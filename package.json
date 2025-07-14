@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate-types": "npx supabase gen types typescript --project-id vbdbvqzfphlwkizvsjkx --schema public > types_db.ts"
   },
   "dependencies": {
     "next": "15.3.3",
