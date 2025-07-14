@@ -1,0 +1,25 @@
+name: 작업 이슈
+description: 프론트, 백엔드, 인프라 등 작업 전 등록용 이슈 템플릿
+title: '[FE/BE/BUG/DOCS] 작업 요약을 여기에 적어주세요'
+body:
+  - type: checkboxes
+    attributes:
+      label: 작업 범위
+      description: 해당되는 범위를 모두 선택해주세요 (제목에도 반영해주세요)
+      options:
+        - label: 프론트엔드 (FE)
+        - label: 백엔드 (BE)
+        - label: 버그 수정 (BUG)
+        - label: 문서 작성 (DOCS)
+        - label: 기타 (ETC)
+  - type: textarea
+    attributes:
+      label: 작업 내용 설명
+      description: 어떤 작업을 할 계획인지 상세히 적어주세요
+      placeholder: |
+        예: 회원가입 페이지 UI 구현 + API 연동
+  - type: input
+    attributes:
+      label: 예상 PR 제목
+      description: 나중에 이 작업을 완료하고 올릴 PR 제목을 미리 적어주세요
+      placeholder: '[FE/BE] 회원가입 기능 구현'
