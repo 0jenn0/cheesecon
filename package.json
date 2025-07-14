@@ -7,9 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-types": "npx supabase gen types typescript --project-id vbdbvqzfphlwkizvsjkx --schema public > types_db.ts"
+    "generate-types": "npx supabase gen types typescript --project-id vbdbvqzfphlwkizvsjkx --schema public > src/types/types_db.ts"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.6.1",
+    "@tanstack/react-query": "^5.83.0",
     "next": "15.3.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
