@@ -130,7 +130,6 @@ const ColorScale = ({
 
 export function AllColors() {
   const [copied, setCopied] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState('palette');
 
   const handleCopy = (hex: string) => {
     navigator.clipboard.writeText(hex);
@@ -144,7 +143,7 @@ export function AllColors() {
   ];
 
   return (
-    <div className='mx-auto max-w-7xl p-6'>
+    <div className='mx-auto max-w-7xl p-8'>
       <div className='mb-8'>
         <h1 className='text-headline-md mb-2 text-gray-900'>
           Design Tokens - Colors
@@ -154,7 +153,6 @@ export function AllColors() {
           해당 색상의 HEX 값을 복사할 수 있습니다.
         </p>
       </div>
-
       <div className='space-y-12'>
         {Object.entries(colorTokens).map(([name, colors]) => (
           <ColorScale

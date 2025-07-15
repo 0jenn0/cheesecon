@@ -64,7 +64,17 @@ export function AllAnimations() {
   };
 
   return (
-    <div className='space-y-12'>
+    <div className='mx-auto flex max-w-7xl flex-col gap-8 p-8'>
+      <div className='mb-4 flex flex-col gap-2'>
+        <h1 className='text-headline-md text-gray-900'>
+          Design Tokens - Animations
+        </h1>
+        <p className='text-body-sm text-gray-600'>
+          애플리케이션 전반에서 사용되는 애니메이션 토큰입니다. 버튼을 클릭시
+          애니메이션이 재생됩니다.
+        </p>
+      </div>
+
       {animationGroups.map((group) => (
         <div key={group.label}>
           <h2 className='mb-4 text-xl font-semibold'>{group.label}</h2>
