@@ -1,0 +1,264 @@
+@theme {
+  /* 애니메이션 지속시간 */
+  --animation-duration-fast: 150ms;
+  --animation-duration-normal: 250ms;
+  --animation-duration-slow: 350ms;
+  --animation-duration-slower: 500ms;
+
+  /* 애니메이션 이징 */
+  --animation-ease-linear: linear;
+  --animation-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --animation-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --animation-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --animation-ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* 애니메이션 거리 */
+  --animation-distance-small: 0.5rem;
+  --animation-distance-normal: 1rem;
+  --animation-distance-large: 1.5rem;
+  --animation-distance-xl: 2rem;
+
+  /* 애니메이션 스케일 */
+  --animation-scale-small: 0.95;
+  --animation-scale-normal: 0.9;
+  --animation-scale-large: 0.8;
+
+  /* 애니메이션 회전 */
+  --animation-rotate-small: 5deg;
+  --animation-rotate-normal: 10deg;
+  --animation-rotate-large: 15deg;
+
+  /* 애니메이션 투명도 */
+  --animation-opacity-fade: 0.8;
+  --animation-opacity-hide: 0;
+  --animation-opacity-show: 1;
+}
+
+/* 슬라이드 애니메이션 */
+.slide-up {
+  animation: slideUp var(--animation-duration-normal) var(--animation-ease-out);
+}
+
+.slide-up-fast {
+  animation: slideUp var(--animation-duration-fast) var(--animation-ease-out);
+}
+
+.slide-up-slow {
+  animation: slideUp var(--animation-duration-slow) var(--animation-ease-out);
+}
+
+.slide-down {
+  animation: slideDown var(--animation-duration-normal)
+    var(--animation-ease-out);
+}
+
+.slide-down-fast {
+  animation: slideDown var(--animation-duration-fast) var(--animation-ease-out);
+}
+
+.slide-down-slow {
+  animation: slideDown var(--animation-duration-slow) var(--animation-ease-out);
+}
+
+.slide-left {
+  animation: slideLeft var(--animation-duration-normal)
+    var(--animation-ease-out);
+}
+
+.slide-left-fast {
+  animation: slideLeft var(--animation-duration-fast) var(--animation-ease-out);
+}
+
+.slide-left-slow {
+  animation: slideLeft var(--animation-duration-slow) var(--animation-ease-out);
+}
+
+.slide-right {
+  animation: slideRight var(--animation-duration-normal)
+    var(--animation-ease-out);
+}
+
+.slide-right-fast {
+  animation: slideRight var(--animation-duration-fast) var(--animation-ease-out);
+}
+
+.slide-right-slow {
+  animation: slideRight var(--animation-duration-slow) var(--animation-ease-out);
+}
+
+/* 페이드 애니메이션 */
+.fade-in {
+  animation: fadeIn var(--animation-duration-normal) var(--animation-ease-out);
+}
+
+.fade-in-fast {
+  animation: fadeIn var(--animation-duration-fast) var(--animation-ease-out);
+}
+
+.fade-in-slow {
+  animation: fadeIn var(--animation-duration-slow) var(--animation-ease-out);
+}
+
+.fade-out {
+  animation: fadeOut var(--animation-duration-normal) var(--animation-ease-in);
+}
+
+.fade-out-fast {
+  animation: fadeOut var(--animation-duration-fast) var(--animation-ease-in);
+}
+
+.fade-out-slow {
+  animation: fadeOut var(--animation-duration-slow) var(--animation-ease-in);
+}
+
+/* 스케일 애니메이션 */
+.scale-in {
+  animation: scaleIn var(--animation-duration-normal) var(--animation-ease-out);
+}
+
+.scale-in-fast {
+  animation: scaleIn var(--animation-duration-fast) var(--animation-ease-out);
+}
+
+.scale-in-slow {
+  animation: scaleIn var(--animation-duration-slow) var(--animation-ease-out);
+}
+
+.scale-out {
+  animation: scaleOut var(--animation-duration-normal) var(--animation-ease-in);
+}
+
+.scale-out-fast {
+  animation: scaleOut var(--animation-duration-fast) var(--animation-ease-in);
+}
+
+.scale-out-slow {
+  animation: scaleOut var(--animation-duration-slow) var(--animation-ease-in);
+}
+
+/* 바운스 애니메이션 */
+.bounce-in {
+  animation: bounceIn var(--animation-duration-slow)
+    var(--animation-ease-bounce);
+}
+
+.bounce-out {
+  animation: bounceOut var(--animation-duration-slow)
+    var(--animation-ease-bounce);
+}
+
+/* 슬라이드 애니메이션 키프레임 */
+@keyframes slideUp {
+  from {
+    transform: translateY(var(--animation-distance-normal));
+    opacity: var(--animation-opacity-hide);
+  }
+  to {
+    transform: translateY(0);
+    opacity: var(--animation-opacity-show);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(calc(-1 * var(--animation-distance-normal)));
+    opacity: var(--animation-opacity-hide);
+  }
+  to {
+    transform: translateY(0);
+    opacity: var(--animation-opacity-show);
+  }
+}
+
+@keyframes slideLeft {
+  from {
+    transform: translateX(var(--animation-distance-normal));
+    opacity: var(--animation-opacity-hide);
+  }
+  to {
+    transform: translateX(0);
+    opacity: var(--animation-opacity-show);
+  }
+}
+
+@keyframes slideRight {
+  from {
+    transform: translateX(calc(-1 * var(--animation-distance-normal)));
+    opacity: var(--animation-opacity-hide);
+  }
+  to {
+    transform: translateX(0);
+    opacity: var(--animation-opacity-show);
+  }
+}
+
+/* 페이드 애니메이션 키프레임 */
+@keyframes fadeIn {
+  from {
+    opacity: var(--animation-opacity-hide);
+  }
+  to {
+    opacity: var(--animation-opacity-show);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: var(--animation-opacity-show);
+  }
+  to {
+    opacity: var(--animation-opacity-hide);
+  }
+}
+
+/* 스케일 애니메이션 키프레임 */
+@keyframes scaleIn {
+  from {
+    transform: scale(var(--animation-scale-normal));
+    opacity: var(--animation-opacity-hide);
+  }
+  to {
+    transform: scale(1);
+    opacity: var(--animation-opacity-show);
+  }
+}
+
+@keyframes scaleOut {
+  from {
+    transform: scale(1);
+    opacity: var(--animation-opacity-show);
+  }
+  to {
+    transform: scale(var(--animation-scale-normal));
+    opacity: var(--animation-opacity-hide);
+  }
+}
+
+/* 바운스 애니메이션 키프레임 */
+@keyframes bounceIn {
+  0% {
+    transform: scale(var(--animation-scale-large));
+    opacity: var(--animation-opacity-hide);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: var(--animation-opacity-show);
+  }
+}
+
+@keyframes bounceOut {
+  0% {
+    transform: scale(1);
+    opacity: var(--animation-opacity-show);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(var(--animation-scale-large));
+    opacity: var(--animation-opacity-hide);
+  }
+}
