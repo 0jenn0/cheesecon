@@ -43,3 +43,5 @@ next-env.d.ts
 # cursor
 .cursor/
 .vscode/
+*storybook.log
+storybook-static

@@ -1,0 +1,20 @@
+@import 'tailwindcss';
+@import '../../config/tailwind/animations.css';
+@import '../../config/tailwind/z-index.css';
+@import '../../config/tailwind/colors.css';
+@import '../../config/tailwind/radius.css';
+@import '../../config/tailwind/font.css';
+@import '../../config/tailwind/breakpoints.css';
+
+html {
+  font-size: 10px;
+}
+
+body {
+  background: #ffffff;
+  color: #171717;
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  font-weight: var(--font-weight-normal);
+}
