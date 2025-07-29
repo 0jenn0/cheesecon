@@ -23,7 +23,7 @@ export const createServerSupabaseClient = async (
         set(name: string, value: string, options: CookieOptions) {
           try {
             cookieStoreInstance.set({ name, value, ...options });
-          } catch (error) {
+          } catch {
             // 서버 컴포넌트에서 `set` 메서드가 호출되었습니다.
             // 미들웨어에서 사용자 세션을 갱신하고 있다면 이 에러는 무시할 수 있습니다.
           }
@@ -31,7 +31,7 @@ export const createServerSupabaseClient = async (
         remove(name: string, options: CookieOptions) {
           try {
             cookieStoreInstance.set({ name, value: '', ...options });
-          } catch (error) {
+          } catch {
             // 서버 컴포넌트에서 `remove` 메서드가 호출되었습니다.
             // 미들웨어에서 사용자 세션을 갱신하고 있다면 이 에러는 무시할 수 있습니다.
           }
