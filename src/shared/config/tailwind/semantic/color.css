@@ -225,43 +225,37 @@
   .bg-interactive-primary {
     background-color: var(--color-bg-interactive-primary);
   }
-  .bg-interactive-primary-hovered {
+  .bg-interactive-primary:hover {
     background-color: var(--color-bg-interactive-primary-hovered);
   }
-  .bg-interactive-primary-pressed {
+  .bg-interactive-primary:active {
     background-color: var(--color-bg-interactive-primary-pressed);
-  }
-  .bg-interactive-primary-hovered-subtile {
-    background-color: var(--color-bg-interactive-primary-hovered-subtile);
-  }
-  .bg-interactive-primary-pressed-subtle {
-    background-color: var(--color-bg-interactive-primary-pressed-subtle);
   }
   .bg-interactive-secondary {
     background-color: var(--color-bg-interactive-secondary);
   }
-  .bg-interactive-secondary-hovered {
+  .bg-interactive-secondary:hover {
     background-color: var(--color-bg-interactive-secondary-hovered);
   }
-  .bg-interactive-secondary-pressed {
+  .bg-interactive-secondary:active {
     background-color: var(--color-bg-interactive-secondary-pressed);
   }
   .bg-interactive-danger {
     background-color: var(--color-bg-interactive-danger);
   }
+  .bg-interactive-danger:hover {
+    background-color: var(--color-bg-interactive-danger-hovered);
+  }
+  .bg-interactive-danger:active {
+    background-color: var(--color-bg-interactive-danger-pressed);
+  }
   .bg-interactive-danger-subtile {
     background-color: var(--color-bg-interactive-danger-subtile);
   }
-  .bg-interactive-danger-hovered {
-    background-color: var(--color-bg-interactive-danger-hovered);
-  }
-  .bg-interactive-danger-hovered-subtile {
+  .bg-interactive-danger-subtile:hover {
     background-color: var(--color-bg-interactive-danger-hovered-subtile);
   }
-  .bg-interactive-danger-pressed {
-    background-color: var(--color-bg-interactive-danger-pressed);
-  }
-  .bg-interactive-danger-pressed-subtile {
+  .bg-interactive-danger-subtile:active {
     background-color: var(--color-bg-interactive-danger-pressed-subtile);
   }
   .bg-interactive-inverse {
