@@ -56,8 +56,8 @@
   );
   --color-bg-interactive-danger: var(--red-600);
   --color-bg-interactive-danger-subtile: var(--red-200);
-  --color-bg-interactive-danger-hoverd: var(--red-700);
-  --color-bg-interactive-danger-hoverd-subtile: var(--red-300);
+  --color-bg-interactive-danger-hovered: var(--red-700);
+  --color-bg-interactive-danger-hovered-subtile: var(--red-300);
   --color-bg-interactive-danger-pressed: var(--red-800);
   --color-bg-interactive-danger-pressed-subtile: var(--red-400);
   --color-bg-interactive-inverse: var(--white);
@@ -252,11 +252,11 @@
   .bg-interactive-danger-subtile {
     background-color: var(--color-bg-interactive-danger-subtile);
   }
-  .bg-interactive-danger-hoverd {
-    background-color: var(--color-bg-interactive-danger-hoverd);
+  .bg-interactive-danger-hovered {
+    background-color: var(--color-bg-interactive-danger-hovered);
   }
-  .bg-interactive-danger-hoverd-subtile {
-    background-color: var(--color-bg-interactive-danger-hoverd-subtile);
+  .bg-interactive-danger-hovered-subtile {
+    background-color: var(--color-bg-interactive-danger-hovered-subtile);
   }
   .bg-interactive-danger-pressed {
     background-color: var(--color-bg-interactive-danger-pressed);
