@@ -7,6 +7,7 @@ const spinnerVariants = cva('animate-spin', {
       primary: 'text-[var(--color-cheesecon-primary-500)]',
       secondary: 'text-[var(--color-cheesecon-secondary-800)]',
       white: 'text-white',
+      danger: 'text-danger-bold',
     },
     size: {
       sm: 'width-12 height-12',
@@ -21,8 +22,6 @@ const spinnerVariants = cva('animate-spin', {
 });
 
 interface SpinnerProps extends VariantProps<typeof spinnerVariants> {
-  size?: 'sm' | 'md' | 'lg';
-  variant?: 'primary' | 'secondary' | 'white';
   className?: string;
 }
 

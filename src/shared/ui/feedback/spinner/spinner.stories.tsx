@@ -88,3 +88,18 @@ export const White: Story = {
     ),
   ],
 };
+
+export const Danger: Story = {
+  args: {
+    variant: 'danger',
+  },
+  decorators: [
+    (Story, context) => (
+      <div className={containerStyle}>
+        <Story args={{ ...context.args, size: 'sm' }} />
+        <Story args={{ ...context.args, size: 'md' }} />
+        <Story args={{ ...context.args, size: 'lg' }} />
+      </div>
+    ),
+  ],
+};
