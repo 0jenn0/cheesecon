@@ -24,6 +24,18 @@ export default function Icon({
   const iconName = kebabToPascal(name) as keyof typeof icons;
   const Icon = icons[iconName];
 
+  if (!Icon) {
+    console.warn(`Icon "${name}" (${iconName}) not found`);
+    return (
+      <div
+        className={`flex items-center justify-center bg-red-100 text-red-600 ${className || ''}`}
+        style={{ width: size, height: size }}
+      >
+        ?
+      </div>
+    );
+  }
+
   return (
     <Icon
       className={className}
