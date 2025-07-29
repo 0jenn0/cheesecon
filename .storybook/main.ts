@@ -14,5 +14,31 @@ const config: StorybookConfig = {
     options: {},
   },
   staticDirs: ['../public'],
+  webpackFinal: async (config) => {
+    if (config.module && config.module.rules) {
+      config.module.rules = config.module.rules.filter(
+        (rule) =>
+          rule &&
+          typeof rule === 'object' &&
+          'test' in rule &&
+          !rule.test?.toString().includes('svg'),
+      );
+
+      config.module.rules.push({
+        test: /\.svg$/,
+        use: [
+          {
+            loader: '@svgr/webpack',
+            options: {
+              typescript: true,
+              ext: 'tsx',
+            },
+          },
+        ],
+      });
+    }
+
+    return config;
+  },
 };
 export default config;
