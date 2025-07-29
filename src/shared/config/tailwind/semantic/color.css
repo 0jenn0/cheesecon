@@ -31,17 +31,17 @@
   --color-bg-brand: var(--color-cheesecon-primary-300);
   --color-bg-info-subtle: var(--blue-50);
   --color-bg-info-bold: var(--blue-700);
-  --color-bg-warning-subtile: var(--yellow-50);
+  --color-bg-warning-subtle: var(--yellow-50);
   --color-bg-warning-bold: var(--yellow-500);
-  --color-bg-success-subtile: var(--green-50);
+  --color-bg-success-subtle: var(--green-50);
   --color-bg-success-bold: var(--green-700);
-  --color-bg-danger-subtile: var(--red-50);
+  --color-bg-danger-subtle: var(--red-50);
   --color-bg-danger-bold: var(--red-700);
   --color-bg-disabled: var(--gray-100);
   --color-bg-interactive-primary: var(--color-cheesecon-primary-300);
   --color-bg-interactive-primary-hovered: var(--color-cheesecon-primary-350);
   --color-bg-interactive-primary-pressed: var(--color-cheesecon-primary-400);
-  --color-bg-interactive-primary-hovered-subtile: var(
+  --color-bg-interactive-primary-hovered-subtle: var(
     --color-cheesecon-primary-100
   );
   --color-bg-interactive-primary-pressed-subtle: var(
@@ -54,12 +54,21 @@
   --color-bg-interactive-secondary-pressed: var(
     --color-cheesecon-secondary-200
   );
+  --color-bg-interactive-secondary-hovered-subtle: var(
+    --color-cheesecon-secondary-50
+  );
+  --color-bg-interactive-secondary-pressed-subtle: var(
+    --color-cheesecon-secondary-100
+  );
   --color-bg-interactive-danger: var(--red-600);
-  --color-bg-interactive-danger-subtile: var(--red-200);
+  --color-bg-interactive-danger-transparent: var(--white);
+  --color-bg-interactive-danger-hovered-transparent: var(--red-50);
+  --color-bg-interactive-danger-pressed-transparent: var(--red-100);
+  --color-bg-interactive-danger-subtle: var(--red-200);
   --color-bg-interactive-danger-hovered: var(--red-700);
-  --color-bg-interactive-danger-hovered-subtile: var(--red-300);
+  --color-bg-interactive-danger-hovered-subtle: var(--red-300);
   --color-bg-interactive-danger-pressed: var(--red-800);
-  --color-bg-interactive-danger-pressed-subtile: var(--red-400);
+  --color-bg-interactive-danger-pressed-subtle: var(--red-400);
   --color-bg-interactive-inverse: var(--white);
   --color-bg-interactive-selected: var(--color-cheesecon-primary-50);
   --color-bg-interactive-selected-hovered: var(--color-cheesecon-primary-100);
@@ -90,11 +99,11 @@
   --color-border-focusRing: var(--orange-400);
   --color-border-info-subtle: var(--blue-50);
   --color-border-info: var(--blue-600);
-  --color-border-warning-subtile: var(--yellow-50);
+  --color-border-warning-subtle: var(--yellow-50);
   --color-border-warning: var(--yellow-500);
-  --color-border-success-subtile: var(--green-50);
+  --color-border-success-subtle: var(--green-50);
   --color-border-success: var(--green-600);
-  --color-border-danger-subtile: var(--red-50);
+  --color-border-danger-subtle: var(--red-50);
   --color-border-danger: var(--red-600);
   --color-border-disabled: var(--gray-400);
   --color-border-interactive-primary: var(--color-cheesecon-primary-300);
@@ -157,22 +166,25 @@
   .text-disabled {
     color: var(--color-text-disabled);
   }
+  .text-disabled:disabled {
+    color: var(--color-text-disabled);
+  }
   .text-interactive-primary {
     color: var(--color-text-interactive-primary);
   }
-  .text-interactive-primary-hovered {
+  .text-interactive-primary:hover:not(:disabled) {
     color: var(--color-text-interactive-primary-hovered);
   }
-  .text-interactive-primary-pressed {
+  .text-interactive-primary:active:not(:disabled) {
     color: var(--color-text-interactive-primary-pressed);
   }
   .text-interactive-secondary {
     color: var(--color-text-interactive-secondary);
   }
-  .text-interactive-secondary-hovered {
+  .text-interactive-secondary:hover:not(:disabled) {
     color: var(--color-text-interactive-secondary-hovered);
   }
-  .text-interactive-secondary-pressed {
+  .text-interactive-secondary:active:not(:disabled) {
     color: var(--color-text-interactive-secondary-pressed);
   }
   .text-interactive-inverse {
@@ -184,6 +196,9 @@
 
   /* Background Colors */
   .bg-primary {
+    background-color: var(--color-bg-primary);
+  }
+  .bg-primary-subtle {
     background-color: var(--color-bg-primary);
   }
   .bg-secondary {
@@ -201,20 +216,20 @@
   .bg-info-bold {
     background-color: var(--color-bg-info-bold);
   }
-  .bg-warning-subtile {
-    background-color: var(--color-bg-warning-subtile);
+  .bg-warning-subtle {
+    background-color: var(--color-bg-warning-subtle);
   }
   .bg-warning-bold {
     background-color: var(--color-bg-warning-bold);
   }
-  .bg-success-subtile {
-    background-color: var(--color-bg-success-subtile);
+  .bg-success-subtle {
+    background-color: var(--color-bg-success-subtle);
   }
   .bg-success-bold {
     background-color: var(--color-bg-success-bold);
   }
-  .bg-danger-subtile {
-    background-color: var(--color-bg-danger-subtile);
+  .bg-danger-subtle {
+    background-color: var(--color-bg-danger-subtle);
   }
   .bg-danger-bold {
     background-color: var(--color-bg-danger-bold);
@@ -225,38 +240,68 @@
   .bg-interactive-primary {
     background-color: var(--color-bg-interactive-primary);
   }
-  .bg-interactive-primary:hover {
+  .bg-interactive-primary:hover:not(:disabled) {
     background-color: var(--color-bg-interactive-primary-hovered);
   }
-  .bg-interactive-primary:active {
+  .bg-interactive-primary:active:not(:disabled) {
     background-color: var(--color-bg-interactive-primary-pressed);
+  }
+  .bg-interactive-primary-subtle {
+    background-color: var(--color-bg-primary);
+  }
+  .bg-interactive-primary-subtle:hover:not(:disabled) {
+    background-color: var(--color-bg-interactive-primary-hovered-subtle);
+  }
+  .bg-interactive-primary-subtle:active:not(:disabled) {
+    background-color: var(--color-bg-interactive-primary-pressed-subtle);
+  }
+  .bg-disabled:disabled {
+    background-color: var(--color-bg-disabled);
   }
   .bg-interactive-secondary {
     background-color: var(--color-bg-interactive-secondary);
   }
-  .bg-interactive-secondary:hover {
+  .bg-interactive-secondary:hover:not(:disabled) {
     background-color: var(--color-bg-interactive-secondary-hovered);
   }
-  .bg-interactive-secondary:active {
+  .bg-interactive-secondary:active:not(:disabled) {
     background-color: var(--color-bg-interactive-secondary-pressed);
+  }
+  .bg-interactive-secondary-subtle {
+    background-color: var(--color-bg-primary);
+  }
+  .bg-interactive-secondary-subtle:hover:not(:disabled) {
+    background-color: var(--color-bg-interactive-secondary-hovered-subtle);
+  }
+  .bg-interactive-secondary-subtle:active:not(:disabled) {
+    background-color: var(--color-bg-interactive-secondary-pressed-subtle);
   }
   .bg-interactive-danger {
     background-color: var(--color-bg-interactive-danger);
   }
-  .bg-interactive-danger:hover {
+  .bg-interactive-danger:hover:not(:disabled) {
     background-color: var(--color-bg-interactive-danger-hovered);
   }
-  .bg-interactive-danger:active {
+  .bg-interactive-danger:active:not(:disabled) {
     background-color: var(--color-bg-interactive-danger-pressed);
   }
-  .bg-interactive-danger-subtile {
-    background-color: var(--color-bg-interactive-danger-subtile);
+  .bg-interactive-danger-subtle {
+    background-color: var(--color-bg-interactive-danger-subtle);
   }
-  .bg-interactive-danger-subtile:hover {
-    background-color: var(--color-bg-interactive-danger-hovered-subtile);
+  .bg-interactive-danger-subtle:hover:not(:disabled) {
+    background-color: var(--color-bg-interactive-danger-hovered-subtle);
   }
-  .bg-interactive-danger-subtile:active {
-    background-color: var(--color-bg-interactive-danger-pressed-subtile);
+  .bg-interactive-danger-subtle:active:not(:disabled) {
+    background-color: var(--color-bg-interactive-danger-pressed-subtle);
+  }
+  .bg-interactive-danger-transparent {
+    background-color: var(--color-bg-interactive-danger-transparent);
+  }
+  .bg-interactive-danger-transparent:hover:not(:disabled) {
+    background-color: var(--color-bg-interactive-danger-hovered-transparent);
+  }
+  .bg-interactive-danger-transparent:active:not(:disabled) {
+    background-color: var(--color-bg-interactive-danger-pressed-transparent);
   }
   .bg-interactive-inverse {
     background-color: var(--color-bg-interactive-inverse);
@@ -264,10 +309,10 @@
   .bg-interactive-selected {
     background-color: var(--color-bg-interactive-selected);
   }
-  .bg-interactive-selected-hovered {
+  .bg-interactive-selected:hover:not(:disabled) {
     background-color: var(--color-bg-interactive-selected-hovered);
   }
-  .bg-interactive-selected-pressed {
+  .bg-interactive-selected:active:not(:disabled) {
     background-color: var(--color-bg-interactive-selected-pressed);
   }
 
@@ -299,19 +344,19 @@
   .icon-interactive-primary {
     color: var(--color-icon-interactive-primary);
   }
-  .icon-interactive-primary-hovered {
+  .icon-interactive-primary:hover:not(:disabled) {
     color: var(--color-icon-interactive-primary-hovered);
   }
-  .icon-interactive-primary-pressed {
+  .icon-interactive-primary:active:not(:disabled) {
     color: var(--color-icon-interactive-primary-pressed);
   }
   .icon-interactive-secondary {
     color: var(--color-icon-interactive-secondary);
   }
-  .icon-interactive-secondary-hovered {
+  .icon-interactive-secondary:hover:not(:disabled) {
     color: var(--color-icon-interactive-secondary-hovered);
   }
-  .icon-interactive-secondary-pressed {
+  .icon-interactive-secondary:active:not(:disabled) {
     color: var(--color-icon-interactive-secondary-pressed);
   }
   .icon-interactive-inverse {
@@ -340,20 +385,20 @@
   .border-info {
     border-color: var(--color-border-info);
   }
-  .border-warning-subtile {
-    border-color: var(--color-border-warning-subtile);
+  .border-warning-subtle {
+    border-color: var(--color-border-warning-subtle);
   }
   .border-warning {
     border-color: var(--color-border-warning);
   }
-  .border-success-subtile {
-    border-color: var(--color-border-success-subtile);
+  .border-success-subtle {
+    border-color: var(--color-border-success-subtle);
   }
   .border-success {
     border-color: var(--color-border-success);
   }
-  .border-danger-subtile {
-    border-color: var(--color-border-danger-subtile);
+  .border-danger-subtle {
+    border-color: var(--color-border-danger-subtle);
   }
   .border-danger {
     border-color: var(--color-border-danger);
@@ -364,28 +409,28 @@
   .border-interactive-primary {
     border-color: var(--color-border-interactive-primary);
   }
-  .border-interactive-primary-hovered {
+  .border-interactive-primary:hover:not(:disabled) {
     border-color: var(--color-border-interactive-primary-hovered);
   }
-  .border-interactive-primary-pressed {
+  .border-interactive-primary:active:not(:disabled) {
     border-color: var(--color-border-interactive-primary-pressed);
   }
   .border-interactive-secondary {
     border-color: var(--color-border-interactive-secondary);
   }
-  .border-interactive-secondary-hovered {
+  .border-interactive-secondary:hover:not(:disabled) {
     border-color: var(--color-border-interactive-secondary-hovered);
   }
-  .border-interactive-secondary-pressed {
+  .border-interactive-secondary:active:not(:disabled) {
     border-color: var(--color-border-interactive-secondary-pressed);
   }
   .border-interactive-danger {
     border-color: var(--color-border-interactive-danger);
   }
-  .border-interactive-danger-hovered {
+  .border-interactive-danger:hover:not(:disabled) {
     border-color: var(--color-border-interactive-danger-hovered);
   }
-  .border-interactive-danger-pressed {
+  .border-interactive-danger:active:not(:disabled) {
     border-color: var(--color-border-interactive-danger-pressed);
   }
   .border-interactive-inverse {
