@@ -17,7 +17,7 @@ export const ICON_NAMES = [
   'google-login',
   'image-plus',
   'image',
-  'kakaotalk-logo',
+  'kakao-logo',
   'line-logo',
   'link',
   'lock',

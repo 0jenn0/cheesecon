@@ -1,6 +1,6 @@
 export { default as GoogleLogin } from './google-login.svg';
 export { default as KakaoLogin } from './kakao-login.svg';
-export { default as KakaotalkLogo } from './kakaotalk-logo.svg';
+export { default as KakaoLogo } from './kakao-logo.svg';
 export { default as LineLogo } from './line-logo.svg';
 export { default as Lock } from './lock.svg';
 export { default as Menu } from './menu.svg';
