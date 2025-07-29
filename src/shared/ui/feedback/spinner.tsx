@@ -5,7 +5,7 @@ const spinnerVariants = cva('animate-spin', {
   variants: {
     variant: {
       primary: 'text-[var(--color-cheesecon-primary-500)]',
-      secondary: 'text-[var(--color-cheesecon-secondary-500)]',
+      secondary: 'text-[var(--color-cheesecon-secondary-800)]',
       white: 'text-white',
     },
     size: {
