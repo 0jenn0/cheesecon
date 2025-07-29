@@ -75,7 +75,9 @@ export default function Button({
   );
 }
 
-function getSpinnerSize(size: ButtonProps['size']): SpinnerProps['size'] {
+export function getSpinnerSize(
+  size: ButtonProps['size'],
+): SpinnerProps['size'] {
   if (size === 'sm') {
     return 'sm';
   }
@@ -87,7 +89,7 @@ function getSpinnerSize(size: ButtonProps['size']): SpinnerProps['size'] {
   return 'lg';
 }
 
-function getSpinnerVariant(
+export function getSpinnerVariant(
   variant: ButtonProps['variant'],
   styleVariant: ButtonProps['styleVariant'],
 ): SpinnerProps['variant'] {
