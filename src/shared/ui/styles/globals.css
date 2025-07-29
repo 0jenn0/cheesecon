@@ -1,20 +1,28 @@
 @import 'tailwindcss';
+
 @import '../../config/tailwind/animations.css';
 @import '../../config/tailwind/z-index.css';
-@import '../../config/tailwind/colors.css';
-@import '../../config/tailwind/radius.css';
-@import '../../config/tailwind/font.css';
-@import '../../config/tailwind/breakpoints.css';
+@import '../../config/tailwind/breakpoint.css';
+
+@import '../../config/tailwind/primitive/color.css';
+@import '../../config/tailwind/primitive/measurement.css';
+@import '../../config/tailwind/primitive/typography.css';
+
+@import '../../config/tailwind/theme/index.css';
+
+@import '../../config/tailwind/semantic/typography.css';
+@import '../../config/tailwind/semantic/color.css';
+@import '../../config/tailwind/semantic/appearance.css';
 
 html {
-  font-size: 10px;
+  font-size: 16px;
 }
 
 body {
   background: #ffffff;
   color: #171717;
-  font-family: var(--font-family-sans);
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-relaxed);
-  font-weight: var(--font-weight-normal);
+  font-family: var(--font-family-typeface-sans);
+  font-size: var(--font-size-400);
+  line-height: var(--line-height-500);
+  font-weight: var(--font-style-normal-regular);
 }
