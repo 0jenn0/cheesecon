@@ -1,10 +1,10 @@
 import { SVGProps } from 'react';
 import * as icons from '@/shared/asset/icon';
-import { ICON_NAMES, iconSize } from './config';
+import { ICON_NAMES, ICON_SIZES } from './config';
 
-interface IconProps extends SVGProps<SVGSVGElement> {
+export interface IconProps extends SVGProps<SVGSVGElement> {
   name: (typeof ICON_NAMES)[number];
-  size?: iconSize;
+  size?: (typeof ICON_SIZES)[number];
   className?: string;
 }
 

@@ -40,4 +40,4 @@ export const ICON_NAMES = [
   'x',
 ] as const;
 
-export type iconSize = 16 | 24 | 32 | 40 | 48;
+export const ICON_SIZES = [12, 16, 24, 32, 40, 48] as const;
