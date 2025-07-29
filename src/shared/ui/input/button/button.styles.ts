@@ -91,7 +91,6 @@ export const iconVariants = cva('', {
     variant: {
       primary: 'text-interactive-primary',
       secondary: 'text-interactive-secondary',
-      tertiary: 'text-interactive-secondary',
       danger: 'text-interactive-inverse',
       disabled: 'text-disabled',
     },
