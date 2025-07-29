@@ -28,6 +28,7 @@ export default function Button({
 }: ButtonProps) {
   const finalVariant = disabled ? 'disabled' : variant;
   const spinnerConfig = getSpinnerAllVariant(size, variant, styleVariant);
+  const opacity = isLoading && 'opacity-0';
 
   return (
     <button
@@ -49,14 +50,14 @@ export default function Button({
           name={leadingIcon}
           className={cn(
             iconVariants({ size, variant: finalVariant, styleVariant }),
-            isLoading && 'opacity-0',
+            opacity,
           )}
         />
       )}
       <div
         className={cn(
           textVariants({ variant: finalVariant, styleVariant }),
-          isLoading && 'opacity-0',
+          opacity,
         )}
       >
         {children}
@@ -66,7 +67,7 @@ export default function Button({
           name={trailingIcon}
           className={cn(
             iconVariants({ size, variant: finalVariant, styleVariant }),
-            isLoading && 'opacity-0',
+            opacity,
           )}
         />
       )}
