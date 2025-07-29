@@ -1,0 +1,192 @@
+@theme {
+  /* Typography 토큰 - Mobile First */
+
+  /* Heading Tokens */
+  --font-family-heading: var(--font-family-typeface-sans);
+  --letter-spacing-heading: var(--letter-spacing-tight);
+  --font-weight-heading: var(--font-style-normal-semi-bold);
+
+  /* Body Tokens */
+  --font-family-body: var(--font-family-typeface-sans);
+  --letter-spacing-body: var(--letter-spacing-normal);
+  --font-weight-body-regular: var(--font-style-normal-regular);
+  --font-weight-body-medium: var(--font-style-normal-medium);
+  --font-weight-body-semi-bold: var(--font-style-normal-semi-bold);
+
+  /* Mobile 기본값 */
+  --font-size-heading-4xl: var(--font-size-1000);
+  --line-height-heading-4xl: var(--line-height-1200);
+
+  --font-size-heading-3xl: var(--font-size-900);
+  --line-height-heading-3xl: var(--line-height-1000);
+
+  --font-size-heading-2xl: var(--font-size-700);
+  --line-height-heading-2xl: var(--line-height-900);
+
+  --font-size-heading-xl: var(--font-size-600);
+  --line-height-heading-xl: var(--line-height-800);
+
+  --font-size-heading-lg: var(--font-size-500);
+  --line-height-heading-lg: var(--line-height-700);
+
+  --font-size-heading-md: var(--font-size-450);
+  --line-height-heading-md: var(--line-height-600);
+
+  --font-size-heading-sm: var(--font-size-350);
+  --line-height-heading-sm: var(--line-height-450);
+
+  --font-size-body-lg: var(--font-size-400);
+  --line-height-body-lg: var(--line-height-500);
+
+  --font-size-body-md: var(--font-size-350);
+  --line-height-body-md: var(--line-height-400);
+
+  --font-size-body-sm: var(--font-size-300);
+  --line-height-body-sm: var(--line-height-400);
+}
+
+/* Desktop 반응형 오버라이드 */
+@media (min-width: 768px) {
+  :root {
+    /* Desktop에서만 다른 값들 */
+    --font-size-heading-4xl: var(--font-size-1500);
+    --line-height-heading-4xl: var(--line-height-1700);
+
+    --font-size-heading-3xl: var(--font-size-1200);
+    --line-height-heading-3xl: var(--line-height-1400);
+
+    --font-size-heading-2xl: var(--font-size-1000);
+    --line-height-heading-2xl: var(--line-height-1200);
+
+    --font-size-heading-xl: var(--font-size-900);
+    --line-height-heading-xl: var(--line-height-1000);
+
+    --font-size-heading-lg: var(--font-size-700);
+    --line-height-heading-lg: var(--line-height-900);
+
+    --font-size-heading-md: var(--font-size-600);
+    --line-height-heading-md: var(--line-height-700);
+
+    --font-size-heading-sm: var(--font-size-450);
+    --line-height-heading-sm: var(--line-height-600);
+
+    /* Body는 동일하므로 오버라이드 불필요 */
+  }
+}
+
+/* 편의를 위한 compound 토큰들 */
+@theme {
+  /* Heading 복합 클래스 */
+  --typography-heading-4xl: var(--font-size-heading-4xl)
+    var(--line-height-heading-4xl) var(--font-family-heading);
+  --typography-heading-3xl: var(--font-size-heading-3xl)
+    var(--line-height-heading-3xl) var(--font-family-heading);
+  --typography-heading-2xl: var(--font-size-heading-2xl)
+    var(--line-height-heading-2xl) var(--font-family-heading);
+  --typography-heading-xl: var(--font-size-heading-xl)
+    var(--line-height-heading-xl) var(--font-family-heading);
+  --typography-heading-lg: var(--font-size-heading-lg)
+    var(--line-height-heading-lg) var(--font-family-heading);
+  --typography-heading-md: var(--font-size-heading-md)
+    var(--line-height-heading-md) var(--font-family-heading);
+  --typography-heading-sm: var(--font-size-heading-sm)
+    var(--line-height-heading-sm) var(--font-family-heading);
+
+  /* Body 복합 클래스 */
+  --typography-body-lg: var(--font-size-body-lg) var(--line-height-body-lg)
+    var(--font-family-body);
+  --typography-body-md: var(--font-size-body-md) var(--line-height-body-md)
+    var(--font-family-body);
+  --typography-body-sm: var(--font-size-body-sm) var(--line-height-body-sm)
+    var(--font-family-body);
+}
+
+@layer utilities {
+  .text-heading-4xl {
+    font-size: var(--font-size-heading-4xl);
+    line-height: var(--line-height-heading-4xl);
+    font-family: var(--font-family-heading);
+    font-weight: var(--font-weight-heading);
+    letter-spacing: var(--letter-spacing-heading);
+  }
+
+  .text-heading-3xl {
+    font-size: var(--font-size-heading-3xl);
+    line-height: var(--line-height-heading-3xl);
+    font-family: var(--font-family-heading);
+    font-weight: var(--font-weight-heading);
+    letter-spacing: var(--letter-spacing-heading);
+  }
+
+  .text-heading-2xl {
+    font-size: var(--font-size-heading-2xl);
+    line-height: var(--line-height-heading-2xl);
+    font-family: var(--font-family-heading);
+    font-weight: var(--font-weight-heading);
+    letter-spacing: var(--letter-spacing-heading);
+  }
+
+  .text-heading-xl {
+    font-size: var(--font-size-heading-xl);
+    line-height: var(--line-height-heading-xl);
+    font-family: var(--font-family-heading);
+    font-weight: var(--font-weight-heading);
+    letter-spacing: var(--letter-spacing-heading);
+  }
+
+  .text-heading-lg {
+    font-size: var(--font-size-heading-lg);
+    line-height: var(--line-height-heading-lg);
+    font-family: var(--font-family-heading);
+    font-weight: var(--font-weight-heading);
+    letter-spacing: var(--letter-spacing-heading);
+  }
+
+  .text-heading-md {
+    font-size: var(--font-size-heading-md);
+    line-height: var(--line-height-heading-md);
+    font-family: var(--font-family-heading);
+    font-weight: var(--font-weight-heading);
+    letter-spacing: var(--letter-spacing-heading);
+  }
+
+  .text-heading-sm {
+    font-size: var(--font-size-heading-sm);
+    line-height: var(--line-height-heading-sm);
+    font-family: var(--font-family-heading);
+    font-weight: var(--font-weight-heading);
+    letter-spacing: var(--letter-spacing-heading);
+  }
+
+  .text-body-lg {
+    font-size: var(--font-size-body-lg);
+    line-height: var(--line-height-body-lg);
+    font-family: var(--font-family-body);
+    letter-spacing: var(--letter-spacing-body);
+  }
+
+  .text-body-md {
+    font-size: var(--font-size-body-md);
+    line-height: var(--line-height-body-md);
+    font-family: var(--font-family-body);
+    letter-spacing: var(--letter-spacing-body);
+  }
+
+  .text-body-sm {
+    font-size: var(--font-size-body-sm);
+    line-height: var(--line-height-body-sm);
+    font-family: var(--font-family-body);
+    letter-spacing: var(--letter-spacing-body);
+  }
+
+  /* 가중치 변형 */
+  .font-regular {
+    font-weight: var(--font-weight-body-regular);
+  }
+  .font-medium {
+    font-weight: var(--font-weight-body-medium);
+  }
+  .font-semi-bold {
+    font-weight: var(--font-weight-body-semi-bold);
+  }
+}

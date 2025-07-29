@@ -1,0 +1,30 @@
+@theme {
+  --breakpoint-mobile: 320px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
+  --breakpoint-laptop: 1440px;
+}
+
+@media (width >= 320px) {
+  :root {
+    --current-breakpoint: mobile;
+  }
+}
+
+@media (width >= 768px) {
+  :root {
+    --current-breakpoint: tablet;
+  }
+}
+
+@media (width >= 1024px) {
+  :root {
+    --current-breakpoint: desktop;
+  }
+}
+
+@media (width >= 1440px) {
+  :root {
+    --current-breakpoint: laptop;
+  }
+}

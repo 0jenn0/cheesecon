@@ -1,7 +1,0 @@
-@theme {
-  --breakpoint-*: initial;
-  --breakpoint-mobile: 24rem;
-  --breakpoint-tablet: 40rem;
-  --breakpoint-laptop: 64rem;
-  --breakpoint-desktop: 80rem;
-}

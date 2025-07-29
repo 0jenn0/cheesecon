@@ -1,0 +1,23 @@
+@theme {
+  --color-cheesecon-primary-50: var(--yellow-50);
+  --color-cheesecon-primary-100: var(--yellow-100);
+  --color-cheesecon-primary-200: var(--yellow-200);
+  --color-cheesecon-primary-300: var(--yellow-300);
+  --color-cheesecon-primary-350: var(--yellow-350);
+  --color-cheesecon-primary-400: var(--yellow-400);
+  --color-cheesecon-primary-500: var(--yellow-500);
+  --color-cheesecon-primary-600: var(--yellow-600);
+  --color-cheesecon-primary-700: var(--yellow-700);
+  --color-cheesecon-primary-800: var(--yellow-800);
+  --color-cheesecon-primary-900: var(--yellow-900);
+  --color-cheesecon-secondary-50: var(--gray-50);
+  --color-cheesecon-secondary-100: var(--gray-100);
+  --color-cheesecon-secondary-200: var(--gray-200);
+  --color-cheesecon-secondary-300: var(--gray-300);
+  --color-cheesecon-secondary-400: var(--gray-400);
+  --color-cheesecon-secondary-500: var(--gray-500);
+  --color-cheesecon-secondary-600: var(--gray-600);
+  --color-cheesecon-secondary-700: var(--gray-700);
+  --color-cheesecon-secondary-800: var(--gray-800);
+  --color-cheesecon-secondary-900: var(--gray-900);
+}
