@@ -21,7 +21,7 @@ const spinnerVariants = cva('animate-spin', {
   },
 });
 
-interface SpinnerProps extends VariantProps<typeof spinnerVariants> {
+export interface SpinnerProps extends VariantProps<typeof spinnerVariants> {
   className?: string;
 }
 
