@@ -5,7 +5,7 @@ import { Icon } from '@/shared/ui/display';
 import { useSelect } from '../../provider/select-provider';
 
 const selectOptionVariants = cva(
-  'bg-interactive-secondary-subtle padding-x-8 padding-y-4 flex items-center gap-4',
+  'bg-interactive-secondary-subtle padding-x-8 padding-y-4 flex items-center gap-4 select-none',
   {
     variants: {
       isSelected: {
