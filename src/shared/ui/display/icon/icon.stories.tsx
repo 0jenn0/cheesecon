@@ -131,9 +131,9 @@ export const Colors: Story = {
   },
 };
 
-export const Debug: Story = {
+export const Debug = {
   decorators: [
-    (Story) => {
+    () => {
       const availableIcons = Object.keys(icons);
       console.log('Available icons:', availableIcons);
       console.log('ICON_NAMES:', ICON_NAMES);
