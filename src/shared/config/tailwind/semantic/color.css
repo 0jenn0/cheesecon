@@ -78,8 +78,8 @@
   --color-icon-ghost: var(--gray-200);
   --color-icon-info: var(--blue-700);
   --color-icon-warning: var(--yellow-700);
-  --color-icon-success: var(--green-700);
-  --color-icon-danger: var(--red-700);
+  --color-icon-success: var(--green-600);
+  --color-icon-danger: var(--red-600);
   --color-icon-disabled: var(--gray-400);
   --color-icon-interactive-primary: var(--gray-700);
   --color-icon-interactive-primary-hovered: var(--gray-800);
@@ -119,6 +119,9 @@
   );
   --color-border-interactive-secondary-pressed: var(
     --color-cheesecon-secondary-500
+  );
+  --color-border-interactive-secondary-focus-within: var(
+    --color-cheesecon-primary-400
   );
   --color-border-interactive-danger: var(--red-600);
   --color-border-interactive-danger-hovered: var(--red-700);
@@ -163,10 +166,7 @@
   .text-danger-bold {
     color: var(--color-text-danger-bold);
   }
-  .text-disabled {
-    color: var(--color-text-disabled);
-  }
-  .text-disabled:disabled {
+  .text-primary:disabled {
     color: var(--color-text-disabled);
   }
   .text-interactive-primary {
@@ -423,6 +423,9 @@
   }
   .border-interactive-secondary:active:not(:disabled) {
     border-color: var(--color-border-interactive-secondary-pressed);
+  }
+  .border-interactive-secondary:focus-within:not(:disabled) {
+    border-color: var(--color-border-interactive-secondary-focus-within);
   }
   .border-interactive-danger {
     border-color: var(--color-border-interactive-danger);
