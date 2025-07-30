@@ -3,7 +3,7 @@ import { ICON_NAMES } from '../../display/icon/config';
 import TextField, {
   TEXTFIELD_DIRECTION,
   TEXTFIELD_VARIANT,
-} from './text-filed';
+} from './text-field';
 
 const meta: Meta<typeof TextField> = {
   title: 'UI/Input/TextField',
