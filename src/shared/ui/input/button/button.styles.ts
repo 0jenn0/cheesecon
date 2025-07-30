@@ -15,7 +15,7 @@ export const buttonVariants = cva(
         md: 'padding-x-16 padding-y-12 text-body-lg h-10',
       },
       styleVariant: {
-        outlined: 'rounded-[4px]', // FIXME: outlined일 때만 border-radius-md가 적용안됨
+        outlined: '',
         filled: '',
         transparent: '',
       },

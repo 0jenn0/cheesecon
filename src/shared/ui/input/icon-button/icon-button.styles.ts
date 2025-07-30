@@ -12,7 +12,7 @@ export const iconButtonVariants = cva(
         disabled: 'bg-disabled disabled:cursor-not-allowed',
       },
       styleVariant: {
-        outlined: 'rounded-[4px]', // FIXME: outlined일 때만 border-radius-md가 적용안됨
+        outlined: '',
         filled: '',
         transparent: '',
       },
