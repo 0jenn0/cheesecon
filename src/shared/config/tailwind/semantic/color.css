@@ -142,6 +142,9 @@
   .text-tertiary {
     color: var(--color-text-teritiary);
   }
+  .placeholder-text-tertiary::placeholder {
+    color: var(--color-text-teritiary);
+  }
   .text-info {
     color: var(--color-text-info);
   }

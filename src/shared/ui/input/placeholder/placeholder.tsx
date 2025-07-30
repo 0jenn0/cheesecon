@@ -46,7 +46,7 @@ export default function Placeholder({
       <input
         {...props}
         className={cn(
-          'placeholder:text-tertiary placeholder:text-body-m text-primary disabled:text-disabled flex flex-1 outline-none',
+          'text-body-sm text-primary disabled:text-disabled placeholder-text-tertiary flex flex-1 outline-none',
           inputClassName,
         )}
         placeholder={placeholder}
