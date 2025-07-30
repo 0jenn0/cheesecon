@@ -6,3 +6,4 @@ export { default as Checkbox } from './checkbox/checkbox';
 export { default as Placeholder } from './placeholder/placeholder';
 export { default as TextArea } from './text-area/text-area';
 export { default as TextField } from './text-field/text-field';
+export { default as TextAreaField } from './text-area-field/text-area-field';
