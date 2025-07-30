@@ -10,4 +10,5 @@ export const trailingLabelVariants = cva('*:text-body-md', {
   },
 });
 
-export const labelStyle = 'text-body-md text-primary flex items-center gap-4';
+export const labelStyle =
+  'text-body-md font-semibold text-primary flex items-center gap-4 min-w-[100px]';
