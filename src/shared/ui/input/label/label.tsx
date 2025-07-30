@@ -5,12 +5,12 @@ import { labelStyle, trailingLabelVariants } from './label.style';
 export const LABEL_TYPE_VARIANTS = ['default', 'required', 'optional'] as const;
 
 export interface LabelProps extends ComponentPropsWithRef<'label'> {
-  type: (typeof LABEL_TYPE_VARIANTS)[number];
+  type?: (typeof LABEL_TYPE_VARIANTS)[number];
 }
 
 export default function Label({
   children,
-  type,
+  type = 'default',
   className,
   ...props
 }: LabelProps) {
