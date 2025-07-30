@@ -7,7 +7,7 @@ export const placeholderVariants = cva(
       variant: {
         default: 'border-interactive-secondary',
         filled: 'border-interactive-secondary',
-        error: 'border-danger focus-within:border-yellow-400',
+        error: 'border-danger',
         disabled: 'border-interactive-secondary bg-disabled cursor-not-allowed',
       },
     },
