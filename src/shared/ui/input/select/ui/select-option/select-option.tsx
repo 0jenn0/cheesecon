@@ -1,19 +1,8 @@
 import { ComponentPropsWithRef } from 'react';
-import { cva } from 'class-variance-authority';
 import { cn } from '@/shared/lib/utils';
 import { Icon } from '@/shared/ui/display';
 import { useSelect } from '../../provider/select-provider';
-
-const selectOptionVariants = cva(
-  'bg-interactive-secondary-subtle padding-x-8 padding-y-4 flex items-center gap-4 select-none',
-  {
-    variants: {
-      isSelected: {
-        true: 'bg-interactive-selected',
-      },
-    },
-  },
-);
+import { selectOptionVariants } from './select-option.style';
 
 export interface SelectOptionProps extends ComponentPropsWithRef<'li'> {
   label: string;
