@@ -1,5 +1,6 @@
 import { SVGProps } from 'react';
 import * as icons from '@/shared/asset/icon';
+
 import { ICON_NAMES, ICON_SIZES } from './config';
 
 export interface IconProps extends SVGProps<SVGSVGElement> {
