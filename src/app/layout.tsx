@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { ModalProvider } from '@/shared/ui/feedback/modal/modal-provider';
+import GlobalNavigationBar from '@/shared/ui/navigation/global-navigation-bar/global-navigation-bar';
 import ReactQueryClientProvider from '@/provider/QueryProvider';
 import '../shared/ui/styles/globals.css';
 
@@ -17,9 +18,12 @@ export default function RootLayout({
     <ReactQueryClientProvider>
       <ModalProvider>
         <html lang='en'>
-          <body className='antialiased'>
+          <body className='bg-secondary flex h-screen flex-col antialiased'>
             <div id='modal' />
-            {children}
+            <GlobalNavigationBar isLoggedIn={false} />
+            <main className='m-auto w-full max-w-[1024px] flex-1'>
+              {children}
+            </main>
           </body>
         </html>
       </ModalProvider>
