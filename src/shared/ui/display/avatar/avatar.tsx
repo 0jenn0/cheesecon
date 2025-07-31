@@ -28,7 +28,7 @@ export default function Avatar({
   size,
 }: AvatarProps) {
   const [imageError, setImageError] = useState(false);
-  const firstLetter = name[0].toUpperCase();
+  const firstLetter = name ? name[0].toUpperCase() : '';
 
   const handleImageError = () => {
     setImageError(true);

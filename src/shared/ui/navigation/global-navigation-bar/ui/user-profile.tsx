@@ -18,7 +18,7 @@ export default function UserProfile({
     <div className={cn('flex items-center gap-12', className)} {...props}>
       {isLoggedIn && (
         <div className='flex items-center gap-8'>
-          <Avatar name={name!} profileType='letter' size='sm' />
+          <Avatar name={name ?? ''} profileType='letter' size='sm' />
           <span className='text-body-sm'>{name}</span>
         </div>
       )}
