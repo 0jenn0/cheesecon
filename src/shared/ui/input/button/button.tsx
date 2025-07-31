@@ -20,7 +20,6 @@ export interface ButtonProps extends VariantProps<typeof buttonVariants> {
   leadingIcon?: (typeof ICON_NAMES)[number];
   trailingIcon?: (typeof ICON_NAMES)[number];
   isLoading?: boolean;
-  buttonClassName?: string;
   textClassName?: string;
 }
 
@@ -37,7 +36,7 @@ export default function Button<T extends ElementType = 'button'>({
   trailingIcon,
   isLoading = false,
   disabled,
-  buttonClassName,
+  className,
   textClassName,
   ...props
 }: PolymorphicButtonProps<T>) {
@@ -55,7 +54,7 @@ export default function Button<T extends ElementType = 'button'>({
       className={cn(
         buttonVariants({ variant: finalVariant, size, styleVariant }),
         disabledClass,
-        buttonClassName,
+        className,
       )}
       {...buttonProps}
       {...props}
