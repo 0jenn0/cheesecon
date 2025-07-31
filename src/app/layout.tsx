@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { ModalProvider } from '@/shared/ui/feedback/modal/modal-provider';
 import ReactQueryClientProvider from '@/provider/QueryProvider';
 import '../shared/ui/styles/globals.css';
 
@@ -14,9 +15,14 @@ export default function RootLayout({
 }>) {
   return (
     <ReactQueryClientProvider>
-      <html lang='en'>
-        <body className='antialiased'>{children}</body>
-      </html>
+      <ModalProvider>
+        <html lang='en'>
+          <body className='antialiased'>
+            <div id='modal' />
+            {children}
+          </body>
+        </html>
+      </ModalProvider>
     </ReactQueryClientProvider>
   );
 }
