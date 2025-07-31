@@ -37,3 +37,4 @@ export { default as Send } from './send.svg';
 export { default as X } from './x.svg';
 export { default as MessageHeart } from './message-heart.svg';
 export { default as MessageLoading } from './message-loading.svg';
+export { default as User } from './user.svg';
