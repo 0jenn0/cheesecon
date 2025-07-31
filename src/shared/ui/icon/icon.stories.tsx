@@ -11,7 +11,7 @@ const kebabToPascal = (kebab: string): string => {
 };
 
 const meta: Meta<typeof Icon> = {
-  title: 'UI/Display/Icon',
+  title: 'UI/Icon',
   component: Icon,
   parameters: {
     layout: 'centered',
