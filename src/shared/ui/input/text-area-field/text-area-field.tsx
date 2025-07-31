@@ -1,7 +1,7 @@
 import { ComponentPropsWithRef } from 'react';
 import { cn } from '@/shared/lib';
 import { Label } from '..';
-import { IconProps } from '../../display/icon/icon';
+import { IconProps } from '../../icon/icon';
 import { HelpMessage } from '../part';
 import TextArea from '../text-area/text-area';
 

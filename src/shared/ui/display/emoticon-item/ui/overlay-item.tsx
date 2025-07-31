@@ -1,7 +1,7 @@
 import { cn } from '@/shared/lib';
 import { Spinner } from '@/shared/ui/feedback';
 import { Checkbox } from '@/shared/ui/input';
-import Icon from '../../icon/icon';
+import Icon from '../../../icon/icon';
 import ImageNumberBadge from './number-badge';
 
 export default function OverlayItem({

@@ -1,7 +1,7 @@
 import { ComponentPropsWithRef } from 'react';
 import { VariantProps, cva } from 'class-variance-authority';
-import { ICON_NAMES } from '@/shared/ui/display/icon/config';
-import Icon from '@/shared/ui/display/icon/icon';
+import { ICON_NAMES } from '@/shared/ui/icon/config';
+import Icon from '@/shared/ui/icon/icon';
 import { helpMessageVariants, iconVariants } from './help-message.style';
 
 export interface HelpMessageProps

@@ -1,9 +1,9 @@
 import { ComponentPropsWithRef } from 'react';
 import { VariantProps } from 'class-variance-authority';
 import { cn } from '@/shared/lib';
-import { ICON_NAMES } from '../../display/icon/config';
-import Icon from '../../display/icon/icon';
 import { Spinner } from '../../feedback';
+import { ICON_NAMES } from '../../icon/config';
+import Icon from '../../icon/icon';
 import { getSpinnerSize, getSpinnerVariant } from '../button/button';
 import {
   iconButtonIconVariants,

@@ -2,7 +2,7 @@
 
 import { ComponentPropsWithRef, useState } from 'react';
 import { cn } from '@/shared/lib/utils';
-import Icon from '@/shared/ui/display/icon/icon';
+import Icon from '@/shared/ui/icon/icon';
 import { useSelect } from '../../provider/select-provider';
 import { selectPlaceholderVariants } from './select-placeholder.style';
 
