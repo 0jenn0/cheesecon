@@ -75,7 +75,9 @@
   --color-bg-interactive-selected-pressed: var(--color-cheesecon-primary-200);
   --color-icon-primary: var(--gray-900);
   --color-icon-secondary: var(--gray-700);
+  --color-icon-tertiary: var(--gray-400);
   --color-icon-ghost: var(--gray-200);
+  --color-icon-heart: var(--rose-300);
   --color-icon-info: var(--blue-700);
   --color-icon-warning: var(--yellow-700);
   --color-icon-success: var(--green-600);
@@ -326,8 +328,14 @@
   .icon-secondary {
     color: var(--color-icon-secondary);
   }
+  .icon-tertiary {
+    color: var(--color-icon-tertiary);
+  }
   .icon-ghost {
     color: var(--color-icon-ghost);
+  }
+  .icon-heart {
+    color: var(--color-icon-heart);
   }
   .icon-info {
     color: var(--color-icon-info);
