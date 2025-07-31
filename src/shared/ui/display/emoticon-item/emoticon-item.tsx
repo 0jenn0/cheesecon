@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Icon from '../icon/icon';
+import Icon from '../../icon/icon';
 import { emoticonItemVariant } from './emoticon-item.style';
 import { BottomBar, OverlayItem } from './ui';
 

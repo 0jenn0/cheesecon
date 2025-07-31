@@ -1,6 +1,8 @@
+'use client';
+
 import { ComponentPropsWithRef, useState } from 'react';
 import { cn } from '@/shared/lib/utils';
-import Icon, { IconProps } from '../../display/icon/icon';
+import Icon, { IconProps } from '../../icon/icon';
 import { placeholderVariants } from './placeholder.style';
 
 export interface PlaceholderProps extends ComponentPropsWithRef<'input'> {

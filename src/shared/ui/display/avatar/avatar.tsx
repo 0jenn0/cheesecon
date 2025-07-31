@@ -1,8 +1,10 @@
+'use client';
+
 import { ComponentPropsWithRef, useState } from 'react';
 import { VariantProps } from 'class-variance-authority';
 import { cn } from '@/shared/lib/utils';
 import { Icon } from '..';
-import { IconProps } from '../icon/icon';
+import { IconProps } from '../../icon/icon';
 import { avatarVariants, letterVariants } from './avatar.style';
 
 export const AVATAR_SIZE = ['sm', 'lg'] as const;
@@ -26,7 +28,7 @@ export default function Avatar({
   size,
 }: AvatarProps) {
   const [imageError, setImageError] = useState(false);
-  const firstLetter = name[0].toUpperCase();
+  const firstLetter = name ? name[0].toUpperCase() : '';
 
   const handleImageError = () => {
     setImageError(true);

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import { ICON_NAMES } from '../../display/icon/config';
+import { ICON_NAMES } from '../../icon/config';
 import Placeholder from './placeholder';
 
 const meta: Meta<typeof Placeholder> = {

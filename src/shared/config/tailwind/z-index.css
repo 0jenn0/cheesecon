@@ -8,3 +8,35 @@
   --z-index-tooltip: 1070;
   --z-index-toast: 1080;
 }
+
+.z-index-dropdown {
+  z-index: var(--z-index-dropdown);
+}
+
+.z-index-sticky {
+  z-index: var(--z-index-sticky);
+}
+
+.z-index-fixed {
+  z-index: var(--z-index-fixed);
+}
+
+.z-index-modal-backdrop {
+  z-index: var(--z-index-modal-backdrop);
+}
+
+.z-index-modal {
+  z-index: var(--z-index-modal);
+}
+
+.z-index-popover {
+  z-index: var(--z-index-popover);
+}
+
+.z-index-tooltip {
+  z-index: var(--z-index-tooltip);
+}
+
+.z-index-toast {
+  z-index: var(--z-index-toast);
+}

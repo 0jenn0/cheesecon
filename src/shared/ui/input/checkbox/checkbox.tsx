@@ -1,6 +1,6 @@
-import { ComponentPropsWithRef, useEffect, useState } from 'react';
+import { ComponentPropsWithRef } from 'react';
 import { Icon } from '../../display';
-import { ICON_NAMES } from '../../display/icon/config';
+import { ICON_NAMES } from '../../icon/config';
 import { checkboxVariants } from './checkbox.style';
 
 export const CHECKBOX_STATUS = ['checked', 'unchecked', 'partial'] as const;

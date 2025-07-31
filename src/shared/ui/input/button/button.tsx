@@ -1,21 +1,34 @@
-import { ComponentPropsWithRef } from 'react';
+import { ComponentPropsWithRef, ElementType, ReactNode } from 'react';
 import { VariantProps } from 'class-variance-authority';
 import { cn } from '@/shared/lib';
-import { ICON_NAMES } from '../../display/icon/config';
-import Icon from '../../display/icon/icon';
 import { Spinner } from '../../feedback';
 import { SpinnerProps } from '../../feedback/spinner/spinner';
+import { ICON_NAMES } from '../../icon/config';
+import Icon from '../../icon/icon';
 import { buttonVariants, iconVariants, textVariants } from './button.styles';
 
-export interface ButtonProps
-  extends ComponentPropsWithRef<'button'>,
-    VariantProps<typeof buttonVariants> {
+type PolymorphicRef<T extends ElementType> = ComponentPropsWithRef<T>['ref'];
+
+type PolymorphicComponentProp<T extends ElementType, Props = {}> = {
+  as?: T;
+  ref?: PolymorphicRef<T>;
+} & Props &
+  Omit<ComponentPropsWithRef<T>, keyof Props | 'as' | 'ref'>;
+
+export interface ButtonProps extends VariantProps<typeof buttonVariants> {
+  children?: ReactNode;
   leadingIcon?: (typeof ICON_NAMES)[number];
   trailingIcon?: (typeof ICON_NAMES)[number];
   isLoading?: boolean;
+  buttonClassName?: string;
+  textClassName?: string;
 }
 
-export default function Button({
+export type PolymorphicButtonProps<T extends ElementType = 'button'> =
+  PolymorphicComponentProp<T, ButtonProps>;
+
+export default function Button<T extends ElementType = 'button'>({
+  as,
   children,
   variant = 'primary',
   size = 'md',
@@ -24,18 +37,27 @@ export default function Button({
   trailingIcon,
   isLoading = false,
   disabled,
+  buttonClassName,
+  textClassName,
   ...props
-}: ButtonProps) {
+}: PolymorphicButtonProps<T>) {
+  const Component = as || 'button';
   const finalVariant = disabled ? 'disabled' : variant;
   const spinnerConfig = getSpinnerAllVariant(size, variant, styleVariant);
   const opacity = isLoading && 'opacity-0';
 
+  const isButton = Component === 'button';
+  const buttonProps = isButton ? { disabled } : {};
+  const disabledClass = !isButton && disabled ? 'pointer-events-none' : '';
+
   return (
-    <button
+    <Component
       className={cn(
         buttonVariants({ variant: finalVariant, size, styleVariant }),
+        disabledClass,
+        buttonClassName,
       )}
-      disabled={disabled}
+      {...buttonProps}
       {...props}
     >
       {isLoading && (
@@ -58,6 +80,7 @@ export default function Button({
         className={cn(
           textVariants({ variant: finalVariant, styleVariant }),
           opacity,
+          textClassName,
         )}
       >
         {children}
@@ -71,7 +94,7 @@ export default function Button({
           )}
         />
       )}
-    </button>
+    </Component>
   );
 }
 
