@@ -1,3 +1,5 @@
+'use client';
+
 import { ComponentPropsWithRef, useState } from 'react';
 import { VariantProps } from 'class-variance-authority';
 import { cn } from '@/shared/lib/utils';
