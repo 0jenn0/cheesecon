@@ -25,7 +25,7 @@ export default function UserProfile({
       <IconButton
         variant='secondary'
         styleVariant='transparent'
-        icon={name ? 'log-out' : 'log-in'}
+        icon={isLoggedIn ? 'log-out' : 'log-in'}
       />
     </div>
   );
