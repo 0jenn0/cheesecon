@@ -41,4 +41,4 @@ export const ICON_NAMES = [
   'user',
 ] as const;
 
-export const ICON_SIZES = [12, 16, 24, 32, 40, 48] as const;
+export const ICON_SIZES = [12, 16, 24, 32, 36, 40, 48] as const;
