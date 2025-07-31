@@ -3,7 +3,7 @@ import { usePathname } from 'next/navigation';
 import { ComponentPropsWithRef } from 'react';
 import { cn } from '@/shared/lib/utils';
 import { Icon } from '@/shared/ui/display';
-import { ICON_NAMES } from '@/shared/ui/display/icon/config';
+import { ICON_NAMES } from '@/shared/ui/icon/config';
 import { tabItemVariants } from './tab-item.style';
 
 export interface TabItemProps extends ComponentPropsWithRef<'li'> {
