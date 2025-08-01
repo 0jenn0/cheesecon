@@ -7,11 +7,13 @@ import { useImageUpload } from '@/feature/upload-image/use-upload-image';
 export interface GridItemProps {
   imageNumber: number;
   showCheckbox?: boolean;
+  showGripIcon?: boolean;
 }
 
 export default function GridItem({
   imageNumber,
   showCheckbox = false,
+  showGripIcon = false,
 }: GridItemProps) {
   const {
     previews,
@@ -23,25 +25,11 @@ export default function GridItem({
     handleClick,
     handleFileSelect,
   } = useImageUpload();
-  const [showGripIcon, setShowGripIcon] = useState(false);
 
   const hasImage = previews[0];
 
-  const handleMouseEnter = () => {
-    if (showCheckbox) {
-      return null;
-    }
-
-    setShowGripIcon(true);
-  };
-
-  const handleMouseLeave = () => {
-    setShowGripIcon(false);
-  };
   return (
     <div
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
