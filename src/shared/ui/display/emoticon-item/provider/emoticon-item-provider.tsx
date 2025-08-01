@@ -10,11 +10,7 @@ export interface EmoticonItemContextType {
   showGripIcon: boolean;
 
   imageUrl: string;
-  isImageLoaded: boolean;
-  isImageError: boolean;
-  setImageUrl: (url: string) => void;
-  setIsImageLoaded: (loaded: boolean) => void;
-  setIsImageError: (error: boolean) => void;
+  isUploading: boolean;
 }
 
 export const emoticonItemContext = createContext<EmoticonItemContextType>({
@@ -27,30 +23,24 @@ export const emoticonItemContext = createContext<EmoticonItemContextType>({
   showGripIcon: false,
 
   imageUrl: '',
-  isImageLoaded: false,
-  isImageError: false,
-  setImageUrl: () => {},
-  setIsImageLoaded: () => {},
-  setIsImageError: () => {},
+  isUploading: false,
 });
 
 export function EmoticonItemProvider({
   imageNumber,
   showCheckbox = false,
   showGripIcon = false,
+  imageUrl = '',
+  isUploading = false,
   children,
 }: PropsWithChildren<{
   imageNumber: number;
   showCheckbox?: boolean;
   showGripIcon?: boolean;
+  imageUrl?: string;
+  isUploading?: boolean;
 }>) {
   const [isChecked, setIsChecked] = useState(false);
-
-  //   const [showCheckboxState, setShowCheckboxState] = useState(showCheckbox);
-
-  const [imageUrl, setImageUrl] = useState('');
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
-  const [isImageError, setIsImageError] = useState(false);
 
   const handleCheck = () => {
     setIsChecked(!isChecked);
@@ -65,12 +55,8 @@ export function EmoticonItemProvider({
         handleCheck,
         showGripIcon,
 
-        imageUrl: '',
-        isImageLoaded: false,
-        isImageError: false,
-        setImageUrl,
-        setIsImageLoaded,
-        setIsImageError,
+        imageUrl,
+        isUploading,
       }}
     >
       {children}

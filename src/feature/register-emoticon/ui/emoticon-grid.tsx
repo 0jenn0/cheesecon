@@ -1,23 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import EmoticonItem from '@/shared/ui/display/emoticon-item/emoticon-item';
 import { Button } from '@/shared/ui/input';
+import GridItem from './grid-item';
 
 export default function EmoticonGrid() {
   const [isMultipleSelect, setIsMultipleSelect] = useState(false);
-  const [selectedEmoticon, setSelectedEmoticon] = useState<number[]>([]);
 
   const handleMultipleSelect = () => {
     setIsMultipleSelect(!isMultipleSelect);
-  };
-
-  const handleEmoticonSelect = (emoticonNumber: number) => {
-    if (selectedEmoticon.includes(emoticonNumber)) {
-      setSelectedEmoticon((prev) => prev.filter((id) => id !== emoticonNumber));
-    } else {
-      setSelectedEmoticon((prev) => [...prev, emoticonNumber]);
-    }
   };
 
   return (
@@ -38,12 +29,10 @@ export default function EmoticonGrid() {
       <div className='border-ghost border-b' />
       <div className='tablet:grid-cols-6 grid grid-cols-4 gap-16'>
         {Array.from({ length: 24 }).map((_, index) => (
-          <EmoticonItem
+          <GridItem
             key={index}
             imageNumber={index + 1}
             showCheckbox={isMultipleSelect}
-            isSelected={selectedEmoticon.includes(index + 1)}
-            onClick={() => handleEmoticonSelect(index + 1)}
           />
         ))}
       </div>

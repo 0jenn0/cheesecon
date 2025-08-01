@@ -13,17 +13,23 @@ function EmoticonItemRoot({
   imageNumber,
   showCheckbox,
   showGripIcon,
+  imageUrl,
+  isUploading,
   children,
 }: PropsWithChildren<{
   imageNumber: number;
   showCheckbox?: boolean;
   showGripIcon?: boolean;
+  imageUrl?: string;
+  isUploading?: boolean;
 }>) {
   return (
     <EmoticonItemProvider
       showGripIcon={showGripIcon}
       imageNumber={imageNumber}
       showCheckbox={showCheckbox}
+      imageUrl={imageUrl}
+      isUploading={isUploading}
     >
       <div className='border-interactive-secondary flex aspect-square w-full flex-col gap-0 border-b'>
         {children}
@@ -33,44 +39,32 @@ function EmoticonItemRoot({
 }
 
 function EmoticonItemContent({ children }: PropsWithChildren) {
-  const {
-    imageUrl,
-    isImageLoaded,
-    isImageError,
-    setImageUrl,
-    setIsImageLoaded,
-    setIsImageError,
-  } = useEmoticonItem();
-
-  const shouldShowImage = imageUrl && !isImageError;
-  const shouldShowErrorIcon = isImageError;
-  const shouldShowLoading =
-    isImageLoaded || (!isImageLoaded && Boolean(imageUrl) && !isImageError);
+  const { imageUrl, isUploading } = useEmoticonItem();
 
   return (
     <>
-      {shouldShowImage && (
+      {
         <div
-          className='h-full w-full bg-cover bg-center bg-no-repeat'
-          style={{ backgroundImage: `url(${imageUrl})` }}
-          onLoad={() => setIsImageLoaded(true)}
-          onError={() => setIsImageError(true)}
+          className='flex h-full w-full flex-col bg-cover bg-center bg-no-repeat'
+          style={imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined}
         >
           {children}
         </div>
-      )}
-      {shouldShowErrorIcon && (
+      }
+      {/* {shouldShowErrorIcon && (
         <div className='flex h-full w-full flex-col items-center justify-center gap-8'>
           <Icon name='alert-circle' size={16} className='icon-danger' />
           <span className='text-body-sm text-danger'>이미지 로딩 실패</span>
         </div>
-      )}
-      {shouldShowLoading && (
+      )} */}
+      {isUploading && (
         <div className='flex h-full w-full flex-col items-center justify-center gap-8'>
           <Spinner />
+          {isUploading && (
+            <span className='text-body-sm text-secondary'>업로드 중...</span>
+          )}
         </div>
       )}
-      {children}
     </>
   );
 }
