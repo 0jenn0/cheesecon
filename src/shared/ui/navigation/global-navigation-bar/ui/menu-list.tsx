@@ -1,6 +1,10 @@
+'use client';
+
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ComponentPropsWithRef } from 'react';
 import { cn } from '@/shared/lib';
+import { useAuth } from '@/feature/auth/provider/auth-provider';
 import MenuItem from './menu-item/menu-item';
 
 type Menu = {
@@ -13,6 +17,27 @@ export interface MenuListProps extends ComponentPropsWithRef<'ul'> {
 }
 
 export default function MenuList({ menus, ...props }: MenuListProps) {
+  const { user, isLoading, signOut } = useAuth();
+  const router = useRouter();
+
+  const isLoggedIn = !isLoading && user !== null && user.email !== '';
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
+
+  const handleSignIn = () => {
+    router.push('/login');
+  };
+
+  const handleLogout = () => {
+    if (isLoggedIn) {
+      handleSignOut();
+    } else {
+      handleSignIn();
+    }
+  };
+
   const isOpen = true;
 
   return (
@@ -31,8 +56,10 @@ export default function MenuList({ menus, ...props }: MenuListProps) {
           as={Link}
         />
       ))}
-      <MenuItem label='로그아웃' onClick={() => console.log('로그아웃')} />
-      {/* TODO: 로그아웃 기능 추가 */}
+      <MenuItem
+        label={isLoggedIn ? '로그아웃' : '로그인'}
+        onClick={handleLogout}
+      />
     </ul>
   );
 }

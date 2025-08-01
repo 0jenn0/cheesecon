@@ -19,8 +19,7 @@ html {
 }
 
 body {
-  background: #ffffff;
-  color: #171717;
+  color: var(--color-text-primary);
   font-family: var(--font-family-typeface-sans);
   font-size: var(--font-size-400);
   line-height: var(--line-height-500);

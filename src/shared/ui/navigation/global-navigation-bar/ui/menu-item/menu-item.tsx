@@ -1,10 +1,4 @@
-'use client';
-
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
 import { ComponentPropsWithRef, ElementType } from 'react';
-import { cn } from '@/shared/lib/utils';
-import { menuItemVariants } from './menu-item.style';
 
 type PolymorphicRef<T extends ElementType> = ComponentPropsWithRef<T>['ref'];
 
@@ -30,14 +24,11 @@ export default function MenuItem<T extends ElementType = 'button'>({
 }: PolymorphicButtonProps<T>) {
   const Component = as || 'button';
 
-  const pathname = usePathname();
-  const isSelected = pathname === href;
-
   return (
     <Component
       {...props}
       href={href}
-      className={cn(menuItemVariants({ isSelected }))}
+      className='text-body-md bg-interactive-secondary-subtle padding-x-16 padding-y-8 flex cursor-pointer items-center gap-4 select-none'
     >
       {label}
     </Component>

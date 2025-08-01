@@ -23,6 +23,7 @@ export default function IconButton({
   styleVariant = 'filled',
   disabled,
   isLoading = false,
+  className,
   ...props
 }: IconButtonProps) {
   const finalVariant = disabled ? 'disabled' : variant;
@@ -32,7 +33,7 @@ export default function IconButton({
     <button
       className={cn(
         iconButtonVariants({ variant: finalVariant, styleVariant }),
-        props.className,
+        className,
       )}
       {...props}
     >
