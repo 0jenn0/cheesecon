@@ -24,6 +24,7 @@ export interface TextFieldProps extends ComponentPropsWithRef<'div'> {
   direction?: TextFieldDirection;
   labelClassName?: string;
   placeholderClassName?: string;
+  name?: string;
 }
 
 export default function TextField({
@@ -39,6 +40,8 @@ export default function TextField({
   className,
   labelClassName,
   placeholderClassName,
+  onChange,
+  name,
 }: TextFieldProps) {
   return (
     <div
@@ -53,12 +56,14 @@ export default function TextField({
       </Label>
       <div className='flex flex-1 flex-col gap-8'>
         <Placeholder
+          name={name}
           placeholder={placeholder}
           trailingIcon={placeholderIcon}
           iconSize={placeholderIconSize ?? 24}
           isError={variant === 'error'}
           disabled={disabled ?? false}
           className={placeholderClassName}
+          onChange={onChange}
         />
         {helpMessage && (
           <HelpMessage variant={variant}>{helpMessage[variant]}</HelpMessage>

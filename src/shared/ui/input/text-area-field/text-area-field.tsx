@@ -12,7 +12,8 @@ export type TextFieldVariant = (typeof TEXTFIELD_VARIANT)[number];
 export const TEXTFIELD_DIRECTION = ['row', 'column'] as const;
 export type TextFieldDirection = (typeof TEXTFIELD_DIRECTION)[number];
 
-export interface TextAreaFieldProps extends ComponentPropsWithRef<'div'> {
+export interface TextAreaFieldProps
+  extends Omit<ComponentPropsWithRef<'div'>, 'onChange'> {
   label: string;
   placeholder: string;
   placeholderIcon?: IconProps['name'];
@@ -24,6 +25,8 @@ export interface TextAreaFieldProps extends ComponentPropsWithRef<'div'> {
   labelType?: LabelProps['type'];
   labelClassName?: string;
   textAreaClassName?: string;
+  name?: string;
+  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
 export default function TextAreaField({
@@ -37,6 +40,9 @@ export default function TextAreaField({
   className,
   labelClassName,
   textAreaClassName,
+  name,
+  onChange,
+  ...props
 }: TextAreaFieldProps) {
   return (
     <div
@@ -51,10 +57,13 @@ export default function TextAreaField({
       </Label>
       <div className='flex flex-1 flex-col gap-8'>
         <TextArea
+          name={name}
           placeholder={placeholder}
           isError={variant === 'error'}
           disabled={disabled ?? false}
           className={textAreaClassName}
+          onChange={onChange}
+          {...(props as any)}
         />
         {helpMessage && (
           <HelpMessage variant={variant}>{helpMessage[variant]}</HelpMessage>
