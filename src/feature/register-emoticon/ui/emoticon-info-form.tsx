@@ -29,7 +29,7 @@ export default function EmoticonInfoForm() {
   };
 
   return (
-    <div className='flex flex-1 flex-col gap-24'>
+    <div className='flex flex-1 flex-col gap-16'>
       <TextField
         name='name'
         label='이모티콘 이름'
@@ -42,7 +42,7 @@ export default function EmoticonInfoForm() {
       <TextField
         name='author'
         label='이모티콘 작가명'
-        placeholder='이모티콘 이름'
+        placeholder='이모티콘 작가명'
         direction='row'
         labelType='required'
         placeholderClassName='padding-y-12'
@@ -71,7 +71,7 @@ export default function EmoticonInfoForm() {
       <TextAreaField
         name='description'
         label='이모티콘 설명'
-        placeholder='이모티콘 이름'
+        placeholder='이모티콘 설명'
         direction='row'
         labelType='required'
         onChange={handleTextAreaChange}

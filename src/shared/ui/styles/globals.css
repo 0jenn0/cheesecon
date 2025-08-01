@@ -18,6 +18,13 @@ html {
   font-size: 16px;
 }
 
+:root {
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-background-secondary)
+    var(--color-background-secondary);
+}
+
 body {
   color: var(--color-text-primary);
   font-family: var(--font-family-typeface-sans);

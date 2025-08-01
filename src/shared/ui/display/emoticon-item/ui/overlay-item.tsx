@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { cn } from '@/shared/lib';
 import { Spinner } from '@/shared/ui/feedback';
 import { Checkbox } from '@/shared/ui/input';
@@ -10,13 +11,19 @@ export default function OverlayItem({
   showImageIcon,
   showGrip,
   showCheckbox,
+  isSelected,
+  onCheckboxClick,
 }: {
   imageNumber: number;
   isLoading: boolean;
   showImageIcon: boolean;
   showGrip: boolean;
   showCheckbox: boolean;
+  isSelected: boolean;
+  onCheckboxClick?: () => void;
 }) {
+  const [isChecked, setIsChecked] = useState(isSelected);
+
   const renderCenterContent = () => {
     if (isLoading) {
       return <Spinner size='lg' />;
@@ -57,7 +64,18 @@ export default function OverlayItem({
     <div className='border-interactive-secondary absolute top-0 right-0 bottom-0 left-0 flex aspect-square w-full flex-col gap-0 border-b'>
       <div className='padding-8 flex w-full items-center justify-between'>
         <ImageNumberBadge imageNumber={imageNumber} />
-        {showCheckbox ? <Checkbox /> : <div className='width-24 height-24' />}
+        {showCheckbox ? (
+          <Checkbox
+            status={isSelected ? 'checked' : 'unchecked'}
+            checked={isSelected || isChecked}
+            onChange={() => {
+              setIsChecked(!isChecked);
+              onCheckboxClick?.();
+            }}
+          />
+        ) : (
+          <div className='width-24 height-24' />
+        )}
       </div>
 
       <div className='flex w-full flex-1 items-center justify-center'>

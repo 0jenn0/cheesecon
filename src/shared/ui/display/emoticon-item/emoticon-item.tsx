@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { ComponentProps, ComponentPropsWithRef, useState } from 'react';
 import Icon from '../../icon/icon';
 import { emoticonItemVariant } from './emoticon-item.style';
 import { BottomBar, OverlayItem } from './ui';
 
-export interface EmoticonItemProps {
+export interface EmoticonItemProps extends ComponentPropsWithRef<'div'> {
   imageNumber: number;
   imageUrl?: string;
   showBottomBar?: boolean;
@@ -14,6 +14,8 @@ export interface EmoticonItemProps {
   commentCount?: number;
   isDragging?: boolean;
   isChanged?: boolean;
+  isSelected?: boolean;
+  onCheckboxClick?: () => void;
 }
 
 export default function EmoticonItem({
@@ -27,6 +29,9 @@ export default function EmoticonItem({
   commentCount = 0,
   isDragging = false,
   isChanged = false,
+  isSelected = false,
+  onCheckboxClick,
+  ...props
 }: EmoticonItemProps) {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [isImageError, setIsImageError] = useState(false);
@@ -41,6 +46,7 @@ export default function EmoticonItem({
       className={emoticonItemVariant({
         variant: isDragging ? 'dragging' : isChanged ? 'changed' : 'default',
       })}
+      {...props}
     >
       <div className='border-interactive-secondary border-radius-lg aspect-square w-full overflow-hidden'>
         {shouldShowImage && (
@@ -65,6 +71,8 @@ export default function EmoticonItem({
         showImageIcon={!imageUrl}
         showGrip={isDragging || showGrip}
         showCheckbox={showCheckbox}
+        isSelected={isSelected}
+        onCheckboxClick={onCheckboxClick}
       />
       {showBottomBar && (
         <BottomBar likeCount={likeCount} commentCount={commentCount} />
