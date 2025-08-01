@@ -8,3 +8,4 @@ export { default as TextArea } from './text-area/text-area';
 export { default as TextField } from './text-field/text-field';
 export { default as TextAreaField } from './text-area-field/text-area-field';
 export { default as Select } from './select/select';
+export { default as SelectField } from './select-field/select-field';
