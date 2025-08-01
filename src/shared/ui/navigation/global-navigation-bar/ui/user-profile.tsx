@@ -22,15 +22,18 @@ export default function UserProfile({ className, ...props }: UserProfileProps) {
     router.push('/login');
   };
 
-  const isLoggedIn = !isLoading && user;
+  const isLoggedIn = !isLoading && user !== null && user.email !== '';
   const name = user?.name || user?.email;
 
   return (
-    <div className={cn('flex items-center gap-12', className)} {...props}>
+    <div
+      className={cn('tablet:flex hidden items-center gap-12', className)}
+      {...props}
+    >
       {isLoggedIn && (
         <div className='flex items-center gap-8'>
           <Avatar
-            name={name ?? ''}
+            name={name ?? '뭐임'}
             profileType={user?.avatarUrl ? 'image' : 'letter'}
             size='sm'
             imageUrl={user?.avatarUrl ?? ''}
