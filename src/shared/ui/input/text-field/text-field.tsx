@@ -2,6 +2,7 @@ import { ComponentPropsWithRef } from 'react';
 import { cn } from '@/shared/lib';
 import { Label } from '..';
 import { IconProps } from '../../icon/icon';
+import { LabelProps } from '../label/label';
 import { HelpMessage } from '../part';
 import Placeholder from '../placeholder/placeholder';
 
@@ -16,10 +17,13 @@ export interface TextFieldProps extends ComponentPropsWithRef<'div'> {
   placeholder: string;
   placeholderIcon?: IconProps['name'];
   placeholderIconSize?: IconProps['size'];
+  labelType?: LabelProps['type'];
   variant?: TextFieldVariant;
   disabled?: boolean;
   helpMessage?: Record<TextFieldVariant, string>;
   direction?: TextFieldDirection;
+  labelClassName?: string;
+  placeholderClassName?: string;
 }
 
 export default function TextField({
@@ -27,19 +31,26 @@ export default function TextField({
   placeholder,
   placeholderIcon,
   placeholderIconSize,
+  labelType = 'default',
   variant = 'default',
   disabled = false,
   helpMessage,
   direction = 'column',
+  className,
+  labelClassName,
+  placeholderClassName,
 }: TextFieldProps) {
   return (
     <div
       className={cn(
-        'flex flex-col gap-12',
+        'flex w-full flex-col gap-12',
         direction === 'row' && 'flex-row items-start',
+        className,
       )}
     >
-      <Label>{label}</Label>
+      <Label type={labelType} className={labelClassName}>
+        {label}
+      </Label>
       <div className='flex flex-1 flex-col gap-8'>
         <Placeholder
           placeholder={placeholder}
@@ -47,6 +58,7 @@ export default function TextField({
           iconSize={placeholderIconSize ?? 24}
           isError={variant === 'error'}
           disabled={disabled ?? false}
+          className={placeholderClassName}
         />
         {helpMessage && (
           <HelpMessage variant={variant}>{helpMessage[variant]}</HelpMessage>
