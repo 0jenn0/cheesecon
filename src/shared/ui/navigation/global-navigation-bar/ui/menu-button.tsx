@@ -37,7 +37,7 @@ export default function MenuButton() {
           <MenuList
             menus={[
               { label: '홈', href: '/' },
-              { label: '이모티콘 등록하기', href: '/register' },
+              { label: '이모티콘 등록하기', href: '/emoticon-register' },
               { label: '마이 페이지', href: '/my-page' },
             ]}
           />
