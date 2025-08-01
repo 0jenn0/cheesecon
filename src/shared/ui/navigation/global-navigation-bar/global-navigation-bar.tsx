@@ -1,14 +1,9 @@
+'use client';
+
+import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { Logo, MenuButton, Navigation, UserProfile } from './ui';
 
-interface GlobalNavigationBarProps {
-  isLoggedIn: boolean;
-  name?: string;
-}
-
-export default function GlobalNavigationBar({
-  isLoggedIn,
-  name,
-}: GlobalNavigationBarProps) {
+export default function GlobalNavigationBar() {
   return (
     <header className='border-ghost bg-primary padding-y-12 relative flex w-full items-center justify-center border-b'>
       <div className='padding-x-16 flex w-full max-w-[1024px] items-center justify-between'>
@@ -17,11 +12,7 @@ export default function GlobalNavigationBar({
 
         <div>
           <MenuButton />
-          <UserProfile
-            className='tablet:flex hidden'
-            isLoggedIn={isLoggedIn}
-            name={name}
-          />
+          <UserProfile />
         </div>
       </div>
     </header>
