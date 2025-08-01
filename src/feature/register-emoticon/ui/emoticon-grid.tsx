@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Button } from '@/shared/ui/input';
 import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
@@ -14,26 +14,41 @@ interface GridItemData {
 export default function EmoticonGrid() {
   const [isMultipleSelect, setIsMultipleSelect] = useState(false);
   const [isOrderChange, setIsOrderChange] = useState(false);
-  const [items, setItems] = useState<GridItemData[]>(
-    Array.from({ length: 24 }, (_, i) => ({
-      imageNumber: i + 1,
-      preview: '',
-    })),
-  );
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  const INITIAL_ITEMS = Array.from({ length: 24 }, (_, i) => ({
+    imageNumber: i + 1,
+    preview: '',
+  }));
+  const [items, setItems] = useState<GridItemData[]>(INITIAL_ITEMS);
+  const [newItems, setNewItems] = useState<GridItemData[]>(INITIAL_ITEMS);
 
   const handleMultipleSelect = () => {
     setIsMultipleSelect(!isMultipleSelect);
   };
 
   const handleOrderChange = () => {
-    setIsOrderChange(!isOrderChange);
+    setIsOrderChange(true);
+    setHasUnsavedChanges(false);
+  };
+
+  const handleCancelOrder = () => {
+    setNewItems(items);
+    setIsOrderChange(false);
+    setHasUnsavedChanges(false);
+  };
+
+  const handleSaveOrder = () => {
+    setItems(newItems);
+    setIsOrderChange(false);
+    setHasUnsavedChanges(false);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (active.id !== over?.id && over?.id) {
-      setItems((items) => {
+      setNewItems((items) => {
         const oldIndex = items.findIndex(
           (item) => item.imageNumber === Number(active.id),
         );
@@ -51,16 +66,25 @@ export default function EmoticonGrid() {
 
         return newItems;
       });
+      setHasUnsavedChanges(true);
     }
   };
 
-  const handleImageUpload = (imageNumber: number, preview: string) => {
-    setItems((prevItems) =>
-      prevItems.map((item) =>
-        item.imageNumber === imageNumber ? { ...item, preview } : item,
-      ),
-    );
-  };
+  const handleImageUpload = useCallback(
+    (imageNumber: number, preview: string) => {
+      setItems((prevItems) =>
+        prevItems.map((item) =>
+          item.imageNumber === imageNumber ? { ...item, preview } : item,
+        ),
+      );
+      setNewItems((prevItems) =>
+        prevItems.map((item) =>
+          item.imageNumber === imageNumber ? { ...item, preview } : item,
+        ),
+      );
+    },
+    [],
+  );
 
   return (
     <section className='bg-primary padding-24 border-radius-xl flex w-full flex-col gap-24'>
@@ -73,16 +97,17 @@ export default function EmoticonGrid() {
                 variant='secondary'
                 styleVariant='outlined'
                 textClassName='text-body-sm font-semibold'
-                onClick={handleOrderChange}
+                onClick={handleCancelOrder}
               >
                 취소
               </Button>
               <Button
                 variant='primary'
                 textClassName='text-body-sm font-semibold'
-                onClick={handleOrderChange}
+                onClick={handleSaveOrder}
+                disabled={!hasUnsavedChanges}
               >
-                저장
+                {hasUnsavedChanges ? '저장' : '저장됨'}
               </Button>
             </div>
           ) : (
@@ -108,11 +133,11 @@ export default function EmoticonGrid() {
       <div className='border-ghost border-b' />
       <DndContext onDragEnd={handleDragEnd}>
         <SortableContext
-          items={items.map((item) => item.imageNumber)}
+          items={newItems.map((item) => item.imageNumber)}
           strategy={rectSortingStrategy}
         >
           <div className='tablet:grid-cols-6 grid grid-cols-4 gap-16'>
-            {items.map((item, index) => (
+            {newItems.map((item, index) => (
               <GridItem
                 key={item.imageNumber}
                 id={item.imageNumber}
@@ -120,9 +145,7 @@ export default function EmoticonGrid() {
                 showCheckbox={isMultipleSelect}
                 showGripIcon={isOrderChange}
                 isDraggable={isOrderChange}
-                onImageUpload={(preview) =>
-                  handleImageUpload(item.imageNumber, preview)
-                }
+                onImageUpload={handleImageUpload}
               />
             ))}
           </div>

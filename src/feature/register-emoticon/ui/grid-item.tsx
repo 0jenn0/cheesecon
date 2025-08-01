@@ -13,7 +13,7 @@ export interface GridItemProps
   showCheckbox?: boolean;
   showGripIcon?: boolean;
   isDraggable?: boolean;
-  onImageUpload?: (preview: string) => void;
+  onImageUpload?: (imageNumber: number, preview: string) => void;
 }
 
 const GridItem = ({
@@ -59,7 +59,7 @@ const GridItem = ({
 
   useEffect(() => {
     if (previews[0]) {
-      onImageUpload?.(previews[0]);
+      onImageUpload?.(imageNumber, previews[0]);
     }
   }, [previews, onImageUpload]);
 
