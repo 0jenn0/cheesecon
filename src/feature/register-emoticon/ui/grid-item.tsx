@@ -1,20 +1,31 @@
-import { useState } from 'react';
+import { ComponentPropsWithRef, useEffect } from 'react';
+import { cn } from '@/shared/lib/utils';
 import { Icon } from '@/shared/ui/display';
 import EmoticonItem from '@/shared/ui/display/emoticon-item/emoticon-item';
-import { IconButton } from '@/shared/ui/input';
 import { useImageUpload } from '@/feature/upload-image/use-upload-image';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
-export interface GridItemProps {
+export interface GridItemProps
+  extends Omit<ComponentPropsWithRef<'div'>, 'id'> {
+  id: number;
   imageNumber: number;
   showCheckbox?: boolean;
   showGripIcon?: boolean;
+  isDraggable?: boolean;
+  onImageUpload?: (preview: string) => void;
 }
 
-export default function GridItem({
+const GridItem = ({
+  id,
   imageNumber,
   showCheckbox = false,
   showGripIcon = false,
-}: GridItemProps) {
+  onImageUpload,
+  ref,
+  isDraggable = false,
+  ...props
+}: GridItemProps) => {
   const {
     previews,
     isUploading,
@@ -26,15 +37,44 @@ export default function GridItem({
     handleFileSelect,
   } = useImageUpload();
 
-  const hasImage = previews[0];
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id,
+    disabled: !isDraggable,
+  });
+
+  const hasImage = Boolean(previews[0]);
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  useEffect(() => {
+    if (previews[0]) {
+      onImageUpload?.(previews[0]);
+    }
+  }, [previews, onImageUpload]);
 
   return (
     <div
+      ref={setNodeRef}
+      style={style}
+      {...(isDraggable ? attributes : {})}
+      {...(isDraggable ? listeners : {})}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className='cursor-pointer'
+      className={cn('cursor-pointer')}
       onClick={handleClick}
+      {...props}
     >
       <input
         ref={inputRef}
@@ -65,4 +105,6 @@ export default function GridItem({
       </EmoticonItem.Root>
     </div>
   );
-}
+};
+
+export default GridItem;

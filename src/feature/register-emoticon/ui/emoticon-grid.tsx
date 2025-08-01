@@ -2,11 +2,24 @@
 
 import { useState } from 'react';
 import { Button } from '@/shared/ui/input';
+import { DndContext, DragEndEvent } from '@dnd-kit/core';
+import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 import GridItem from './grid-item';
+
+interface GridItemData {
+  imageNumber: number;
+  preview?: string;
+}
 
 export default function EmoticonGrid() {
   const [isMultipleSelect, setIsMultipleSelect] = useState(false);
   const [isOrderChange, setIsOrderChange] = useState(false);
+  const [items, setItems] = useState<GridItemData[]>(
+    Array.from({ length: 24 }, (_, i) => ({
+      imageNumber: i + 1,
+      preview: '',
+    })),
+  );
 
   const handleMultipleSelect = () => {
     setIsMultipleSelect(!isMultipleSelect);
@@ -14,6 +27,39 @@ export default function EmoticonGrid() {
 
   const handleOrderChange = () => {
     setIsOrderChange(!isOrderChange);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id && over?.id) {
+      setItems((items) => {
+        const oldIndex = items.findIndex(
+          (item) => item.imageNumber === Number(active.id),
+        );
+        const newIndex = items.findIndex(
+          (item) => item.imageNumber === Number(over.id),
+        );
+
+        if (oldIndex === -1 || newIndex === -1) {
+          return items;
+        }
+
+        const newItems = [...items];
+        const [removed] = newItems.splice(oldIndex, 1);
+        newItems.splice(newIndex, 0, removed);
+
+        return newItems;
+      });
+    }
+  };
+
+  const handleImageUpload = (imageNumber: number, preview: string) => {
+    setItems((prevItems) =>
+      prevItems.map((item) =>
+        item.imageNumber === imageNumber ? { ...item, preview } : item,
+      ),
+    );
   };
 
   return (
@@ -60,16 +106,28 @@ export default function EmoticonGrid() {
       </div>
 
       <div className='border-ghost border-b' />
-      <div className='tablet:grid-cols-6 grid grid-cols-4 gap-16'>
-        {Array.from({ length: 24 }).map((_, index) => (
-          <GridItem
-            key={index}
-            imageNumber={index + 1}
-            showCheckbox={isMultipleSelect}
-            showGripIcon={isOrderChange}
-          />
-        ))}
-      </div>
+      <DndContext onDragEnd={handleDragEnd}>
+        <SortableContext
+          items={items.map((item) => item.imageNumber)}
+          strategy={rectSortingStrategy}
+        >
+          <div className='tablet:grid-cols-6 grid grid-cols-4 gap-16'>
+            {items.map((item, index) => (
+              <GridItem
+                key={item.imageNumber}
+                id={item.imageNumber}
+                imageNumber={index + 1}
+                showCheckbox={isMultipleSelect}
+                showGripIcon={isOrderChange}
+                isDraggable={isOrderChange}
+                onImageUpload={(preview) =>
+                  handleImageUpload(item.imageNumber, preview)
+                }
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
     </section>
   );
 }
