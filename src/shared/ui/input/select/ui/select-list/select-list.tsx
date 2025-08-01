@@ -14,7 +14,7 @@ export default function SelectList({ options, ...props }: SelectListProps) {
     <ul
       {...props}
       className={cn(
-        'bg-primary border-radius-md padding-y-4 border-secondary margin-t-8 absolute top-full right-0 left-0 max-h-[300px] w-full flex-col gap-0 overflow-y-auto border',
+        'effect-shadow-16 z-index-popover bg-primary border-radius-md padding-y-4 border-secondary margin-t-8 absolute top-full right-0 left-0 max-h-[300px] w-full flex-col gap-0 overflow-y-auto border',
         isOpen ? 'flex' : 'hidden',
       )}
     >
