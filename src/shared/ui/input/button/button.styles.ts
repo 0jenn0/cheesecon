@@ -58,13 +58,13 @@ export const buttonVariants = cva(
   },
 );
 
-export const textVariants = cva('text-interactive-primary', {
+export const textVariants = cva('', {
   variants: {
     variant: {
       primary: 'text-interactive-primary',
       secondary: 'text-interactive-secondary',
-      danger: 'text-interactive-inverse',
-      disabled: 'text-disabled',
+      danger: 'text-danger-bold',
+      disabled: 'text-tertiary',
     },
     styleVariant: {
       outlined: '',
@@ -75,13 +75,8 @@ export const textVariants = cva('text-interactive-primary', {
   compoundVariants: [
     {
       variant: 'danger',
-      styleVariant: 'outlined',
-      className: 'text-danger-bold',
-    },
-    {
-      variant: 'danger',
-      styleVariant: 'transparent',
-      className: 'text-danger-bold',
+      styleVariant: 'filled',
+      className: 'text-interactive-inverse',
     },
   ],
 });
@@ -91,7 +86,7 @@ export const iconVariants = cva('', {
     variant: {
       primary: 'text-interactive-primary',
       secondary: 'text-interactive-secondary',
-      danger: 'text-interactive-inverse',
+      danger: 'text-danger-bold',
       disabled: 'text-disabled',
     },
     styleVariant: {
@@ -107,13 +102,8 @@ export const iconVariants = cva('', {
   compoundVariants: [
     {
       variant: 'danger',
-      styleVariant: 'outlined',
-      className: 'text-danger-bold',
-    },
-    {
-      variant: 'danger',
-      styleVariant: 'transparent',
-      className: 'text-danger-bold',
+      styleVariant: 'filled',
+      className: 'text-interactive-inverse',
     },
   ],
 });
