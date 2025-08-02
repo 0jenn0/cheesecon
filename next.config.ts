@@ -11,6 +11,16 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: process.env.NEXT_PUBLIC_SUPABASE_STORAGE_HOSTNAME || '',
+        port: '',
+        pathname: '/storage/v1/object/public/**',
+      },
+    ],
+  },
   webpack: (config) => {
     // @ts-expect-error
     const fileLoaderRule = config.module.rules.find((rule) =>
