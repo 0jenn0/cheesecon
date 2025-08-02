@@ -47,20 +47,9 @@ const GridItem = ({
           const result = await uploadImageMutation.mutateAsync(formData);
           setImageUrl(result.url);
 
-          // emoticonSet이 아직 생성되지 않은 경우 임시로 이미지만 저장
-          if (emoticonSet.id) {
-            createEmoticonImageMutation.mutate({
-              setId: emoticonSet.id,
-              imageUrl: result.url,
-              imageOrder: imageNumber,
-            });
-          } else {
-            // TODO: emoticonSet 생성 후 이미지 연결 로직 필요
-            console.log('EmoticonSet not created yet, image saved temporarily');
-          }
-
           // TODO: 토스트로 성공처리
           console.log('Upload successful:', result);
+          // TODO: 이미지 업로드 성공 후 리다이렉팅 추가
         } catch (error) {
           // TODO: 토스트로 에러처리
           console.error('Upload error:', error);

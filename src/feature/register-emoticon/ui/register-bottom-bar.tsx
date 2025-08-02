@@ -8,7 +8,7 @@ import useEmoticonRegister from '../model/hook';
 
 export function RegisterBottomBar() {
   const { emoticonSet, imageUrls } = useEmoticonRegister();
-  console.log('imageUrls클라이언트', imageUrls);
+
   const registerMutation = useMutation({
     mutationFn: (emoticonSet: EmoticonSet) =>
       createEmoticonSet(emoticonSet, imageUrls),
@@ -23,51 +23,7 @@ export function RegisterBottomBar() {
   });
 
   const handleRegister = () => {
-    // 필수 필드 검증
-    if (!emoticonSet.title || emoticonSet.title.trim() === '') {
-      alert('이모티콘 이름을 입력해주세요.');
-      return;
-    }
-
-    if (!emoticonSet.author_name || emoticonSet.author_name.trim() === '') {
-      alert('이모티콘 작가명을 입력해주세요.');
-      return;
-    }
-
-    if (!emoticonSet.platform || emoticonSet.platform === '') {
-      alert('이모티콘 플랫폼을 선택해주세요.');
-      return;
-    }
-
-    if (!emoticonSet.type || emoticonSet.type === '') {
-      alert('이모티콘 유형을 선택해주세요.');
-      return;
-    }
-
-    if (!emoticonSet.description || emoticonSet.description.trim() === '') {
-      alert('이모티콘 설명을 입력해주세요.');
-      return;
-    }
-
-    if (imageUrls.length === 0) {
-      alert('이모티콘 이미지를 업로드해주세요.');
-      return;
-    }
-
-    // EmoticonSet 타입에 맞게 변환
-    console.log('emoticonSet', emoticonSet);
-    const emoticonSetForServer: EmoticonSet = {
-      author_name: emoticonSet.author_name,
-      description: emoticonSet.description,
-      is_private: emoticonSet.is_private,
-      password_hash: emoticonSet.password_hash,
-      platform: emoticonSet.platform,
-      representative_image_url: emoticonSet.representative_image_url,
-      title: emoticonSet.title,
-      type: emoticonSet.type,
-    };
-
-    registerMutation.mutate(emoticonSetForServer);
+    registerMutation.mutate(emoticonSet);
   };
 
   return (

@@ -20,7 +20,6 @@ export default function EmoticonInfoForm() {
     const target = e.target as HTMLSelectElement;
     const { name, value } = target;
 
-    // 값 매핑
     let mappedValue = value;
     if (name === 'platform') {
       mappedValue = value === '카카오톡' ? 'kakao' : 'line';

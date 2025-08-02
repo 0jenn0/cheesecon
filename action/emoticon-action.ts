@@ -16,16 +16,10 @@ export type EmoticonSet = Omit<
   | 'views_count'
 >;
 
-// 허용된 플랫폼과 타입 값들
-const ALLOWED_PLATFORMS = ['kakao', 'line'] as const;
-const ALLOWED_TYPES = ['static', 'emotion'] as const;
-
 export async function createEmoticonSet(
   emoticonSet: EmoticonSet,
   imageUrls: { imageUrl: string; imageOrder: number }[],
 ) {
-  console.log('imageUrls서버', imageUrls);
-
   const supabase = await createServerSupabaseClient();
   const user = (await supabase.auth.getUser()).data.user;
 
