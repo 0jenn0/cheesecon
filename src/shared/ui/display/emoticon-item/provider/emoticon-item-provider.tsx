@@ -11,6 +11,8 @@ export interface EmoticonItemContextType {
 
   imageUrl: string;
   isUploading: boolean;
+
+  isDragging: boolean;
 }
 
 export const emoticonItemContext = createContext<EmoticonItemContextType>({
@@ -24,6 +26,8 @@ export const emoticonItemContext = createContext<EmoticonItemContextType>({
 
   imageUrl: '',
   isUploading: false,
+
+  isDragging: false,
 });
 
 export function EmoticonItemProvider({
@@ -32,6 +36,7 @@ export function EmoticonItemProvider({
   showGripIcon = false,
   imageUrl = '',
   isUploading = false,
+  isDragging = false,
   children,
 }: PropsWithChildren<{
   imageNumber: number;
@@ -39,6 +44,7 @@ export function EmoticonItemProvider({
   showGripIcon?: boolean;
   imageUrl?: string;
   isUploading?: boolean;
+  isDragging?: boolean;
 }>) {
   const [isChecked, setIsChecked] = useState(false);
 
@@ -57,6 +63,7 @@ export function EmoticonItemProvider({
 
         imageUrl,
         isUploading,
+        isDragging,
       }}
     >
       {children}

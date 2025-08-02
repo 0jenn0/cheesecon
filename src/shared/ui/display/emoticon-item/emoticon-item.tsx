@@ -1,4 +1,5 @@
 import { ComponentPropsWithRef, PropsWithChildren } from 'react';
+import { VariantProps, cva } from 'class-variance-authority';
 import { Spinner } from '../../feedback';
 import Icon from '../../icon/icon';
 import { Checkbox } from '../../input';
@@ -15,6 +16,7 @@ function EmoticonItemRoot({
   showGripIcon,
   imageUrl,
   isUploading,
+  isDragging,
   children,
 }: PropsWithChildren<{
   imageNumber: number;
@@ -22,6 +24,7 @@ function EmoticonItemRoot({
   showGripIcon?: boolean;
   imageUrl?: string;
   isUploading?: boolean;
+  isDragging?: boolean;
 }>) {
   return (
     <EmoticonItemProvider
@@ -30,23 +33,39 @@ function EmoticonItemRoot({
       showCheckbox={showCheckbox}
       imageUrl={imageUrl}
       isUploading={isUploading}
+      isDragging={isDragging}
     >
-      <div className='border-interactive-secondary flex aspect-square w-full flex-col gap-0 border-b'>
-        {children}
-      </div>
+      {children}
     </EmoticonItemProvider>
   );
 }
 
-function EmoticonItemContent({ children }: PropsWithChildren) {
-  const { imageUrl, isUploading } = useEmoticonItem();
+const contentVariants = cva(
+  'flex aspect-square h-full w-full flex-col gap-0 bg-cover bg-center bg-no-repeat',
+  {
+    variants: {
+      isDragging: {
+        false: 'border-interactive-secondary border-b',
+        true: 'border-radius-xl border-2 border-[var(--color-cheesecon-primary-300)] opacity-70',
+      },
+    },
+  },
+);
+
+interface EmoticonItemContentProps
+  extends ComponentPropsWithRef<'div'>,
+    VariantProps<typeof contentVariants> {}
+
+function EmoticonItemContent({ children, ...props }: EmoticonItemContentProps) {
+  const { imageUrl, isUploading, isDragging } = useEmoticonItem();
 
   return (
     <>
       {
         <div
-          className='flex h-full w-full flex-col bg-cover bg-center bg-no-repeat'
+          className={contentVariants({ isDragging })}
           style={imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined}
+          {...props}
         >
           {children}
         </div>

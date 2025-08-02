@@ -90,6 +90,7 @@ const GridItem = ({
         isUploading={isUploading}
         showCheckbox={showCheckbox}
         showGripIcon={showGripIcon}
+        isDragging={isDragging}
       >
         <EmoticonItem.Content>
           <EmoticonItem.Header />
