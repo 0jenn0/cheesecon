@@ -8,6 +8,7 @@ import {
   SecretNumberForm,
 } from '@/feature/register-emoticon/ui';
 import { RegisterBottomBar } from '@/feature/register-emoticon/ui/register-bottom-bar';
+import { ImageDropzone } from '@/feature/upload-image/ui';
 
 export default function EmoticonRegisterPage() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -30,11 +31,10 @@ export default function EmoticonRegisterPage() {
               <div className='border-ghost border-b' />
               <SecretNumberForm />
             </section>
-            <ImageUploader
-              onImageSelect={handleImageSelect}
-              accept='image/*'
-              maxSize={5} // 5MB
-            />
+
+            <div className='max-w-[320px] flex-1'>
+              <ImageDropzone maxSize={5} />
+            </div>
           </div>
         </div>
 
