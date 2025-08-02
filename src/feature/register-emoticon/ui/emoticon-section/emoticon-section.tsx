@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import { Button } from '@/shared/ui/input';
 import { DragEndEvent } from '@dnd-kit/core';
 import useEmoticonRegister from '../../model/hook';
+import { MultiSelectButton, OrderChangeButton } from './ui';
 import EmoticonGrid from './ui/emoticon-grid';
 
 const INITIAL_ITEMS = Array.from({ length: 24 }, (_, i) => ({
@@ -101,42 +102,17 @@ export default function EmoticonSection() {
       <div className='flex w-full items-center justify-between'>
         <h2 className='text-heading-sm'>이모티콘 목록</h2>
         <div className='flex gap-24'>
-          {isOrderChange ? (
-            <div className='flex gap-8'>
-              <Button
-                variant='secondary'
-                styleVariant='outlined'
-                textClassName='text-body-sm font-semibold'
-                onClick={handleCancelOrder}
-              >
-                취소
-              </Button>
-              <Button
-                variant='primary'
-                textClassName='text-body-sm font-semibold'
-                onClick={handleSaveOrder}
-                disabled={!hasUnsavedChanges}
-              >
-                {hasUnsavedChanges ? '저장' : '저장됨'}
-              </Button>
-            </div>
-          ) : (
-            <Button
-              variant='secondary'
-              textClassName='text-body-sm font-semibold'
-              onClick={handleOrderChange}
-            >
-              순서 바꾸기
-            </Button>
-          )}
-          <Button
-            variant='secondary'
-            textClassName='text-body-sm font-semibold'
-            onClick={handleMultipleSelect}
-            disabled={isOrderChange}
-          >
-            다중 선택
-          </Button>
+          <OrderChangeButton
+            isOrderChange={isOrderChange}
+            handleCancelOrder={handleCancelOrder}
+            handleSaveOrder={handleSaveOrder}
+            handleOrderChange={handleOrderChange}
+            hasUnsavedChanges={hasUnsavedChanges}
+          />
+          <MultiSelectButton
+            handleMultipleSelect={handleMultipleSelect}
+            isOrderChange={isOrderChange}
+          />
         </div>
       </div>
 
