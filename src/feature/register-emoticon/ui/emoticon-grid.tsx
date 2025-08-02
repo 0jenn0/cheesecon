@@ -18,7 +18,7 @@ export default function EmoticonGrid() {
 
   const INITIAL_ITEMS = Array.from({ length: 24 }, (_, i) => ({
     imageNumber: i + 1,
-    preview: '',
+    imageUrl: '',
   }));
   const [items, setItems] = useState<GridItemData[]>(INITIAL_ITEMS);
   const [newItems, setNewItems] = useState<GridItemData[]>(INITIAL_ITEMS);
@@ -71,15 +71,15 @@ export default function EmoticonGrid() {
   };
 
   const handleImageUpload = useCallback(
-    (imageNumber: number, preview: string) => {
+    (imageNumber: number, imageUrl: string) => {
       setItems((prevItems) =>
         prevItems.map((item) =>
-          item.imageNumber === imageNumber ? { ...item, preview } : item,
+          item.imageNumber === imageNumber ? { ...item, imageUrl } : item,
         ),
       );
       setNewItems((prevItems) =>
         prevItems.map((item) =>
-          item.imageNumber === imageNumber ? { ...item, preview } : item,
+          item.imageNumber === imageNumber ? { ...item, imageUrl } : item,
         ),
       );
     },

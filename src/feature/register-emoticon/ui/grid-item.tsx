@@ -1,8 +1,9 @@
-import { ComponentPropsWithRef, useEffect } from 'react';
+import { ComponentPropsWithRef, useCallback, useEffect, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
 import { cn } from '@/shared/lib/utils';
 import { Icon } from '@/shared/ui/display';
 import EmoticonItem from '@/shared/ui/display/emoticon-item/emoticon-item';
-import { useImageUpload } from '@/feature/upload-image/use-upload-image';
+import { useUploadImageMutation } from '@/feature/upload-image/model/upload-image-mutation';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
@@ -26,16 +27,44 @@ const GridItem = ({
   isDraggable = false,
   ...props
 }: GridItemProps) => {
-  const {
-    previews,
-    isUploading,
-    inputRef,
-    handleDragOver,
-    handleDragLeave,
-    handleDrop,
-    handleClick,
-    handleFileSelect,
-  } = useImageUpload();
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const uploadImageMutation = useUploadImageMutation();
+
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      if (acceptedFiles.length > 0) {
+        const formData = new FormData();
+
+        acceptedFiles.forEach((file) => {
+          formData.append('file', file);
+        });
+
+        try {
+          const result = await uploadImageMutation.mutateAsync(formData);
+          setImageUrl(result.url);
+          // TODO: 토스트로 성공처리
+          console.log('Upload successful:', result);
+        } catch (error) {
+          // TODO: 토스트로 에러처리
+          console.error('Upload error:', error);
+        }
+      }
+    },
+    [uploadImageMutation],
+  );
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    multiple: true,
+    accept: {
+      'image/png': ['.png'],
+      'image/jpeg': ['.jpg', '.jpeg'],
+      'image/gif': ['.gif'],
+      'image/webp': ['.webp'],
+    },
+    maxSize: 5 * 1024 * 1024,
+    disabled: uploadImageMutation.isPending || isDraggable,
+  });
 
   const {
     attributes,
@@ -49,7 +78,7 @@ const GridItem = ({
     disabled: !isDraggable,
   });
 
-  const hasImage = Boolean(previews[0]);
+  const hasImage = Boolean(imageUrl);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -58,47 +87,62 @@ const GridItem = ({
   };
 
   useEffect(() => {
-    if (previews[0]) {
-      onImageUpload?.(imageNumber, previews[0]);
+    if (imageUrl) {
+      onImageUpload?.(imageNumber, imageUrl);
     }
-  }, [previews, onImageUpload]);
+  }, [imageUrl, onImageUpload]);
+
+  const dragProps = isDraggable ? { ...attributes, ...listeners } : {};
+  const dropzoneProps = !isDraggable ? getRootProps() : {};
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      {...(isDraggable ? attributes : {})}
-      {...(isDraggable ? listeners : {})}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
       className={cn('cursor-pointer')}
-      onClick={handleClick}
+      {...dragProps}
+      {...dropzoneProps}
       {...props}
     >
-      <input
-        ref={inputRef}
-        type='file'
-        accept='image/*'
-        multiple={false}
-        onChange={handleFileSelect}
-        className='hidden'
-      />
+      {!isDraggable && (
+        <input
+          {...getInputProps()}
+          type='file'
+          accept='image/*'
+          multiple={false}
+          className='hidden'
+        />
+      )}
       <EmoticonItem.Root
         imageNumber={imageNumber}
-        imageUrl={previews[0]}
-        isUploading={isUploading}
+        imageUrl={imageUrl ?? ''}
+        isUploading={uploadImageMutation.isPending}
         showCheckbox={showCheckbox}
         showGripIcon={showGripIcon}
         isDragging={isDragging}
       >
-        <EmoticonItem.Content>
+        <EmoticonItem.Content
+          className={cn(
+            'transition-all duration-300',
+            isDragActive &&
+              'border-radius-xl effect-shadow-8 border-ghost border',
+          )}
+        >
           <EmoticonItem.Header />
           <EmoticonItem.Body>
             {hasImage ? (
               <div className='width-32 height-32 bg-transparent' />
             ) : (
-              <Icon name='image-plus' size={32} className='icon-ghost' />
+              <Icon
+                name='image-plus'
+                size={32}
+                className={cn(
+                  'transition-all duration-300',
+                  isDragActive
+                    ? 'scale-125 text-[var(--color-cheesecon-primary-400)]'
+                    : 'text-[var(--color-cheesecon-secondary-200)]',
+                )}
+              />
             )}
           </EmoticonItem.Body>
           <EmoticonItem.Footer />

@@ -1,5 +1,6 @@
 import { ComponentPropsWithRef, PropsWithChildren } from 'react';
 import { VariantProps, cva } from 'class-variance-authority';
+import { cn } from '@/shared/lib';
 import { Spinner } from '../../feedback';
 import Icon from '../../icon/icon';
 import { Checkbox } from '../../input';
@@ -56,20 +57,24 @@ interface EmoticonItemContentProps
   extends ComponentPropsWithRef<'div'>,
     VariantProps<typeof contentVariants> {}
 
-function EmoticonItemContent({ children, ...props }: EmoticonItemContentProps) {
+function EmoticonItemContent({
+  children,
+  className,
+  ...props
+}: EmoticonItemContentProps) {
   const { imageUrl, isUploading, isDragging } = useEmoticonItem();
 
   return (
     <>
-      {
+      {!isUploading && (
         <div
-          className={contentVariants({ isDragging })}
+          className={cn(contentVariants({ isDragging }), className)}
           style={imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined}
           {...props}
         >
           {children}
         </div>
-      }
+      )}
       {/* {shouldShowErrorIcon && (
         <div className='flex h-full w-full flex-col items-center justify-center gap-8'>
           <Icon name='alert-circle' size={16} className='icon-danger' />
@@ -77,18 +82,18 @@ function EmoticonItemContent({ children, ...props }: EmoticonItemContentProps) {
         </div>
       )} */}
       {isUploading && (
-        <div className='flex h-full w-full flex-col items-center justify-center gap-8'>
+        <div className={contentVariants({ isDragging })}>
           <Spinner />
-          {isUploading && (
-            <span className='text-body-sm text-secondary'>업로드 중...</span>
-          )}
         </div>
       )}
     </>
   );
 }
 
-function EmoticonItemHeader({}: PropsWithChildren) {
+function EmoticonItemHeader({
+  className,
+  ...props
+}: ComponentPropsWithRef<'div'>) {
   const {
     imageNumber,
     showCheckbox,
@@ -98,7 +103,13 @@ function EmoticonItemHeader({}: PropsWithChildren) {
   } = useEmoticonItem();
 
   return (
-    <div className='padding-8 flex w-full items-center justify-between'>
+    <div
+      className={cn(
+        'padding-8 flex w-full items-center justify-between',
+        className,
+      )}
+      {...props}
+    >
       <ImageNumberBadge imageNumber={imageNumber} />
       {showCheckbox ? (
         <Checkbox
@@ -113,17 +124,35 @@ function EmoticonItemHeader({}: PropsWithChildren) {
   );
 }
 
-function EmoticonItemBody({ children }: PropsWithChildren) {
+function EmoticonItemBody({
+  children,
+  className,
+  ...props
+}: PropsWithChildren<ComponentPropsWithRef<'div'>>) {
   return (
-    <div className='flex flex-1 items-center justify-center'>{children}</div>
+    <div
+      className={cn('flex flex-1 items-center justify-center', className)}
+      {...props}
+    >
+      {children}
+    </div>
   );
 }
 
-function EmoticonItemFooter({}: PropsWithChildren) {
+function EmoticonItemFooter({
+  className,
+  ...props
+}: PropsWithChildren<ComponentPropsWithRef<'div'>>) {
   const { showGripIcon } = useEmoticonItem();
 
   return (
-    <div className='padding-8 flex w-full items-center justify-end'>
+    <div
+      className={cn(
+        'padding-8 flex w-full items-center justify-end',
+        className,
+      )}
+      {...props}
+    >
       {showGripIcon ? (
         <Icon
           name='grip-vertical'
