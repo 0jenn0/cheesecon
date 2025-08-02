@@ -6,7 +6,6 @@ import EmoticonItem from '@/shared/ui/display/emoticon-item/emoticon-item';
 import { useUploadImageMutation } from '@/feature/upload-image/model/upload-image-mutation';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import useEmoticonRegister from '../model/hook';
 
 export interface GridItemProps
   extends Omit<ComponentPropsWithRef<'div'>, 'id'> {
