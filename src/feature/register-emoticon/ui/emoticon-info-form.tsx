@@ -1,37 +1,40 @@
 'use client';
 
-import { useState } from 'react';
 import { SelectField, TextAreaField, TextField } from '@/shared/ui/input';
+import useEmoticonRegister from '../model/hook';
 
 export default function EmoticonInfoForm() {
-  const [info, setInfo] = useState<Record<string, string>>({
-    name: '',
-    author: '',
-    platform: '',
-    type: '',
-    description: '',
-  });
+  const { emoticonSet, setEmoticonSet } = useEmoticonRegister();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setInfo((prev) => ({ ...prev, [name]: value }));
+    setEmoticonSet({ ...emoticonSet, [name]: value });
   };
 
   const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setInfo((prev) => ({ ...prev, [name]: value }));
+    setEmoticonSet({ ...emoticonSet, [name]: value });
   };
 
   const handleSelectChange = (e: React.FormEvent<HTMLDivElement>) => {
     const target = e.target as HTMLSelectElement;
     const { name, value } = target;
-    setInfo((prev) => ({ ...prev, [name]: value }));
+
+    // 값 매핑
+    let mappedValue = value;
+    if (name === 'platform') {
+      mappedValue = value === '카카오톡' ? 'kakao' : 'line';
+    } else if (name === 'type') {
+      mappedValue = value === '움직이는 이모티콘' ? 'emotion' : 'static';
+    }
+
+    setEmoticonSet({ ...emoticonSet, [name]: mappedValue });
   };
 
   return (
     <div className='flex flex-1 flex-col gap-16'>
       <TextField
-        name='name'
+        name='title'
         label='이모티콘 이름'
         placeholder='이모티콘 이름'
         direction='row'
@@ -40,7 +43,7 @@ export default function EmoticonInfoForm() {
         onChange={handleInputChange}
       />
       <TextField
-        name='author'
+        name='author_name'
         label='이모티콘 작가명'
         placeholder='이모티콘 작가명'
         direction='row'

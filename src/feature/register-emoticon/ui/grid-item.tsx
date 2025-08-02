@@ -3,9 +3,11 @@ import { useDropzone } from 'react-dropzone';
 import { cn } from '@/shared/lib/utils';
 import { Icon } from '@/shared/ui/display';
 import EmoticonItem from '@/shared/ui/display/emoticon-item/emoticon-item';
+import { useCreateEmoticonImageMutation } from '@/entity/emoticon-images/query/mutation';
 import { useUploadImageMutation } from '@/feature/upload-image/model/upload-image-mutation';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import useEmoticonRegister from '../model/hook';
 
 export interface GridItemProps
   extends Omit<ComponentPropsWithRef<'div'>, 'id'> {
@@ -29,6 +31,8 @@ const GridItem = ({
 }: GridItemProps) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const uploadImageMutation = useUploadImageMutation();
+  const createEmoticonImageMutation = useCreateEmoticonImageMutation();
+  const { emoticonSet } = useEmoticonRegister();
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -42,6 +46,19 @@ const GridItem = ({
         try {
           const result = await uploadImageMutation.mutateAsync(formData);
           setImageUrl(result.url);
+
+          // emoticonSet이 아직 생성되지 않은 경우 임시로 이미지만 저장
+          if (emoticonSet.id) {
+            createEmoticonImageMutation.mutate({
+              setId: emoticonSet.id,
+              imageUrl: result.url,
+              imageOrder: imageNumber,
+            });
+          } else {
+            // TODO: emoticonSet 생성 후 이미지 연결 로직 필요
+            console.log('EmoticonSet not created yet, image saved temporarily');
+          }
+
           // TODO: 토스트로 성공처리
           console.log('Upload successful:', result);
         } catch (error) {

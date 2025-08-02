@@ -1,14 +1,23 @@
-'use client';
-
-import { useState } from 'react';
 import { Icon } from '@/shared/ui/display';
 import { Checkbox, TextField } from '@/shared/ui/input';
+import useEmoticonRegister from '../model/hook';
 
 export default function SecretNumberForm() {
-  const [isSecret, setIsSecret] = useState(false);
+  const { emoticonSet, setEmoticonSet } = useEmoticonRegister();
 
-  const handleSecretNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsSecret(e.target.checked);
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmoticonSet({
+      ...emoticonSet,
+      is_private: e.target.checked,
+      password_hash: e.target.checked ? emoticonSet.password_hash : null,
+    });
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmoticonSet({
+      ...emoticonSet,
+      password_hash: e.target.value || null,
+    });
   };
 
   return (
@@ -16,9 +25,9 @@ export default function SecretNumberForm() {
       <div className='flex flex-col gap-12'>
         <div className='flex w-full items-center gap-12'>
           <Checkbox
-            checked={isSecret}
-            onChange={handleSecretNumberChange}
-            status={isSecret ? 'checked' : 'unchecked'}
+            checked={emoticonSet.is_private ?? false}
+            onChange={handleCheckboxChange}
+            status={emoticonSet.is_private ? 'checked' : 'unchecked'}
             id='secretNumberCheck'
           />
           <div className='flex items-center gap-4'>
@@ -38,7 +47,7 @@ export default function SecretNumberForm() {
         </span>
       </div>
 
-      {isSecret && (
+      {emoticonSet.is_private && (
         <div className='bg-secondary padding-24 border-radius-2xl flex flex-col gap-16'>
           <TextField
             name='secretNumber'
@@ -47,6 +56,7 @@ export default function SecretNumberForm() {
             direction='row'
             labelType='required'
             placeholderClassName='padding-y-12'
+            onChange={handlePasswordChange}
           />
           <TextField
             name='secretNumber'
@@ -55,6 +65,7 @@ export default function SecretNumberForm() {
             direction='row'
             labelType='required'
             placeholderClassName='padding-y-12'
+            onChange={handlePasswordChange}
           />
         </div>
       )}

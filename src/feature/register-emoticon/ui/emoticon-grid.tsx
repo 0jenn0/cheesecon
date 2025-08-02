@@ -4,18 +4,19 @@ import { useCallback, useState } from 'react';
 import { Button } from '@/shared/ui/input';
 import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
+import useEmoticonRegister from '../model/hook';
 import GridItem from './grid-item';
 
 interface GridItemData {
   imageNumber: number;
-  preview?: string;
+  imageUrl?: string;
 }
 
 export default function EmoticonGrid() {
   const [isMultipleSelect, setIsMultipleSelect] = useState(false);
   const [isOrderChange, setIsOrderChange] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-
+  const { setImageUrls } = useEmoticonRegister();
   const INITIAL_ITEMS = Array.from({ length: 24 }, (_, i) => ({
     imageNumber: i + 1,
     imageUrl: '',
@@ -66,6 +67,7 @@ export default function EmoticonGrid() {
 
         return newItems;
       });
+
       setHasUnsavedChanges(true);
     }
   };
@@ -82,7 +84,14 @@ export default function EmoticonGrid() {
           item.imageNumber === imageNumber ? { ...item, imageUrl } : item,
         ),
       );
+      setImageUrls(
+        newItems.map((item) => ({
+          imageUrl: item.imageUrl ?? '',
+          imageOrder: item.imageNumber,
+        })),
+      );
     },
+
     [],
   );
 

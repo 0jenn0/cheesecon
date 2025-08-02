@@ -7,6 +7,7 @@ import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
 import { Spinner } from '@/shared/ui/feedback';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
+import useEmoticonRegister from '@/feature/register-emoticon/model/hook';
 import { useUploadImageMutation } from '../model/upload-image-mutation';
 
 export interface ImageDropzoneProps extends ComponentPropsWithRef<'div'> {
@@ -20,9 +21,9 @@ export default function ImageDropzone({
   className,
   ...props
 }: ImageDropzoneProps) {
+  const { emoticonSet, setEmoticonSet } = useEmoticonRegister();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const uploadImageMutation = useUploadImageMutation();
-  const { user, isLoading: authLoading } = useAuth();
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -36,6 +37,10 @@ export default function ImageDropzone({
         try {
           const result = await uploadImageMutation.mutateAsync(formData);
           setImageUrl(result.url);
+          setEmoticonSet({
+            ...emoticonSet,
+            representative_image_url: result.url,
+          });
           // TODO: 토스트로 성공처리
           console.log('Upload successful:', result);
         } catch (error) {
@@ -44,7 +49,7 @@ export default function ImageDropzone({
         }
       }
     },
-    [uploadImageMutation, user],
+    [uploadImageMutation],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -57,10 +62,10 @@ export default function ImageDropzone({
       'image/webp': ['.webp'],
     },
     maxSize: maxSize * 1024 * 1024, // MB를 바이트로 변환
-    disabled: disabled || uploadImageMutation.isPending || authLoading,
+    disabled: disabled || uploadImageMutation.isPending,
   });
 
-  const isLoading = uploadImageMutation.isPending || authLoading;
+  const isLoading = uploadImageMutation.isPending;
   const isDisabled = disabled || isLoading;
 
   return (
