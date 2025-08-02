@@ -84,12 +84,12 @@ export default function EmoticonGrid() {
           item.imageNumber === imageNumber ? { ...item, imageUrl } : item,
         ),
       );
-      setImageUrls(
-        newItems.map((item) => ({
-          imageUrl: item.imageUrl ?? '',
-          imageOrder: item.imageNumber,
-        })),
-      );
+      handleSetImageUrl([
+        {
+          imageUrl,
+          imageOrder: imageNumber,
+        },
+      ]);
     },
 
     [],

@@ -7,7 +7,9 @@ interface EmoticonRegisterContextType {
   emoticonSet: EmoticonSetRequest;
   imageUrls: { imageUrl: string; imageOrder: number }[];
   setEmoticonSet: (emoticonSet: EmoticonSetRequest) => void;
-  setImageUrls: (imageUrls: { imageUrl: string; imageOrder: number }[]) => void;
+  handleSetImageUrl: (
+    newImageUrls: { imageUrl: string; imageOrder: number }[],
+  ) => void;
 }
 
 const EmoticonRegisterContext = createContext<EmoticonRegisterContextType>({
@@ -29,8 +31,8 @@ const EmoticonRegisterContext = createContext<EmoticonRegisterContextType>({
     user_id: null,
   },
   imageUrls: [],
-  setImageUrls: () => {
-    throw new Error('setImageUrls 함수를 정의해주세요.');
+  handleSetImageUrl: () => {
+    throw new Error('handleSetImageUrl 함수를 정의해주세요.');
   },
   setEmoticonSet: () => {
     throw new Error('setEmoticonSet 함수를 정의해주세요.');
@@ -58,9 +60,16 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
   const [imageUrls, setImageUrls] = useState<
     { imageUrl: string; imageOrder: number }[]
   >([]);
+
+  const handleSetImageUrl = (
+    newImageUrls: { imageUrl: string; imageOrder: number }[],
+  ) => {
+    setImageUrls((prev) => [...prev, ...newImageUrls]);
+  };
+
   return (
     <EmoticonRegisterContext.Provider
-      value={{ emoticonSet, setEmoticonSet, imageUrls, setImageUrls }}
+      value={{ emoticonSet, setEmoticonSet, imageUrls, handleSetImageUrl }}
     >
       {children}
     </EmoticonRegisterContext.Provider>

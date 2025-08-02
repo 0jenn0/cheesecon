@@ -1,13 +1,9 @@
 import { Button } from '@/shared/ui/input';
 import { useRegisterMutation } from '@/entity/emoticon-set';
-import { createEmoticonSet } from '@/entity/emoticon-set/api/emoticon-set-api';
-import { EmoticonSet } from '@/entity/emoticon-set/type';
-import { useMutation } from '@tanstack/react-query';
 import useEmoticonRegister from '../model/hook';
 
 export function RegisterBottomBar() {
   const { emoticonSet, imageUrls } = useEmoticonRegister();
-
   const registerMutation = useRegisterMutation({ imageUrls });
 
   const handleRegister = () => {
