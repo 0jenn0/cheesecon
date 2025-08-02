@@ -2,8 +2,8 @@
 
 import { EmoticonRegisterProvider } from '@/feature/register-emoticon/model/hook';
 import {
-  EmoticonGrid,
   EmoticonInfoForm,
+  EmoticonSection,
   SecretNumberForm,
 } from '@/feature/register-emoticon/ui';
 import { RegisterBottomBar } from '@/feature/register-emoticon/ui/register-bottom-bar';
@@ -31,7 +31,7 @@ export default function EmoticonRegisterPage() {
           </div>
         </div>
 
-        <EmoticonGrid />
+        <EmoticonSection />
       </div>
       <RegisterBottomBar />
     </EmoticonRegisterProvider>

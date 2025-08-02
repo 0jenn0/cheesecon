@@ -2,10 +2,9 @@
 
 import { useCallback, useState } from 'react';
 import { Button } from '@/shared/ui/input';
-import { DndContext, DragEndEvent } from '@dnd-kit/core';
-import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
-import useEmoticonRegister from '../model/hook';
-import GridItem from './grid-item';
+import { DragEndEvent } from '@dnd-kit/core';
+import useEmoticonRegister from '../../model/hook';
+import EmoticonGrid from './ui/emoticon-grid';
 
 const INITIAL_ITEMS = Array.from({ length: 24 }, (_, i) => ({
   imageNumber: i + 1,
@@ -17,7 +16,7 @@ interface GridItemData {
   imageUrl?: string;
 }
 
-export default function EmoticonGrid() {
+export default function EmoticonSection() {
   const [isMultipleSelect, setIsMultipleSelect] = useState(false);
   const [isOrderChange, setIsOrderChange] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -142,26 +141,14 @@ export default function EmoticonGrid() {
       </div>
 
       <div className='border-ghost border-b' />
-      <DndContext onDragEnd={handleDragEnd}>
-        <SortableContext
-          items={newItems.map((item) => item.imageNumber)}
-          strategy={rectSortingStrategy}
-        >
-          <div className='tablet:grid-cols-6 grid grid-cols-4 gap-16'>
-            {newItems.map((item, index) => (
-              <GridItem
-                key={item.imageNumber}
-                id={item.imageNumber}
-                imageNumber={index + 1}
-                showCheckbox={isMultipleSelect}
-                showGripIcon={isOrderChange}
-                isDraggable={isOrderChange}
-                onImageUpload={handleImageUpload}
-              />
-            ))}
-          </div>
-        </SortableContext>
-      </DndContext>
+
+      <EmoticonGrid
+        items={newItems}
+        handleDragEnd={handleDragEnd}
+        handleImageUpload={handleImageUpload}
+        isMultipleSelect={isMultipleSelect}
+        isOrderChange={isOrderChange}
+      />
     </section>
   );
 }
