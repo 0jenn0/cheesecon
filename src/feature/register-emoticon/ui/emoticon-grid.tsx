@@ -7,6 +7,11 @@ import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 import useEmoticonRegister from '../model/hook';
 import GridItem from './grid-item';
 
+const INITIAL_ITEMS = Array.from({ length: 24 }, (_, i) => ({
+  imageNumber: i + 1,
+  imageUrl: '',
+}));
+
 interface GridItemData {
   imageNumber: number;
   imageUrl?: string;
@@ -16,11 +21,8 @@ export default function EmoticonGrid() {
   const [isMultipleSelect, setIsMultipleSelect] = useState(false);
   const [isOrderChange, setIsOrderChange] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const { setImageUrls } = useEmoticonRegister();
-  const INITIAL_ITEMS = Array.from({ length: 24 }, (_, i) => ({
-    imageNumber: i + 1,
-    imageUrl: '',
-  }));
+  const { handleSetImageUrl } = useEmoticonRegister();
+
   const [items, setItems] = useState<GridItemData[]>(INITIAL_ITEMS);
   const [newItems, setNewItems] = useState<GridItemData[]>(INITIAL_ITEMS);
 
