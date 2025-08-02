@@ -1,20 +1,7 @@
 'use server';
 
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
-import { Tables } from '@/types/types_db';
-
-export type EmoticonSetRequest = Tables<'emoticon_sets'>;
-
-export type EmoticonSet = Omit<
-  EmoticonSetRequest,
-  | 'id'
-  | 'created_at'
-  | 'updated_at'
-  | 'user_id'
-  | 'comments_count'
-  | 'likes_count'
-  | 'views_count'
->;
+import { EmoticonSet, EmoticonSetRequest } from '../type';
 
 export async function createEmoticonSet(
   emoticonSet: EmoticonSet,
@@ -69,26 +56,9 @@ export async function createEmoticonSet(
     );
   }
 
-  // 직렬화 가능한 형태로 반환
   return {
     success: true,
-    emoticonSet: {
-      id: data.id,
-      title: data.title,
-      author_name: data.author_name,
-      description: data.description,
-      platform: data.platform,
-      type: data.type,
-      representative_image_url: data.representative_image_url,
-      is_private: data.is_private,
-      password_hash: data.password_hash,
-      created_at: data.created_at,
-      updated_at: data.updated_at,
-      user_id: data.user_id,
-      comments_count: data.comments_count,
-      likes_count: data.likes_count,
-      views_count: data.views_count,
-    },
+    emoticonSet: data,
     emoticonImages: emoticonImages,
   };
 }

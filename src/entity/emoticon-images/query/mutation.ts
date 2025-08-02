@@ -1,9 +1,9 @@
 import { queryClient } from '@/provider/QueryProvider';
 import { useMutation } from '@tanstack/react-query';
-import createEmoticonImage from '../api';
+import createEmoticonImage from '../api/emoticon-images-api';
 import { emoticonImageQueryKey } from './query-key';
 
-export const useCreateEmoticonImageMutation = () => {
+export function useCreateEmoticonImageMutation() {
   return useMutation({
     mutationFn: createEmoticonImage,
     onSuccess: (_, { setId }) => {
@@ -12,4 +12,4 @@ export const useCreateEmoticonImageMutation = () => {
       });
     },
   });
-};
+}
