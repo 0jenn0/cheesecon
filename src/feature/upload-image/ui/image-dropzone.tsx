@@ -90,13 +90,13 @@ export default function ImageDropzone({
       )}
 
       {imageUrl && !isLoading && (
-        <div className='group/image bor border-radius-xl bg-primary border-ghost effect-shadow-4 relative flex aspect-square h-full w-auto items-center justify-center overflow-hidden border-1'>
+        <div className='group/image border-radius-xl bg-primary border-ghost effect-shadow-4 relative flex aspect-square h-auto w-full items-center justify-center overflow-hidden'>
           <Image
             width={240}
             height={240}
             src={imageUrl}
             alt='Uploaded preview'
-            className='h-full w-full object-cover transition-transform duration-300'
+            className='h-auto w-full object-cover transition-transform duration-300'
           />
 
           <div className='absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 transition-opacity duration-300 group-hover/image:opacity-100'>
