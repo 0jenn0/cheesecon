@@ -9,6 +9,10 @@ export const checkboxVariants = cva(
         unchecked: 'bg-primary border-interactive-secondary border',
         partial: 'bg-interactive-primary',
       },
+      disabled: {
+        true: 'bg-disabled cursor-not-allowed',
+        false: 'bg-primary border-interactive-secondary cursor-pointer border',
+      },
     },
   },
 );
