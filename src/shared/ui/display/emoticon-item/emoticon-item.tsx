@@ -42,7 +42,7 @@ function EmoticonItemRoot({
 }
 
 const contentVariants = cva(
-  'flex aspect-square h-full w-full flex-col gap-0 bg-cover bg-center bg-no-repeat',
+  'flex aspect-square h-full w-full flex-col items-center justify-center gap-0 bg-cover bg-center bg-no-repeat',
   {
     variants: {
       isDragging: {
@@ -83,7 +83,7 @@ function EmoticonItemContent({
       )} */}
       {isUploading && (
         <div className={contentVariants({ isDragging })}>
-          <Spinner />
+          <Spinner size='lg' />
         </div>
       )}
     </>
