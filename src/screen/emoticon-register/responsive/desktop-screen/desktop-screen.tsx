@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import useIntersectionObserver from '@/shared/lib/use-intersection-observer';
-import { EmoticonRegisterProvider } from '@/feature/register-emoticon/model/hook';
 import {
   EmoticonInfoForm,
   EmoticonSection,
@@ -43,7 +42,7 @@ export default function EmoticonRegisterDesktopScreen() {
   }, [isEmoticonSectionVisibleMobile]);
 
   return (
-    <EmoticonRegisterProvider>
+    <>
       <div className='padding-16 tablet:padding-24 margin-b-64 flex h-full w-full flex-col items-center gap-24'>
         <div className='padding-24 border-radius-2xl bg-primary flex w-full flex-col gap-24'>
           <h1 className='text-heading-md w-full text-start'>
@@ -69,6 +68,6 @@ export default function EmoticonRegisterDesktopScreen() {
         </section>
       </div>
       <RegisterBottomBar />
-    </EmoticonRegisterProvider>
+    </>
   );
 }
