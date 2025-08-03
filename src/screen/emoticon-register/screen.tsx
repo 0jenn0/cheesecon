@@ -1,3 +1,5 @@
+'use client';
+
 import { EmoticonRegisterProvider } from '@/feature/register-emoticon/model/hook';
 import {
   EmoticonInfoForm,
