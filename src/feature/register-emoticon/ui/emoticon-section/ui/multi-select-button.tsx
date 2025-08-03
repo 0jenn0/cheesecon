@@ -33,9 +33,10 @@ export default function MultiSelectButton() {
           다중 선택
         </Button>
       ) : (
-        <div className='flex gap-8'>
+        <div className='tablet:w-fit flex w-full gap-8'>
           <Button
             variant='secondary'
+            styleVariant='outlined'
             textClassName='text-body-sm font-semibold'
             className='tablet:w-fit w-full'
             onClick={toggleMultipleSelect}
