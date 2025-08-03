@@ -1,6 +1,5 @@
 'use client';
 
-import ProgressBar from '@/shared/ui/feedback/progress-bar/progress-bar';
 import { EmoticonProvider, UIProvider } from './provider';
 import {
   EmoticonGrid,
