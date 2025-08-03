@@ -22,7 +22,7 @@ export default function Checkbox({
       <input
         {...props}
         type='checkbox'
-        className='absolute h-full w-full opacity-0 outline-none'
+        className='absolute h-full w-full cursor-pointer opacity-0 outline-none'
         checked={status === 'checked'}
         onChange={onChange}
         ref={(input) => {

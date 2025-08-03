@@ -114,22 +114,22 @@ export default function ImageDropzone({
 
       {!imageUrl && !isLoading && (
         <div className='flex h-full w-full flex-col items-center justify-center gap-24 text-center'>
-          <div
-            className={cn(
-              'rounded-full p-6 transition-all duration-300',
-              isDragActive
-                ? 'bg-cheesecon-primary-100 text-[var(--color-cheesecon-primary-500)]'
-                : 'bg-gray-100/40',
-            )}
-          >
-            <Icon
-              name={isDragActive ? 'logo' : 'image-plus'}
-              className='icon-disabled'
-              size={32}
-            />
-          </div>
+          <div className='border-radius-xl bg-primary border-ghost flex aspect-square w-full flex-col items-center justify-center gap-12 border'>
+            <div
+              className={cn(
+                'padding-16 rounded-full transition-all duration-300',
+                isDragActive
+                  ? 'bg-cheesecon-primary-100 text-[var(--color-cheesecon-primary-500)]'
+                  : 'bg-gray-100/40',
+              )}
+            >
+              <Icon
+                name={isDragActive ? 'logo' : 'image-plus'}
+                className='icon-disabled'
+                size={24}
+              />
+            </div>
 
-          <div className='flex flex-col gap-12'>
             <h3 className='text-heading-sm'>
               {isDragActive ? '파일을 놓아주세요' : '이미지 업로드'}
             </h3>

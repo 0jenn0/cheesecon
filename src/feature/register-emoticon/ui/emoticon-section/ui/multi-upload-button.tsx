@@ -1,4 +1,6 @@
-import { useState } from 'react';
+'use client';
+
+import { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import ProgressBar from '@/shared/ui/feedback/progress-bar/progress-bar';
 import { Button } from '@/shared/ui/input';
@@ -12,12 +14,17 @@ export default function MultiUploadButton() {
     current: 0,
     total: 0,
   });
+  const [headerHeight, setHeaderHeight] = useState<number | undefined>(
+    undefined,
+  );
   const uploadImageMutation = useUploadImageMutation();
   const { handleEmoticonItem, items } = useEmoticonContext();
   const { handleSetImageUrl } = useEmoticonRegister();
 
-  const headerElement = window.document.querySelector('header');
-  const headerHeight = headerElement?.clientHeight;
+  useEffect(() => {
+    const headerElement = window.document.querySelector('header');
+    setHeaderHeight(headerElement?.clientHeight);
+  }, []);
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: async (acceptedFiles) => {

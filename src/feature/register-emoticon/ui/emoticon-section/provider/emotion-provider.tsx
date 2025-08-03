@@ -10,7 +10,8 @@ export type EmoticonItemAction =
   | 'CHECK'
   | 'UNCHECK'
   | 'CHANGE_ORDER'
-  | 'UPLOAD';
+  | 'UPLOAD'
+  | 'RESTORE_INITIAL_ORDER';
 
 const INITIAL_ITEMS = Array.from({ length: 24 }, (_, i) => ({
   imageNumber: i + 1,
@@ -19,20 +20,23 @@ const INITIAL_ITEMS = Array.from({ length: 24 }, (_, i) => ({
 
 export interface EmoticonContextType {
   items: EmoticonItem[];
+  initialOrderItems: EmoticonItem[] | null;
   changeStack: {
     imageNumber: number;
     newImageNumber: number;
   }[];
   setChangeStack: (imageNumber: number, newImageNumber: number) => void;
   clearChangeStack: () => void;
+  saveInitialOrder: () => void;
+  clearInitialOrder: () => void;
   handleEmoticonItem: (
     imageNumber: number,
     action: EmoticonItemAction,
-    {
-      newImageNumber,
-      imageNumbers,
-      imageUrl,
-    }: { newImageNumber?: number; imageNumbers?: number[]; imageUrl?: string },
+    params?: {
+      newImageNumber?: number;
+      imageNumbers?: number[];
+      imageUrl?: string;
+    },
   ) => void;
 }
 
@@ -40,6 +44,9 @@ const EmoticonContext = createContext<EmoticonContextType | null>(null);
 
 export function EmoticonProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<EmoticonItem[]>(INITIAL_ITEMS);
+  const [initialOrderItems, setInitialOrderItems] = useState<
+    EmoticonItem[] | null
+  >(null);
   const [changeStack, setChangeStackState] = useState<
     {
       imageNumber: number;
@@ -55,13 +62,21 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
     setChangeStackState([]);
   };
 
+  const saveInitialOrder = () => {
+    setInitialOrderItems([...items]);
+  };
+
+  const clearInitialOrder = () => {
+    setInitialOrderItems(null);
+  };
+
   type typeOfImageNumber = (typeof items)[number]['imageNumber'];
 
   const handleCheckEmoticonItem = useCallback(
-    (imageNumbers: typeOfImageNumber[]) => {
+    (imageNumber: typeOfImageNumber) => {
       setItems((prevItems) =>
         prevItems.map((item) =>
-          imageNumbers.includes(item.imageNumber)
+          item.imageNumber === imageNumber
             ? { ...item, isChecked: true }
             : item,
         ),
@@ -71,10 +86,10 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
   );
 
   const handleUncheckEmoticonItem = useCallback(
-    (imageNumbers: typeOfImageNumber[]) => {
+    (imageNumber: typeOfImageNumber) => {
       setItems((prevItems) =>
         prevItems.map((item) =>
-          imageNumbers.includes(item.imageNumber)
+          item.imageNumber === imageNumber
             ? { ...item, isChecked: false }
             : item,
         ),
@@ -85,15 +100,25 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
 
   const handleChangeOrderEmoticonItem = useCallback(
     (imageNumber: typeOfImageNumber, newImageNumber: typeOfImageNumber) => {
-      setItems((prevItems) =>
-        prevItems.map((item) =>
-          item.imageNumber === imageNumber
-            ? { ...item, imageNumber: newImageNumber }
-            : item.imageNumber === newImageNumber
-              ? { ...item, imageNumber: imageNumber }
-              : item,
-        ),
-      );
+      setItems((prevItems) => {
+        const newItems = [...prevItems];
+        const activeIndex = newItems.findIndex(
+          (item) => item.imageNumber === imageNumber,
+        );
+        const overIndex = newItems.findIndex(
+          (item) => item.imageNumber === newImageNumber,
+        );
+        if (activeIndex === -1 || overIndex === -1) {
+          return prevItems;
+        }
+        const [movedItem] = newItems.splice(activeIndex, 1);
+        newItems.splice(overIndex, 0, movedItem);
+
+        return newItems.map((item, index) => ({
+          ...item,
+          imageNumber: index + 1,
+        }));
+      });
     },
     [],
   );
@@ -109,54 +134,46 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
     [],
   );
 
+  const handleRestoreInitialOrder = useCallback(() => {
+    if (initialOrderItems) {
+      setItems([...initialOrderItems]);
+    }
+  }, [initialOrderItems]);
+
   const handleEmoticonItem = useCallback(
     (
-      imageNumber: typeOfImageNumber[] | typeOfImageNumber,
+      imageNumber: typeOfImageNumber,
       action: EmoticonItemAction,
-      {
-        newImageNumber,
-        imageUrl,
-      }: {
+      params?: {
         newImageNumber?: typeOfImageNumber;
+        imageNumbers?: typeOfImageNumber[];
         imageUrl?: string;
       },
     ) => {
+      const { newImageNumber, imageUrl } = params || {};
       switch (action) {
         case 'CHECK':
-          handleCheckEmoticonItem(
-            Array.isArray(imageNumber) ? imageNumber : [imageNumber],
-          );
+          handleCheckEmoticonItem(imageNumber);
           break;
         case 'UNCHECK':
-          handleUncheckEmoticonItem(
-            Array.isArray(imageNumber) ? imageNumber : [imageNumber],
-          );
+          handleUncheckEmoticonItem(imageNumber);
           break;
         case 'CHANGE_ORDER':
           if (newImageNumber) {
-            if (Array.isArray(imageNumber)) {
-              throw new Error(
-                'imageNumber는 하나의 이모티콘만 변경할 수 있습니다.',
-              );
-            } else {
-              handleChangeOrderEmoticonItem(imageNumber, newImageNumber);
-            }
+            handleChangeOrderEmoticonItem(imageNumber, newImageNumber);
           } else {
             throw new Error('newImageNumber가 필요합니다.');
           }
           break;
         case 'UPLOAD':
-          if (Array.isArray(imageNumber)) {
-            throw new Error(
-              'imageNumber는 하나의 이모티콘만 변경할 수 있습니다.',
-            );
+          if (imageUrl || imageUrl === '') {
+            handleUploadEmoticonItem(imageNumber, imageUrl);
           } else {
-            if (imageUrl) {
-              handleUploadEmoticonItem(imageNumber, imageUrl);
-            } else {
-              throw new Error('imageUrl이 필요합니다.');
-            }
+            throw new Error('imageUrl이 필요합니다.');
           }
+          break;
+        case 'RESTORE_INITIAL_ORDER':
+          handleRestoreInitialOrder();
           break;
         default:
           throw new Error('잘못된 액션입니다.');
@@ -167,6 +184,7 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
       handleUncheckEmoticonItem,
       handleChangeOrderEmoticonItem,
       handleUploadEmoticonItem,
+      handleRestoreInitialOrder,
     ],
   );
 
@@ -174,9 +192,12 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
     <EmoticonContext.Provider
       value={{
         items,
+        initialOrderItems,
         changeStack,
         setChangeStack,
         clearChangeStack,
+        saveInitialOrder,
+        clearInitialOrder,
         handleEmoticonItem,
       }}
     >

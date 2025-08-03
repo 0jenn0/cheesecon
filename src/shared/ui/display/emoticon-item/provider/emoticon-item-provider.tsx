@@ -1,40 +1,32 @@
-import { PropsWithChildren, createContext, useContext, useState } from 'react';
+import { PropsWithChildren, createContext, useContext } from 'react';
 
 export interface EmoticonItemContextType {
   imageNumber: number;
+  imageUrl: string;
 
   showCheckbox: boolean;
-  isChecked: boolean;
-  handleCheck: () => void;
-
   showGripIcon: boolean;
 
-  imageUrl: string;
   isUploading: boolean;
-
   isDragging: boolean;
 }
 
 export const emoticonItemContext = createContext<EmoticonItemContextType>({
   imageNumber: 0,
+  imageUrl: '',
 
   showCheckbox: false,
-  isChecked: false,
-  handleCheck: () => {},
-
   showGripIcon: false,
 
-  imageUrl: '',
   isUploading: false,
-
   isDragging: false,
 });
 
 export function EmoticonItemProvider({
   imageNumber,
+  imageUrl = '',
   showCheckbox = false,
   showGripIcon = false,
-  imageUrl = '',
   isUploading = false,
   isDragging = false,
   children,
@@ -46,22 +38,15 @@ export function EmoticonItemProvider({
   isUploading?: boolean;
   isDragging?: boolean;
 }>) {
-  const [isChecked, setIsChecked] = useState(false);
-
-  const handleCheck = () => {
-    setIsChecked(!isChecked);
-  };
-
   return (
     <emoticonItemContext.Provider
       value={{
         imageNumber,
+        imageUrl,
+
         showCheckbox,
-        isChecked,
-        handleCheck,
         showGripIcon,
 
-        imageUrl,
         isUploading,
         isDragging,
       }}
