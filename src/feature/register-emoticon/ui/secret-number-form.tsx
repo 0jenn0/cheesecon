@@ -21,7 +21,7 @@ export default function SecretNumberForm() {
   };
 
   return (
-    <section className='flex flex-col gap-24'>
+    <section className='flex w-full flex-col gap-24'>
       <div className='flex flex-col gap-12'>
         <div className='flex w-full items-center gap-12'>
           <Checkbox
@@ -48,23 +48,23 @@ export default function SecretNumberForm() {
       </div>
 
       {emoticonSet.is_private && (
-        <div className='bg-secondary padding-24 border-radius-2xl flex flex-col gap-16'>
+        <div className='tablet:bg-secondary tablet:padding-24 border-radius-2xl flex flex-col gap-16'>
           <TextField
             name='secretNumber'
             label='비밀 번호'
             placeholder='****'
-            direction='row'
             labelType='required'
             placeholderClassName='padding-y-12'
+            responsiveDirection={{ mobile: 'column', desktop: 'row' }}
             onChange={handlePasswordChange}
           />
           <TextField
             name='secretNumber'
             label='비밀 번호 확인'
             placeholder='****'
-            direction='row'
             labelType='required'
             placeholderClassName='padding-y-12'
+            responsiveDirection={{ mobile: 'column', desktop: 'row' }}
             onChange={handlePasswordChange}
           />
         </div>

@@ -31,51 +31,51 @@ export default function EmoticonInfoForm() {
   };
 
   return (
-    <div className='flex flex-1 flex-col gap-16'>
+    <div className='flex w-full flex-1 flex-col gap-16'>
       <TextField
         name='title'
         label='이모티콘 이름'
         placeholder='이모티콘 이름'
-        direction='row'
         labelType='required'
         placeholderClassName='padding-y-12'
+        responsiveDirection={{ mobile: 'column', desktop: 'row' }}
         onChange={handleInputChange}
       />
       <TextField
         name='author_name'
         label='이모티콘 작가명'
         placeholder='이모티콘 작가명'
-        direction='row'
         labelType='required'
         placeholderClassName='padding-y-12'
+        responsiveDirection={{ mobile: 'column', desktop: 'row' }}
         onChange={handleInputChange}
       />
       <SelectField
         name='platform'
         label='이모티콘 플랫폼'
         placeholder='이모티콘 플랫폼'
-        direction='row'
         labelType='required'
         options={['카카오톡', '라인']}
         selectClassName='padding-y-12 text-body-sm'
+        responsiveDirection={{ mobile: 'column', desktop: 'row' }}
         onChange={handleSelectChange}
       />
       <SelectField
         name='type'
         label='이모티콘 유형'
         placeholder='이모티콘 유형'
-        direction='row'
         labelType='required'
         options={['움직이는 이모티콘', '멈춰있는 이모티콘']}
         selectClassName='padding-y-12 text-body-sm'
+        responsiveDirection={{ mobile: 'column', desktop: 'row' }}
         onChange={handleSelectChange}
       />
       <TextAreaField
         name='description'
         label='이모티콘 설명'
         placeholder='이모티콘 설명'
-        direction='row'
         labelType='required'
+        responsiveDirection={{ mobile: 'column', desktop: 'row' }}
         onChange={handleTextAreaChange}
       />
     </div>

@@ -22,6 +22,10 @@ export interface TextFieldProps extends ComponentPropsWithRef<'div'> {
   disabled?: boolean;
   helpMessage?: Record<SelectVariant, string>;
   direction?: SelectDirection;
+  responsiveDirection?: {
+    mobile: SelectDirection;
+    desktop: SelectDirection;
+  };
   options: string[];
   labelClassName?: string;
   selectClassName?: string;
@@ -35,6 +39,7 @@ export default function SelectField({
   disabled = false,
   helpMessage,
   direction = 'column',
+  responsiveDirection,
   options,
   className,
   labelClassName,
@@ -47,13 +52,15 @@ export default function SelectField({
       className={cn(
         'flex w-full flex-col gap-12',
         direction === 'row' && 'flex-row items-start',
+        responsiveDirection &&
+          `flex-${responsiveDirection.mobile} md:flex-${responsiveDirection.desktop} items-start`,
         className,
       )}
     >
       <Label type={labelType} className={labelClassName}>
         {label}
       </Label>
-      <div className='flex flex-1 flex-col gap-8'>
+      <div className='flex w-full flex-1 flex-col gap-8'>
         <Select
           name={name}
           label='이모티콘 플랫폼'
