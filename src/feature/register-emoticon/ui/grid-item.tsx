@@ -1,4 +1,4 @@
-import { ComponentPropsWithRef, useCallback, useEffect, useState } from 'react';
+import { ComponentPropsWithRef, useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { cn } from '@/shared/lib/utils';
 import { Icon } from '@/shared/ui/display';
@@ -42,6 +42,7 @@ const GridItem = ({
         try {
           const result = await uploadImageMutation.mutateAsync(formData);
           setImageUrl(result.url);
+          onImageUpload?.(imageNumber, result.url);
 
           // TODO: 토스트로 성공처리
           console.log('Upload successful:', result);
@@ -87,12 +88,6 @@ const GridItem = ({
     transition,
     opacity: isDragging ? 0.5 : 1,
   };
-
-  useEffect(() => {
-    if (imageUrl) {
-      onImageUpload?.(imageNumber, imageUrl);
-    }
-  }, [imageUrl, onImageUpload]);
 
   const dragProps = isDraggable ? { ...attributes, ...listeners } : {};
   const dropzoneProps = !isDraggable ? getRootProps() : {};
