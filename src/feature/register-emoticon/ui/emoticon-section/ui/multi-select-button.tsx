@@ -19,6 +19,20 @@ export default function MultiSelectButton() {
     });
   };
 
+  const isCheckedItemsIsTwo =
+    items.filter((item) => item.isChecked).length === 2;
+
+  const handleChangeOrderSelectedItems = () => {
+    const checkedItems = items.filter((item) => item.isChecked);
+
+    const imageNumber = checkedItems[0].imageNumber;
+    const newImageNumber = checkedItems[1].imageNumber;
+
+    handleEmoticonItem(imageNumber, 'CHANGE_ORDER', {
+      newImageNumber,
+    });
+  };
+
   const isCheckedItemsHasImageUrl = items.some(
     (item) => item.isChecked && item.imageUrl,
   );
@@ -31,7 +45,6 @@ export default function MultiSelectButton() {
           textClassName='text-body-sm font-semibold'
           className='tablet:w-fit w-full'
           onClick={toggleMultipleSelect}
-          disabled={isOrderChange}
         >
           다중 선택
         </Button>
@@ -41,18 +54,18 @@ export default function MultiSelectButton() {
             variant='secondary'
             textClassName='text-body-sm font-semibold'
             className='tablet:w-fit w-full'
-            onClick={handleDeleteSelectedItems}
-            disabled={!isCheckedItemsHasImageUrl}
-          >
-            선택 삭제
-          </Button>
-          <Button
-            variant='secondary'
-            textClassName='text-body-sm font-semibold'
-            className='tablet:w-fit w-full'
             onClick={toggleMultipleSelect}
           >
             취소
+          </Button>
+          <Button
+            variant='danger'
+            styleVariant='outlined'
+            textClassName='text-body-sm font-semibold'
+            className='tablet:w-fit w-full'
+            onClick={handleDeleteSelectedItems}
+          >
+            선택 삭제
           </Button>
         </div>
       )}
