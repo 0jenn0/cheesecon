@@ -1,35 +1,27 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import StepIndicator from '@/shared/ui/display/step-indicator/step-indicator';
-import { Button } from '@/shared/ui/input';
 import { EmoticonRegisterProvider } from '@/feature/register-emoticon/model/hook';
-import { useEmoticonRegisterContext } from './model/emoticon-register-context';
+import { RegisterBottomBarMobile } from '@/feature/register-emoticon/ui';
+import { useEmoticonRegisterContext, useStep } from './model';
 import {
   EmoticonRegisterStep1Screen,
   EmoticonRegisterStep2Screen,
 } from './responsive';
 
+const INITIAL_STEP = 0;
 const STEP_COUNT = 2;
 
-export default function EmoticonRegisterMobileScreen({
-  step = 0,
-}: {
-  step?: number;
-}) {
-  const [currentStep, setCurrentStep] = useState(step);
+export default function EmoticonRegisterMobileScreen() {
+  const { currentStep, handleStepChange } = useStep(INITIAL_STEP, STEP_COUNT);
   const { isEmoticonSectionVisible } = useEmoticonRegisterContext();
 
   useEffect(() => {
     if (isEmoticonSectionVisible && currentStep === 0) {
-      setCurrentStep(1);
+      handleStepChange(STEP_COUNT - 1);
     }
   }, [isEmoticonSectionVisible, currentStep]);
-
-  const handleNextStep = () => {
-    setCurrentStep(Math.min(currentStep + 1, STEP_COUNT - 1));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
   return (
     <EmoticonRegisterProvider>
@@ -38,15 +30,11 @@ export default function EmoticonRegisterMobileScreen({
         {currentStep === 0 && <EmoticonRegisterStep1Screen />}
         {currentStep === 1 && <EmoticonRegisterStep2Screen />}
       </section>
-      <div className='padding-16 fixed right-0 bottom-0 left-0'>
-        <Button
-          className='w-full'
-          textClassName='text-body-lg font-semibold'
-          onClick={handleNextStep}
-        >
-          {currentStep === STEP_COUNT - 1 ? '등록하기' : '다음'}
-        </Button>
-      </div>
+      <RegisterBottomBarMobile
+        currentStep={currentStep}
+        STEP_COUNT={STEP_COUNT}
+        handleStepChange={handleStepChange}
+      />
     </EmoticonRegisterProvider>
   );
 }
