@@ -3,27 +3,30 @@ import useEmoticonContext from '../provider/emotion-provider';
 import useUIContext from '../provider/ui-provider';
 
 export default function OrderChangeButton() {
-  const { changeStack, clearChangeStack, handleEmoticonItem } =
-    useEmoticonContext();
-  const { isOrderChange, toggleOrderChange, handleOrderChange } =
-    useUIContext();
+  const {
+    changeStack,
+    clearChangeStack,
+    saveInitialOrder,
+    clearInitialOrder,
+    handleEmoticonItem,
+  } = useEmoticonContext();
+  const { isOrderChange, handleOrderChange } = useUIContext();
 
-  const handleUndo = () => {
-    const reversedChanges = [...changeStack].reverse();
-    reversedChanges.forEach((change) => {
-      handleEmoticonItem(change.newImageNumber, 'CHANGE_ORDER', {
-        newImageNumber: change.imageNumber,
-      });
-    });
+  const handleStartOrderChange = () => {
+    saveInitialOrder();
+    handleOrderChange(true);
   };
 
   const handleCancelOrder = () => {
-    handleUndo();
+    handleEmoticonItem(0, 'RESTORE_INITIAL_ORDER');
     clearChangeStack();
+    clearInitialOrder();
     handleOrderChange(false);
   };
 
   const handleSaveOrder = () => {
+    clearChangeStack();
+    clearInitialOrder();
     handleOrderChange(false);
   };
 
@@ -55,7 +58,7 @@ export default function OrderChangeButton() {
           variant='secondary'
           className='tablet:w-fit w-full'
           textClassName='text-body-sm font-semibold'
-          onClick={toggleOrderChange}
+          onClick={handleStartOrderChange}
         >
           순서 바꾸기
         </Button>
