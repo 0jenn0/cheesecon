@@ -88,6 +88,7 @@ export default function MultiUploadButton() {
       <Button
         variant='primary'
         textClassName='text-body-sm font-semibold'
+        className='tablet:w-fit w-full'
         leadingIcon='image-plus'
       >
         다중 업로드
