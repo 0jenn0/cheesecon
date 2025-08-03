@@ -73,7 +73,7 @@ export default function ImageDropzone({
       {...getRootProps()}
       className={cn(
         'group relative flex h-full w-full cursor-pointer flex-col items-center justify-center',
-        'padding-24 border-width-xs rounded-2xl border-2 border-dashed transition-all duration-300 ease-in-out',
+        'padding-24 border-width-xs rounded-2xl border-dashed transition-all duration-300 ease-in-out',
         isDragActive
           ? 'effect-shadow-16 bg-primary scale-[1.02] border-[var(--color-cheesecon-primary-500)]'
           : 'border-interactive-secondary-subtle bg-interactive-secondary-subtle',
