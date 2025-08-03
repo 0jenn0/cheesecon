@@ -1,6 +1,7 @@
 import { ComponentPropsWithRef, PropsWithChildren } from 'react';
 import { VariantProps, cva } from 'class-variance-authority';
 import { cn } from '@/shared/lib';
+import useEmoticonContext from '@/feature/register-emoticon/ui/emoticon-section/provider/emotion-provider';
 import { Spinner } from '../../feedback';
 import Icon from '../../icon/icon';
 import { Checkbox } from '../../input';
@@ -94,13 +95,16 @@ function EmoticonItemHeader({
   className,
   ...props
 }: ComponentPropsWithRef<'div'>) {
-  const {
-    imageNumber,
-    showCheckbox,
+  const { imageNumber, showCheckbox } = useEmoticonItem();
 
-    isChecked,
-    handleCheck,
-  } = useEmoticonItem();
+  const { items, handleEmoticonItem } = useEmoticonContext();
+  const isChecked = items.find(
+    (item) => item.imageNumber === imageNumber,
+  )?.isChecked;
+
+  const handleCheckboxClick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleEmoticonItem(imageNumber, e.target.checked ? 'CHECK' : 'UNCHECK');
+  };
 
   return (
     <div
@@ -115,7 +119,8 @@ function EmoticonItemHeader({
         <Checkbox
           status={isChecked ? 'checked' : 'unchecked'}
           checked={isChecked}
-          onChange={handleCheck}
+          onChange={handleCheckboxClick}
+          onClick={(e) => e.stopPropagation()}
         />
       ) : (
         <div className='width-24 height-24' />
