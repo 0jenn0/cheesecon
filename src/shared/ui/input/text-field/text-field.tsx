@@ -1,4 +1,5 @@
 import { ComponentPropsWithRef } from 'react';
+import { VariantProps, cva } from 'class-variance-authority';
 import { cn } from '@/shared/lib';
 import { Label } from '..';
 import { IconProps } from '../../icon/icon';
@@ -12,7 +13,18 @@ export type TextFieldVariant = (typeof TEXTFIELD_VARIANT)[number];
 export const TEXTFIELD_DIRECTION = ['row', 'column'] as const;
 export type TextFieldDirection = (typeof TEXTFIELD_DIRECTION)[number];
 
-export interface TextFieldProps extends ComponentPropsWithRef<'div'> {
+const textFieldVariants = cva('flex w-full', {
+  variants: {
+    direction: {
+      column: 'flex-col gap-12',
+      row: 'tablet:flex-row flex-row gap-12',
+    },
+  },
+});
+
+export interface TextFieldProps
+  extends ComponentPropsWithRef<'div'>,
+    VariantProps<typeof textFieldVariants> {
   label: string;
   placeholder: string;
   placeholderIcon?: IconProps['name'];
@@ -22,10 +34,6 @@ export interface TextFieldProps extends ComponentPropsWithRef<'div'> {
   disabled?: boolean;
   helpMessage?: Record<TextFieldVariant, string>;
   direction?: TextFieldDirection;
-  responsiveDirection?: {
-    mobile: TextFieldDirection;
-    desktop: TextFieldDirection;
-  };
   labelClassName?: string;
   placeholderClassName?: string;
   name?: string;
@@ -40,26 +48,18 @@ export default function TextField({
   variant = 'default',
   disabled = false,
   helpMessage,
-  direction = 'column',
-  responsiveDirection,
-  className,
+  direction,
   labelClassName,
   placeholderClassName,
   onChange,
   name,
 }: TextFieldProps) {
-  const finalDirection = responsiveDirection
-    ? `${responsiveDirection.mobile} md:${responsiveDirection.desktop}`
-    : direction;
-
   return (
     <div
       className={cn(
-        'flex w-full flex-col gap-12',
-        direction === 'row' && 'flex-row items-start',
-        responsiveDirection &&
-          `flex-${responsiveDirection.mobile} md:flex-${responsiveDirection.desktop} items-start`,
-        className,
+        direction
+          ? textFieldVariants({ direction })
+          : 'tablet:flex-row flex flex-col gap-12',
       )}
     >
       <Label type={labelType} className={labelClassName}>

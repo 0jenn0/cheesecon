@@ -38,7 +38,7 @@ export default function EmoticonInfoForm() {
         placeholder='이모티콘 이름'
         labelType='required'
         placeholderClassName='padding-y-12'
-        responsiveDirection={{ mobile: 'column', desktop: 'row' }}
+        direction='column'
         onChange={handleInputChange}
       />
       <TextField
@@ -47,7 +47,7 @@ export default function EmoticonInfoForm() {
         placeholder='이모티콘 작가명'
         labelType='required'
         placeholderClassName='padding-y-12'
-        responsiveDirection={{ mobile: 'column', desktop: 'row' }}
+        direction='column'
         onChange={handleInputChange}
       />
       <SelectField
