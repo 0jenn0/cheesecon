@@ -1,18 +1,18 @@
 import { Indicator } from './ui';
 
 export interface StepIndicatorProps {
-  steps: number[];
   currentStep: number;
+  totalStep: number;
 }
 
 export default function StepIndicator({
-  steps,
   currentStep,
+  totalStep,
 }: StepIndicatorProps) {
   return (
     <div className='flex items-center gap-4'>
-      {steps.map((step) => (
-        <Indicator key={step} step={step} currentStep={currentStep} />
+      {Array.from({ length: totalStep }).map((_, index) => (
+        <Indicator key={index} step={index} currentStep={currentStep} />
       ))}
     </div>
   );

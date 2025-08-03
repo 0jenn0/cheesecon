@@ -9,6 +9,7 @@ export default function MultiSelectButton() {
     <Button
       variant='secondary'
       textClassName='text-body-sm font-semibold'
+      className='tablet:w-fit w-full'
       onClick={handleMultipleSelect}
       disabled={isOrderChange}
     >

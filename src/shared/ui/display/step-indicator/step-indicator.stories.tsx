@@ -14,9 +14,9 @@ const meta: Meta<typeof StepIndicator> = {
     },
   },
   argTypes: {
-    steps: {
-      control: { type: 'object' },
-      description: '단계 배열 (숫자 배열)',
+    totalStep: {
+      control: { type: 'number' },
+      description: '총 단계 수',
     },
     currentStep: {
       control: { type: 'number' },
@@ -31,35 +31,35 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    steps: [1, 2, 3, 4],
+    totalStep: 4,
     currentStep: 2,
   },
 };
 
 export const ThreeSteps: Story = {
   args: {
-    steps: [1, 2, 3],
+    totalStep: 3,
     currentStep: 1,
   },
 };
 
 export const FiveSteps: Story = {
   args: {
-    steps: [1, 2, 3, 4, 5],
+    totalStep: 5,
     currentStep: 3,
   },
 };
 
 export const FirstStep: Story = {
   args: {
-    steps: [1, 2, 3, 4],
+    totalStep: 4,
     currentStep: 1,
   },
 };
 
 export const LastStep: Story = {
   args: {
-    steps: [1, 2, 3, 4],
+    totalStep: 4,
     currentStep: 4,
   },
 };
@@ -76,25 +76,25 @@ export const AllStepStates: Story = {
             <span className='w-20 text-sm font-medium text-gray-600'>
               1단계:
             </span>
-            <StepIndicator steps={[1, 2, 3, 4]} currentStep={1} />
+            <StepIndicator totalStep={4} currentStep={1} />
           </div>
           <div className='flex items-center gap-16'>
             <span className='w-20 text-sm font-medium text-gray-600'>
               2단계:
             </span>
-            <StepIndicator steps={[1, 2, 3, 4]} currentStep={2} />
+            <StepIndicator totalStep={4} currentStep={2} />
           </div>
           <div className='flex items-center gap-16'>
             <span className='w-20 text-sm font-medium text-gray-600'>
               3단계:
             </span>
-            <StepIndicator steps={[1, 2, 3, 4]} currentStep={3} />
+            <StepIndicator totalStep={4} currentStep={3} />
           </div>
           <div className='flex items-center gap-16'>
             <span className='w-20 text-sm font-medium text-gray-600'>
               4단계:
             </span>
-            <StepIndicator steps={[1, 2, 3, 4]} currentStep={4} />
+            <StepIndicator totalStep={4} currentStep={4} />
           </div>
         </div>
       </div>

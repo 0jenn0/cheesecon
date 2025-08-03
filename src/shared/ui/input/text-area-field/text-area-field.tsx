@@ -22,6 +22,10 @@ export interface TextAreaFieldProps
   disabled?: boolean;
   helpMessage?: Record<TextFieldVariant, string>;
   direction?: TextFieldDirection;
+  responsiveDirection?: {
+    mobile: TextFieldDirection;
+    desktop: TextFieldDirection;
+  };
   labelType?: LabelProps['type'];
   labelClassName?: string;
   textAreaClassName?: string;
@@ -36,6 +40,7 @@ export default function TextAreaField({
   disabled = false,
   helpMessage,
   direction = 'column',
+  responsiveDirection,
   labelType = 'default',
   className,
   labelClassName,
@@ -49,13 +54,15 @@ export default function TextAreaField({
       className={cn(
         'flex flex-col gap-12',
         direction === 'row' && 'flex-row items-start',
+        responsiveDirection &&
+          `flex-${responsiveDirection.mobile} md:flex-${responsiveDirection.desktop} items-start`,
         className,
       )}
     >
       <Label type={labelType} className={labelClassName}>
         {label}
       </Label>
-      <div className='flex flex-1 flex-col gap-8'>
+      <div className='flex w-full flex-1 flex-col gap-8'>
         <TextArea
           name={name}
           placeholder={placeholder}

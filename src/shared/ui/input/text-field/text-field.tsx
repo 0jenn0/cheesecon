@@ -22,6 +22,10 @@ export interface TextFieldProps extends ComponentPropsWithRef<'div'> {
   disabled?: boolean;
   helpMessage?: Record<TextFieldVariant, string>;
   direction?: TextFieldDirection;
+  responsiveDirection?: {
+    mobile: TextFieldDirection;
+    desktop: TextFieldDirection;
+  };
   labelClassName?: string;
   placeholderClassName?: string;
   name?: string;
@@ -37,24 +41,31 @@ export default function TextField({
   disabled = false,
   helpMessage,
   direction = 'column',
+  responsiveDirection,
   className,
   labelClassName,
   placeholderClassName,
   onChange,
   name,
 }: TextFieldProps) {
+  const finalDirection = responsiveDirection
+    ? `${responsiveDirection.mobile} md:${responsiveDirection.desktop}`
+    : direction;
+
   return (
     <div
       className={cn(
         'flex w-full flex-col gap-12',
         direction === 'row' && 'flex-row items-start',
+        responsiveDirection &&
+          `flex-${responsiveDirection.mobile} md:flex-${responsiveDirection.desktop} items-start`,
         className,
       )}
     >
       <Label type={labelType} className={labelClassName}>
         {label}
       </Label>
-      <div className='flex flex-1 flex-col gap-8'>
+      <div className='flex w-full flex-1 flex-col gap-8'>
         <Placeholder
           name={name}
           placeholder={placeholder}
