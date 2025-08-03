@@ -192,11 +192,11 @@ export type Database = {
           likes_count: number | null
           password_hash: string | null
           platform: string
-          representative_image_url: string | null
+          representative_image_url: string
           title: string
           type: string
           updated_at: string | null
-          user_id: string | null
+          user_id: string
           views_count: number | null
         }
         Insert: {
@@ -209,11 +209,11 @@ export type Database = {
           likes_count?: number | null
           password_hash?: string | null
           platform: string
-          representative_image_url?: string | null
+          representative_image_url: string
           title: string
           type: string
           updated_at?: string | null
-          user_id?: string | null
+          user_id: string
           views_count?: number | null
         }
         Update: {
@@ -226,11 +226,11 @@ export type Database = {
           likes_count?: number | null
           password_hash?: string | null
           platform?: string
-          representative_image_url?: string | null
+          representative_image_url?: string
           title?: string
           type?: string
           updated_at?: string | null
-          user_id?: string | null
+          user_id?: string
           views_count?: number | null
         }
         Relationships: [
