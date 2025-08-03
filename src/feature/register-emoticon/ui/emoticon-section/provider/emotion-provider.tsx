@@ -19,6 +19,12 @@ const INITIAL_ITEMS = Array.from({ length: 24 }, (_, i) => ({
 
 export interface EmoticonContextType {
   items: EmoticonItem[];
+  changeStack: {
+    imageNumber: number;
+    newImageNumber: number;
+  }[];
+  setChangeStack: (imageNumber: number, newImageNumber: number) => void;
+  clearChangeStack: () => void;
   handleEmoticonItem: (
     imageNumber: number,
     action: EmoticonItemAction,
@@ -30,15 +36,24 @@ export interface EmoticonContextType {
   ) => void;
 }
 
-const EmoticonContext = createContext<EmoticonContextType>({
-  items: [],
-  handleEmoticonItem: () => {
-    throw new Error('handleEmoticonItem 함수를 정의해주세요.');
-  },
-});
+const EmoticonContext = createContext<EmoticonContextType | null>(null);
 
 export function EmoticonProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<EmoticonItem[]>(INITIAL_ITEMS);
+  const [changeStack, setChangeStackState] = useState<
+    {
+      imageNumber: number;
+      newImageNumber: number;
+    }[]
+  >([]);
+
+  const setChangeStack = (imageNumber: number, newImageNumber: number) => {
+    setChangeStackState((prev) => [...prev, { imageNumber, newImageNumber }]);
+  };
+
+  const clearChangeStack = () => {
+    setChangeStackState([]);
+  };
 
   type typeOfImageNumber = (typeof items)[number]['imageNumber'];
 
@@ -156,7 +171,15 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <EmoticonContext.Provider value={{ items, handleEmoticonItem }}>
+    <EmoticonContext.Provider
+      value={{
+        items,
+        changeStack,
+        setChangeStack,
+        clearChangeStack,
+        handleEmoticonItem,
+      }}
+    >
       {children}
     </EmoticonContext.Provider>
   );

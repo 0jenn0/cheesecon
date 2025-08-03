@@ -3,10 +3,9 @@ import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 import GridItem from '../../grid-item';
 import useEmoticonContext from '../provider/emotion-provider';
-import useUIContext from '../provider/ui-provider';
 
 export default function EmoticonGrid() {
-  const { items, handleEmoticonItem } = useEmoticonContext();
+  const { items, setChangeStack, handleEmoticonItem } = useEmoticonContext();
 
   const handleImageUpload = useCallback(
     (imageNumber: number, imageUrl: string) => {
@@ -21,6 +20,7 @@ export default function EmoticonGrid() {
       handleEmoticonItem(Number(active.id), 'CHANGE_ORDER', {
         newImageNumber: Number(over.id),
       });
+      setChangeStack(Number(active.id), Number(over.id));
     }
   }, []);
 

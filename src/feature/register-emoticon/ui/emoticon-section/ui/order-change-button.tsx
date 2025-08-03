@@ -4,19 +4,27 @@ import useEmoticonContext from '../provider/emotion-provider';
 import useUIContext from '../provider/ui-provider';
 
 export default function OrderChangeButton() {
-  const { items, handleEmoticonItem } = useEmoticonContext();
+  const { changeStack, setChangeStack, clearChangeStack, handleEmoticonItem } =
+    useEmoticonContext();
   const { isOrderChange, toggleOrderChange, handleOrderChange } =
     useUIContext();
 
-  const [isSaveChanged, setIsSaveChanged] = useState(false);
+  const handleUndo = () => {
+    const reversedChanges = [...changeStack].reverse();
+    reversedChanges.forEach((change) => {
+      handleEmoticonItem(change.newImageNumber, 'CHANGE_ORDER', {
+        newImageNumber: change.imageNumber,
+      });
+    });
+  };
 
   const handleCancelOrder = () => {
-    setIsSaveChanged(false);
+    handleUndo();
+    clearChangeStack();
     handleOrderChange(false);
   };
 
   const handleSaveOrder = () => {
-    setIsSaveChanged(true);
     handleOrderChange(false);
   };
 
@@ -36,9 +44,9 @@ export default function OrderChangeButton() {
             variant='primary'
             textClassName='text-body-sm font-semibold'
             onClick={handleSaveOrder}
-            disabled={!isSaveChanged}
+            disabled={!changeStack.length}
           >
-            {isSaveChanged ? '저장' : '저장됨'}
+            {changeStack.length ? '저장' : '저장됨'}
           </Button>
         </div>
       ) : (
