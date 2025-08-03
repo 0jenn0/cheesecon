@@ -7,12 +7,10 @@ import useUIContext from '../provider/ui-provider';
 
 export default function EmoticonGrid() {
   const { items, handleEmoticonItem } = useEmoticonContext();
-  const { isMultipleSelect, isOrderChange } = useUIContext();
 
   const handleImageUpload = useCallback(
     (imageNumber: number, imageUrl: string) => {
       handleEmoticonItem(imageNumber, 'UPLOAD', { imageUrl });
-      handleSetImageUrl([{ imageUrl, imageOrder: imageNumber }]);
     },
     [handleEmoticonItem],
   );
@@ -38,9 +36,6 @@ export default function EmoticonGrid() {
               key={item.imageNumber}
               id={item.imageNumber}
               imageNumber={index + 1}
-              showCheckbox={isMultipleSelect}
-              showGripIcon={isOrderChange}
-              isDraggable={isOrderChange}
               onImageUpload={handleImageUpload}
             />
           ))}

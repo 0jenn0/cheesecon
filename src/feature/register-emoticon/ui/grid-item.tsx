@@ -6,27 +6,25 @@ import EmoticonItem from '@/shared/ui/display/emoticon-item/emoticon-item';
 import { useUploadImageMutation } from '@/feature/upload-image/model/upload-image-mutation';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import useUIContext from './emoticon-section/provider/ui-provider';
 
 export interface GridItemProps
   extends Omit<ComponentPropsWithRef<'div'>, 'id'> {
   id: number;
   imageNumber: number;
-  showCheckbox?: boolean;
-  showGripIcon?: boolean;
-  isDraggable?: boolean;
   onImageUpload?: (imageNumber: number, preview: string) => void;
 }
 
 const GridItem = ({
   id,
   imageNumber,
-  showCheckbox = false,
-  showGripIcon = false,
+
   onImageUpload,
   ref,
-  isDraggable = false,
+
   ...props
 }: GridItemProps) => {
+  const { isMultipleSelect, isOrderChange } = useUIContext();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const uploadImageMutation = useUploadImageMutation();
 
@@ -66,7 +64,7 @@ const GridItem = ({
       'image/webp': ['.webp'],
     },
     maxSize: 5 * 1024 * 1024,
-    disabled: uploadImageMutation.isPending || isDraggable,
+    disabled: uploadImageMutation.isPending || isOrderChange,
   });
 
   const {
@@ -78,7 +76,7 @@ const GridItem = ({
     isDragging,
   } = useSortable({
     id,
-    disabled: !isDraggable,
+    disabled: !isOrderChange,
   });
 
   const hasImage = Boolean(imageUrl);
@@ -89,8 +87,8 @@ const GridItem = ({
     opacity: isDragging ? 0.5 : 1,
   };
 
-  const dragProps = isDraggable ? { ...attributes, ...listeners } : {};
-  const dropzoneProps = !isDraggable ? getRootProps() : {};
+  const dragProps = isOrderChange ? { ...attributes, ...listeners } : {};
+  const dropzoneProps = !isOrderChange ? getRootProps() : {};
 
   return (
     <div
@@ -101,7 +99,7 @@ const GridItem = ({
       {...dropzoneProps}
       {...props}
     >
-      {!isDraggable && (
+      {!isOrderChange && (
         <input
           {...getInputProps()}
           type='file'
@@ -114,8 +112,8 @@ const GridItem = ({
         imageNumber={imageNumber}
         imageUrl={imageUrl ?? ''}
         isUploading={uploadImageMutation.isPending}
-        showCheckbox={showCheckbox}
-        showGripIcon={showGripIcon}
+        showCheckbox={isMultipleSelect}
+        showGripIcon={isOrderChange}
         isDragging={isDragging}
       >
         <EmoticonItem.Content
