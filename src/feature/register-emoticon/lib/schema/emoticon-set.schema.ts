@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const emoticonSetSchema = z.object({
-  id: z.string().min(1, '이모티콘 세트 ID는 필수에요    '),
+  id: z.string().optional(),
   author_name: z.string().min(2, '작성자 이름은 2자 이상이어야 해요'),
   title: z.string().min(1, '제목은 필수에요'),
   platform: z.string().min(1, '플랫폼은 필수에요'),
@@ -16,12 +16,16 @@ export const emoticonSetSchema = z.object({
   updated_at: z.string().nullable(),
   representative_image_url: z
     .string()
-    .startsWith('http', '올바른 URL 형식이 아니에요'),
-  user_id: z.string().min(1, '유저 ID는 필수에요'),
+    .startsWith('http', { message: '올바른 URL 형식이 아니에요' })
+    .nullable()
+    .refine((val) => val !== null && val.length > 0, {
+      message: '대표 이미지는 필수에요',
+    }),
+  user_id: z.string().nullable(),
 });
 
 export const imageUrlSchema = z.object({
-  imageUrl: z.string().startsWith('http', '올바른 URL 형식이 아니에오'),
+  imageUrl: z.string().startsWith('http', '올바른 URL 형식이 아니에요'),
   imageOrder: z.number().int().min(0, '이미지 순서는 0 이상이어야 해요'),
 });
 

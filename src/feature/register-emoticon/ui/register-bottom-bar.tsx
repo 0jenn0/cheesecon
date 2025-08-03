@@ -1,12 +1,32 @@
 import { Button } from '@/shared/ui/input';
 import { useRegisterMutation } from '@/entity/emoticon-set';
+import { useAuth } from '@/feature/auth/provider/auth-provider';
 import useEmoticonRegister from '../model/hook';
 
 export function RegisterBottomBar() {
-  const { emoticonSet, imageUrls } = useEmoticonRegister();
+  const { emoticonSet, imageUrls, validateAll, isValid, validationErrors } =
+    useEmoticonRegister();
+  const { session } = useAuth();
   const registerMutation = useRegisterMutation({ imageUrls });
 
   const handleRegister = () => {
+    console.log('현재 상태:', {
+      emoticonSet,
+      user_id: session?.user.id,
+      imageUrls,
+      isValid,
+      validationErrors,
+    });
+
+    const isFormValid = validateAll();
+
+    if (!isFormValid) {
+      console.log('검증 오류:', validationErrors);
+      // 여기서 사용자에게 오류 메시지를 표시할 수 있습니다
+      alert('입력 정보를 확인해주세요.');
+      return;
+    }
+
     registerMutation.mutate(emoticonSet);
   };
 
@@ -16,7 +36,7 @@ export function RegisterBottomBar() {
         textClassName='text-body-lg font-semibold'
         className='padding-32'
         onClick={handleRegister}
-        disabled={registerMutation.isPending}
+        disabled={registerMutation.isPending || !isValid}
         isLoading={registerMutation.isPending}
       >
         등록하기

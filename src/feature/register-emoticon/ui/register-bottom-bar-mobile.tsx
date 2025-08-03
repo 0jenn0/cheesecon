@@ -13,10 +13,18 @@ export function RegisterBottomBarMobile({
   STEP_COUNT: number;
   handleStepChange: (step: number) => void;
 }) {
-  const { emoticonSet, imageUrls } = useEmoticonRegister();
+  const { emoticonSet, imageUrls, validateAll, isValid, validationErrors } =
+    useEmoticonRegister();
   const registerMutation = useRegisterMutation({ imageUrls });
 
   const handleRegister = () => {
+    const isFormValid = validateAll();
+
+    if (!isFormValid) {
+      // TODO: 토스트 메시지로 오류 표시
+      return;
+    }
+
     registerMutation.mutate(emoticonSet);
   };
 
@@ -37,7 +45,7 @@ export function RegisterBottomBarMobile({
             textClassName='text-body-lg font-semibold'
             onClick={handleRegister}
             isLoading={registerMutation.isPending}
-            disabled={registerMutation.isPending}
+            disabled={registerMutation.isPending || !isValid}
           >
             등록하기
           </Button>

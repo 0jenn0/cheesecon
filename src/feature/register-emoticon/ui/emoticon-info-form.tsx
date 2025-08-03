@@ -4,16 +4,21 @@ import { SelectField, TextAreaField, TextField } from '@/shared/ui/input';
 import useEmoticonRegister from '../model/hook';
 
 export default function EmoticonInfoForm() {
-  const { emoticonSet, setEmoticonSet } = useEmoticonRegister();
+  const { emoticonSet, setEmoticonSet, validateField, validationErrors } =
+    useEmoticonRegister();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setEmoticonSet({ ...emoticonSet, [name]: value });
+    const updatedEmoticonSet = { ...emoticonSet, [name]: value };
+    setEmoticonSet(updatedEmoticonSet);
+    validateField(name as keyof typeof emoticonSet, value);
   };
 
   const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setEmoticonSet({ ...emoticonSet, [name]: value });
+    const updatedEmoticonSet = { ...emoticonSet, [name]: value };
+    setEmoticonSet(updatedEmoticonSet);
+    validateField(name as keyof typeof emoticonSet, value);
   };
 
   const handleSelectChange = (e: React.FormEvent<HTMLDivElement>) => {
@@ -27,7 +32,17 @@ export default function EmoticonInfoForm() {
       mappedValue = value === '움직이는 이모티콘' ? 'emotion' : 'static';
     }
 
-    setEmoticonSet({ ...emoticonSet, [name]: mappedValue });
+    const updatedEmoticonSet = { ...emoticonSet, [name]: mappedValue };
+    setEmoticonSet(updatedEmoticonSet);
+    validateField(name as keyof typeof emoticonSet, mappedValue);
+  };
+
+  const getFieldError = (fieldName: string) => {
+    return validationErrors.emoticonSet?.[fieldName]?.[0];
+  };
+
+  const hasFieldError = (fieldName: string) => {
+    return !!getFieldError(fieldName);
   };
 
   return (
@@ -40,6 +55,16 @@ export default function EmoticonInfoForm() {
         placeholderClassName='padding-y-12'
         direction='column'
         onChange={handleInputChange}
+        variant={hasFieldError('title') ? 'error' : 'default'}
+        helpMessage={
+          hasFieldError('title')
+            ? {
+                default: '',
+                success: '',
+                error: getFieldError('title') || '',
+              }
+            : undefined
+        }
       />
       <TextField
         name='author_name'
@@ -49,6 +74,16 @@ export default function EmoticonInfoForm() {
         placeholderClassName='padding-y-12'
         direction='column'
         onChange={handleInputChange}
+        variant={hasFieldError('author_name') ? 'error' : 'default'}
+        helpMessage={
+          hasFieldError('author_name')
+            ? {
+                default: '',
+                success: '',
+                error: getFieldError('author_name') || '',
+              }
+            : undefined
+        }
       />
       <SelectField
         name='platform'
@@ -59,6 +94,16 @@ export default function EmoticonInfoForm() {
         selectClassName='padding-y-12 text-body-sm'
         responsiveDirection={{ mobile: 'column', desktop: 'row' }}
         onChange={handleSelectChange}
+        variant={hasFieldError('platform') ? 'error' : 'default'}
+        helpMessage={
+          hasFieldError('platform')
+            ? {
+                default: '',
+                success: '',
+                error: getFieldError('platform') || '',
+              }
+            : undefined
+        }
       />
       <SelectField
         name='type'
@@ -69,6 +114,16 @@ export default function EmoticonInfoForm() {
         selectClassName='padding-y-12 text-body-sm'
         responsiveDirection={{ mobile: 'column', desktop: 'row' }}
         onChange={handleSelectChange}
+        variant={hasFieldError('type') ? 'error' : 'default'}
+        helpMessage={
+          hasFieldError('type')
+            ? {
+                default: '',
+                success: '',
+                error: getFieldError('type') || '',
+              }
+            : undefined
+        }
       />
       <TextAreaField
         name='description'
@@ -77,6 +132,16 @@ export default function EmoticonInfoForm() {
         labelType='required'
         responsiveDirection={{ mobile: 'column', desktop: 'row' }}
         onChange={handleTextAreaChange}
+        variant={hasFieldError('description') ? 'error' : 'default'}
+        helpMessage={
+          hasFieldError('description')
+            ? {
+                default: '',
+                success: '',
+                error: getFieldError('description') || '',
+              }
+            : undefined
+        }
       />
     </div>
   );
