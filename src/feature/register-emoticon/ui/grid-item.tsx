@@ -39,7 +39,6 @@ const GridItem = ({
 
         try {
           const result = await uploadImageMutation.mutateAsync(formData);
-          // setImageUrl(result.url);
           onImageUpload?.(imageNumber, result.url);
 
           // TODO: 토스트로 성공처리

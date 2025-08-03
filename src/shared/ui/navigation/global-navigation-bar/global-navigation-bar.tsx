@@ -1,6 +1,5 @@
 'use client';
 
-import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { Logo, MenuButton, Navigation, UserProfile } from './ui';
 
 export default function GlobalNavigationBar() {
