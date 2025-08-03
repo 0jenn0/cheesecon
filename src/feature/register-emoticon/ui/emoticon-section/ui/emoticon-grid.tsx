@@ -12,6 +12,7 @@ export default function EmoticonGrid() {
   const handleImageUpload = useCallback(
     (imageNumber: number, imageUrl: string) => {
       handleEmoticonItem(imageNumber, 'UPLOAD', { imageUrl });
+      handleSetImageUrl([{ imageUrl, imageOrder: imageNumber }]);
     },
     [handleEmoticonItem],
   );
