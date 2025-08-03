@@ -28,11 +28,11 @@ export interface EmoticonContextType {
   handleEmoticonItem: (
     imageNumber: number,
     action: EmoticonItemAction,
-    {
-      newImageNumber,
-      imageNumbers,
-      imageUrl,
-    }: { newImageNumber?: number; imageNumbers?: number[]; imageUrl?: string },
+    params?: {
+      newImageNumber?: number;
+      imageNumbers?: number[];
+      imageUrl?: string;
+    },
   ) => void;
 }
 
@@ -58,10 +58,10 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
   type typeOfImageNumber = (typeof items)[number]['imageNumber'];
 
   const handleCheckEmoticonItem = useCallback(
-    (imageNumbers: typeOfImageNumber[]) => {
+    (imageNumber: typeOfImageNumber) => {
       setItems((prevItems) =>
         prevItems.map((item) =>
-          imageNumbers.includes(item.imageNumber)
+          item.imageNumber === imageNumber
             ? { ...item, isChecked: true }
             : item,
         ),
@@ -71,10 +71,10 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
   );
 
   const handleUncheckEmoticonItem = useCallback(
-    (imageNumbers: typeOfImageNumber[]) => {
+    (imageNumber: typeOfImageNumber) => {
       setItems((prevItems) =>
         prevItems.map((item) =>
-          imageNumbers.includes(item.imageNumber)
+          item.imageNumber === imageNumber
             ? { ...item, isChecked: false }
             : item,
         ),
@@ -111,51 +111,34 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
 
   const handleEmoticonItem = useCallback(
     (
-      imageNumber: typeOfImageNumber[] | typeOfImageNumber,
+      imageNumber: typeOfImageNumber,
       action: EmoticonItemAction,
-      {
-        newImageNumber,
-        imageUrl,
-      }: {
+      params?: {
         newImageNumber?: typeOfImageNumber;
+        imageNumbers?: typeOfImageNumber[];
         imageUrl?: string;
       },
     ) => {
+      const { newImageNumber, imageUrl } = params || {};
       switch (action) {
         case 'CHECK':
-          handleCheckEmoticonItem(
-            Array.isArray(imageNumber) ? imageNumber : [imageNumber],
-          );
+          handleCheckEmoticonItem(imageNumber);
           break;
         case 'UNCHECK':
-          handleUncheckEmoticonItem(
-            Array.isArray(imageNumber) ? imageNumber : [imageNumber],
-          );
+          handleUncheckEmoticonItem(imageNumber);
           break;
         case 'CHANGE_ORDER':
           if (newImageNumber) {
-            if (Array.isArray(imageNumber)) {
-              throw new Error(
-                'imageNumber는 하나의 이모티콘만 변경할 수 있습니다.',
-              );
-            } else {
-              handleChangeOrderEmoticonItem(imageNumber, newImageNumber);
-            }
+            handleChangeOrderEmoticonItem(imageNumber, newImageNumber);
           } else {
             throw new Error('newImageNumber가 필요합니다.');
           }
           break;
         case 'UPLOAD':
-          if (Array.isArray(imageNumber)) {
-            throw new Error(
-              'imageNumber는 하나의 이모티콘만 변경할 수 있습니다.',
-            );
+          if (imageUrl || imageUrl === '') {
+            handleUploadEmoticonItem(imageNumber, imageUrl);
           } else {
-            if (imageUrl) {
-              handleUploadEmoticonItem(imageNumber, imageUrl);
-            } else {
-              throw new Error('imageUrl이 필요합니다.');
-            }
+            throw new Error('imageUrl이 필요합니다.');
           }
           break;
         default:
