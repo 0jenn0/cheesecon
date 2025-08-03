@@ -1,23 +1,15 @@
+import useModal from '@/shared/ui/feedback/modal/modal-provider';
 import { Button } from '@/shared/ui/input';
+import DeleteConfirmModal from '../../delete-confirm-modal';
 import useEmoticonContext from '../provider/emotion-provider';
 import useUIContext from '../provider/ui-provider';
 
 export default function MultiSelectButton() {
-  const { isOrderChange, isMultipleSelect, toggleMultipleSelect } =
-    useUIContext();
-  const { items, handleEmoticonItem } = useEmoticonContext();
+  const { openModal } = useModal();
+  const { isMultipleSelect, toggleMultipleSelect } = useUIContext();
+  const { items } = useEmoticonContext();
 
-  const handleDeleteSelectedItems = () => {
-    const checkedItems = items.filter((item) => item.isChecked);
-    checkedItems.forEach((item) => {
-      if (item.isChecked) {
-        handleEmoticonItem(item.imageNumber, 'UPLOAD', {
-          imageUrl: '',
-        });
-      }
-      handleEmoticonItem(item.imageNumber, 'UNCHECK');
-    });
-  };
+  const handleDeleteSelectedItems = () => openModal();
 
   const isCheckedItems = items.filter((item) => item.isChecked).length;
 
@@ -55,6 +47,7 @@ export default function MultiSelectButton() {
           </Button>
         </div>
       )}
+      <DeleteConfirmModal />
     </>
   );
 }
