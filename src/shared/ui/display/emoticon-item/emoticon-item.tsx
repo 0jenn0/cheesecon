@@ -101,6 +101,9 @@ function EmoticonItemHeader({
   const isChecked = items.find(
     (item) => item.imageNumber === imageNumber,
   )?.isChecked;
+  const hasImage = items.find(
+    (item) => item.imageNumber === imageNumber,
+  )?.imageUrl;
 
   const handleCheckboxClick = (e: React.ChangeEvent<HTMLInputElement>) => {
     handleEmoticonItem(imageNumber, e.target.checked ? 'CHECK' : 'UNCHECK');
@@ -117,6 +120,7 @@ function EmoticonItemHeader({
       <ImageNumberBadge imageNumber={imageNumber} />
       {showCheckbox ? (
         <Checkbox
+          disabled={!hasImage}
           status={isChecked ? 'checked' : 'unchecked'}
           checked={isChecked}
           onChange={handleCheckboxClick}

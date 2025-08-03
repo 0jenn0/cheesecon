@@ -14,7 +14,9 @@ export default function DeleteConfirmModal() {
   const handleDelete = () => {
     checkedItemsImageNumber.forEach((imageNumber) => {
       handleEmoticonItem(imageNumber, 'UPLOAD', { imageUrl: '' });
+      handleEmoticonItem(imageNumber, 'UNCHECK');
     });
+
     closeModal();
   };
 

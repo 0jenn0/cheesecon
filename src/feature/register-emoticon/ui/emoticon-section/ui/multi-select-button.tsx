@@ -7,7 +7,15 @@ import useUIContext from '../provider/ui-provider';
 export default function MultiSelectButton() {
   const { openModal } = useModal();
   const { isMultipleSelect, toggleMultipleSelect } = useUIContext();
-  const { items } = useEmoticonContext();
+
+  const { items, handleEmoticonItem } = useEmoticonContext();
+
+  const handleClickCancel = () => {
+    toggleMultipleSelect();
+    items.forEach((item) => {
+      handleEmoticonItem(item.imageNumber, 'UNCHECK');
+    });
+  };
 
   const handleDeleteSelectedItems = () => openModal();
 
@@ -31,7 +39,7 @@ export default function MultiSelectButton() {
             styleVariant='outlined'
             textClassName='text-body-sm font-semibold'
             className='tablet:w-fit w-full'
-            onClick={toggleMultipleSelect}
+            onClick={handleClickCancel}
           >
             취소
           </Button>
