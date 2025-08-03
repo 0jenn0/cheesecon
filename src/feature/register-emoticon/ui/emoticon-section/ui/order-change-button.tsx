@@ -33,7 +33,7 @@ export default function OrderChangeButton() {
   return (
     <>
       {isOrderChange ? (
-        <div className='flex gap-8'>
+        <div className='tablet:w-fit flex w-full gap-8'>
           <Button
             variant='secondary'
             styleVariant='outlined'
