@@ -48,20 +48,22 @@ export default function SecretNumberForm() {
       </div>
 
       {emoticonSet.is_private && (
-        <div className='tablet:bg-secondary tablet:padding-24 border-radius-2xl flex flex-col gap-16'>
+        <div className='flex flex-col gap-16'>
           <TextField
             name='secretNumber'
-            label='비밀 번호'
+            label='비밀번호'
             placeholder='****'
             labelType='required'
+            direction='column'
             placeholderClassName='padding-y-12'
             onChange={handlePasswordChange}
           />
           <TextField
             name='secretNumber'
-            label='비밀 번호 확인'
+            label='비밀번호 확인'
             placeholder='****'
             labelType='required'
+            direction='column'
             placeholderClassName='padding-y-12'
             onChange={handlePasswordChange}
           />
