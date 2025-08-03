@@ -12,7 +12,7 @@ export default function Navigation({ className, ...props }: NavigationProps) {
         textClassName='text-body-sm text-interactive-primary font-semibold'
         size='sm'
         as={Link}
-        href='/' // TODO: 이모티콘 등록하기 페이지 주소 추가
+        href='/emoticon-register'
       >
         이모티콘 등록하기
       </Button>

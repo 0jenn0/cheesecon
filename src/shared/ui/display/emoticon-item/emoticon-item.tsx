@@ -1,74 +1,177 @@
-import { useState } from 'react';
+import { ComponentPropsWithRef, PropsWithChildren } from 'react';
+import { VariantProps, cva } from 'class-variance-authority';
+import { cn } from '@/shared/lib';
+import { Spinner } from '../../feedback';
 import Icon from '../../icon/icon';
-import { emoticonItemVariant } from './emoticon-item.style';
-import { BottomBar, OverlayItem } from './ui';
+import { Checkbox } from '../../input';
+import useEmoticonItem, {
+  EmoticonItemProvider,
+} from './provider/emoticon-item-provider';
+import { ImageNumberBadge } from './ui';
 
-export interface EmoticonItemProps {
+export interface EmoticonItemProps extends ComponentPropsWithRef<'div'> {}
+
+function EmoticonItemRoot({
+  imageNumber,
+  showCheckbox,
+  showGripIcon,
+  imageUrl,
+  isUploading,
+  isDragging,
+  children,
+}: PropsWithChildren<{
   imageNumber: number;
-  imageUrl?: string;
-  showBottomBar?: boolean;
-  showGrip?: boolean;
   showCheckbox?: boolean;
-  isLoading?: boolean;
-  likeCount?: number;
-  commentCount?: number;
+  showGripIcon?: boolean;
+  imageUrl?: string;
+  isUploading?: boolean;
   isDragging?: boolean;
-  isChanged?: boolean;
+}>) {
+  return (
+    <EmoticonItemProvider
+      showGripIcon={showGripIcon}
+      imageNumber={imageNumber}
+      showCheckbox={showCheckbox}
+      imageUrl={imageUrl}
+      isUploading={isUploading}
+      isDragging={isDragging}
+    >
+      {children}
+    </EmoticonItemProvider>
+  );
 }
 
-export default function EmoticonItem({
-  imageNumber,
-  imageUrl,
-  showBottomBar = false,
-  showGrip = false,
-  showCheckbox = false,
-  isLoading = false,
-  likeCount = 0,
-  commentCount = 0,
-  isDragging = false,
-  isChanged = false,
-}: EmoticonItemProps) {
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
-  const [isImageError, setIsImageError] = useState(false);
+const contentVariants = cva(
+  'flex aspect-square h-full w-full flex-col items-center justify-center gap-0 bg-cover bg-center bg-no-repeat',
+  {
+    variants: {
+      isDragging: {
+        false: 'border-interactive-secondary border-b',
+        true: 'border-radius-xl border-2 border-[var(--color-cheesecon-primary-300)] opacity-70',
+      },
+    },
+  },
+);
 
-  const shouldShowImage = imageUrl && !isImageError;
-  const shouldShowErrorIcon = isImageError;
-  const shouldShowLoading =
-    isLoading || (!isImageLoaded && Boolean(imageUrl) && !isImageError);
+interface EmoticonItemContentProps
+  extends ComponentPropsWithRef<'div'>,
+    VariantProps<typeof contentVariants> {}
+
+function EmoticonItemContent({
+  children,
+  className,
+  ...props
+}: EmoticonItemContentProps) {
+  const { imageUrl, isUploading, isDragging } = useEmoticonItem();
+
+  return (
+    <>
+      {!isUploading && (
+        <div
+          className={cn(contentVariants({ isDragging }), className)}
+          style={imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined}
+          {...props}
+        >
+          {children}
+        </div>
+      )}
+      {/* {shouldShowErrorIcon && (
+        <div className='flex h-full w-full flex-col items-center justify-center gap-8'>
+          <Icon name='alert-circle' size={16} className='icon-danger' />
+          <span className='text-body-sm text-danger'>이미지 로딩 실패</span>
+        </div>
+      )} */}
+      {isUploading && (
+        <div className={contentVariants({ isDragging })}>
+          <Spinner size='lg' />
+        </div>
+      )}
+    </>
+  );
+}
+
+function EmoticonItemHeader({
+  className,
+  ...props
+}: ComponentPropsWithRef<'div'>) {
+  const {
+    imageNumber,
+    showCheckbox,
+
+    isChecked,
+    handleCheck,
+  } = useEmoticonItem();
 
   return (
     <div
-      className={emoticonItemVariant({
-        variant: isDragging ? 'dragging' : isChanged ? 'changed' : 'default',
-      })}
+      className={cn(
+        'padding-8 flex w-full items-center justify-between',
+        className,
+      )}
+      {...props}
     >
-      <div className='border-interactive-secondary border-radius-lg aspect-square w-full overflow-hidden'>
-        {shouldShowImage && (
-          <img
-            src={imageUrl}
-            alt='emoticon'
-            className='h-full w-full object-cover'
-            onLoad={() => setIsImageLoaded(true)}
-            onError={() => setIsImageError(true)}
-          />
-        )}
-        {shouldShowErrorIcon && (
-          <div className='flex h-full w-full flex-col items-center justify-center gap-8'>
-            <Icon name='alert-circle' size={16} className='icon-danger' />
-            <span className='text-body-sm text-danger'>이미지 로딩 실패</span>
-          </div>
-        )}
-      </div>
-      <OverlayItem
-        imageNumber={imageNumber}
-        isLoading={shouldShowLoading}
-        showImageIcon={!imageUrl}
-        showGrip={isDragging || showGrip}
-        showCheckbox={showCheckbox}
-      />
-      {showBottomBar && (
-        <BottomBar likeCount={likeCount} commentCount={commentCount} />
+      <ImageNumberBadge imageNumber={imageNumber} />
+      {showCheckbox ? (
+        <Checkbox
+          status={isChecked ? 'checked' : 'unchecked'}
+          checked={isChecked}
+          onChange={handleCheck}
+        />
+      ) : (
+        <div className='width-24 height-24' />
       )}
     </div>
   );
 }
+
+function EmoticonItemBody({
+  children,
+  className,
+  ...props
+}: PropsWithChildren<ComponentPropsWithRef<'div'>>) {
+  return (
+    <div
+      className={cn('flex flex-1 items-center justify-center', className)}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+}
+
+function EmoticonItemFooter({
+  className,
+  ...props
+}: PropsWithChildren<ComponentPropsWithRef<'div'>>) {
+  const { showGripIcon } = useEmoticonItem();
+
+  return (
+    <div
+      className={cn(
+        'padding-8 flex w-full items-center justify-end',
+        className,
+      )}
+      {...props}
+    >
+      {showGripIcon ? (
+        <Icon
+          name='grip-vertical'
+          size={24}
+          className='icon-secondary border-radius-rounded padding-4 bg-white/60'
+        />
+      ) : (
+        <div className='width-24 height-24' />
+      )}
+    </div>
+  );
+}
+
+const EmoticonItem = {
+  Root: EmoticonItemRoot,
+  Content: EmoticonItemContent,
+  Body: EmoticonItemBody,
+  Header: EmoticonItemHeader,
+  Footer: EmoticonItemFooter,
+};
+
+export default EmoticonItem;

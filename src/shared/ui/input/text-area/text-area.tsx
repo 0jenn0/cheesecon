@@ -13,11 +13,12 @@ export default function TextArea({
   isError = false,
   disabled = false,
   className,
+  onChange,
   ...props
 }: TextAreaProps) {
   return (
     <textarea
-      {...props}
+      onChange={onChange}
       placeholder={placeholder}
       className={cn(
         'text-body-sm',
@@ -27,6 +28,7 @@ export default function TextArea({
         className,
       )}
       disabled={disabled}
+      {...props}
     />
   );
 }

@@ -125,6 +125,18 @@
   --color-border-interactive-secondary-focus-within: var(
     --color-cheesecon-primary-400
   );
+  --color-border-interactive-secondary-subtle: var(
+    --color-cheesecon-secondary-200
+  );
+  --color-border-interactive-secondary-hovered-subtle: var(
+    --color-cheesecon-secondary-300
+  );
+  --color-border-interactive-secondary-pressed-subtle: var(
+    --color-cheesecon-secondary-400
+  );
+  --color-border-interactive-secondary-focus-within-subtle: var(
+    --color-cheesecon-primary-400
+  );
   --color-border-interactive-danger: var(--red-600);
   --color-border-interactive-danger-hovered: var(--red-700);
   --color-border-interactive-danger-pressed: var(--red-800);
@@ -143,6 +155,9 @@
   }
   .text-tertiary {
     color: var(--color-text-teritiary);
+  }
+  .placeholder-text-primary::placeholder {
+    color: var(--color-text-primary);
   }
   .placeholder-text-tertiary::placeholder {
     color: var(--color-text-teritiary);
@@ -437,6 +452,18 @@
   }
   .border-interactive-secondary:focus-within:not(:disabled) {
     border-color: var(--color-border-interactive-secondary-focus-within);
+  }
+  .border-interactive-secondary-subtle {
+    border-color: var(--color-border-interactive-secondary-subtle);
+  }
+  .border-interactive-secondary-subtle:hover:not(:disabled) {
+    border-color: var(--color-border-interactive-secondary-hovered-subtle);
+  }
+  .border-interactive-secondary-subtle:active:not(:disabled) {
+    border-color: var(--color-border-interactive-secondary-pressed-subtle);
+  }
+  .border-interactive-secondary-subtle:focus-within:not(:disabled) {
+    border-color: var(--color-border-interactive-secondary-focus-within-subtle);
   }
   .border-interactive-danger {
     border-color: var(--color-border-interactive-danger);

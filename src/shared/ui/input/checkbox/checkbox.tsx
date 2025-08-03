@@ -4,11 +4,10 @@ import { ICON_NAMES } from '../../icon/config';
 import { checkboxVariants } from './checkbox.style';
 
 export const CHECKBOX_STATUS = ['checked', 'unchecked', 'partial'] as const;
+export type CheckboxStatus = (typeof CHECKBOX_STATUS)[number];
 
-export interface CheckboxProps
-  extends Omit<ComponentPropsWithRef<'input'>, 'onChange'> {
-  status?: (typeof CHECKBOX_STATUS)[number];
-  onChange?: (checked: boolean) => void;
+export interface CheckboxProps extends ComponentPropsWithRef<'input'> {
+  status?: CheckboxStatus;
 }
 
 export default function Checkbox({
@@ -23,11 +22,9 @@ export default function Checkbox({
       <input
         {...props}
         type='checkbox'
-        className='h-0 w-0 opacity-0'
+        className='absolute h-full w-full opacity-0 outline-none'
         checked={status === 'checked'}
-        onChange={(e) => {
-          onChange?.(e.target.checked);
-        }}
+        onChange={onChange}
         ref={(input) => {
           if (input) {
             input.indeterminate = status === 'partial';

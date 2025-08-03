@@ -9,11 +9,12 @@ export interface SelectOptionProps extends ComponentPropsWithRef<'li'> {
 }
 
 export default function SelectOption({ label, ...props }: SelectOptionProps) {
-  const { currentValue, setCurrentValue } = useSelect();
+  const { currentValue, setCurrentValue, setIsOpen } = useSelect();
   const isSelected = currentValue === label;
 
   const handleClick = () => {
     setCurrentValue(label);
+    setIsOpen(false);
   };
 
   return (

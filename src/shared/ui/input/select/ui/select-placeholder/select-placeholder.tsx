@@ -3,13 +3,15 @@
 import { ComponentPropsWithRef, useState } from 'react';
 import { cn } from '@/shared/lib/utils';
 import Icon from '@/shared/ui/icon/icon';
+import Placeholder from '../../../placeholder/placeholder';
 import { useSelect } from '../../provider/select-provider';
 import { selectPlaceholderVariants } from './select-placeholder.style';
 
-export interface SelectPlaceholderProps extends ComponentPropsWithRef<'div'> {
+export interface SelectPlaceholderProps extends ComponentPropsWithRef<'input'> {
   label: string;
   isError?: boolean;
   disabled?: boolean;
+  name?: string;
 }
 
 export default function SelectPlaceholder({
@@ -17,7 +19,9 @@ export default function SelectPlaceholder({
   isError = false,
   disabled = false,
   onClick,
-  ...props
+  className,
+  onChange,
+  name,
 }: SelectPlaceholderProps) {
   const { currentValue, isOpen, setIsOpen } = useSelect();
 
@@ -26,31 +30,39 @@ export default function SelectPlaceholder({
     disabled,
   });
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleClick = (e: React.MouseEvent<HTMLInputElement>) => {
     if (disabled) return;
 
     setIsOpen(!isOpen);
     onClick?.(e);
+
+    if (onChange) {
+      onChange({
+        target: {
+          name,
+          value: currentValue || label,
+        },
+      } as React.ChangeEvent<HTMLInputElement>);
+    }
   };
 
   return (
-    <div
+    <Placeholder
+      name={name}
+      placeholder={currentValue || label}
+      isError={isError}
+      disabled={disabled}
+      iconSize={20}
+      trailingIcon='chevron-down'
+      onChange={onChange}
       className={cn(
         selectPlaceholderVariants({ variant: finalVariant, isOpen }),
+        className,
       )}
       onClick={handleClick}
-      {...props}
-    >
-      {currentValue || label}
-      <Icon
-        name='chevron-down'
-        size={24}
-        className={cn(
-          'text-tertiary transition-transform duration-200',
-          isOpen && 'rotate-180',
-        )}
-      />
-    </div>
+      readOnly
+      inputClassName='cursor-pointer placeholder-text-primary'
+    />
   );
 }
 

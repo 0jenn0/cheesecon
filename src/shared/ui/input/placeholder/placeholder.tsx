@@ -11,7 +11,6 @@ export interface PlaceholderProps extends ComponentPropsWithRef<'input'> {
   trailingIcon?: IconProps['name'];
   iconClassName?: string;
   inputClassName?: string;
-  placeholderClassName?: string;
   iconSize: IconProps['size'];
   disabled: boolean;
   onTrailingIconClick?: () => void;
@@ -23,10 +22,11 @@ export default function Placeholder({
   trailingIcon,
   iconClassName,
   inputClassName,
-  placeholderClassName,
   iconSize = 24,
   disabled = false,
   onTrailingIconClick,
+  className,
+  onChange,
   ...props
 }: PlaceholderProps) {
   const [value, setValue] = useState('');
@@ -38,22 +38,26 @@ export default function Placeholder({
     disabled,
   });
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value);
+    if (onChange) {
+      onChange(e);
+    }
+  };
+
   return (
     <div
-      className={cn(
-        placeholderVariants({ variant: finalVariant }),
-        placeholderClassName,
-      )}
+      className={cn(placeholderVariants({ variant: finalVariant }), className)}
     >
       <input
         {...props}
         className={cn(
-          'text-body-sm text-primary disabled:text-disabled placeholder-text-tertiary flex flex-1 outline-none',
+          'text-body-sm text-primary disabled:text-disabled flex flex-1 outline-none',
           inputClassName,
         )}
         placeholder={placeholder}
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={handleChange}
         disabled={disabled}
       />
       {trailingIcon && (

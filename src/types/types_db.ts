@@ -10,14 +10,431 @@ export type Database = {
   // Allows to automatically instanciate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "12.2.12 (cd3cf9e)"
   }
   public: {
     Tables: {
-      [_ in never]: never
+      comment_reactions: {
+        Row: {
+          comment_id: string | null
+          created_at: string | null
+          emoji: string
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          comment_id?: string | null
+          created_at?: string | null
+          emoji: string
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          comment_id?: string | null
+          created_at?: string | null
+          emoji?: string
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comment_reactions_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comment_reactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "active_commenters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comment_reactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      comments: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          image_id: string | null
+          images: string[] | null
+          parent_comment_id: string | null
+          set_id: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          image_id?: string | null
+          images?: string[] | null
+          parent_comment_id?: string | null
+          set_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          image_id?: string | null
+          images?: string[] | null
+          parent_comment_id?: string | null
+          set_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_image_id_fkey"
+            columns: ["image_id"]
+            isOneToOne: false
+            referencedRelation: "emoticon_images"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_parent_comment_id_fkey"
+            columns: ["parent_comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_set_id_fkey"
+            columns: ["set_id"]
+            isOneToOne: false
+            referencedRelation: "emoticon_sets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_set_id_fkey"
+            columns: ["set_id"]
+            isOneToOne: false
+            referencedRelation: "trending_emoticons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "active_commenters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      emoticon_images: {
+        Row: {
+          comments_count: number | null
+          created_at: string | null
+          id: string
+          image_order: number
+          image_url: string
+          set_id: string | null
+        }
+        Insert: {
+          comments_count?: number | null
+          created_at?: string | null
+          id?: string
+          image_order: number
+          image_url: string
+          set_id?: string | null
+        }
+        Update: {
+          comments_count?: number | null
+          created_at?: string | null
+          id?: string
+          image_order?: number
+          image_url?: string
+          set_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emoticon_images_set_id_fkey"
+            columns: ["set_id"]
+            isOneToOne: false
+            referencedRelation: "emoticon_sets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emoticon_images_set_id_fkey"
+            columns: ["set_id"]
+            isOneToOne: false
+            referencedRelation: "trending_emoticons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      emoticon_sets: {
+        Row: {
+          author_name: string
+          comments_count: number | null
+          created_at: string | null
+          description: string | null
+          id: string
+          is_private: boolean | null
+          likes_count: number | null
+          password_hash: string | null
+          platform: string
+          representative_image_url: string | null
+          title: string
+          type: string
+          updated_at: string | null
+          user_id: string | null
+          views_count: number | null
+        }
+        Insert: {
+          author_name: string
+          comments_count?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_private?: boolean | null
+          likes_count?: number | null
+          password_hash?: string | null
+          platform: string
+          representative_image_url?: string | null
+          title: string
+          type: string
+          updated_at?: string | null
+          user_id?: string | null
+          views_count?: number | null
+        }
+        Update: {
+          author_name?: string
+          comments_count?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_private?: boolean | null
+          likes_count?: number | null
+          password_hash?: string | null
+          platform?: string
+          representative_image_url?: string | null
+          title?: string
+          type?: string
+          updated_at?: string | null
+          user_id?: string | null
+          views_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emoticon_sets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "active_commenters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emoticon_sets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      likes: {
+        Row: {
+          created_at: string | null
+          id: string
+          set_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          set_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          set_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "likes_set_id_fkey"
+            columns: ["set_id"]
+            isOneToOne: false
+            referencedRelation: "emoticon_sets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "likes_set_id_fkey"
+            columns: ["set_id"]
+            isOneToOne: false
+            referencedRelation: "trending_emoticons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "active_commenters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          id: string
+          nickname: string
+          provider: string
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          id: string
+          nickname: string
+          provider: string
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          id?: string
+          nickname?: string
+          provider?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      views: {
+        Row: {
+          created_at: string | null
+          id: string
+          set_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          set_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          set_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "views_set_id_fkey"
+            columns: ["set_id"]
+            isOneToOne: false
+            referencedRelation: "emoticon_sets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "views_set_id_fkey"
+            columns: ["set_id"]
+            isOneToOne: false
+            referencedRelation: "trending_emoticons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "views_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "active_commenters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "views_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
-      [_ in never]: never
+      active_commenters: {
+        Row: {
+          avatar_url: string | null
+          comment_count: number | null
+          id: string | null
+          nickname: string | null
+        }
+        Relationships: []
+      }
+      dashboard_stats: {
+        Row: {
+          today_new_emoticons: number | null
+          total_comments: number | null
+          total_emoticons: number | null
+          total_users: number | null
+        }
+        Relationships: []
+      }
+      trending_emoticons: {
+        Row: {
+          author_avatar: string | null
+          author_name: string | null
+          author_nickname: string | null
+          comments_count: number | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          is_private: boolean | null
+          likes_count: number | null
+          password_hash: string | null
+          platform: string | null
+          recent_likes_count: number | null
+          representative_image_url: string | null
+          title: string | null
+          type: string | null
+          updated_at: string | null
+          user_id: string | null
+          views_count: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emoticon_sets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "active_commenters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emoticon_sets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       [_ in never]: never
