@@ -27,10 +27,23 @@ function ModalPortal({
   ...props
 }: ModalProps) {
   const [mounted, setMounted] = useState(false);
+  const { isOpen } = useModal();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isOpen]);
 
   if (!mounted) {
     return null;
@@ -82,7 +95,7 @@ function ModalContent({
           </section>
           <div
             className={cn(
-              'z-index-modal-backdrop fixed inset-0 bg-black/70',
+              'z-index-modal-backdrop fixed inset-0 bg-black/50',
               overlayClassName,
             )}
             onClick={handleOverlayClick}
