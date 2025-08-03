@@ -23,7 +23,6 @@ export default function EmoticonRegisterMobileScreen({
   useEffect(() => {
     if (isEmoticonSectionVisible && currentStep === 0) {
       setCurrentStep(1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [isEmoticonSectionVisible, currentStep]);
 
