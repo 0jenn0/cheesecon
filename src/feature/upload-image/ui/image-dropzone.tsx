@@ -126,8 +126,9 @@ export default function ImageDropzone({
             />
           </div>
 
-          <h3 className='text-heading-sm'>
-            {isDragActive ? '파일을 놓아주세요' : '이미지 업로드'}
+          <h3 className='text-heading-sm flex items-center gap-4'>
+            {isDragActive ? '파일을 놓아주세요' : '대표 이미지 업로드'}
+            {!isDragActive && <span className='text-red-500'>*</span>}
           </h3>
 
           {!isDragActive && (
