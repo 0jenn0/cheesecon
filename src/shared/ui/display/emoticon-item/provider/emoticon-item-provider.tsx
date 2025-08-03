@@ -1,4 +1,4 @@
-import { PropsWithChildren, createContext, useContext, useState } from 'react';
+import { PropsWithChildren, createContext, useContext } from 'react';
 
 export interface EmoticonItemContextType {
   imageNumber: number;

@@ -15,32 +15,26 @@ export interface GridItemProps
   imageUrl?: string;
   onImageUpload?: (imageNumber: number, preview: string) => void;
 }
-
 const GridItem = ({
   id,
   imageNumber,
   imageUrl,
   onImageUpload,
   ref,
-
   ...props
 }: GridItemProps) => {
   const { isMultipleSelect, isOrderChange } = useUIContext();
   const uploadImageMutation = useUploadImageMutation();
-
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
         const formData = new FormData();
-
         acceptedFiles.forEach((file) => {
           formData.append('file', file);
         });
-
         try {
           const result = await uploadImageMutation.mutateAsync(formData);
           onImageUpload?.(imageNumber, result.url);
-
           // TODO: 토스트로 성공처리
           console.log('Upload successful:', result);
           // TODO: 이미지 업로드 성공 후 리다이렉팅 추가
@@ -52,7 +46,6 @@ const GridItem = ({
     },
     [uploadImageMutation],
   );
-
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: true,
@@ -65,7 +58,6 @@ const GridItem = ({
     maxSize: 5 * 1024 * 1024,
     disabled: uploadImageMutation.isPending || isOrderChange,
   });
-
   const {
     attributes,
     listeners,
@@ -77,18 +69,14 @@ const GridItem = ({
     id,
     disabled: !isOrderChange,
   });
-
   const hasImage = Boolean(imageUrl);
-
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
   };
-
   const dragProps = isOrderChange ? { ...attributes, ...listeners } : {};
   const dropzoneProps = !isOrderChange ? getRootProps() : {};
-
   return (
     <div
       ref={setNodeRef}
@@ -145,5 +133,4 @@ const GridItem = ({
     </div>
   );
 };
-
 export default GridItem;
