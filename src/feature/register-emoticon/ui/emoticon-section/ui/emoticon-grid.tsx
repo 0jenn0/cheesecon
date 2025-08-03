@@ -40,6 +40,7 @@ export default function EmoticonGrid() {
               id={item.imageNumber}
               imageNumber={index + 1}
               onImageUpload={handleImageUpload}
+              imageUrl={item.imageUrl}
             />
           ))}
         </div>
