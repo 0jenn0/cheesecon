@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import useEmoticonRegister from '@/feature/register-emoticon/model/hook';
 import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 import GridItem from '../../grid-item';
@@ -6,10 +7,12 @@ import useEmoticonContext from '../provider/emotion-provider';
 
 export default function EmoticonGrid() {
   const { items, setChangeStack, handleEmoticonItem } = useEmoticonContext();
+  const { handleSetImageUrl } = useEmoticonRegister();
 
   const handleImageUpload = useCallback(
     (imageNumber: number, imageUrl: string) => {
       handleEmoticonItem(imageNumber, 'UPLOAD', { imageUrl });
+      handleSetImageUrl([{ imageUrl, imageOrder: imageNumber }]);
     },
     [handleEmoticonItem],
   );
