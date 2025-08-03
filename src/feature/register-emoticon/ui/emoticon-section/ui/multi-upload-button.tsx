@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import ProgressBar from '@/shared/ui/feedback/progress-bar/progress-bar';
