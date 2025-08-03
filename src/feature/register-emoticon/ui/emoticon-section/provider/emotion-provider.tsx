@@ -108,16 +108,16 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
         const overIndex = newItems.findIndex(
           (item) => item.imageNumber === newImageNumber,
         );
-
         if (activeIndex === -1 || overIndex === -1) {
           return prevItems;
         }
-
-        // 배열 순서 변경
         const [movedItem] = newItems.splice(activeIndex, 1);
         newItems.splice(overIndex, 0, movedItem);
 
-        return newItems;
+        return newItems.map((item, index) => ({
+          ...item,
+          imageNumber: index + 1,
+        }));
       });
     },
     [],
