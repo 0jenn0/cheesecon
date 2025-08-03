@@ -1,10 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import StepIndicator from '@/shared/ui/display/step-indicator/step-indicator';
 import { Button } from '@/shared/ui/input';
 import { EmoticonRegisterProvider } from '@/feature/register-emoticon/model/hook';
-import { EmoticonRegisterStep1Screen, EmoticonRegisterStep2Screen } from './ui';
+import { useEmoticonRegisterContext } from './model/emoticon-register-context';
+import {
+  EmoticonRegisterStep1Screen,
+  EmoticonRegisterStep2Screen,
+} from './responsive';
 
 const STEP_COUNT = 2;
 
@@ -14,6 +18,14 @@ export default function EmoticonRegisterMobileScreen({
   step?: number;
 }) {
   const [currentStep, setCurrentStep] = useState(step);
+  const { isEmoticonSectionVisible } = useEmoticonRegisterContext();
+
+  useEffect(() => {
+    if (isEmoticonSectionVisible && currentStep === 0) {
+      setCurrentStep(1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [isEmoticonSectionVisible, currentStep]);
 
   const handleNextStep = () => {
     setCurrentStep(Math.min(currentStep + 1, STEP_COUNT - 1));
