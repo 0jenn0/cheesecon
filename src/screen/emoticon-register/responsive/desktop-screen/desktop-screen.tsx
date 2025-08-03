@@ -26,12 +26,6 @@ export default function EmoticonRegisterDesktopScreen() {
   }, [isIntersecting, setIsEmoticonSectionVisible]);
 
   useEffect(() => {
-    console.log(
-      '데스크톱: isEmoticonSectionVisibleMobile 변경됨',
-      isEmoticonSectionVisibleMobile,
-    );
-
-    // 데스크톱에서 모바일로만 작동 (true일 때만)
     if (isEmoticonSectionVisibleMobile) {
       const element = emoticonSectionRef.current;
       if (element) {
