@@ -16,7 +16,7 @@
   --border-radius-xl: var(--unit-12);
   --border-radius-2xl: var(--unit-16);
   --border-radius-rounded: 9999px;
-  --border-width-xs: var(--unit-0-5);
+  --border-width-xs: var(--unit-0-6);
   --border-width-sm: var(--unit-1);
   --border-width-md: var(--unit-2);
   --border-width-lg: var(--unit-4);
@@ -1077,7 +1077,7 @@
   .border-radius-br-rounded {
     border-bottom-right-radius: var(--border-radius-rounded);
   }
-  .border-width-0 {
+  .border-width-xs {
     border-width: var(--border-width-xs);
   }
   .border-width-sm {
