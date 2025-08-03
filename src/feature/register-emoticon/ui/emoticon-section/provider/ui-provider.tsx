@@ -2,7 +2,7 @@ import { createContext, useContext, useState } from 'react';
 
 interface UIContextType {
   isMultipleSelect: boolean;
-  handleMultipleSelect: () => void;
+  toggleMultipleSelect: () => void;
 
   isOrderChange: boolean;
   toggleOrderChange: () => void;
@@ -11,8 +11,8 @@ interface UIContextType {
 
 const UIContext = createContext<UIContextType>({
   isMultipleSelect: false,
-  handleMultipleSelect: () => {
-    throw new Error('handleMultipleSelect 함수를 정의해주세요.');
+  toggleMultipleSelect: () => {
+    throw new Error('toggleMultipleSelect 함수를 정의해주세요.');
   },
 
   isOrderChange: false,
@@ -28,8 +28,8 @@ export function UIProvider({ children }: { children: React.ReactNode }) {
   const [isMultipleSelect, setIsMultipleSelect] = useState(false);
   const [isOrderChange, setIsOrderChange] = useState(false);
 
-  const handleMultipleSelect = () => {
-    setIsMultipleSelect(true);
+  const toggleMultipleSelect = () => {
+    setIsMultipleSelect((prev) => !prev);
   };
 
   const toggleOrderChange = () => {
@@ -44,7 +44,7 @@ export function UIProvider({ children }: { children: React.ReactNode }) {
     <UIContext.Provider
       value={{
         isMultipleSelect,
-        handleMultipleSelect,
+        toggleMultipleSelect,
         isOrderChange,
         toggleOrderChange,
         handleOrderChange,
