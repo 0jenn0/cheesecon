@@ -16,7 +16,7 @@ const EmoticonRegisterContext = createContext<EmoticonRegisterContextType>({
   emoticonSet: {
     id: '',
     author_name: '',
-    description: null,
+    description: '',
     is_private: null,
     password_hash: null,
     comments_count: null,
@@ -43,7 +43,7 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
   const [emoticonSet, setEmoticonSet] = useState<EmoticonSetRequest>({
     id: '',
     author_name: '',
-    description: null,
+    description: '',
     is_private: null,
     password_hash: null,
     comments_count: null,

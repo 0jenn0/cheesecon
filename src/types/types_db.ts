@@ -186,7 +186,7 @@ export type Database = {
           author_name: string
           comments_count: number | null
           created_at: string | null
-          description: string | null
+          description: string
           id: string
           is_private: boolean | null
           likes_count: number | null
@@ -203,7 +203,7 @@ export type Database = {
           author_name: string
           comments_count?: number | null
           created_at?: string | null
-          description?: string | null
+          description: string
           id?: string
           is_private?: boolean | null
           likes_count?: number | null
@@ -220,7 +220,7 @@ export type Database = {
           author_name?: string
           comments_count?: number | null
           created_at?: string | null
-          description?: string | null
+          description?: string
           id?: string
           is_private?: boolean | null
           likes_count?: number | null
