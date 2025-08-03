@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 import StepIndicator from '@/shared/ui/display/step-indicator/step-indicator';
-import { EmoticonRegisterProvider } from '@/feature/register-emoticon/model/hook';
 import { RegisterBottomBarMobile } from '@/feature/register-emoticon/ui';
 import { useEmoticonRegisterContext, useStep } from './model';
 import {
@@ -24,7 +23,7 @@ export default function EmoticonRegisterMobileScreen() {
   }, [isEmoticonSectionVisible, currentStep]);
 
   return (
-    <EmoticonRegisterProvider>
+    <>
       <section className='padding-y-16 margin-b-64 flex h-full w-full flex-col items-center gap-24'>
         <StepIndicator currentStep={currentStep} totalStep={STEP_COUNT} />
         {currentStep === 0 && <EmoticonRegisterStep1Screen />}
@@ -35,6 +34,6 @@ export default function EmoticonRegisterMobileScreen() {
         STEP_COUNT={STEP_COUNT}
         handleStepChange={handleStepChange}
       />
-    </EmoticonRegisterProvider>
+    </>
   );
 }
