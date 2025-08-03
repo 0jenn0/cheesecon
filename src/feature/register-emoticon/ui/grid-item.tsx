@@ -12,20 +12,20 @@ export interface GridItemProps
   extends Omit<ComponentPropsWithRef<'div'>, 'id'> {
   id: number;
   imageNumber: number;
+  imageUrl?: string;
   onImageUpload?: (imageNumber: number, preview: string) => void;
 }
 
 const GridItem = ({
   id,
   imageNumber,
-
+  imageUrl,
   onImageUpload,
   ref,
 
   ...props
 }: GridItemProps) => {
   const { isMultipleSelect, isOrderChange } = useUIContext();
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const uploadImageMutation = useUploadImageMutation();
 
   const onDrop = useCallback(
@@ -39,7 +39,7 @@ const GridItem = ({
 
         try {
           const result = await uploadImageMutation.mutateAsync(formData);
-          setImageUrl(result.url);
+          // setImageUrl(result.url);
           onImageUpload?.(imageNumber, result.url);
 
           // TODO: 토스트로 성공처리

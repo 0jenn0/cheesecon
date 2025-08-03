@@ -1,7 +1,12 @@
 'use client';
 
 import { EmoticonProvider, UIProvider } from './provider';
-import { EmoticonGrid, MultiSelectButton, OrderChangeButton } from './ui';
+import {
+  EmoticonGrid,
+  MultiSelectButton,
+  MultiUploadButton,
+  OrderChangeButton,
+} from './ui';
 
 export default function EmoticonSection() {
   return (
@@ -13,6 +18,7 @@ export default function EmoticonSection() {
             <div className='tablet:justify-normal tablet:gap-24 tablet:w-fit flex w-full justify-between gap-[48px]'>
               <OrderChangeButton />
               <MultiSelectButton />
+              <MultiUploadButton />
             </div>
           </div>
 
