@@ -1,20 +1,25 @@
+import { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/shared/ui/input';
+import useEmoticonContext from '../provider/emotion-provider';
+import useUIContext from '../provider/ui-provider';
 
-interface OrderChangeButtonProps {
-  isOrderChange: boolean;
-  handleCancelOrder: () => void;
-  handleSaveOrder: () => void;
-  handleOrderChange: () => void;
-  hasUnsavedChanges: boolean;
-}
+export default function OrderChangeButton() {
+  const { items, handleEmoticonItem } = useEmoticonContext();
+  const { isOrderChange, toggleOrderChange, handleOrderChange } =
+    useUIContext();
 
-export default function OrderChangeButton({
-  isOrderChange,
-  handleCancelOrder,
-  handleSaveOrder,
-  handleOrderChange,
-  hasUnsavedChanges,
-}: OrderChangeButtonProps) {
+  const [isSaveChanged, setIsSaveChanged] = useState(false);
+
+  const handleCancelOrder = () => {
+    setIsSaveChanged(false);
+    handleOrderChange(false);
+  };
+
+  const handleSaveOrder = () => {
+    setIsSaveChanged(true);
+    handleOrderChange(false);
+  };
+
   return (
     <>
       {isOrderChange ? (
@@ -31,16 +36,16 @@ export default function OrderChangeButton({
             variant='primary'
             textClassName='text-body-sm font-semibold'
             onClick={handleSaveOrder}
-            disabled={!hasUnsavedChanges}
+            disabled={!isSaveChanged}
           >
-            {hasUnsavedChanges ? '저장' : '저장됨'}
+            {isSaveChanged ? '저장' : '저장됨'}
           </Button>
         </div>
       ) : (
         <Button
           variant='secondary'
           textClassName='text-body-sm font-semibold'
-          onClick={handleOrderChange}
+          onClick={toggleOrderChange}
         >
           순서 바꾸기
         </Button>

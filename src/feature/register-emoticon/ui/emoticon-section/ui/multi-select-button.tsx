@@ -1,14 +1,10 @@
 import { Button } from '@/shared/ui/input';
+import useUIContext from '../provider/ui-provider';
 
-interface MultiSelectButtonProps {
-  handleMultipleSelect: () => void;
-  isOrderChange: boolean;
-}
+export default function MultiSelectButton() {
+  const { isOrderChange, isMultipleSelect, handleMultipleSelect } =
+    useUIContext();
 
-export default function MultiSelectButton({
-  handleMultipleSelect,
-  isOrderChange,
-}: MultiSelectButtonProps) {
   return (
     <Button
       variant='secondary'

@@ -1,27 +1,30 @@
+import { useCallback, useState } from 'react';
 import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 import GridItem from '../../grid-item';
+import useEmoticonContext from '../provider/emotion-provider';
+import useUIContext from '../provider/ui-provider';
 
-interface GridItemData {
-  imageNumber: number;
-  imageUrl?: string;
-}
+export default function EmoticonGrid() {
+  const { items, handleEmoticonItem } = useEmoticonContext();
+  const { isMultipleSelect, isOrderChange } = useUIContext();
 
-interface EmoticonGridProps {
-  items: GridItemData[];
-  isMultipleSelect: boolean;
-  isOrderChange: boolean;
-  handleDragEnd: (event: DragEndEvent) => void;
-  handleImageUpload: (imageNumber: number, preview: string) => void;
-}
+  const handleImageUpload = useCallback(
+    (imageNumber: number, imageUrl: string) => {
+      handleEmoticonItem(imageNumber, 'UPLOAD', { imageUrl });
+    },
+    [handleEmoticonItem],
+  );
 
-export default function EmoticonGrid({
-  items,
-  isMultipleSelect,
-  isOrderChange,
-  handleDragEnd,
-  handleImageUpload,
-}: EmoticonGridProps) {
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over) {
+      handleEmoticonItem(Number(active.id), 'CHANGE_ORDER', {
+        newImageNumber: Number(over.id),
+      });
+    }
+  }, []);
+
   return (
     <DndContext onDragEnd={handleDragEnd}>
       <SortableContext
