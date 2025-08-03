@@ -1,23 +1,23 @@
+import useModal from '@/shared/ui/feedback/modal/modal-provider';
 import { Button } from '@/shared/ui/input';
+import DeleteConfirmModal from '../../delete-confirm-modal';
 import useEmoticonContext from '../provider/emotion-provider';
 import useUIContext from '../provider/ui-provider';
 
 export default function MultiSelectButton() {
-  const { isOrderChange, isMultipleSelect, toggleMultipleSelect } =
-    useUIContext();
+  const { openModal } = useModal();
+  const { isMultipleSelect, toggleMultipleSelect } = useUIContext();
+
   const { items, handleEmoticonItem } = useEmoticonContext();
 
-  const handleDeleteSelectedItems = () => {
-    const checkedItems = items.filter((item) => item.isChecked);
-    checkedItems.forEach((item) => {
-      if (item.isChecked) {
-        handleEmoticonItem(item.imageNumber, 'UPLOAD', {
-          imageUrl: '',
-        });
-      }
+  const handleClickCancel = () => {
+    toggleMultipleSelect();
+    items.forEach((item) => {
       handleEmoticonItem(item.imageNumber, 'UNCHECK');
     });
   };
+
+  const handleDeleteSelectedItems = () => openModal();
 
   const isCheckedItems = items.filter((item) => item.isChecked).length;
 
@@ -33,12 +33,13 @@ export default function MultiSelectButton() {
           다중 선택
         </Button>
       ) : (
-        <div className='flex gap-8'>
+        <div className='tablet:w-fit flex w-full gap-8'>
           <Button
             variant='secondary'
+            styleVariant='outlined'
             textClassName='text-body-sm font-semibold'
             className='tablet:w-fit w-full'
-            onClick={toggleMultipleSelect}
+            onClick={handleClickCancel}
           >
             취소
           </Button>
@@ -54,6 +55,7 @@ export default function MultiSelectButton() {
           </Button>
         </div>
       )}
+      <DeleteConfirmModal />
     </>
   );
 }

@@ -1,4 +1,5 @@
 import { ComponentPropsWithRef } from 'react';
+import { cn } from '@/shared/lib/utils';
 import { Icon } from '../../display';
 import { ICON_NAMES } from '../../icon/config';
 import { checkboxVariants } from './checkbox.style';
@@ -12,17 +13,22 @@ export interface CheckboxProps extends ComponentPropsWithRef<'input'> {
 
 export default function Checkbox({
   status = 'unchecked',
+  disabled = false,
   onChange,
   ...props
 }: CheckboxProps) {
   const iconName = getIconName(status);
 
   return (
-    <div className={checkboxVariants({ status })}>
+    <div className={checkboxVariants({ status, disabled })}>
       <input
         {...props}
         type='checkbox'
-        className='absolute h-full w-full cursor-pointer opacity-0 outline-none'
+        disabled={disabled}
+        className={cn(
+          'absolute h-full w-full opacity-0 outline-none',
+          disabled && 'cursor-not-allowed',
+        )}
         checked={status === 'checked'}
         onChange={onChange}
         ref={(input) => {

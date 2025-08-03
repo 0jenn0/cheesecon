@@ -55,7 +55,6 @@ export default function SecretNumberForm() {
             placeholder='****'
             labelType='required'
             placeholderClassName='padding-y-12'
-            responsiveDirection={{ mobile: 'column', desktop: 'row' }}
             onChange={handlePasswordChange}
           />
           <TextField
@@ -64,7 +63,6 @@ export default function SecretNumberForm() {
             placeholder='****'
             labelType='required'
             placeholderClassName='padding-y-12'
-            responsiveDirection={{ mobile: 'column', desktop: 'row' }}
             onChange={handlePasswordChange}
           />
         </div>

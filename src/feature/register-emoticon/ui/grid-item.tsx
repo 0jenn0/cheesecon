@@ -107,7 +107,7 @@ const GridItem = ({
           className={cn(
             'transition-all duration-300',
             isDragActive &&
-              'border-radius-xl effect-shadow-8 border-ghost border',
+              'border-radius-xl effect-shadow-8 border-ghost scale-105 border',
           )}
         >
           <EmoticonItem.Header />
