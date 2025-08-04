@@ -1,6 +1,5 @@
 import { BaseApiRequest, BaseApiResponse } from '@/shared/types';
-import { Tables } from '@/types/types_db';
-import { EmoticonSetOrderBy } from '../type';
+import { EmoticonSet, EmoticonSetOrderBy } from '../type';
 
 export type EmoticonSetQueryKey = {
   all: readonly ['emoticon-sets'];
@@ -15,7 +14,7 @@ export type EmoticonSetQueryKey = {
   ];
 };
 
-export type EmoticonSetQueryResult = BaseApiResponse<Tables<'emoticon_sets'>>;
+export type EmoticonSetQueryResult = BaseApiResponse<EmoticonSet>;
 
 export type EmoticonSetQueryOptions = {
   enabled?: boolean;

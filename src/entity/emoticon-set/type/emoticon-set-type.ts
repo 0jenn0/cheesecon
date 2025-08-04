@@ -1,7 +1,9 @@
 import { BaseSortParams } from '@/shared/types';
 import { Tables } from '@/types/types_db';
 
-export type EmoticonSet = Omit<
+export type EmoticonSet = Tables<'emoticon_sets'>;
+
+export type EmoticonSetRequest = Omit<
   Tables<'emoticon_sets'>,
   | 'id'
   | 'created_at'
@@ -16,8 +18,6 @@ export type EmoticonImageUrlWithOrder = {
   imageUrl: string;
   imageOrder: number;
 };
-
-export type EmoticonSetRequest = Tables<'emoticon_sets'>;
 
 export type EmoticonImage = Tables<'emoticon_images'>;
 
