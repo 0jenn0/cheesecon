@@ -1,3 +1,5 @@
+import { ActivityScreen } from '@/screen/main';
+
 export default function ActivityPage() {
-  return <div>ActivityPage</div>;
+  return <ActivityScreen />;
 }

@@ -66,9 +66,9 @@ function IconLabel({
   label: number | null;
 }) {
   return (
-    <div className='flex gap-4'>
+    <div className='flex gap-2'>
       <Icon name={icon} className='icon-disabled' />
-      <p className='text-body-sm text-tertiary'>{label}</p>
+      <p className='text-body-sm text-secondary'>{label}</p>
     </div>
   );
 }
