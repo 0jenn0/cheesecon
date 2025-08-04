@@ -7,21 +7,36 @@ interface NavigationProps extends ComponentPropsWithRef<'nav'> {}
 
 export default function Navigation({ className, ...props }: NavigationProps) {
   return (
-    <nav className={cn('flex gap-24', className)} {...props}>
+    <nav className={cn('flex items-center gap-12', className)} {...props}>
       <Button
         textClassName='text-body-sm text-interactive-primary font-semibold'
+        variant='secondary'
+        styleVariant='transparent'
+        size='sm'
+        as={Link}
+        href='/popular'
+      >
+        홈
+      </Button>
+      <div className='border-ghost h-24 w-1 border-r' />
+      <Button
+        textClassName='text-body-sm text-interactive-primary font-semibold'
+        variant='secondary'
+        styleVariant='transparent'
         size='sm'
         as={Link}
         href='/emoticon-register'
       >
-        이모티콘 등록하기
+        이모티콘 등록
       </Button>
+      <div className='border-ghost h-24 w-1 border-r' />
       <Button
         textClassName='text-body-sm text-interactive-primary font-semibold'
         variant='secondary'
+        styleVariant='transparent'
         size='sm'
         as={Link}
-        href='/' // TODO: 마이 페이지 주소 추가
+        href='/me'
       >
         마이 페이지
       </Button>
