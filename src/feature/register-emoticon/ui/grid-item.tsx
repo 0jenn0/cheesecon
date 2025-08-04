@@ -1,4 +1,4 @@
-import { ComponentPropsWithRef, useCallback, useState } from 'react';
+import { ComponentPropsWithRef, useCallback, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { cn } from '@/shared/lib/utils';
 import { Icon } from '@/shared/ui/display';
@@ -25,6 +25,8 @@ const GridItem = ({
 }: GridItemProps) => {
   const { isMultipleSelect, isOrderChange } = useUIContext();
   const uploadImageMutation = useUploadImageMutation();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
@@ -44,8 +46,24 @@ const GridItem = ({
         }
       }
     },
-    [uploadImageMutation],
+    [uploadImageMutation, imageNumber, onImageUpload],
   );
+
+  const handleFileSelect = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
+
+  const handleFileChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const files = event.target.files;
+      if (files && files.length > 0) {
+        onDrop(Array.from(files));
+      }
+      event.target.value = '';
+    },
+    [onDrop],
+  );
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: true,
@@ -57,7 +75,9 @@ const GridItem = ({
     },
     maxSize: 5 * 1024 * 1024,
     disabled: uploadImageMutation.isPending || isOrderChange,
+    noClick: true,
   });
+
   const {
     attributes,
     listeners,
@@ -69,6 +89,7 @@ const GridItem = ({
     id,
     disabled: !isOrderChange,
   });
+
   const hasImage = Boolean(imageUrl);
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -77,6 +98,7 @@ const GridItem = ({
   };
   const dragProps = isOrderChange ? { ...attributes, ...listeners } : {};
   const dropzoneProps = !isOrderChange ? getRootProps() : {};
+
   return (
     <div
       ref={setNodeRef}
@@ -95,6 +117,19 @@ const GridItem = ({
           className='hidden'
         />
       )}
+
+      {/* 모바일용 파일 입력 */}
+      {!isOrderChange && (
+        <input
+          ref={fileInputRef}
+          type='file'
+          accept='image/png,image/jpeg,image/gif,image/webp'
+          multiple={false}
+          onChange={handleFileChange}
+          className='hidden'
+        />
+      )}
+
       <EmoticonItem.Root
         imageNumber={imageNumber}
         imageUrl={imageUrl ?? ''}
@@ -109,6 +144,7 @@ const GridItem = ({
             isDragActive &&
               'border-radius-xl effect-shadow-8 border-ghost scale-105 border',
           )}
+          onClick={!isOrderChange ? handleFileSelect : undefined}
         >
           <EmoticonItem.Header />
           <EmoticonItem.Body>

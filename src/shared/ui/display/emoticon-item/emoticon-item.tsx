@@ -47,7 +47,7 @@ const contentVariants = cva(
   {
     variants: {
       isDragging: {
-        false: 'border-interactive-secondary border-b',
+        false: 'border-interactive-secondary border-b-[0.6px]',
         true: 'border-radius-xl cursor-grab border-2 border-[var(--color-cheesecon-primary-300)] opacity-70',
       },
     },

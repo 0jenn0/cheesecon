@@ -1,11 +1,12 @@
 'use client';
 
 import Image from 'next/image';
-import { ComponentPropsWithRef, useCallback, useState } from 'react';
+import { ComponentPropsWithRef, useCallback, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
 import { Spinner } from '@/shared/ui/feedback';
+import { Button } from '@/shared/ui/input';
 import useEmoticonRegister from '@/feature/register-emoticon/model/hook';
 import { useUploadImageMutation } from '../model/upload-image-mutation';
 
@@ -23,6 +24,7 @@ export default function ImageDropzone({
   const { emoticonSet, setEmoticonSet } = useEmoticonRegister();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const uploadImageMutation = useUploadImageMutation();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -48,7 +50,7 @@ export default function ImageDropzone({
         }
       }
     },
-    [uploadImageMutation],
+    [uploadImageMutation, emoticonSet, setEmoticonSet],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -62,7 +64,23 @@ export default function ImageDropzone({
     },
     maxSize: maxSize * 1024 * 1024, // MB를 바이트로 변환
     disabled: disabled || uploadImageMutation.isPending,
+    noClick: true,
   });
+
+  const handleFileSelect = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
+
+  const handleFileChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const files = event.target.files;
+      if (files && files.length > 0) {
+        onDrop(Array.from(files));
+      }
+      event.target.value = '';
+    },
+    [onDrop],
+  );
 
   const isLoading = uploadImageMutation.isPending;
   const isDisabled = disabled || isLoading;
@@ -72,7 +90,7 @@ export default function ImageDropzone({
       {...getRootProps()}
       className={cn(
         'group tablet:h-full relative flex h-[320px] w-full cursor-pointer flex-col items-center justify-center',
-        'padding-24 border-width-xs rounded-2xl border-dashed transition-all duration-300 ease-in-out',
+        'padding-24 border-radius-xl border-1 border-dashed transition-all duration-300 ease-in-out',
         isDragActive
           ? 'effect-shadow-16 bg-primary scale-[1.02] border-[var(--color-cheesecon-primary-500)]'
           : 'border-interactive-secondary-subtle bg-interactive-secondary-subtle',
@@ -82,6 +100,15 @@ export default function ImageDropzone({
       {...props}
     >
       <input {...getInputProps()} />
+
+      <input
+        ref={fileInputRef}
+        type='file'
+        accept='image/png,image/jpeg,image/gif,image/webp'
+        multiple
+        onChange={handleFileChange}
+        className='hidden'
+      />
 
       {isLoading && (
         <div className='absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-white/80 backdrop-blur-sm'>
@@ -110,7 +137,7 @@ export default function ImageDropzone({
       )}
 
       {!imageUrl && !isLoading && (
-        <div className='padding-24 border-radius-xl bg-primary border-ghost tablet:w-full tablet:h-auto flex aspect-square h-full w-auto flex-col items-center justify-center gap-12 border text-center'>
+        <div className='padding-24 border-radius-xl bg-primary tablet:w-full tablet:h-auto flex aspect-square h-full w-auto flex-col items-center justify-center gap-12 text-center'>
           <div
             className={cn(
               'padding-16 rounded-full transition-all duration-300',
@@ -145,6 +172,19 @@ export default function ImageDropzone({
               <div className='text-body-sm text-tertiary'>
                 <p>PNG, JPG, GIF, WEBP 지원</p>
                 <p>최대 {maxSize}MB</p>
+              </div>
+
+              {/* 모바일용 파일 선택 버튼 */}
+              <div className='tablet:hidden mt-16 block'>
+                <Button
+                  variant='primary'
+                  size='sm'
+                  onClick={handleFileSelect}
+                  disabled={isDisabled}
+                  className='w-full'
+                >
+                  파일 선택
+                </Button>
               </div>
             </div>
           )}
