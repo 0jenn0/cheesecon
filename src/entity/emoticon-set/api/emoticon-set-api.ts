@@ -22,7 +22,7 @@ export async function createEmoticonSet(
 
   const emoticonSetId = crypto.randomUUID();
 
-  const emoticonRequest: EmoticonSetRequest = {
+  const emoticonRequest: EmoticonSet = {
     ...emoticonSet,
     id: emoticonSetId,
     created_at: new Date().toISOString(),

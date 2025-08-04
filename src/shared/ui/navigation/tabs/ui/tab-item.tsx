@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ComponentPropsWithRef } from 'react';
@@ -6,7 +8,7 @@ import { Icon } from '@/shared/ui/display';
 import { ICON_NAMES } from '@/shared/ui/icon/config';
 import { tabItemVariants } from './tab-item.style';
 
-export interface TabItemProps extends ComponentPropsWithRef<'li'> {
+export interface TabItemProps extends ComponentPropsWithRef<'a'> {
   label: string;
   href: string;
   icon?: (typeof ICON_NAMES)[number];
@@ -26,14 +28,17 @@ export default function TabItem({
     forcedIsActive !== undefined ? forcedIsActive : pathname === href;
 
   return (
-    <li {...props} className='flex flex-1'>
-      <Link
-        href={href}
-        className={cn(tabItemVariants({ isActive }), className)}
-      >
-        {icon && <Icon name={icon} size={16} />}
-        {label}
-      </Link>
-    </li>
+    <Link
+      href={href}
+      className={cn(
+        tabItemVariants({ isActive }),
+        'flex h-full w-full items-center justify-center',
+        className,
+      )}
+      {...props}
+    >
+      {icon && <Icon name={icon} size={16} />}
+      {label}
+    </Link>
   );
 }

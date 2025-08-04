@@ -1,6 +1,6 @@
 import { PropsWithChildren, createContext, useContext, useState } from 'react';
 import { ImageUrlWithOrder } from '@/shared/types';
-import { EmoticonSetRequest } from '@/entity/emoticon-set/type';
+import { EmoticonSet } from '@/entity/emoticon-set/type';
 import { validateEmoticonSet, validateImageUrls } from '../lib/validation';
 
 interface ValidationErrors {
@@ -9,13 +9,13 @@ interface ValidationErrors {
 }
 
 interface EmoticonRegisterContextType {
-  emoticonSet: EmoticonSetRequest;
+  emoticonSet: EmoticonSet;
   imageUrls: ImageUrlWithOrder[];
-  setEmoticonSet: (emoticonSet: EmoticonSetRequest) => void;
+  setEmoticonSet: (emoticonSet: EmoticonSet) => void;
   handleSetImageUrl: (newImageUrls: ImageUrlWithOrder[]) => void;
   validationErrors: ValidationErrors;
   isValid: boolean;
-  validateField: (field: keyof EmoticonSetRequest, value: any) => void;
+  validateField: (field: keyof EmoticonSet, value: any) => void;
   validateAll: () => boolean;
   clearValidationErrors: () => void;
 }
@@ -59,7 +59,7 @@ const EmoticonRegisterContext = createContext<EmoticonRegisterContextType>({
 });
 
 export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
-  const [emoticonSet, setEmoticonSetState] = useState<EmoticonSetRequest>({
+  const [emoticonSet, setEmoticonSetState] = useState<EmoticonSet>({
     id: '',
     author_name: '',
     description: '',
@@ -82,7 +82,7 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
   );
   const [isValid, setIsValid] = useState(false);
 
-  const setEmoticonSet = (newEmoticonSet: EmoticonSetRequest) => {
+  const setEmoticonSet = (newEmoticonSet: EmoticonSet) => {
     setEmoticonSetState(newEmoticonSet);
 
     const emoticonSetResult = validateEmoticonSet(newEmoticonSet);
@@ -100,7 +100,7 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
     setIsValid(isValidResult);
   };
 
-  const validateField = (field: keyof EmoticonSetRequest, value: any) => {
+  const validateField = (field: keyof EmoticonSet, value: any) => {
     const updatedEmoticonSet = { ...emoticonSet, [field]: value };
     const result = validateEmoticonSet(updatedEmoticonSet);
 
