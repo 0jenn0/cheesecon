@@ -1,5 +1,5 @@
 import { Button } from '@/shared/ui/input';
-import { useRegisterMutation } from '@/entity/emoticon-set';
+import { useRegisterMutation } from '@/entity/emoticon-set/query/emoticon-set-mutation';
 import useEmoticonRegister from '../model/hook';
 
 const INITIAL_STEP = 0;

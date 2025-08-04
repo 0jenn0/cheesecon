@@ -1,12 +1,18 @@
 'use server';
 
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
-import { EmoticonSet, EmoticonSetRequest } from '../type';
+import { ImageUrlWithOrder } from '@/shared/types';
+import { EmoticonImageRequest, EmoticonSet, EmoticonSetRequest } from '../type';
+import {
+  CreateEmoticonSetResult,
+  GetEmoticonSetsRequest,
+  GetEmoticonSetsResult,
+} from './types';
 
 export async function createEmoticonSet(
   emoticonSet: EmoticonSet,
-  imageUrls: { imageUrl: string; imageOrder: number }[],
-) {
+  imageUrls: ImageUrlWithOrder[],
+): Promise<CreateEmoticonSetResult> {
   const supabase = await createServerSupabaseClient();
   const user = (await supabase.auth.getUser()).data.user;
 
@@ -41,11 +47,13 @@ export async function createEmoticonSet(
   const { data: emoticonImages, error: emoticonImagesError } = await supabase
     .from('emoticon_images')
     .insert(
-      imageUrls.map((imageUrl) => ({
-        set_id: emoticonSetId,
-        image_url: imageUrl.imageUrl,
-        image_order: imageUrl.imageOrder,
-      })),
+      imageUrls.map(
+        (imageUrl): EmoticonImageRequest => ({
+          set_id: emoticonSetId,
+          image_url: imageUrl.imageUrl,
+          image_order: imageUrl.imageOrder,
+        }),
+      ),
     )
     .select();
 
@@ -58,7 +66,42 @@ export async function createEmoticonSet(
 
   return {
     success: true,
-    emoticonSet: data,
-    emoticonImages: emoticonImages,
+    data: {
+      emoticonSet: data,
+      emoticonImages: emoticonImages,
+    },
+  };
+}
+
+export async function getEmoticonSets({
+  limit = 10,
+  offset = 0,
+  param = {
+    orderBy: 'created_at' as const,
+    order: 'desc' as const,
+  },
+}: GetEmoticonSetsRequest): Promise<GetEmoticonSetsResult> {
+  const supabase = await createServerSupabaseClient();
+
+  const { data, error, count } = await supabase
+    .from('emoticon_sets')
+    .select('*', { count: 'exact' })
+    .order(param.orderBy, { ascending: param.order === 'asc' })
+    .range(offset, offset + limit - 1);
+
+  if (error) {
+    console.error('Emoticon sets 조회 에러:', error);
+    throw new Error(`이모티콘 세트 조회에 실패했습니다: ${error.message}`);
+  }
+
+  return {
+    success: true,
+    data: {
+      data: data || [],
+      hasMore: count ? offset + limit < count : false,
+      total: count || 0,
+      currentPage: Math.floor(offset / limit) + 1,
+      totalPages: count ? Math.ceil(count / limit) : 0,
+    },
   };
 }
