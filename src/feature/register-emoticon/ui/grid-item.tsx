@@ -118,7 +118,6 @@ const GridItem = ({
         />
       )}
 
-      {/* 모바일용 파일 입력 */}
       {!isOrderChange && (
         <input
           ref={fileInputRef}

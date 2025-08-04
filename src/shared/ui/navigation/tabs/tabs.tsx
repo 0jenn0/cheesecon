@@ -9,7 +9,10 @@ export interface TabsProps extends ComponentPropsWithRef<'ul'> {
 
 export default function Tabs({ items, className, ...props }: TabsProps) {
   return (
-    <ul {...props} className={cn('flex gap-0', className)}>
+    <ul
+      {...props}
+      className={cn('flex w-full justify-center gap-0', className)}
+    >
       {items.map((item) => (
         <TabItem key={item.label} {...item} />
       ))}

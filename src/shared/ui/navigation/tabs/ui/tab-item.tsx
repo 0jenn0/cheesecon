@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ComponentPropsWithRef } from 'react';
@@ -26,11 +28,8 @@ export default function TabItem({
     forcedIsActive !== undefined ? forcedIsActive : pathname === href;
 
   return (
-    <li {...props} className='flex flex-1'>
-      <Link
-        href={href}
-        className={cn(tabItemVariants({ isActive }), className)}
-      >
+    <li {...props} className={cn(tabItemVariants({ isActive }), className)}>
+      <Link href={href} className='flex w-full items-center justify-center'>
         {icon && <Icon name={icon} size={16} />}
         {label}
       </Link>

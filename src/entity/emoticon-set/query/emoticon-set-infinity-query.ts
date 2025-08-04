@@ -32,7 +32,7 @@ export const useEmoticonSetInfinityQuery = (
       }),
     getNextPageParam: (lastPage, pages) => {
       return lastPage.success && lastPage.data.hasMore
-        ? pages.length
+        ? pages.length * (params?.limit || LIMIT)
         : undefined;
     },
     initialPageParam: 0,
