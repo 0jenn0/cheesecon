@@ -1,12 +1,18 @@
 'use server';
 
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
-import { EmoticonSet, EmoticonSetRequest } from '../type';
+import { ImageUrlWithOrder } from '@/shared/types';
+import { EmoticonImageRequest, EmoticonSet, EmoticonSetRequest } from '../type';
+import {
+  CreateEmoticonSetResult,
+  GetEmoticonSetsRequest,
+  GetEmoticonSetsResult,
+} from './types';
 
 export async function createEmoticonSet(
   emoticonSet: EmoticonSet,
-  imageUrls: { imageUrl: string; imageOrder: number }[],
-) {
+  imageUrls: ImageUrlWithOrder[],
+): Promise<CreateEmoticonSetResult> {
   const supabase = await createServerSupabaseClient();
   const user = (await supabase.auth.getUser()).data.user;
 
@@ -41,11 +47,13 @@ export async function createEmoticonSet(
   const { data: emoticonImages, error: emoticonImagesError } = await supabase
     .from('emoticon_images')
     .insert(
-      imageUrls.map((imageUrl) => ({
-        set_id: emoticonSetId,
-        image_url: imageUrl.imageUrl,
-        image_order: imageUrl.imageOrder,
-      })),
+      imageUrls.map(
+        (imageUrl): EmoticonImageRequest => ({
+          set_id: emoticonSetId,
+          image_url: imageUrl.imageUrl,
+          image_order: imageUrl.imageOrder,
+        }),
+      ),
     )
     .select();
 
@@ -58,8 +66,10 @@ export async function createEmoticonSet(
 
   return {
     success: true,
-    emoticonSet: data,
-    emoticonImages: emoticonImages,
+    data: {
+      emoticonSet: data,
+      emoticonImages: emoticonImages,
+    },
   };
 }
 
@@ -70,19 +80,7 @@ export async function getEmoticonSets({
     orderBy: 'created_at' as const,
     order: 'desc' as const,
   },
-}: {
-  limit?: number;
-  offset?: number;
-  param?: {
-    orderBy:
-      | 'created_at'
-      | 'updated_at'
-      | 'views_count'
-      | 'likes_count'
-      | 'comments_count';
-    order: 'asc' | 'desc';
-  };
-}) {
+}: GetEmoticonSetsRequest): Promise<GetEmoticonSetsResult> {
   const supabase = await createServerSupabaseClient();
 
   const { data, error, count } = await supabase
@@ -97,10 +95,13 @@ export async function getEmoticonSets({
   }
 
   return {
-    data: data || [],
-    hasMore: count ? offset + limit < count : false,
-    total: count || 0,
-    currentPage: Math.floor(offset / limit) + 1,
-    totalPages: count ? Math.ceil(count / limit) : 0,
+    success: true,
+    data: {
+      data: data || [],
+      hasMore: count ? offset + limit < count : false,
+      total: count || 0,
+      currentPage: Math.floor(offset / limit) + 1,
+      totalPages: count ? Math.ceil(count / limit) : 0,
+    },
   };
 }
