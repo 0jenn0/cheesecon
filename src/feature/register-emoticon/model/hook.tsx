@@ -1,8 +1,7 @@
 import { PropsWithChildren, createContext, useContext, useState } from 'react';
-import { Tables } from '@/types/types_db';
+import { ImageUrlWithOrder } from '@/shared/types';
+import { EmoticonSetRequest } from '@/entity/emoticon-set/type';
 import { validateEmoticonSet, validateImageUrls } from '../lib/validation';
-
-type EmoticonSetRequest = Tables<'emoticon_sets'>;
 
 interface ValidationErrors {
   emoticonSet?: Record<string, string[] | undefined>;
@@ -11,11 +10,9 @@ interface ValidationErrors {
 
 interface EmoticonRegisterContextType {
   emoticonSet: EmoticonSetRequest;
-  imageUrls: { imageUrl: string; imageOrder: number }[];
+  imageUrls: ImageUrlWithOrder[];
   setEmoticonSet: (emoticonSet: EmoticonSetRequest) => void;
-  handleSetImageUrl: (
-    newImageUrls: { imageUrl: string; imageOrder: number }[],
-  ) => void;
+  handleSetImageUrl: (newImageUrls: ImageUrlWithOrder[]) => void;
   validationErrors: ValidationErrors;
   isValid: boolean;
   validateField: (field: keyof EmoticonSetRequest, value: any) => void;
@@ -79,9 +76,7 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
     type: '',
     user_id: '',
   });
-  const [imageUrls, setImageUrls] = useState<
-    { imageUrl: string; imageOrder: number }[]
-  >([]);
+  const [imageUrls, setImageUrls] = useState<ImageUrlWithOrder[]>([]);
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>(
     {},
   );
@@ -96,9 +91,7 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
     setIsValid(isValidResult);
   };
 
-  const handleSetImageUrl = (
-    newImageUrls: { imageUrl: string; imageOrder: number }[],
-  ) => {
+  const handleSetImageUrl = (newImageUrls: ImageUrlWithOrder[]) => {
     setImageUrls((prev) => [...prev, ...newImageUrls]);
 
     const emoticonSetResult = validateEmoticonSet(emoticonSet);
