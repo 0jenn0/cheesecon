@@ -1,8 +1,3 @@
-export type PaginationParams = {
-  limit?: number;
-  offset?: number;
-};
-
 export type SortOrder = 'asc' | 'desc';
 
 export type BaseSortParams = {
@@ -33,3 +28,8 @@ export type ApiError = {
 export type ApiResult<T> =
   | { success: true; data: T }
   | { success: false; error: ApiError };
+
+export type ImageUrlWithOrder = {
+  imageUrl: string;
+  imageOrder: number;
+};

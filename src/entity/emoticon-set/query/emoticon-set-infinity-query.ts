@@ -1,17 +1,14 @@
+import { SortOrder } from '@/shared/types';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { getEmoticonSets } from '../api';
+import { EmoticonSetOrderBy } from '../type';
 import { EMOTICON_SET_QUERY_KEY } from './query-key';
 
 const LIMIT = 8;
 
 export interface EmoticonSetInfinityQueryParams {
-  orderBy:
-    | 'created_at'
-    | 'updated_at'
-    | 'views_count'
-    | 'likes_count'
-    | 'comments_count';
-  order: 'asc' | 'desc';
+  orderBy: EmoticonSetOrderBy;
+  order: SortOrder;
   offset?: number;
   limit?: number;
 }
@@ -34,7 +31,9 @@ export const useEmoticonSetInfinityQuery = (
         },
       }),
     getNextPageParam: (lastPage, pages) => {
-      return lastPage.hasMore ? pages.length : undefined;
+      return lastPage.success && lastPage.data.hasMore
+        ? pages.length
+        : undefined;
     },
     initialPageParam: 0,
   });

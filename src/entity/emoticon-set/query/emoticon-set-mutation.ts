@@ -1,9 +1,10 @@
+import { ImageUrlWithOrder } from '@/shared/types';
 import { useMutation } from '@tanstack/react-query';
 import { createEmoticonSet } from '../api/emoticon-set-api';
 import { EmoticonSet } from '../type';
 
 export interface RegisterMutationProps {
-  imageUrls: { imageUrl: string; imageOrder: number }[];
+  imageUrls: ImageUrlWithOrder[];
 }
 
 export function useRegisterMutation({ imageUrls }: RegisterMutationProps) {
