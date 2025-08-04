@@ -14,7 +14,7 @@ export default function HelloSection() {
         <h1 className='text-body-lg font-semibold'>
           {user?.name} 작가님, 안녕하세요!
         </h1>
-        <p className='text-body-sm text-secondary'>오늘도 열작하시나요?</p>
+        <p className='text-body-sm text-secondary'>오늘도 응원해요!</p>
       </div>
       <Button
         variant='primary'
