@@ -62,3 +62,45 @@ export async function createEmoticonSet(
     emoticonImages: emoticonImages,
   };
 }
+
+export async function getEmoticonSets({
+  limit = 10,
+  offset = 0,
+  param = {
+    orderBy: 'created_at' as const,
+    order: 'desc' as const,
+  },
+}: {
+  limit?: number;
+  offset?: number;
+  param?: {
+    orderBy:
+      | 'created_at'
+      | 'updated_at'
+      | 'views_count'
+      | 'likes_count'
+      | 'comments_count';
+    order: 'asc' | 'desc';
+  };
+}) {
+  const supabase = await createServerSupabaseClient();
+
+  const { data, error, count } = await supabase
+    .from('emoticon_sets')
+    .select('*', { count: 'exact' })
+    .order(param.orderBy, { ascending: param.order === 'asc' })
+    .range(offset, offset + limit - 1);
+
+  if (error) {
+    console.error('Emoticon sets 조회 에러:', error);
+    throw new Error(`이모티콘 세트 조회에 실패했습니다: ${error.message}`);
+  }
+
+  return {
+    data: data || [],
+    hasMore: count ? offset + limit < count : false,
+    total: count || 0,
+    currentPage: Math.floor(offset / limit) + 1,
+    totalPages: count ? Math.ceil(count / limit) : 0,
+  };
+}
