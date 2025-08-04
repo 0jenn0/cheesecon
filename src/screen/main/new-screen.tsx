@@ -4,10 +4,11 @@ import { useEmoticonSetInfinityQuery } from '@/entity/emoticon-set/query/emotico
 import { EmoticonViewSection } from '@/feature/view-emotion/emoticon-view-section';
 
 export default function PopularScreen() {
-  const { data, fetchNextPage, hasNextPage } = useEmoticonSetInfinityQuery({
-    orderBy: 'created_at',
-    order: 'desc',
-  });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useEmoticonSetInfinityQuery({
+      orderBy: 'created_at',
+      order: 'desc',
+    });
 
   const flattenedData = data?.pages.flatMap((page) =>
     page.success ? page.data.data : [],
@@ -19,6 +20,7 @@ export default function PopularScreen() {
       title='✨ 따끈따끈 최신 이모티콘'
       fetchNextPage={fetchNextPage}
       hasNextPage={hasNextPage}
+      isFetchingNextPage={isFetchingNextPage}
     />
   );
 }
