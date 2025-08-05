@@ -89,7 +89,7 @@ export default function EmoticonCommentSection({
             renderComment(comment),
           )}
         {parentComments.length === 0 && (
-          <div className='padding-16 flex w-full items-center justify-center gap-8'>
+          <div className='padding- flex w-full items-center justify-center gap-8'>
             <p className='text-tertiary'>첫 피드백을 남겨주세요!</p>
             <Icon name='message-loading' size={20} className='text-gray-300' />
           </div>
