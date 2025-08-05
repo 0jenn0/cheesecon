@@ -101,7 +101,7 @@ function EmoticonPlatform({ platform }: { platform: EmoticonSet['platform'] }) {
   return (
     <div
       className={cn(
-        'padding-8 border-radius-md flex w-[160px] items-center gap-4',
+        'padding-8 border-radius-md tablet:w-[160px] flex w-full items-center gap-4',
         platform === 'kakao' ? 'bg-yellow-50' : 'bg-green-50',
       )}
     >
@@ -124,7 +124,7 @@ function EmoticonType({ type }: { type: EmoticonSet['type'] }) {
   return (
     <div
       className={cn(
-        'padding-8 border-radius-md flex w-[160px] items-center gap-4',
+        'padding-8 border-radius-md tablet:w-[160px] flex w-full items-center gap-4',
         type === 'animated' ? 'bg-rose-50' : 'bg-gray-50',
       )}
     >

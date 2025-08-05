@@ -31,7 +31,7 @@ export default function EmoticonImageSection({
         <div className='border-ghost w-full border-b' />
         <ul
           className={cn(
-            'tablet:grid-cols-6 grid grid-cols-4 gap-x-24 gap-y-12',
+            'tablet:grid-cols-6 tablet:gap-x-[32px] grid grid-cols-4 gap-x-16 gap-y-16',
             className,
           )}
         >

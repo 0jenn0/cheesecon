@@ -1,6 +1,6 @@
 import { cva } from 'class-variance-authority';
 
-export const labelValuePairVariants = cva('flex w-full gap-12', {
+export const labelValuePairVariants = cva('flex w-full gap-16', {
   variants: {
     direction: {
       row: 'flex-row items-center',
@@ -9,7 +9,7 @@ export const labelValuePairVariants = cva('flex w-full gap-12', {
   },
 });
 
-export const labelVariants = cva('text-body-sm text-secondary min-w-[120px]', {
+export const labelVariants = cva('text-body-sm text-secondary min-w-[100px]', {
   variants: {
     direction: {
       row: 'border-ghost border-r',
