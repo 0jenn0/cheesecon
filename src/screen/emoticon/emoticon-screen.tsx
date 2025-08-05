@@ -4,7 +4,11 @@ import { useEffect } from 'react';
 import { useEmoticonSetDetailQuery } from '@/entity/emoticon-set/query/emoticon-set-query';
 import { trackEmoticonView } from '@/entity/view/api';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
-import { EmoticonCommentSection, EmoticonInfoSection } from './ui';
+import {
+  EmoticonCommentSection,
+  EmoticonInfoSection,
+  EmoticonScreenSkeleton,
+} from './ui';
 import EmoticonImageSection from './ui/emoticon-image-section';
 
 export default function EmoticonScreen({
@@ -19,7 +23,7 @@ export default function EmoticonScreen({
     trackEmoticonView(emoticonSetId, session?.user.id);
   }, [emoticonSetId, session?.user.id]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <EmoticonScreenSkeleton />;
   if (!data) return <div>데이터를 찾을 수 없습니다.</div>;
 
   return (

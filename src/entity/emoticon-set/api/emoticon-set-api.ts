@@ -91,7 +91,7 @@ export async function getEmoticonSets({
 
   const { data, error, count } = await supabase
     .from('emoticon_sets')
-    .select('*,emoticons:emoticon_sets_id_fkey(id,image_url,image_order)', {
+    .select('*,emoticon_images(id,image_url,image_order)', {
       count: 'exact',
     })
     .order(param.orderBy, { ascending: param.order === 'asc' })
