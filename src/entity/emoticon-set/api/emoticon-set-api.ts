@@ -2,7 +2,13 @@
 
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
 import { ImageUrlWithOrder } from '@/shared/types';
-import { EmoticonImageRequest, EmoticonSet, EmoticonSetRequest } from '../type';
+import { Tables } from '@/types/types_db';
+import {
+  EmoticonImageRequest,
+  EmoticonSet,
+  EmoticonSetDetail,
+  EmoticonSetRequest,
+} from '../type';
 import {
   CreateEmoticonSetResult,
   GetEmoticonSetsRequest,
@@ -85,7 +91,9 @@ export async function getEmoticonSets({
 
   const { data, error, count } = await supabase
     .from('emoticon_sets')
-    .select('*', { count: 'exact' })
+    .select('*,emoticons:emoticon_sets_id_fkey(id,image_url,image_order)', {
+      count: 'exact',
+    })
     .order(param.orderBy, { ascending: param.order === 'asc' })
     .range(offset, offset + limit - 1);
 
@@ -106,12 +114,26 @@ export async function getEmoticonSets({
   };
 }
 
-export async function getEmoticonSet(id: string): Promise<EmoticonSet> {
+export async function getEmoticonSetDetail(
+  id: string,
+): Promise<EmoticonSetDetail> {
   const supabase = await createServerSupabaseClient();
 
   const { data, error } = await supabase
     .from('emoticon_sets')
-    .select('*')
+    .select(
+      `
+  *,
+  emoticon_images(*),
+  likes(count),
+  views(count),
+  comments(
+    *,
+    profile:profiles(*),
+    comment_reactions(*)
+  )
+`,
+    )
     .eq('id', id)
     .single();
 
@@ -120,5 +142,19 @@ export async function getEmoticonSet(id: string): Promise<EmoticonSet> {
     throw new Error(`이모티콘 세트 조회에 실패했습니다: ${error.message}`);
   }
 
-  return data;
+  if (!data) {
+    throw new Error('이모티콘 세트를 찾을 수 없습니다.');
+  }
+
+  const formattedData: EmoticonSetDetail = {
+    ...data,
+    comments: data.comments.map((comment) => ({
+      ...comment,
+      profile: comment.profile as unknown as Tables<'profiles'>,
+    })),
+    likes: data.likes[0]?.count ?? 0,
+    views: data.views[0]?.count ?? 0,
+  };
+
+  return formattedData;
 }

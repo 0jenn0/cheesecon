@@ -3,10 +3,11 @@ import { getTimeAgo } from '@/shared/lib/utils';
 import { Avatar, Icon } from '@/shared/ui/display';
 import { Button } from '@/shared/ui/input';
 import { CommentWithProfile } from '@/entity/comment';
+import { EmoticonSetDetail } from '@/entity/emoticon-set';
 import CommentForm from './comment-form';
 
 interface CommentProps {
-  comment: CommentWithProfile;
+  comment: EmoticonSetDetail['comments'][number];
   to?: string;
   asChild?: boolean;
   onReply?: (id: string) => void;

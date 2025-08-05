@@ -28,7 +28,6 @@ export default function CommentForm({
     emoticonSetId,
     parentCommentId,
   });
-
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -55,7 +54,14 @@ export default function CommentForm({
         profileType='image'
         size='sm'
       />
-      <form className='flex w-full flex-col gap-8' onSubmit={handleSubmit}>
+      <form
+        className='flex w-full flex-col gap-8'
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit(e);
+          e.currentTarget.reset();
+        }}
+      >
         <TextArea
           placeholder='댓글을 입력해주세요.'
           className='flex-1'

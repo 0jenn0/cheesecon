@@ -3,6 +3,16 @@ import { Tables } from '@/types/types_db';
 
 export type EmoticonSet = Tables<'emoticon_sets'>;
 
+export type EmoticonSetDetail = Tables<'emoticon_sets'> & {
+  emoticon_images: Tables<'emoticon_images'>[];
+  likes: number;
+  views: number;
+  comments: (Tables<'comments'> & {
+    profile: Tables<'profiles'>;
+    comment_reactions: Tables<'comment_reactions'>[];
+  })[];
+};
+
 export type EmoticonSetRequest = Omit<
   Tables<'emoticon_sets'>,
   | 'id'

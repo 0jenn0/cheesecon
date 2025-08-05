@@ -1,14 +1,14 @@
 import Image from 'next/image';
 import { Icon } from '@/shared/ui/display';
 import { IconButton } from '@/shared/ui/input';
-import { EmoticonSet } from '@/entity/emoticon-set/type';
+import { EmoticonSet, EmoticonSetDetail } from '@/entity/emoticon-set/type';
 import LikeButton from '@/feature/like/ui/like-button/like-button';
 import { SecretIcon } from '.';
 
 export default function EmoticonInfoHeader({
-  emoticonSet,
+  emoticonSetDetail,
 }: {
-  emoticonSet: EmoticonSet;
+  emoticonSetDetail: EmoticonSetDetail;
 }) {
   const {
     author_name,
@@ -17,7 +17,7 @@ export default function EmoticonInfoHeader({
     is_private,
     views_count,
     comments_count,
-  } = emoticonSet;
+  } = emoticonSetDetail;
 
   return (
     <div className='bg-primary flex w-full items-center gap-16'>
@@ -38,8 +38,8 @@ export default function EmoticonInfoHeader({
             <p>{author_name}</p>
           </div>
           <LikeButton
-            setId={emoticonSet.id}
-            initialLikesCount={emoticonSet.likes_count ?? 0}
+            setId={emoticonSetDetail.id}
+            initialLikesCount={emoticonSetDetail.likes_count ?? 0}
           />
         </div>
 

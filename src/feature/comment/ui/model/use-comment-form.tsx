@@ -12,7 +12,7 @@ export default function useCommentForm({
 }) {
   const [comment, setComment] = useState<CreateCommentParams>({
     content: '',
-    set_id: emoticonSetId,
+    set_id: emoticonSetId || null,
     parent_comment_id: parentCommentId ?? null,
     image_id: null,
     images: null,
@@ -78,7 +78,7 @@ export default function useCommentForm({
         onSuccess: () => {
           setComment({
             content: '',
-            set_id: emoticonSetId,
+            set_id: emoticonSetId || null,
             parent_comment_id: null,
             image_id: null,
             images: null,

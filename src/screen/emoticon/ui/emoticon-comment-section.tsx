@@ -4,20 +4,22 @@ import { usePagination } from '@/shared/lib/use-pagination';
 import { Icon } from '@/shared/ui/display';
 import { Pagination } from '@/shared/ui/navigation';
 import { CommentWithProfile, useCommentQuery } from '@/entity/comment';
+import { EmoticonSetDetail } from '@/entity/emoticon-set';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { Comment, CommentForm } from '@/feature/comment/ui';
 
 const COUNT_PER_PAGE = 100;
 
 export default function EmoticonCommentSection({
-  emoticonSetId,
+  comments,
   authorId,
+  emoticonSetId,
 }: {
-  emoticonSetId: string;
+  comments: EmoticonSetDetail['comments'];
   authorId: string;
+  emoticonSetId: string;
 }) {
   const { session } = useAuth();
-
   const [commentFormPosition, setCommentFormPosition] = useState<string | null>(
     null,
   );
@@ -32,22 +34,15 @@ export default function EmoticonCommentSection({
     setCommentFormPosition(id);
   };
 
-  const { data, isLoading } = useCommentQuery({
-    set_id: emoticonSetId,
-    limit: COUNT_PER_PAGE,
-    offset,
-  });
-
-  const comments = data?.data;
-
   const renderComment = (
-    comment: CommentWithProfile,
+    comment: EmoticonSetDetail['comments'][number],
     depth: number = 0,
     parentNickname?: string,
   ) => {
     const childComments =
       comments?.filter(
-        (c: CommentWithProfile) => c.parent_comment_id === comment.id,
+        (c: EmoticonSetDetail['comments'][number]) =>
+          c.parent_comment_id === comment.id,
       ) || [];
 
     return (
@@ -61,9 +56,9 @@ export default function EmoticonCommentSection({
           isMe={session?.user.id === comment.user_id}
           isAuthor={comment.user_id === authorId}
         />
-        {childComments.map((childComment: CommentWithProfile) => (
+        {childComments.map((childComment) => (
           <div key={childComment.id} className={cn(depth < 2 && 'ml-24')}>
-            {renderComment(childComment, depth + 1, comment.profile.nickname)}
+            {renderComment(childComment, depth + 1, comment.user_id ?? '')}
           </div>
         ))}
       </div>
@@ -72,10 +67,10 @@ export default function EmoticonCommentSection({
 
   const parentComments =
     comments?.filter(
-      (comment: CommentWithProfile) => !comment.parent_comment_id,
+      (comment: EmoticonSetDetail['comments'][number]) =>
+        !comment.parent_comment_id,
     ) || [];
 
-  if (isLoading) return <div>Loading...</div>;
   return (
     <section className='tablet:border-radius-2xl bg-primary tablet:padding-24 tablet:gap-24 padding-16 flex flex-col gap-16'>
       <div className='flex items-center gap-4'>
@@ -85,7 +80,7 @@ export default function EmoticonCommentSection({
       <div className='border-ghost border-b' />
       <div className='flex w-full flex-col gap-24'>
         {parentComments.length > 0 &&
-          parentComments.map((comment: CommentWithProfile) =>
+          parentComments.map((comment: EmoticonSetDetail['comments'][number]) =>
             renderComment(comment),
           )}
         {parentComments.length === 0 && (
@@ -98,12 +93,12 @@ export default function EmoticonCommentSection({
       {commentFormPosition === null && (
         <CommentForm emoticonSetId={emoticonSetId} />
       )}
-      <Pagination
+      {/* <Pagination
         currentPage={currentPage}
-        totalPages={data?.totalPages || 1}
+        totalPages={totalPages || 1}
         onPageChange={handlePageChange}
         className='mt-6'
-      />
+      /> */}
     </section>
   );
 }

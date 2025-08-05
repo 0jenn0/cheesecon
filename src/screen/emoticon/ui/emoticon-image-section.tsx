@@ -3,24 +3,18 @@
 import { ComponentProps } from 'react';
 import { cn } from '@/shared/lib';
 import EmoticonItem from '@/shared/ui/display/emoticon-item/emoticon-item';
-import { useEmoticonImagesQuery } from '@/entity/emoticon-images/query';
-import { EmoticonImage } from '@/entity/emoticon-set/type';
+import { EmoticonImage, EmoticonSetDetail } from '@/entity/emoticon-set/type';
 import { EmoticonProvider } from '@/feature/register-emoticon/ui/emoticon-section/provider';
 
 interface EmoticonImageSectionProps extends ComponentProps<'section'> {
-  emoticonSetId: string;
+  emoticonImages: EmoticonSetDetail['emoticon_images'];
 }
 
 export default function EmoticonImageSection({
-  emoticonSetId,
+  emoticonImages,
   className,
   ...props
 }: EmoticonImageSectionProps) {
-  const { data: images, isLoading } = useEmoticonImagesQuery(emoticonSetId);
-
-  if (isLoading) return <div>Loading...</div>;
-  if (!images) return <div>데이터를 찾을 수 없습니다.</div>;
-
   return (
     <EmoticonProvider>
       <section
@@ -35,7 +29,7 @@ export default function EmoticonImageSection({
             className,
           )}
         >
-          {images.map((image: EmoticonImage) => (
+          {emoticonImages.map((image: EmoticonImage) => (
             <li key={image.id}>
               <EmoticonImageItem image={image} />
             </li>

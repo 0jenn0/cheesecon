@@ -1,30 +1,33 @@
 import { ComponentProps } from 'react';
 import { LabelValuePair } from '@/shared/ui/display';
-import { EmoticonSet } from '@/entity/emoticon-set/type';
+import { EmoticonSet, EmoticonSetDetail } from '@/entity/emoticon-set/type';
 import {
   EmoticonInfoHeader,
   EmoticonPlatformItem,
   EmoticonTypeItem,
-  SecretIcon,
 } from './ui';
 
 interface EmoticonInfoSectionProps extends ComponentProps<'section'> {
-  emoticonSet: EmoticonSet;
+  emoticonSetDetail: EmoticonSetDetail;
 }
 
 export default function EmoticonInfoSection({
-  emoticonSet,
+  emoticonSetDetail,
 }: EmoticonInfoSectionProps) {
   return (
     <section className='tablet:border-radius-2xl bg-primary padding-24 flex flex-col gap-24'>
-      <EmoticonInfoHeader emoticonSet={emoticonSet} />
-      <EmoticonInfoContent emoticonSet={emoticonSet} />
+      <EmoticonInfoHeader emoticonSetDetail={emoticonSetDetail} />
+      <EmoticonInfoContent emoticonSetDetail={emoticonSetDetail} />
     </section>
   );
 }
 
-function EmoticonInfoContent({ emoticonSet }: { emoticonSet: EmoticonSet }) {
-  const { platform, type, description } = emoticonSet;
+function EmoticonInfoContent({
+  emoticonSetDetail,
+}: {
+  emoticonSetDetail: EmoticonSetDetail;
+}) {
+  const { platform, type, description } = emoticonSetDetail;
 
   return (
     <div className='bg-primary flex flex-col gap-8'>

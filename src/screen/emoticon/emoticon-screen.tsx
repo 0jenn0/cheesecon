@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useEmoticonSetQuery } from '@/entity/emoticon-set/query/emoticon-set-query';
+import { useEmoticonSetDetailQuery } from '@/entity/emoticon-set/query/emoticon-set-query';
 import { trackEmoticonView } from '@/entity/view/api';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { EmoticonCommentSection, EmoticonInfoSection } from './ui';
@@ -12,7 +12,7 @@ export default function EmoticonScreen({
 }: {
   emoticonSetId: string;
 }) {
-  const { data, isLoading } = useEmoticonSetQuery(emoticonSetId);
+  const { data, isLoading } = useEmoticonSetDetailQuery(emoticonSetId);
   const { session } = useAuth();
 
   useEffect(() => {
@@ -24,11 +24,12 @@ export default function EmoticonScreen({
 
   return (
     <div className='padding-y-16 tablet:padding-y-24 tablet:gap-24 flex flex-col gap-16'>
-      <EmoticonInfoSection emoticonSet={data} />
-      <EmoticonImageSection emoticonSetId={emoticonSetId} />
+      <EmoticonInfoSection emoticonSetDetail={data} />
+      <EmoticonImageSection emoticonImages={data.emoticon_images} />
       <EmoticonCommentSection
-        emoticonSetId={emoticonSetId}
+        comments={data.comments}
         authorId={data.user_id ?? ''}
+        emoticonSetId={emoticonSetId}
       />
     </div>
   );
