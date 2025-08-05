@@ -25,11 +25,11 @@ export default function Comment({
   isAuthor = false,
 }: CommentProps) {
   return (
-    <div className='flex w-full gap-12'>
+    <div className='flex w-full gap-4'>
       <>
-        {asChild && <Icon name='corner-down-right' className='icon-disabled' />}
+        {asChild && <Icon name='corner-down-right' className='text-gray-300' />}
       </>
-      <div className='flex flex-1 gap-12'>
+      <div className='flex flex-1 gap-8'>
         <Avatar
           name={comment.profile.nickname}
           profileType='image'
@@ -80,7 +80,7 @@ export default function Comment({
               size='sm'
               onClick={() => onReply?.(comment.id)}
             >
-              <p className='text-sm'>{showForm ? '취소' : '답글'}</p>
+              <p className='text-body-sm'>{showForm ? '취소' : '답글'}</p>
             </Button>
             <p className='text-tertiary text-body-sm'>
               {comment.created_at && getTimeAgo(comment.created_at)}

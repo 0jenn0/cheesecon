@@ -4,6 +4,7 @@ import { cn } from '@/shared/lib';
 import { Icon, LabelValuePair } from '@/shared/ui/display';
 import { IconButton } from '@/shared/ui/input';
 import { EmoticonSet } from '@/entity/emoticon-set/type';
+import LikeButton from '@/feature/like/ui/like-button/like-button';
 
 interface EmoticonInfoSectionProps extends ComponentProps<'section'> {
   emoticonSet: EmoticonSet;
@@ -31,13 +32,7 @@ export default function EmoticonInfoSection({
               </div>
               <p>{author_name}</p>
             </div>
-            <button className='border-radius-2xl border-ghost padding-12 flex cursor-pointer items-center gap-2 border bg-rose-400 hover:bg-rose-500'>
-              <Icon
-                name='heart'
-                size={24}
-                className='icon-interactive-inverse'
-              />
-            </button>
+            <LikeButton likesCount={emoticonSet.likes_count ?? 0} />
           </div>
           <div className='border-ghost w-full border-t' />
           <div className='flex w-full items-center justify-between'>
@@ -45,27 +40,24 @@ export default function EmoticonInfoSection({
               <SecretIcon isSecret={emoticonSet.is_private ?? false} />
               <div className='border-ghost h-16 w-px border-r' />
               <div className='flex items-center gap-8'>
+                <p className='text-body-sm text-secondary'>
+                  조회 {emoticonSet.views_count}
+                </p>
                 <div className='flex items-center gap-2'>
                   <Icon
                     name='message-circle'
-                    size={20}
+                    size={16}
                     className='icon-disabled'
                   />
                   <p className='text-body-sm text-secondary'>
                     {emoticonSet.comments_count}
                   </p>
                 </div>
-                <div className='flex items-center gap-2'>
-                  <Icon name='heart' size={20} className='icon-disabled' />
-                  <p className='text-body-sm text-secondary'>
-                    {emoticonSet.likes_count}
-                  </p>
-                </div>
               </div>
             </div>
             <div className='flex items-center gap-8'>
-              <IconButton variant='secondary' icon='link' />
-              <IconButton variant='secondary' icon='edit-2' />
+              <IconButton variant='secondary' icon='link' iconSize={20} />
+              <IconButton variant='secondary' icon='edit-2' iconSize={20} />
             </div>
           </div>
         </div>
@@ -95,7 +87,7 @@ function SecretIcon({ isSecret }: { isSecret: boolean }) {
       />
       <p
         className={cn(
-          'text-body-sm',
+          'text-body-sm tablet:block hidden',
           isSecret ? 'text-rose-600' : 'text-emerald-600',
         )}
       >
