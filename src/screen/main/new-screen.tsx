@@ -1,14 +1,19 @@
 'use client';
 
 import { useEmoticonSetInfinityQuery } from '@/entity/emoticon-set/query/emoticon-set-infinity-query';
-import { EmoticonViewSection } from '@/feature/view-emotion/emoticon-view-section';
+import {
+  EmoticonViewSection,
+  EmoticonViewSkeleton,
+} from '@/feature/view-emotion/emoticon-view-section';
 
 export default function PopularScreen() {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useEmoticonSetInfinityQuery({
       orderBy: 'created_at',
       order: 'desc',
     });
+
+  if (isLoading) return <EmoticonViewSkeleton />;
 
   const flattenedData = data?.pages.flatMap((page) =>
     page.success ? page.data.data : [],
