@@ -6,13 +6,12 @@ export type CreateCommentRequest = {
   comment: CreateCommentParams;
 };
 
-export type GetCommentsRequest = BaseApiRequest & {
-  param?: CommentSortParams & {
+export type GetCommentsRequest = BaseApiRequest &
+  CommentSortParams & {
     set_id?: string;
     user_id?: string;
     parent_comment_id?: string | null;
   };
-};
 
 export interface CommentWithProfile extends Comment {
   profile: Pick<Profile, 'id' | 'nickname' | 'avatar_url'>;

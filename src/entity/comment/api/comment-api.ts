@@ -21,24 +21,21 @@ export async function getComments(
         '*, profile:profiles!comments_user_id_fkey(id, nickname, avatar_url)',
       );
 
-    if (request.param?.set_id) {
-      query = query.eq('set_id', request.param.set_id);
+    if (request?.set_id) {
+      query = query.eq('set_id', request?.set_id);
     }
 
-    if (request.param?.user_id) {
-      query = query.eq('user_id', request.param.user_id);
+    if (request?.user_id) {
+      query = query.eq('user_id', request.user_id);
     }
 
-    if (request.param?.parent_comment_id !== undefined) {
-      query = query.eq(
-        'parent_comment_id',
-        request.param.parent_comment_id || '',
-      );
+    if (request?.parent_comment_id !== undefined) {
+      query = query.eq('parent_comment_id', request.parent_comment_id || '');
     }
 
-    if (request.param?.sortBy) {
-      query = query.order(request.param.sortBy, {
-        ascending: request.param.sortOrder === 'asc',
+    if (request.sortBy) {
+      query = query.order(request.sortBy, {
+        ascending: request.sortOrder === 'asc',
       });
     } else {
       query = query.order('created_at', { ascending: true });
@@ -53,16 +50,16 @@ export async function getComments(
           .from('comments')
           .select('*', { count: 'exact', head: true });
 
-        if (request.param?.set_id) {
-          countQuery = countQuery.eq('set_id', request.param.set_id);
+        if (request.set_id) {
+          countQuery = countQuery.eq('set_id', request.set_id);
         }
-        if (request.param?.user_id) {
-          countQuery = countQuery.eq('user_id', request.param.user_id);
+        if (request.user_id) {
+          countQuery = countQuery.eq('user_id', request.user_id);
         }
-        if (request.param?.parent_comment_id !== undefined) {
+        if (request.parent_comment_id !== undefined) {
           countQuery = countQuery.eq(
             'parent_comment_id',
-            request.param.parent_comment_id || '',
+            request.parent_comment_id || '',
           );
         }
 
