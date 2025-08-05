@@ -1,4 +1,7 @@
+'use client';
+
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { ComponentPropsWithRef } from 'react';
 import { Icon } from '@/shared/ui/display';
 import { ICON_NAMES } from '@/shared/ui/icon/config';
@@ -10,8 +13,14 @@ interface EmoticonViewItemProps extends ComponentPropsWithRef<'section'> {
 }
 
 function EmoticonViewItem({ item, index }: EmoticonViewItemProps) {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(`/emoticon/${item.id}`);
+  };
+
   return (
-    <section className='flex gap-24'>
+    <section className='flex gap-24' onClick={handleClick}>
       <Thumbnail index={index} item={item} />
       <Content item={item} />
     </section>

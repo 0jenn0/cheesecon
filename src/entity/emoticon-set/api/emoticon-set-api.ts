@@ -105,3 +105,20 @@ export async function getEmoticonSets({
     },
   };
 }
+
+export async function getEmoticonSet(id: string): Promise<EmoticonSet> {
+  const supabase = await createServerSupabaseClient();
+
+  const { data, error } = await supabase
+    .from('emoticon_sets')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error('Emoticon set 조회 에러:', error);
+    throw new Error(`이모티콘 세트 조회에 실패했습니다: ${error.message}`);
+  }
+
+  return data;
+}

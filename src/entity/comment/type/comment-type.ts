@@ -11,8 +11,6 @@ export type CommentWithReactions = Comment & {
 export type CommentSortParams = {
   sortBy?: 'created_at' | 'updated_at';
   sortOrder?: 'asc' | 'desc';
-  limit?: number;
-  offset?: number;
 };
 
 export type CreateCommentParams = {

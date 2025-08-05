@@ -1,8 +1,9 @@
 import { ApiResult, BaseApiRequest, BaseApiResponse } from '@/shared/types';
-import { Comment, CommentSortParams } from '../type';
+import { Profile } from '@/entity/profile';
+import { Comment, CommentSortParams, CreateCommentParams } from '../type';
 
 export type CreateCommentRequest = {
-  comment: Comment;
+  comment: CreateCommentParams;
 };
 
 export type GetCommentsRequest = BaseApiRequest & {
@@ -13,9 +14,13 @@ export type GetCommentsRequest = BaseApiRequest & {
   };
 };
 
+export interface CommentWithProfile extends Comment {
+  profile: Pick<Profile, 'id' | 'nickname' | 'avatar_url'>;
+}
+
 export type CreateCommentResponse = {
   comment: Comment;
 };
 
 export type CreateCommentResult = ApiResult<CreateCommentResponse>;
-export type GetCommentsResult = ApiResult<BaseApiResponse<Comment>>;
+export type GetCommentsResult = ApiResult<BaseApiResponse<CommentWithProfile>>;

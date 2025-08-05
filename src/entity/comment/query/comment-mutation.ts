@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { commentApi } from '../api';
+import { createComment, deleteComment, updateComment } from '../api';
 import { COMMENT_QUERY_KEY } from './query-key';
 import { CommentMutationParams } from './types';
 
@@ -7,7 +7,7 @@ export const useCreateCommentMutation = (params?: CommentMutationParams) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: commentApi.createComment,
+    mutationFn: createComment,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: COMMENT_QUERY_KEY.lists() });
       params?.onSuccess?.();
@@ -20,7 +20,7 @@ export const useUpdateCommentMutation = (params?: CommentMutationParams) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: commentApi.updateComment,
+    mutationFn: updateComment,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: COMMENT_QUERY_KEY.lists() });
       params?.onSuccess?.();
@@ -33,7 +33,7 @@ export const useDeleteCommentMutation = (params?: CommentMutationParams) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: commentApi.deleteComment,
+    mutationFn: deleteComment,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: COMMENT_QUERY_KEY.lists() });
       params?.onSuccess?.();

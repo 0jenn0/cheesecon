@@ -11,7 +11,7 @@ export interface PlaceholderProps extends ComponentPropsWithRef<'input'> {
   trailingIcon?: IconProps['name'];
   iconClassName?: string;
   inputClassName?: string;
-  iconSize: IconProps['size'];
+  iconSize?: IconProps['size'];
   disabled: boolean;
   onTrailingIconClick?: () => void;
 }

@@ -1,4 +1,4 @@
-import { ComponentProps, Ref, useEffect, useRef } from 'react';
+import { ComponentProps, Ref, useEffect } from 'react';
 import { useIntersectionObserver } from '@/shared/lib';
 import { EmoticonSet } from '@/entity/emoticon-set/type';
 import { EmoticonViewItem } from './ui';

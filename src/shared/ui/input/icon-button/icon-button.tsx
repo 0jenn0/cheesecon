@@ -3,7 +3,7 @@ import { VariantProps } from 'class-variance-authority';
 import { cn } from '@/shared/lib';
 import { Spinner } from '../../feedback';
 import { ICON_NAMES } from '../../icon/config';
-import Icon from '../../icon/icon';
+import Icon, { IconProps } from '../../icon/icon';
 import { getSpinnerSize, getSpinnerVariant } from '../button/button';
 import {
   iconButtonIconVariants,
@@ -15,6 +15,8 @@ export interface IconButtonProps
     VariantProps<typeof iconButtonVariants> {
   icon: (typeof ICON_NAMES)[number];
   isLoading?: boolean;
+  iconSize?: IconProps['size'];
+  iconClassName?: string;
 }
 
 export default function IconButton({
@@ -23,6 +25,8 @@ export default function IconButton({
   styleVariant = 'filled',
   disabled,
   isLoading = false,
+  iconSize = 24,
+  iconClassName,
   className,
   ...props
 }: IconButtonProps) {
@@ -52,7 +56,9 @@ export default function IconButton({
             styleVariant,
           }),
           opacity,
+          iconClassName,
         )}
+        size={iconSize}
       />
     </button>
   );
