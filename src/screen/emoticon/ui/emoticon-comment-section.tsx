@@ -3,7 +3,6 @@ import { cn } from '@/shared/lib';
 import { usePagination } from '@/shared/lib/use-pagination';
 import { Icon } from '@/shared/ui/display';
 import { Pagination } from '@/shared/ui/navigation';
-import { CommentWithProfile, useCommentQuery } from '@/entity/comment';
 import { EmoticonSetDetail } from '@/entity/emoticon-set';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { Comment, CommentForm } from '@/feature/comment/ui';
@@ -23,8 +22,12 @@ export default function EmoticonCommentSection({
   const [commentFormPosition, setCommentFormPosition] = useState<string | null>(
     null,
   );
-  const { currentPage, offset, handlePageChange } =
-    usePagination(COUNT_PER_PAGE);
+  const {
+    currentPage,
+    handlePageChange,
+    totalPages,
+    data: paginatedComments,
+  } = usePagination(COUNT_PER_PAGE, comments);
 
   const handleReply = (id: string) => {
     if (commentFormPosition === id) {
@@ -40,7 +43,7 @@ export default function EmoticonCommentSection({
     parentNickname?: string,
   ) => {
     const childComments =
-      comments?.filter(
+      paginatedComments?.filter(
         (c: EmoticonSetDetail['comments'][number]) =>
           c.parent_comment_id === comment.id,
       ) || [];
@@ -66,7 +69,7 @@ export default function EmoticonCommentSection({
   };
 
   const parentComments =
-    comments?.filter(
+    paginatedComments?.filter(
       (comment: EmoticonSetDetail['comments'][number]) =>
         !comment.parent_comment_id,
     ) || [];
@@ -93,12 +96,12 @@ export default function EmoticonCommentSection({
       {commentFormPosition === null && (
         <CommentForm emoticonSetId={emoticonSetId} />
       )}
-      {/* <Pagination
+      <Pagination
         currentPage={currentPage}
         totalPages={totalPages || 1}
         onPageChange={handlePageChange}
         className='mt-6'
-      /> */}
+      />
     </section>
   );
 }
