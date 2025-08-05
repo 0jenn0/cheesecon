@@ -32,7 +32,10 @@ export default function EmoticonInfoSection({
               </div>
               <p>{author_name}</p>
             </div>
-            <LikeButton likesCount={emoticonSet.likes_count ?? 0} />
+            <LikeButton
+              setId={emoticonSet.id}
+              initialLikesCount={emoticonSet.likes_count ?? 0}
+            />
           </div>
           <div className='border-ghost w-full border-t' />
           <div className='flex w-full items-center justify-between'>

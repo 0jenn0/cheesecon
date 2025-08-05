@@ -2,23 +2,29 @@ import { ComponentProps, useState } from 'react';
 import { VariantProps } from 'class-variance-authority';
 import { cn } from '@/shared/lib/utils';
 import { Icon } from '@/shared/ui/display';
+import { useOptimisticLike } from '@/entity/like/query/like-mutation-query';
+import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { likeButtonVariants } from './like-button.style';
 
 export interface LikeButtonProps
   extends ComponentProps<'button'>,
     VariantProps<typeof likeButtonVariants> {
-  likesCount: number;
+  setId: string;
+  initialLikesCount: number;
 }
 
 export default function LikeButton({
-  likesCount,
+  setId,
+  initialLikesCount,
   className,
   ...props
 }: LikeButtonProps) {
-  const [isLiked, setIsLiked] = useState(false);
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-  };
+  const { session } = useAuth();
+  const { isLiked, likesCount, isLoading, toggleLike } = useOptimisticLike(
+    setId,
+    session?.user.id,
+    initialLikesCount,
+  );
 
   return (
     <button
@@ -27,7 +33,8 @@ export default function LikeButton({
         className,
       )}
       {...props}
-      onClick={handleLike}
+      onClick={toggleLike}
+      disabled={isLoading}
     >
       <Icon
         name={isLiked ? 'heart-filled' : 'heart'}
