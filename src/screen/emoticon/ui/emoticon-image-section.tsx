@@ -31,7 +31,7 @@ export default function EmoticonImageSection({
         <div className='border-ghost w-full border-b' />
         <ul
           className={cn(
-            'tablet:grid-cols-6 grid grid-cols-4 gap-12',
+            'tablet:grid-cols-6 grid grid-cols-4 gap-x-24 gap-y-12',
             className,
           )}
         >
@@ -55,6 +55,7 @@ function EmoticonImageItem({ image }: { image: EmoticonImage }) {
       imageUrl={image_url}
       commentsCount={comments_count ?? 0}
       likesCount={likes_count ?? 0}
+      className='cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95'
     >
       <EmoticonItem.Content>
         <EmoticonItem.Header />

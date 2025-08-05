@@ -10,7 +10,17 @@ import useEmoticonItem, {
 } from './provider/emoticon-item-provider';
 import { ImageNumberBadge } from './ui';
 
-export interface EmoticonItemProps extends ComponentPropsWithRef<'div'> {}
+export interface EmoticonItemProps extends ComponentPropsWithRef<'div'> {
+  imageNumber: number;
+  commentsCount?: number;
+  likesCount?: number;
+  showCheckbox?: boolean;
+  showGripIcon?: boolean;
+  showNumberBadge?: boolean;
+  imageUrl?: string;
+  isUploading?: boolean;
+  isDragging?: boolean;
+}
 
 function EmoticonItemRoot({
   imageNumber,
@@ -21,17 +31,8 @@ function EmoticonItemRoot({
   isUploading,
   isDragging,
   children,
-}: PropsWithChildren<{
-  imageNumber: number;
-  commentsCount?: number;
-  likesCount?: number;
-  showCheckbox?: boolean;
-  showGripIcon?: boolean;
-  showNumberBadge?: boolean;
-  imageUrl?: string;
-  isUploading?: boolean;
-  isDragging?: boolean;
-}>) {
+  className,
+}: EmoticonItemProps) {
   return (
     <EmoticonItemProvider
       showGripIcon={showGripIcon}
@@ -42,7 +43,7 @@ function EmoticonItemRoot({
       isUploading={isUploading}
       isDragging={isDragging}
     >
-      <div className='flex flex-col gap-0'>{children}</div>
+      <div className={cn('flex flex-col gap-0', className)}>{children}</div>
     </EmoticonItemProvider>
   );
 }

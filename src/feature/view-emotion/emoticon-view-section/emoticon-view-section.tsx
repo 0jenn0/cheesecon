@@ -38,7 +38,10 @@ export default function EmoticonViewSection({
 
       <ul className='grid grid-cols-1 gap-x-24 gap-y-12 md:grid-cols-2'>
         {items.map((item, index) => (
-          <li className='flex flex-col gap-12' key={`${item.id}-${index}`}>
+          <li
+            className='flex cursor-pointer flex-col gap-12'
+            key={`${item.id}-${index}`}
+          >
             <EmoticonViewItem item={item} index={index + 1} />
             <div className='border-ghost w-full border-b-[0.6px]' />
           </li>

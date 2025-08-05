@@ -21,7 +21,7 @@ function EmoticonViewItem({ item, index }: EmoticonViewItemProps) {
   };
 
   return (
-    <section className='flex gap-24' onClick={handleClick}>
+    <section className='group flex cursor-pointer gap-24' onClick={handleClick}>
       <Thumbnail index={index} item={item} />
       <Content item={item} />
     </section>
@@ -45,7 +45,7 @@ function Thumbnail({ index, item }: { index: number; item: EmoticonSet }) {
       <Image
         src={item.representative_image_url}
         alt={item.title}
-        className='border-radius-lg border-ghost tablet:w-[96px] tablet:h-[96px] h-[80px] w-[80px] border object-cover'
+        className='border-radius-lg border-ghost tablet:w-[96px] tablet:h-[96px] h-[80px] w-[80px] border object-cover transition-all duration-200'
         width={80}
         height={80}
       />
@@ -85,7 +85,9 @@ function EmoticonPlatform({ platform }: { platform: EmoticonSet['platform'] }) {
 function Content({ item }: { item: EmoticonSet }) {
   return (
     <div className='flex h-full flex-1 flex-col justify-center gap-24'>
-      <h1 className='text-body-lg'>{item.title}</h1>
+      <h1 className='text-body-lg w-fit transition-all duration-200 group-hover:underline'>
+        {item.title}
+      </h1>
       <div className='flex w-full justify-between'>
         <p className='text-body-sm text-gray-500'>{item.author_name}</p>
         <div className='flex gap-12'>
