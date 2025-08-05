@@ -71,8 +71,14 @@ export default function EmoticonInfoSection({
         </div>
       </div>
       <div className='bg-primary flex flex-col gap-8'>
-        <LabelValuePair label='이모티콘 플랫폼' value={emoticonSet.platform} />
-        <LabelValuePair label='이모티콘 유형' value={emoticonSet.type} />
+        <LabelValuePair
+          label='이모티콘 플랫폼'
+          value={<EmoticonPlatform platform={emoticonSet.platform} />}
+        />
+        <LabelValuePair
+          label='이모티콘 유형'
+          value={<EmoticonType type={emoticonSet.type} />}
+        />
         <LabelValuePair label='이모티콘 설명' value={emoticonSet.description} />
       </div>
     </section>
@@ -94,6 +100,51 @@ function SecretIcon({ isSecret }: { isSecret: boolean }) {
         )}
       >
         {isSecret ? '비밀' : '공개'} 게시물
+      </p>
+    </div>
+  );
+}
+
+function EmoticonPlatform({ platform }: { platform: EmoticonSet['platform'] }) {
+  return (
+    <div
+      className={cn(
+        'padding-8 border-radius-md flex w-[160px] items-center gap-4',
+        platform === 'kakao' ? 'bg-yellow-50' : 'bg-green-50',
+      )}
+    >
+      <Icon
+        name={platform === 'kakao' ? 'kakao-logo' : 'line-logo'}
+        size={20}
+      />
+      <p
+        className={cn(
+          platform === 'kakao' ? 'text-yellow-00' : 'text-green-700',
+        )}
+      >
+        {platform === 'kakao' ? '카카오톡' : '라인'}
+      </p>
+    </div>
+  );
+}
+
+function EmoticonType({ type }: { type: EmoticonSet['type'] }) {
+  return (
+    <div
+      className={cn(
+        'padding-8 border-radius-md flex w-[160px] items-center gap-4',
+        type === 'animated' ? 'bg-rose-50' : 'bg-gray-50',
+      )}
+    >
+      <Icon
+        name={type === 'animated' ? 'smile-move' : 'smile'}
+        size={20}
+        className={type === 'animated' ? 'text-rose-600' : 'text-gray-600'}
+      />
+      <p
+        className={cn(type === 'animated' ? 'text-rose-600' : 'text-gray-600')}
+      >
+        {type === 'animated' ? '움직이는 이모티콘' : '멈춰있는 이모티콘'}
       </p>
     </div>
   );

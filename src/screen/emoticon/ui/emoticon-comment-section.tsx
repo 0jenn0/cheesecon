@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { cn } from '@/shared/lib';
 import { usePagination } from '@/shared/lib/use-pagination';
+import { Icon } from '@/shared/ui/display';
 import { Pagination } from '@/shared/ui/navigation';
 import { CommentWithProfile, useCommentQuery } from '@/entity/comment';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
@@ -83,8 +84,15 @@ export default function EmoticonCommentSection({
       </div>
       <div className='border-ghost border-b' />
       <div className='flex w-full flex-col gap-24'>
-        {parentComments.map((comment: CommentWithProfile) =>
-          renderComment(comment),
+        {parentComments.length > 0 &&
+          parentComments.map((comment: CommentWithProfile) =>
+            renderComment(comment),
+          )}
+        {parentComments.length === 0 && (
+          <div className='padding-16 flex w-full items-center justify-center gap-8'>
+            <p className='text-tertiary'>첫 피드백을 남겨주세요!</p>
+            <Icon name='message-loading' size={20} className='text-gray-300' />
+          </div>
         )}
       </div>
       {commentFormPosition === null && (

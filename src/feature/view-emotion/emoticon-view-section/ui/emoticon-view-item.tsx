@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { ComponentPropsWithRef } from 'react';
+import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
 import { ICON_NAMES } from '@/shared/ui/icon/config';
 import { EmoticonSet } from '@/entity/emoticon-set/type';
@@ -32,8 +33,14 @@ export default EmoticonViewItem;
 function Thumbnail({ index, item }: { index: number; item: EmoticonSet }) {
   return (
     <div className='border-radius-lg relative flex gap-8 overflow-hidden font-semibold'>
-      <div className='height-24 width-24 border-radius-lg border-secondary bg-secondary flex items-center justify-center backdrop-blur-sm'>
-        <span className='text-body-sm font-regular'>{index}</span>
+      <div className='flex flex-col justify-between'>
+        <div className='height-24 width-24 flex items-center justify-center'>
+          <span className='text-body-sm font-regular'>{index}</span>
+        </div>
+        <div className='flex flex-col items-center gap-4'>
+          <EmoticonType type={item.type} />
+          <EmoticonPlatform platform={item.platform} />
+        </div>
       </div>
       <Image
         src={item.representative_image_url}
@@ -41,6 +48,35 @@ function Thumbnail({ index, item }: { index: number; item: EmoticonSet }) {
         className='border-radius-lg border-ghost tablet:w-[96px] tablet:h-[96px] h-[80px] w-[80px] border object-cover'
         width={80}
         height={80}
+      />
+    </div>
+  );
+}
+
+function EmoticonType({ type }: { type: EmoticonSet['type'] }) {
+  return (
+    <div
+      className={cn(
+        'border-radius-md flex h-[18px] w-[18px] items-center justify-center',
+        type === 'animated' ? 'bg-rose-50' : 'bg-primary border-ghost border',
+      )}
+    >
+      <Icon
+        name={type === 'animated' ? 'smile-move' : 'smile'}
+        size={16}
+        className={cn(type === 'animated' ? 'text-rose-600' : 'text-gray-400')}
+      />
+    </div>
+  );
+}
+
+function EmoticonPlatform({ platform }: { platform: EmoticonSet['platform'] }) {
+  return (
+    <div className='flex h-[24px] w-[24px] items-center justify-center'>
+      <Icon
+        name={platform === 'kakaotalk' ? 'kakao-logo' : 'line-logo'}
+        size={24}
+        className='h-full w-full text-gray-600'
       />
     </div>
   );
