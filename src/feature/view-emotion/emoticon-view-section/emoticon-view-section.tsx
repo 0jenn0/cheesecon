@@ -59,7 +59,7 @@ export default function EmoticonViewSection({
         )}
         {!hasNextPage && items.length > 0 && (
           <div className='text-sm text-gray-400'>
-            모든 데이터를 불러왔습니다
+            모든 이모티콘을 불러왔어요!
           </div>
         )}
       </div>

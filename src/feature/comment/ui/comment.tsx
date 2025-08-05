@@ -2,13 +2,11 @@ import Image from 'next/image';
 import { getTimeAgo } from '@/shared/lib/utils';
 import { Avatar, Icon } from '@/shared/ui/display';
 import { Button } from '@/shared/ui/input';
-import { CommentWithProfile } from '@/entity/comment';
 import { EmoticonSetDetail } from '@/entity/emoticon-set';
 import CommentForm from './comment-form';
 
 interface CommentProps {
   comment: EmoticonSetDetail['comments'][number];
-  to?: string;
   asChild?: boolean;
   onReply?: (id: string) => void;
   showForm?: boolean;
@@ -18,13 +16,13 @@ interface CommentProps {
 
 export default function Comment({
   comment,
-  to,
   asChild = false,
   onReply,
   showForm = false,
   isMe = false,
   isAuthor = false,
 }: CommentProps) {
+  console.log(comment);
   return (
     <div className='flex w-full gap-4'>
       <>
@@ -32,14 +30,18 @@ export default function Comment({
       </>
       <div className='flex flex-1 gap-8'>
         <Avatar
-          name={comment.profile.nickname}
+          name={comment.profile.nickname ?? ''}
           profileType='image'
           size='sm'
-          imageUrl={comment.profile.avatar_url ?? undefined}
+          imageUrl={comment.user_id ?? undefined}
         />
         <div className='flex flex-1 flex-col gap-8'>
           <div className='flex items-center gap-8'>
-            {to && <div className='text-body-sm text-blue-500'>@{to}</div>}
+            {comment.parent && comment.parent.profile.nickname && (
+              <div className='text-body-sm text-blue-500'>
+                @{comment.parent.profile.nickname}
+              </div>
+            )}
             <div className='flex items-center gap-4'>
               <div className='text-body-sm font-semibold'>
                 {comment.profile.nickname}

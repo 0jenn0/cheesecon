@@ -48,11 +48,12 @@ export default function EmoticonCommentSection({
           c.parent_comment_id === comment.id,
       ) || [];
 
+    console.log('comment.parent!!!!!!!!!', comment.parent);
+
     return (
       <div className='flex flex-col gap-16' key={comment.id}>
         <Comment
           comment={comment}
-          to={parentNickname}
           asChild={depth > 0}
           onReply={handleReply}
           showForm={commentFormPosition === comment.id}

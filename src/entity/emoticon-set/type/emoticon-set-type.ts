@@ -10,6 +10,10 @@ export type EmoticonSetDetail = Tables<'emoticon_sets'> & {
   comments: (Tables<'comments'> & {
     profile: Tables<'profiles'>;
     comment_reactions: Tables<'comment_reactions'>[];
+    parent?: {
+      id: string;
+      profile: Tables<'profiles'>;
+    };
   })[];
 };
 

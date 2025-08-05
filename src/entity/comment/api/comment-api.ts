@@ -126,7 +126,6 @@ export async function createComment(
 ): Promise<CreateCommentResponse> {
   const supabase = await createServerSupabaseClient();
 
-  // 인증된 사용자 정보 가져오기
   const {
     data: { user },
     error: authError,
@@ -136,7 +135,6 @@ export async function createComment(
     throw new Error('인증되지 않은 사용자입니다.');
   }
 
-  // CreateCommentParams를 서버에서 필요한 형태로 변환
   const commentData = {
     content: request.comment.content,
     set_id: request.comment.set_id || '',

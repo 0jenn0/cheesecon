@@ -3,12 +3,7 @@
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
 import { ImageUrlWithOrder } from '@/shared/types';
 import { Tables } from '@/types/types_db';
-import {
-  EmoticonImageRequest,
-  EmoticonSet,
-  EmoticonSetDetail,
-  EmoticonSetRequest,
-} from '../type';
+import { EmoticonImageRequest, EmoticonSet, EmoticonSetDetail } from '../type';
 import {
   CreateEmoticonSetResult,
   GetEmoticonSetsRequest,
@@ -113,12 +108,13 @@ export async function getEmoticonSets({
     },
   };
 }
-
+// 더 안전한 대안 방법 (두 단계 쿼리)
 export async function getEmoticonSetDetail(
   id: string,
 ): Promise<EmoticonSetDetail> {
   const supabase = await createServerSupabaseClient();
 
+  // 1. 메인 데이터 조회
   const { data, error } = await supabase
     .from('emoticon_sets')
     .select(
@@ -129,7 +125,7 @@ export async function getEmoticonSetDetail(
   views(count),
   comments(
     *,
-    profile:profiles(*),
+    profile:profiles!comments_user_id_fkey(*),
     comment_reactions(*)
   )
 `,
@@ -146,14 +142,61 @@ export async function getEmoticonSetDetail(
     throw new Error('이모티콘 세트를 찾을 수 없습니다.');
   }
 
+  // 2. 부모 댓글들의 작성자 정보 조회
+  const parentCommentIds = (data.comments || [])
+    .filter((comment) => comment.parent_comment_id)
+    .map((comment) => comment.parent_comment_id)
+    .filter((id): id is string => id !== null);
+
+  let parentCommentsMap = new Map();
+
+  if (parentCommentIds.length > 0) {
+    const { data: parentComments } = await supabase
+      .from('comments')
+      .select('id, profile:profiles!comments_user_id_fkey(*)')
+      .in('id', parentCommentIds);
+
+    if (parentComments) {
+      parentCommentsMap = new Map(parentComments.map((pc) => [pc.id, pc]));
+    }
+  }
+
   const formattedData: EmoticonSetDetail = {
     ...data,
-    comments: data.comments.map((comment) => ({
-      ...comment,
-      profile: comment.profile as unknown as Tables<'profiles'>,
-    })),
-    likes: data.likes[0]?.count ?? 0,
-    views: data.views[0]?.count ?? 0,
+    emoticon_images: data.emoticon_images || [],
+    comments: (data.comments || []).map((comment) => {
+      const parentComment = comment.parent_comment_id
+        ? parentCommentsMap.get(comment.parent_comment_id)
+        : null;
+
+      return {
+        ...comment,
+        profile: comment.profile || {
+          id: '',
+          nickname: '',
+          avatar_url: null,
+          provider: '',
+          created_at: null,
+          updated_at: null,
+        },
+        comment_reactions: comment.comment_reactions || [],
+        parent: parentComment
+          ? {
+              id: parentComment.id,
+              profile: parentComment.profile || {
+                id: '',
+                nickname: '',
+                avatar_url: null,
+                provider: '',
+                created_at: null,
+                updated_at: null,
+              },
+            }
+          : undefined,
+      };
+    }),
+    likes: data.likes?.[0]?.count ?? 0,
+    views: data.views?.[0]?.count ?? 0,
   };
 
   return formattedData;
