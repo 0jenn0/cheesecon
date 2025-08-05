@@ -3,7 +3,7 @@ import { Icon } from '@/shared/ui/display';
 
 export default function Logo() {
   return (
-    <Link href='/' className='flex items-center gap-8'>
+    <Link href='/popular' className='flex items-center gap-8'>
       <Icon
         name='logo'
         size={32}

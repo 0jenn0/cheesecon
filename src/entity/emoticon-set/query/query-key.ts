@@ -12,4 +12,5 @@ export const EMOTICON_SET_QUERY_KEY: EmoticonSetQueryKey = {
       param?.offset,
       param?.limit,
     ] as const,
+  byId: (id: string) => [...EMOTICON_SET_QUERY_KEY.all, id] as const,
 };

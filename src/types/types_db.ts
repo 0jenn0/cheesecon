@@ -146,6 +146,7 @@ export type Database = {
           id: string
           image_order: number
           image_url: string
+          likes_count: number | null
           set_id: string | null
         }
         Insert: {
@@ -154,6 +155,7 @@ export type Database = {
           id?: string
           image_order: number
           image_url: string
+          likes_count?: number | null
           set_id?: string | null
         }
         Update: {
@@ -162,6 +164,7 @@ export type Database = {
           id?: string
           image_order?: number
           image_url?: string
+          likes_count?: number | null
           set_id?: string | null
         }
         Relationships: [
@@ -437,7 +440,21 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      get_weekly_top_users: {
+        Args: { limit_count?: number }
+        Returns: {
+          user_id: string
+          nickname: string
+          profile_image_url: string
+          weekly_emoticon_count: number
+          weekly_comment_count: number
+          weekly_activity_score: number
+        }[]
+      }
+      recalculate_user_stats: {
+        Args: { target_user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

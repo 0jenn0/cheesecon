@@ -1,4 +1,4 @@
-import { ComponentProps, Ref, useEffect, useRef } from 'react';
+import { ComponentProps, Ref, useEffect } from 'react';
 import { useIntersectionObserver } from '@/shared/lib';
 import { EmoticonSet } from '@/entity/emoticon-set/type';
 import { EmoticonViewItem } from './ui';
@@ -38,7 +38,10 @@ export default function EmoticonViewSection({
 
       <ul className='grid grid-cols-1 gap-x-24 gap-y-12 md:grid-cols-2'>
         {items.map((item, index) => (
-          <li className='flex flex-col gap-12' key={`${item.id}-${index}`}>
+          <li
+            className='flex cursor-pointer flex-col gap-12'
+            key={`${item.id}-${index}`}
+          >
             <EmoticonViewItem item={item} index={index + 1} />
             <div className='border-ghost w-full border-b-[0.6px]' />
           </li>
@@ -56,7 +59,7 @@ export default function EmoticonViewSection({
         )}
         {!hasNextPage && items.length > 0 && (
           <div className='text-sm text-gray-400'>
-            모든 데이터를 불러왔습니다
+            모든 이모티콘을 불러왔어요!
           </div>
         )}
       </div>

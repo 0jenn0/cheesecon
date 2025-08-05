@@ -10,34 +10,40 @@ import useEmoticonItem, {
 } from './provider/emoticon-item-provider';
 import { ImageNumberBadge } from './ui';
 
-export interface EmoticonItemProps extends ComponentPropsWithRef<'div'> {}
+export interface EmoticonItemProps extends ComponentPropsWithRef<'div'> {
+  imageNumber: number;
+  commentsCount?: number;
+  likesCount?: number;
+  showCheckbox?: boolean;
+  showGripIcon?: boolean;
+  showNumberBadge?: boolean;
+  imageUrl?: string;
+  isUploading?: boolean;
+  isDragging?: boolean;
+}
 
 function EmoticonItemRoot({
   imageNumber,
   showCheckbox,
   showGripIcon,
+  showNumberBadge,
   imageUrl,
   isUploading,
   isDragging,
   children,
-}: PropsWithChildren<{
-  imageNumber: number;
-  showCheckbox?: boolean;
-  showGripIcon?: boolean;
-  imageUrl?: string;
-  isUploading?: boolean;
-  isDragging?: boolean;
-}>) {
+  className,
+}: EmoticonItemProps) {
   return (
     <EmoticonItemProvider
       showGripIcon={showGripIcon}
       imageNumber={imageNumber}
       showCheckbox={showCheckbox}
+      showNumberBadge={showNumberBadge}
       imageUrl={imageUrl}
       isUploading={isUploading}
       isDragging={isDragging}
     >
-      {children}
+      <div className={cn('flex flex-col gap-0', className)}>{children}</div>
     </EmoticonItemProvider>
   );
 }
@@ -95,7 +101,7 @@ function EmoticonItemHeader({
   className,
   ...props
 }: ComponentPropsWithRef<'div'>) {
-  const { imageNumber, showCheckbox } = useEmoticonItem();
+  const { showNumberBadge, imageNumber, showCheckbox } = useEmoticonItem();
 
   const { items, handleEmoticonItem } = useEmoticonContext();
   const isChecked = items.find(
@@ -117,7 +123,11 @@ function EmoticonItemHeader({
       )}
       {...props}
     >
-      <ImageNumberBadge imageNumber={imageNumber} />
+      {showNumberBadge ? (
+        <ImageNumberBadge imageNumber={imageNumber} />
+      ) : (
+        <div className='width-24 height-24' />
+      )}
       {showCheckbox ? (
         <Checkbox
           disabled={!hasImage}
@@ -175,12 +185,39 @@ function EmoticonItemFooter({
   );
 }
 
+function EmoticonItemBottomBar({
+  className,
+  ...props
+}: PropsWithChildren<ComponentPropsWithRef<'div'>>) {
+  const { likesCount, commentsCount } = useEmoticonItem();
+
+  return (
+    <div
+      className={cn(
+        'padding-8 tablet:justify-end flex w-full items-center justify-between gap-12',
+        className,
+      )}
+      {...props}
+    >
+      <div className='flex items-center gap-2'>
+        <Icon name='message-circle' size={16} className='icon-disabled' />
+        <p className='text-body-sm text-secondary'>{commentsCount}</p>
+      </div>
+      <div className='flex items-center gap-2'>
+        <Icon name='heart' size={16} className='icon-disabled' />
+        <p className='text-body-sm text-secondary'>{likesCount}</p>
+      </div>
+    </div>
+  );
+}
+
 const EmoticonItem = {
   Root: EmoticonItemRoot,
   Content: EmoticonItemContent,
   Body: EmoticonItemBody,
   Header: EmoticonItemHeader,
   Footer: EmoticonItemFooter,
+  BottomBar: EmoticonItemBottomBar,
 };
 
 export default EmoticonItem;

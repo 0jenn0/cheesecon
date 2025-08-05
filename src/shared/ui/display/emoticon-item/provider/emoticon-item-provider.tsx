@@ -3,9 +3,12 @@ import { PropsWithChildren, createContext, useContext } from 'react';
 export interface EmoticonItemContextType {
   imageNumber: number;
   imageUrl: string;
+  commentsCount: number;
+  likesCount: number;
 
   showCheckbox: boolean;
   showGripIcon: boolean;
+  showNumberBadge: boolean;
 
   isUploading: boolean;
   isDragging: boolean;
@@ -14,9 +17,12 @@ export interface EmoticonItemContextType {
 export const emoticonItemContext = createContext<EmoticonItemContextType>({
   imageNumber: 0,
   imageUrl: '',
+  commentsCount: 0,
+  likesCount: 0,
 
   showCheckbox: false,
   showGripIcon: false,
+  showNumberBadge: false,
 
   isUploading: false,
   isDragging: false,
@@ -25,14 +31,20 @@ export const emoticonItemContext = createContext<EmoticonItemContextType>({
 export function EmoticonItemProvider({
   imageNumber,
   imageUrl = '',
+  commentsCount = 0,
+  likesCount = 0,
   showCheckbox = false,
   showGripIcon = false,
+  showNumberBadge = false,
   isUploading = false,
   isDragging = false,
   children,
 }: PropsWithChildren<{
   imageNumber: number;
+  commentsCount?: number;
+  likesCount?: number;
   showCheckbox?: boolean;
+  showNumberBadge?: boolean;
   showGripIcon?: boolean;
   imageUrl?: string;
   isUploading?: boolean;
@@ -43,9 +55,12 @@ export function EmoticonItemProvider({
       value={{
         imageNumber,
         imageUrl,
+        commentsCount,
+        likesCount,
 
         showCheckbox,
         showGripIcon,
+        showNumberBadge,
 
         isUploading,
         isDragging,

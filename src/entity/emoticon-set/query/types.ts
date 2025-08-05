@@ -12,6 +12,7 @@ export type EmoticonSetQueryKey = {
     number | undefined,
     number | undefined,
   ];
+  byId: (id: string) => readonly ['emoticon-sets', string];
 };
 
 export type EmoticonSetQueryResult = BaseApiResponse<EmoticonSet>;

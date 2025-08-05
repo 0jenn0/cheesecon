@@ -135,6 +135,7 @@ const GridItem = ({
         isUploading={uploadImageMutation.isPending}
         showCheckbox={isMultipleSelect}
         showGripIcon={isOrderChange}
+        showNumberBadge={true}
         isDragging={isDragging}
       >
         <EmoticonItem.Content

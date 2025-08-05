@@ -1,3 +1,5 @@
+import { exportPages } from 'next/dist/export/worker';
+
 export { default as GoogleLogin } from './google-login.svg';
 export { default as KakaoLogin } from './kakao-login.svg';
 export { default as KakaoLogo } from './kakao-logo.svg';
@@ -38,3 +40,6 @@ export { default as X } from './x.svg';
 export { default as MessageHeart } from './message-heart.svg';
 export { default as MessageLoading } from './message-loading.svg';
 export { default as User } from './user.svg';
+export { default as Eye } from './eye.svg';
+export { default as EyeOff } from './eye-off.svg';
+export { default as HeartFilled } from './heart-filled.svg';

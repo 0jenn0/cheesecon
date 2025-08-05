@@ -36,7 +36,7 @@ export default function MenuButton() {
         <div className='tablet:hidden'>
           <MenuList
             menus={[
-              { label: '홈', href: '/' },
+              { label: '홈', href: '/popular' },
               { label: '이모티콘 등록하기', href: '/emoticon-register' },
               { label: '마이 페이지', href: '/my-page' },
             ]}

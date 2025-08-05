@@ -11,8 +11,9 @@ export const buttonVariants = cva(
         disabled: 'bg-disabled disabled:cursor-not-allowed',
       },
       size: {
-        sm: 'padding-x-12 padding-y-8 text-body-md',
-        md: 'padding-x-16 padding-y-12 text-body-lg h-10',
+        sm: 'padding-x-8 padding-y-4 text-body-md',
+        md: 'padding-x-16 padding-y-12 text-body-lg',
+        lg: 'padding-x-24 padding-y-16 text-body-xl',
       },
       styleVariant: {
         outlined: '',

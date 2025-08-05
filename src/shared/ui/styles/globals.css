@@ -23,14 +23,36 @@ html {
 :root {
   scrollbar-gutter: stable;
   scrollbar-width: thin;
-  scrollbar-color: var(--color-background-secondary)
-    var(--color-background-secondary);
+  scrollbar-color: var(--color-border-secondary) var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-secondary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-primary);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--color-bg-secondary);
 }
 
 body {
   color: var(--color-text-primary);
   font-family: var(--font-family-typeface-sans);
-  font-size: var(--font-size-400);
+  font-size: var(--font-size-350);
   line-height: var(--line-height-500);
   font-weight: var(--font-style-normal-regular);
 }
