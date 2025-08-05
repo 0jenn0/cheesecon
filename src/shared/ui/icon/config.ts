@@ -39,6 +39,9 @@ export const ICON_NAMES = [
   'naver-login',
   'x',
   'user',
+  'eye',
+  'eye-off',
+  'heart-filled',
 ] as const;
 
 export const ICON_SIZES = [12, 16, 20, 24, 32, 36, 40, 48] as const;
