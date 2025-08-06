@@ -4,7 +4,7 @@ import { cn } from '@/shared/lib';
 import { Spinner } from '../../feedback';
 import { SpinnerProps } from '../../feedback/spinner/spinner';
 import { ICON_NAMES } from '../../icon/config';
-import Icon from '../../icon/icon';
+import Icon, { IconProps } from '../../icon/icon';
 import { buttonVariants, iconVariants, textVariants } from './button.styles';
 
 type PolymorphicRef<T extends ElementType> = ComponentPropsWithRef<T>['ref'];
@@ -20,6 +20,7 @@ export interface ButtonProps extends VariantProps<typeof buttonVariants> {
   leadingIcon?: (typeof ICON_NAMES)[number];
   trailingIcon?: (typeof ICON_NAMES)[number];
   isLoading?: boolean;
+  iconSize?: IconProps['size'];
   textClassName?: string;
 }
 
@@ -32,6 +33,7 @@ export default function Button<T extends ElementType = 'button'>({
   variant = 'primary',
   size = 'md',
   styleVariant = 'filled',
+  iconSize = 24,
   leadingIcon,
   trailingIcon,
   isLoading = false,
@@ -70,9 +72,10 @@ export default function Button<T extends ElementType = 'button'>({
         <Icon
           name={leadingIcon}
           className={cn(
-            iconVariants({ size, variant: finalVariant, styleVariant }),
+            iconVariants({ variant: finalVariant, styleVariant }),
             opacity,
           )}
+          size={iconSize}
         />
       )}
       <div
@@ -88,9 +91,10 @@ export default function Button<T extends ElementType = 'button'>({
         <Icon
           name={trailingIcon}
           className={cn(
-            iconVariants({ size, variant: finalVariant, styleVariant }),
+            iconVariants({ variant: finalVariant, styleVariant }),
             opacity,
           )}
+          size={iconSize}
         />
       )}
     </Component>
