@@ -180,7 +180,7 @@ export async function updateComment(
       images: params.images,
       updated_at: params.updated_at || new Date().toISOString(),
     })
-    .eq('id', params.id);
+    .eq('id', params.commentId);
 
   if (error) {
     throw error;
@@ -192,6 +192,8 @@ export async function deleteComment(
 ): Promise<void> {
   const supabase = await createServerSupabaseClient();
 
+  if (!params.commentId) {
+    throw new Error('commentId가 없습니다.');
   }
 
   const { error } = await supabase
