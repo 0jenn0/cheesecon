@@ -4,7 +4,7 @@ import { ComponentPropsWithRef, ReactNode, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '@/shared/lib';
 import { IconButton } from '../../input';
-import useModal from './modal-provider';
+import { useModal } from './modal-provider';
 
 export interface ModalProps extends ComponentPropsWithRef<'section'> {
   isOpen?: boolean;
@@ -24,10 +24,11 @@ function ModalPortal({
   onClose,
   overlayClassName = '',
   modalClassName = '',
+  isOpen = false,
   ...props
 }: ModalProps) {
   const [mounted, setMounted] = useState(false);
-  const { isOpen } = useModal();
+  const { closeModal } = useModal();
 
   useEffect(() => {
     setMounted(true);
@@ -45,7 +46,24 @@ function ModalPortal({
     };
   }, [isOpen]);
 
-  if (!mounted) {
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        const handleClose = onClose || closeModal;
+        handleClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen, onClose, closeModal]);
+
+  if (!mounted || !isOpen) {
     return null;
   }
 
@@ -53,7 +71,7 @@ function ModalPortal({
 
   return createPortal(
     <ModalContent
-      onClose={onClose}
+      onClose={onClose || closeModal}
       overlayClassName={overlayClassName}
       modalClassName={modalClassName}
       {...props}
@@ -64,45 +82,74 @@ function ModalPortal({
   );
 }
 
-function ModalContent({
+function ModalContainer({
   children,
   onClose,
   overlayClassName,
+  className,
   modalClassName,
   ...props
 }: Omit<ModalProps, 'isOpen'>) {
-  const { closeModal, isOpen } = useModal();
-
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget && onClose) {
-      onClose();
-      closeModal();
+  const handleOverlayClick = (event: React.MouseEvent) => {
+    if (event.target === event.currentTarget) {
+      onClose?.();
     }
   };
 
   return (
-    <>
-      {isOpen && (
-        <>
-          <section
-            className={cn(
-              'z-index-modal bg-primary tablet:border-radius-b-2xl border-radius-t-2xl tablet:w-fit padding-x-24 padding-y-32 tablet:top-1/2 tablet:left-1/2 tablet:-translate-x-1/2 tablet:-translate-y-1/2 fixed bottom-0 flex h-fit w-full min-w-[400px] flex-col gap-24',
-              modalClassName,
-            )}
-            {...props}
-          >
-            {children}
-          </section>
-          <div
-            className={cn(
-              'z-index-modal-backdrop fixed inset-0 bg-black/50',
-              overlayClassName,
-            )}
-            onClick={handleOverlayClick}
-          />
-        </>
-      )}
-    </>
+    <div
+      className='z-index-modal tablet:items-center tablet:justify-center fixed inset-0 flex items-end justify-center'
+      onClick={handleOverlayClick}
+    >
+      <div className={cn('absolute inset-0 bg-black/50', overlayClassName)} />
+      <div
+        className={cn(
+          'z-index-modal relative max-h-[90vh] w-full overflow-auto',
+          'tablet:w-auto tablet:max-w-[90vw]',
+          modalClassName,
+        )}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <section
+          className={cn(
+            'bg-primary padding-24 flex flex-col gap-24',
+            'w-full rounded-t-2xl',
+            'tablet:rounded-2xl tablet:min-w-[400px]',
+            className,
+          )}
+          {...props}
+        >
+          {children}
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function ModalTitle({ children, className, ...props }: ModalSubComponentProps) {
+  return (
+    <h1 className={cn('text-heading-sm', className)} {...props}>
+      {children}
+    </h1>
+  );
+}
+
+function ModalContent({
+  children,
+  modalClassName,
+  overlayClassName,
+  onClose,
+  ...props
+}: Omit<ModalProps, 'isOpen'>) {
+  return (
+    <ModalContainer
+      onClose={onClose}
+      overlayClassName={overlayClassName}
+      modalClassName={modalClassName}
+      {...props}
+    >
+      {children}
+    </ModalContainer>
   );
 }
 
@@ -110,13 +157,17 @@ function ModalHeader({
   children,
   hasCloseButton = true,
   className,
-  onClose = () => {},
+  onClose,
   ...props
 }: ModalSubComponentProps) {
   const { closeModal } = useModal();
+
   const handleClose = () => {
-    onClose();
-    closeModal();
+    if (onClose) {
+      onClose();
+    } else {
+      closeModal();
+    }
   };
 
   return (
@@ -131,6 +182,7 @@ function ModalHeader({
           styleVariant='transparent'
           icon='x'
           onClick={handleClose}
+          aria-label='모달 닫기'
         />
       )}
     </div>
@@ -151,14 +203,16 @@ function ModalFooter({
   ...props
 }: ModalSubComponentProps) {
   return (
-    <div className={className} {...props}>
+    <div className={cn('flex items-center gap-2', className)} {...props}>
       {children}
     </div>
   );
 }
 
 const Modal = {
-  Root: ModalPortal,
+  Portal: ModalPortal,
+  Title: ModalTitle,
+  Container: ModalContainer,
   Header: ModalHeader,
   Body: ModalBody,
   Footer: ModalFooter,
