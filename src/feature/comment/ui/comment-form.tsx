@@ -8,18 +8,27 @@ import { useCommentForm } from './model';
 
 interface CommentFormProps extends ComponentPropsWithRef<'div'> {
   emoticonSetId: string;
+  commentId?: string;
   parentCommentId?: string;
+  setIsEditing?: (isEditing: boolean) => void;
+  initialValue?: string;
+  isEditing?: boolean;
 }
 
 export default function CommentForm({
   emoticonSetId,
+  commentId,
   parentCommentId,
+  initialValue,
   className,
+  isEditing = false,
+  setIsEditing,
   ...props
 }: CommentFormProps) {
   const {
     handleChange,
-    handleSubmit,
+    handleUpdateSubmit,
+    handleCreateSubmit,
     handleImageUpload,
     handleRemoveImage,
     uploadedImages,
@@ -27,7 +36,9 @@ export default function CommentForm({
   } = useCommentForm({
     emoticonSetId,
     parentCommentId,
+    commentId,
   });
+
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -46,14 +57,26 @@ export default function CommentForm({
     [handleImageUpload],
   );
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    if (isEditing) {
+      handleUpdateSubmit(e);
+      setIsEditing?.(false);
+    } else {
+      handleCreateSubmit(e);
+      setIsEditing?.(false);
+    }
+  };
+
   return (
     <div className={cn('flex gap-12', className)} {...props}>
-      <Avatar
-        name={user?.name ?? ''}
-        imageUrl={user?.avatarUrl}
-        profileType='image'
-        size='sm'
-      />
+      {!isEditing ? (
+        <Avatar
+          name={user?.name ?? ''}
+          imageUrl={user?.avatarUrl}
+          profileType='image'
+          size='sm'
+        />
+      ) : null}
       <form
         className='flex w-full flex-col gap-8'
         onSubmit={(e) => {
@@ -68,6 +91,7 @@ export default function CommentForm({
           isError={false}
           disabled={false}
           onChange={handleChange}
+          defaultValue={initialValue ?? ''}
         />
 
         {uploadedImages.length > 0 && (
@@ -133,7 +157,9 @@ export default function CommentForm({
             type='submit'
             isLoading={isPending}
           >
-            <p className='text-secondary text-sm'>댓글 작성</p>
+            <p className='text-secondary text-sm'>
+              {isEditing ? '댓글 수정' : '댓글 작성'}
+            </p>
           </Button>
         </div>
       </form>

@@ -30,7 +30,11 @@ export async function getComments(
     }
 
     if (request?.parent_comment_id !== undefined) {
-      query = query.eq('parent_comment_id', request.parent_comment_id || '');
+      if (request.parent_comment_id === null) {
+        query = query.is('parent_comment_id', null);
+      } else {
+        query = query.eq('parent_comment_id', request.parent_comment_id);
+      }
     }
 
     if (request.sortBy) {
@@ -57,10 +61,14 @@ export async function getComments(
           countQuery = countQuery.eq('user_id', request.user_id);
         }
         if (request.parent_comment_id !== undefined) {
-          countQuery = countQuery.eq(
-            'parent_comment_id',
-            request.parent_comment_id || '',
-          );
+          if (request.parent_comment_id === null) {
+            countQuery = countQuery.is('parent_comment_id', null);
+          } else {
+            countQuery = countQuery.eq(
+              'parent_comment_id',
+              request.parent_comment_id,
+            );
+          }
         }
 
         return countQuery;
@@ -137,8 +145,8 @@ export async function createComment(
 
   const commentData = {
     content: request.comment.content,
-    set_id: request.comment.set_id || '',
-    parent_comment_id: request.comment.parent_comment_id,
+    set_id: request.comment.set_id || null,
+    parent_comment_id: request.comment.parent_comment_id || null,
     image_id: request.comment.image_id,
     images: request.comment.images,
     user_id: user.id,
@@ -165,7 +173,6 @@ export async function updateComment(
   params: UpdateCommentParams,
 ): Promise<void> {
   const supabase = await createServerSupabaseClient();
-
   const { error } = await supabase
     .from('comments')
     .update({
@@ -185,10 +192,12 @@ export async function deleteComment(
 ): Promise<void> {
   const supabase = await createServerSupabaseClient();
 
+  }
+
   const { error } = await supabase
     .from('comments')
     .delete()
-    .eq('id', params.id);
+    .eq('id', params.commentId);
 
   if (error) {
     throw error;
