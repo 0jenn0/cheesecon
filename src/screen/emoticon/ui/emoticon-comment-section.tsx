@@ -19,6 +19,7 @@ export default function EmoticonCommentSection({
   emoticonSetId: string;
 }) {
   const { session } = useAuth();
+
   const [commentFormPosition, setCommentFormPosition] = useState<string | null>(
     null,
   );
@@ -48,8 +49,6 @@ export default function EmoticonCommentSection({
           c.parent_comment_id === comment.id,
       ) || [];
 
-    console.log('comment.parent!!!!!!!!!', comment.parent);
-
     return (
       <div className='flex flex-col gap-16' key={comment.id}>
         <Comment
@@ -59,6 +58,7 @@ export default function EmoticonCommentSection({
           showForm={commentFormPosition === comment.id}
           isMe={session?.user.id === comment.user_id}
           isAuthor={comment.user_id === authorId}
+          emoticonSetId={emoticonSetId}
         />
         {childComments.map((childComment) => (
           <div key={childComment.id} className={cn(depth < 2 && 'ml-24')}>
