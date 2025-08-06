@@ -17,7 +17,7 @@ export default function Skeleton({
 }: SkeletonProps) {
   return (
     <div
-      className={`skeleton-pulse border-radius-lg bg-gray-200 ${className}`}
+      className={`skeleton-pulse border-radius-lg bg-gray-100 ${className}`}
       style={{
         width,
         height,
