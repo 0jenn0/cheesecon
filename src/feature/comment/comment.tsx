@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { cn, getTimeAgo } from '@/shared/lib/utils';
 import { Avatar, Icon } from '@/shared/ui/display';
 import { useModal } from '@/shared/ui/feedback/modal';
@@ -11,14 +11,13 @@ import {
   useCreateCommentReaction,
   useDeleteCommentReaction,
 } from '@/entity/comment_reactions/query/comment-reaciton-mutation-query';
+import useCommentSectionUi from '@/screen/emoticon/emoticon-comment-section/provider/use-comment-section-ui';
 import { useAuth } from '../auth/provider/auth-provider';
 import { CommentForm, EditCommentMenu, EmoticonReaction } from './ui';
 
 interface CommentProps {
   comment: CommentDetail;
   asChild?: boolean;
-  onReply?: (id: string) => void;
-  showForm?: boolean;
   isMe?: boolean;
   isAuthor?: boolean;
   isEditing?: boolean;
@@ -26,11 +25,9 @@ interface CommentProps {
   parentNickname?: string;
 }
 
-export default function Comment({
+export default memo(function Comment({
   comment,
   asChild = false,
-  onReply,
-  showForm = false,
   isMe = false,
   isAuthor = false,
   emoticonSetId,
@@ -38,8 +35,16 @@ export default function Comment({
 }: CommentProps) {
   const { session } = useAuth();
   const { openModal } = useModal();
-  const [showMore, setShowMore] = useState(false);
-  const [showReaction, setShowReaction] = useState(false);
+
+  const {
+    isShowingMore,
+    isShowingReaction,
+    isShowingForm,
+    toggleMore,
+    toggleReaction,
+    toggleForm,
+  } = useCommentSectionUi();
+
   const [isEditing, setIsEditing] = useState(false);
 
   const { mutate: deleteCommentReaction } = useDeleteCommentReaction();
@@ -47,10 +52,6 @@ export default function Comment({
 
   const handleEdit = () => {
     setIsEditing((prev) => !prev);
-  };
-
-  const handleShowMore = () => {
-    setShowMore((prev) => !prev);
   };
 
   return (
@@ -92,7 +93,7 @@ export default function Comment({
             <div className='relative'>
               {isMe && (
                 <>
-                  {showMore && (
+                  {isShowingMore(comment.id) && (
                     <EditCommentMenu
                       handleEdit={handleEdit}
                       handleDelete={() => {
@@ -105,7 +106,7 @@ export default function Comment({
                   )}
                   <button
                     className='padding-0 bg-interactive-secondary-subtle cursor-pointer'
-                    onClick={handleShowMore}
+                    onClick={() => toggleMore(comment.id)}
                   >
                     <Icon name='more-vertical' className='text-secondary' />
                   </button>
@@ -188,11 +189,13 @@ export default function Comment({
             <div className='flex items-center gap-8'>
               <Button
                 variant='secondary'
-                styleVariant={showForm ? 'outlined' : 'filled'}
+                styleVariant={isShowingForm(comment.id) ? 'outlined' : 'filled'}
                 size='sm'
-                onClick={() => onReply?.(comment.id)}
+                onClick={() => toggleForm(comment.id)}
               >
-                <p className='text-body-sm'>{showForm ? '취소' : '답글'}</p>
+                <p className='text-body-sm'>
+                  {isShowingForm(comment.id) ? '취소' : '답글'}
+                </p>
               </Button>
               <p className='text-tertiary text-body-sm'>
                 {comment.created_at && getTimeAgo(comment.created_at)}
@@ -204,9 +207,9 @@ export default function Comment({
                 variant='secondary'
                 iconSize={16}
                 styleVariant='transparent'
-                onClick={() => setShowReaction((prev) => !prev)}
+                onClick={() => toggleReaction(comment.id)}
               />
-              {showReaction && (
+              {isShowingReaction(comment.id) && (
                 <div className='margin-r-8 absolute top-1/2 right-full -translate-y-1/2'>
                   <EmoticonReaction commentId={comment.id} />
                 </div>
@@ -216,7 +219,7 @@ export default function Comment({
 
           <div className='border-ghost w-full border-b-[0.6px]' />
 
-          {showForm && (
+          {isShowingForm(comment.id) && (
             <CommentForm
               emoticonSetId={emoticonSetId}
               parentCommentId={comment.id}
@@ -227,4 +230,4 @@ export default function Comment({
       </div>
     </div>
   );
-}
+});
