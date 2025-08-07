@@ -2,15 +2,20 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { getTimeAgo } from '@/shared/lib/utils';
+import { cn, getTimeAgo } from '@/shared/lib/utils';
 import { Avatar, Icon } from '@/shared/ui/display';
 import { useModal } from '@/shared/ui/feedback/modal';
 import { Button, IconButton } from '@/shared/ui/input';
-import { EmoticonSetDetail } from '@/entity/emoticon-set';
-import { CommentForm, EditCommentMenu } from './ui';
+import { CommentDetail } from '@/entity/comment/api/types';
+import {
+  useCreateCommentReaction,
+  useDeleteCommentReaction,
+} from '@/entity/comment_reactions/query/comment-reaciton-mutation-query';
+import { useAuth } from '../auth/provider/auth-provider';
+import { CommentForm, EditCommentMenu, EmoticonReaction } from './ui';
 
 interface CommentProps {
-  comment: EmoticonSetDetail['comments'][number];
+  comment: CommentDetail;
   asChild?: boolean;
   onReply?: (id: string) => void;
   showForm?: boolean;
@@ -18,6 +23,7 @@ interface CommentProps {
   isAuthor?: boolean;
   isEditing?: boolean;
   emoticonSetId: string;
+  parentNickname?: string;
 }
 
 export default function Comment({
@@ -28,10 +34,16 @@ export default function Comment({
   isMe = false,
   isAuthor = false,
   emoticonSetId,
+  parentNickname,
 }: CommentProps) {
+  const { session } = useAuth();
   const { openModal } = useModal();
   const [showMore, setShowMore] = useState(false);
+  const [showReaction, setShowReaction] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+
+  const { mutate: deleteCommentReaction } = useDeleteCommentReaction();
+  const { mutate: createCommentReaction } = useCreateCommentReaction();
 
   const handleEdit = () => {
     setIsEditing((prev) => !prev);
@@ -48,7 +60,7 @@ export default function Comment({
       </>
       <div className='flex flex-1 gap-8'>
         <Avatar
-          name={comment.profile.nickname ?? ''}
+          name={comment.profile.nickname}
           profileType='image'
           size='sm'
           imageUrl={comment.profile.avatar_url ?? undefined}
@@ -56,9 +68,9 @@ export default function Comment({
         <div className='flex flex-1 flex-col gap-8'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center gap-8'>
-              {comment.parent && comment.parent.profile.nickname && (
+              {comment.parent_comment_id && comment.parent_comment_id && (
                 <div className='text-body-sm text-blue-500'>
-                  @{comment.parent.profile.nickname}
+                  @{parentNickname}
                 </div>
               )}
               <div className='flex items-center gap-4'>
@@ -91,13 +103,12 @@ export default function Comment({
                       }}
                     />
                   )}
-                  <IconButton
-                    icon='more-vertical'
-                    iconSize={16}
-                    variant='secondary'
-                    styleVariant='transparent'
+                  <button
+                    className='padding-0 bg-interactive-secondary-subtle cursor-pointer'
                     onClick={handleShowMore}
-                  />
+                  >
+                    <Icon name='more-vertical' className='text-secondary' />
+                  </button>
                 </>
               )}
             </div>
@@ -133,18 +144,74 @@ export default function Comment({
           ) : (
             <div>{comment.content}</div>
           )}
-          <div className='flex items-center gap-8'>
-            <Button
-              variant='secondary'
-              styleVariant={showForm ? 'outlined' : 'filled'}
-              size='sm'
-              onClick={() => onReply?.(comment.id)}
-            >
-              <p className='text-body-sm'>{showForm ? '취소' : '답글'}</p>
-            </Button>
-            <p className='text-tertiary text-body-sm'>
-              {comment.created_at && getTimeAgo(comment.created_at)}
-            </p>
+          <div className='padding-y-2 flex items-center gap-12'>
+            {comment.reaction_summary.length > 0 &&
+              comment.reaction_summary.map((reaction) => {
+                const isSelectedEmoticon = comment.reactions?.find(
+                  (r) =>
+                    r.emoji === reaction.emoji &&
+                    r.user_id === session?.user.id,
+                );
+
+                return (
+                  <button
+                    key={reaction.emoji}
+                    className={cn(
+                      'border-radius-lg padding-x-8 padding-y-2 flex cursor-pointer items-center gap-4',
+                      isSelectedEmoticon
+                        ? 'bg-interactive-primary-subtle border-interactive-primary border'
+                        : 'bg-interactive-secondary-subtle',
+                    )}
+                    onClick={() => {
+                      if (isSelectedEmoticon) {
+                        deleteCommentReaction({
+                          commentId: comment.id,
+                          emoji: reaction.emoji,
+                        });
+                      } else {
+                        createCommentReaction({
+                          commentId: comment.id,
+                          emoji: reaction.emoji,
+                        });
+                      }
+                    }}
+                  >
+                    {reaction.emoji}
+                    <p className='text-body-sm text-secondary'>
+                      {reaction.count}
+                    </p>
+                  </button>
+                );
+              })}
+          </div>
+          <div className='flex w-full items-center justify-between'>
+            <div className='flex items-center gap-8'>
+              <Button
+                variant='secondary'
+                styleVariant={showForm ? 'outlined' : 'filled'}
+                size='sm'
+                onClick={() => onReply?.(comment.id)}
+              >
+                <p className='text-body-sm'>{showForm ? '취소' : '답글'}</p>
+              </Button>
+              <p className='text-tertiary text-body-sm'>
+                {comment.created_at && getTimeAgo(comment.created_at)}
+              </p>
+            </div>
+            <div className='relative'>
+              <IconButton
+                icon='smile-plus'
+                variant='secondary'
+                iconSize={16}
+                styleVariant='transparent'
+                onClick={() => setShowReaction((prev) => !prev)}
+              />
+              {showReaction && (
+                <div className='margin-r-8 absolute top-1/2 right-full -translate-y-1/2'>
+                  <EmoticonReaction commentId={comment.id} />
+                </div>
+              )}
+            </div>
           </div>
 
           <div className='border-ghost w-full border-b-[0.6px]' />
