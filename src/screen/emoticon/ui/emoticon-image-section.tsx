@@ -50,6 +50,8 @@ function EmoticonImageItem({ image }: { image: EmoticonImage }) {
       commentsCount={comments_count ?? 0}
       likesCount={likes_count ?? 0}
       className='cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95'
+      isUploading={false}
+      isDragging={false}
     >
       <EmoticonItem.Content>
         <EmoticonItem.Header />
