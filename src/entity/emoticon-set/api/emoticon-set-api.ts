@@ -108,7 +108,6 @@ export async function getEmoticonSets({
     },
   };
 }
-// 더 안전한 대안 방법 (두 단계 쿼리)
 export async function getEmoticonSetDetail(
   id: string,
 ): Promise<EmoticonSetDetail> {
@@ -142,7 +141,6 @@ export async function getEmoticonSetDetail(
     throw new Error('이모티콘 세트를 찾을 수 없습니다.');
   }
 
-  // 2. 부모 댓글들의 작성자 정보 조회
   const parentCommentIds = (data.comments || [])
     .filter((comment) => comment.parent_comment_id)
     .map((comment) => comment.parent_comment_id)
@@ -197,6 +195,7 @@ export async function getEmoticonSetDetail(
     }),
     likes: data.likes?.[0]?.count ?? 0,
     views: data.views?.[0]?.count ?? 0,
+    comments_count: data.comments.length,
   };
 
   return formattedData;
