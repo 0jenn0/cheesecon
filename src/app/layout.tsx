@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { ReactScan } from '@/shared/lib';
 import { ModalProvider } from '@/shared/ui/feedback/modal/modal-provider';
 import GlobalNavigationBar from '@/shared/ui/navigation/global-navigation-bar/global-navigation-bar';
 import AuthProvider from '@/feature/auth/provider/auth-provider';
@@ -20,6 +21,7 @@ export default async function RootLayout({
       <AuthProvider>
         <ModalProvider>
           <html lang='en'>
+            <ReactScan />
             <body className='bg-secondary flex h-screen flex-col antialiased'>
               <div id='modal' />
               <GlobalNavigationBar />
