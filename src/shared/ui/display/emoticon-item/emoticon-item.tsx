@@ -1,3 +1,5 @@
+'use client';
+
 import { ComponentPropsWithRef, PropsWithChildren } from 'react';
 import { VariantProps, cva } from 'class-variance-authority';
 import { cn } from '@/shared/lib';

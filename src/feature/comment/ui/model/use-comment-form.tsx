@@ -1,12 +1,12 @@
+'use client';
+
 import { useState } from 'react';
 import {
   useCreateCommentMutation,
   useUpdateCommentMutation,
 } from '@/entity/comment/query/comment-mutation';
 import { CreateCommentParams } from '@/entity/comment/type';
-import { EMOTICON_SET_QUERY_KEY } from '@/entity/emoticon-set';
 import { useUploadImageMutation } from '@/feature/upload-image/model/upload-image-mutation';
-import { queryClient } from '@/provider/QueryProvider';
 
 export default function useCommentForm({
   emoticonSetId,

@@ -1,10 +1,11 @@
+'use client';
+
 import Image from 'next/image';
 import { useState } from 'react';
 import { getTimeAgo } from '@/shared/lib/utils';
 import { Avatar, Icon } from '@/shared/ui/display';
 import { useModal } from '@/shared/ui/feedback/modal';
-import { Button, IconButton, TextArea } from '@/shared/ui/input';
-import { useUpdateCommentMutation } from '@/entity/comment/query/comment-mutation';
+import { Button, IconButton } from '@/shared/ui/input';
 import { EmoticonSetDetail } from '@/entity/emoticon-set';
 import { CommentForm, EditCommentMenu } from './ui';
 

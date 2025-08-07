@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { cn } from '@/shared/lib';
 import { usePagination } from '@/shared/lib/use-pagination';

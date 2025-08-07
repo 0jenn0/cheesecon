@@ -1,8 +1,10 @@
+'use client';
+
 import Image from 'next/image';
 import { ComponentPropsWithRef, useCallback, useRef } from 'react';
 import { cn } from '@/shared/lib';
-import { Avatar, Icon } from '@/shared/ui/display';
-import { Button, IconButton, Placeholder, TextArea } from '@/shared/ui/input';
+import { Avatar } from '@/shared/ui/display';
+import { Button, IconButton, TextArea } from '@/shared/ui/input';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { useCommentForm } from './model';
 
