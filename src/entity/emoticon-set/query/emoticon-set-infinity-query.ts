@@ -1,6 +1,9 @@
 import { SortOrder } from '@/shared/types';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { getEmoticonSets } from '../api';
+import {
+  UseInfiniteQueryOptions,
+  useInfiniteQuery,
+} from '@tanstack/react-query';
+import { GetEmoticonSetsResult, getEmoticonSets } from '../api';
 import { EmoticonSetOrderBy } from '../type';
 import { EMOTICON_SET_QUERY_KEY } from './query-key';
 
@@ -15,6 +18,10 @@ export interface EmoticonSetInfinityQueryParams {
 
 export const useEmoticonSetInfinityQuery = (
   params?: EmoticonSetInfinityQueryParams,
+  options?: {
+    onSuccess?: (data: GetEmoticonSetsResult) => void;
+    onError?: (error: Error) => void;
+  },
 ) => {
   return useInfiniteQuery({
     queryKey: EMOTICON_SET_QUERY_KEY.order(params?.orderBy || 'created_at', {
@@ -36,5 +43,6 @@ export const useEmoticonSetInfinityQuery = (
         : undefined;
     },
     initialPageParam: 0,
+    ...options,
   });
 };

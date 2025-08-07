@@ -20,7 +20,6 @@ export default async function EmoticonScreen({
       <EmoticonInfoSection emoticonSetDetail={data} />
       <EmoticonImageSection emoticonImages={data.emoticon_images} />
       <EmoticonCommentSection
-        comments={data.comments}
         authorId={data.user_id ?? ''}
         emoticonSetId={emoticonSetId}
       />
