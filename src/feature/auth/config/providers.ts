@@ -8,7 +8,7 @@ export const PROVIDER_CONFIG = {
     text: '구글',
     icon: 'google-login',
   },
-  kakao: {
+  kakaotalk: {
     text: '카카오',
     icon: 'kakao-login',
   },

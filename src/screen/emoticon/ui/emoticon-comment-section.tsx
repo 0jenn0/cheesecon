@@ -29,58 +29,9 @@ export default function EmoticonCommentSection({
   const { currentPage, handlePageChange, totalPages } =
     usePagination(COUNT_PER_PAGE);
 
-  const { session } = useAuth();
-
   const [commentFormPosition, setCommentFormPosition] = useState<string | null>(
     null,
   );
-
-  const handleReply = (id: string) => {
-    if (commentFormPosition === id) {
-      setCommentFormPosition(null);
-      return;
-    }
-    setCommentFormPosition(id);
-  };
-
-  const renderComment = ({
-    comment,
-    depth = 0,
-    parentNickname,
-  }: {
-    comment: CommentDetail;
-    depth?: number;
-    parentNickname: string;
-  }) => {
-    const childComments =
-      comments?.filter(
-        (c: CommentDetail) => c.parent_comment_id === comment.id,
-      ) || [];
-
-    return (
-      <div className='flex flex-col gap-16' key={comment.id}>
-        <Comment
-          comment={comment}
-          asChild={depth > 0}
-          onReply={handleReply}
-          showForm={commentFormPosition === comment.id}
-          isMe={session?.user.id === comment.user_id}
-          isAuthor={comment.user_id === authorId}
-          emoticonSetId={emoticonSetId}
-          parentNickname={parentNickname}
-        />
-        {childComments.map((childComment) => (
-          <div key={childComment.id} className={cn(depth < 2 && 'ml-24')}>
-            {renderComment({
-              comment: childComment,
-              depth: depth + 1,
-              parentNickname,
-            })}
-          </div>
-        ))}
-      </div>
-    );
-  };
 
   const parentComments =
     comments?.filter((comment: CommentDetail) => !comment.parent_comment_id) ||
@@ -99,6 +50,11 @@ export default function EmoticonCommentSection({
             renderComment({
               comment,
               parentNickname: comment.profile.nickname,
+              comments,
+              authorId,
+              emoticonSetId,
+              commentFormPosition,
+              setCommentFormPosition,
             }),
           )}
         {parentComments.length === 0 && (
@@ -118,5 +74,69 @@ export default function EmoticonCommentSection({
         className='mt-6'
       />
     </section>
+  );
+}
+
+function renderComment({
+  comment,
+  depth = 0,
+  parentNickname,
+  comments,
+  authorId,
+  emoticonSetId,
+  commentFormPosition,
+  setCommentFormPosition,
+}: {
+  comment: CommentDetail;
+  depth?: number;
+  parentNickname: string;
+  comments: CommentDetail[];
+  authorId: string;
+  emoticonSetId: string;
+  commentFormPosition: string | null;
+  setCommentFormPosition: (position: string | null) => void;
+}) {
+  const { session } = useAuth();
+
+  const handleReply = (id: string) => {
+    if (commentFormPosition === id) {
+      setCommentFormPosition(null);
+      return;
+    }
+    setCommentFormPosition(id);
+  };
+
+  const childComments =
+    comments?.filter(
+      (c: CommentDetail) => c.parent_comment_id === comment.id,
+    ) || [];
+
+  return (
+    <div className='flex flex-col gap-16' key={comment.id}>
+      <Comment
+        comment={comment}
+        asChild={depth > 0}
+        onReply={handleReply}
+        showForm={commentFormPosition === comment.id}
+        isMe={session?.user.id === comment.user_id}
+        isAuthor={comment.user_id === authorId}
+        emoticonSetId={emoticonSetId}
+        parentNickname={parentNickname}
+      />
+      {childComments.map((childComment) => (
+        <div key={childComment.id} className={cn(depth < 2 && 'ml-24')}>
+          {renderComment({
+            comment: childComment,
+            depth: depth + 1,
+            parentNickname,
+            comments,
+            authorId,
+            emoticonSetId,
+            commentFormPosition,
+            setCommentFormPosition,
+          })}
+        </div>
+      ))}
+    </div>
   );
 }
