@@ -15,11 +15,13 @@ export async function getComments(
   try {
     const supabase = await createServerSupabaseClient();
 
-    let query = supabase
-      .from('comments')
-      .select(
-        '*, profile:profiles!comments_user_id_fkey(id, nickname, avatar_url)',
-      );
+    let query = supabase.from('comments').select(
+      `
+        *,
+        profile:profiles!comments_user_id_fkey(*),
+        comment_reactions!comment_reactions_comment_id_fkey(*)
+        `,
+    );
 
     if (request?.set_id) {
       query = query.eq('set_id', request?.set_id);
@@ -97,12 +99,28 @@ export async function getComments(
       };
     }
 
-    const validComments = (dataResult.data || [])
-      .filter((item) => item.profile !== null)
-      .map((item) => ({
+    const validComments = dataResult.data;
+
+    const formatedComments = validComments?.map((item) => {
+      const reactionCounts = item.comment_reactions.reduce(
+        (acc, reaction) => {
+          acc[reaction.emoji] = (acc[reaction.emoji] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
+
+      return {
         ...item,
-        profile: item.profile!,
-      }));
+        reaction_summary: Object.entries(reactionCounts).map(
+          ([emoji, count]) => ({
+            emoji,
+            count,
+          }),
+        ),
+        reactions: item.comment_reactions,
+      };
+    });
 
     const total = countResult.count || 0;
     const currentPage = Math.floor(offset / limit) + 1;
@@ -112,7 +130,10 @@ export async function getComments(
     return {
       success: true,
       data: {
-        data: validComments,
+        data: formatedComments?.map((item) => ({
+          ...item,
+          profile: item.profile!,
+        })),
         total,
         currentPage,
         totalPages,
