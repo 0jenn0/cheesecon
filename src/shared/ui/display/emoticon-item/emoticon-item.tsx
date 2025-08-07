@@ -91,7 +91,9 @@ function EmoticonItemContent({
               <Image
                 src={imageUrl}
                 alt='emoticon'
-                priority={imageNumber <= 6}
+                priority={imageNumber <= 8}
+                fetchPriority={imageNumber <= 8 ? 'high' : 'low'}
+                loading={imageNumber <= 8 ? 'eager' : 'lazy'}
                 width={100}
                 height={100}
                 className={cn(
