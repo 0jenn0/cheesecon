@@ -1,4 +1,5 @@
 import { createBrowserSupabaseClient } from '@/shared/lib/supabase/client';
+import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
 
 function hasViewedInSession(setId: string, userId?: string): boolean {
   if (typeof window === 'undefined') return false;
@@ -15,7 +16,7 @@ function markViewedInSession(setId: string, userId?: string): void {
 }
 
 export async function incrementViewCount(setId: string, userId?: string) {
-  const supabase = createBrowserSupabaseClient();
+  const supabase = await createServerSupabaseClient();
 
   try {
     const { data, error } = await supabase.rpc(

@@ -1,10 +1,7 @@
-import { ComponentPropsWithRef, useState } from 'react';
-import { i } from 'framer-motion/client';
+import { ComponentPropsWithRef } from 'react';
 import { cn } from '@/shared/lib/utils';
-import { Icon } from '@/shared/ui/display';
 import { IconProps } from '@/shared/ui/icon/icon';
 import { Button } from '@/shared/ui/input';
-import { useDeleteCommentMutation } from '@/entity/comment/query/comment-mutation';
 
 export interface EditCommentMenuProps extends ComponentPropsWithRef<'ul'> {
   handleEdit: () => void;
