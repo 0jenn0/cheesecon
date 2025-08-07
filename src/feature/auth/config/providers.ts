@@ -1,6 +1,6 @@
 import { ICON_NAMES } from '@/shared/ui/icon/config';
 
-export const LOGIN_PROVIDER = ['google', 'kakao', 'naver'] as const;
+export const LOGIN_PROVIDER = ['google', 'kakaotalk', 'naver'] as const;
 export type LoginProvider = (typeof LOGIN_PROVIDER)[number];
 
 export const PROVIDER_CONFIG = {
