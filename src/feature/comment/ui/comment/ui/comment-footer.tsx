@@ -1,3 +1,6 @@
+'use client';
+
+import { useEffect, useRef } from 'react';
 import { getTimeAgo } from '@/shared/lib/utils';
 import { Button, IconButton } from '@/shared/ui/input';
 import { CommentDetail } from '@/entity/comment';
@@ -7,6 +10,24 @@ import { EmoticonReaction } from '../..';
 export default function CommentFooter({ comment }: { comment: CommentDetail }) {
   const { isShowingForm, toggleForm } = useCommentSectionUi(comment.id);
   const { isShowingReaction, toggleReaction } = useCommentSectionUi(comment.id);
+  const reactionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isShowingReaction &&
+        reactionRef.current &&
+        !reactionRef.current.contains(event.target as Node)
+      ) {
+        toggleReaction();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isShowingReaction, toggleReaction]);
 
   return (
     <div className='flex w-full items-center justify-between'>
@@ -23,7 +44,7 @@ export default function CommentFooter({ comment }: { comment: CommentDetail }) {
           {comment.created_at && getTimeAgo(comment.created_at)}
         </p>
       </div>
-      <div className='relative'>
+      <div className='relative' ref={reactionRef}>
         <IconButton
           icon='smile-plus'
           variant='secondary'

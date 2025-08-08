@@ -1,5 +1,6 @@
-import Image from 'next/image';
-import { PropsWithChildren } from 'react';
+'use client';
+
+import { PropsWithChildren, useEffect, useRef } from 'react';
 import { Icon } from '@/shared/ui/display';
 import { CommentDetail } from '@/entity/comment';
 import { useCommentSectionUi } from '@/screen/emoticon/emoticon-comment-section/provider/use-comment-section-ui';
@@ -17,6 +18,24 @@ export default function CommentHeader({
 }>) {
   const { isShowingMore, toggleMore } = useCommentSectionUi(comment.id);
   const { isEditing, toggleEditing } = useCommentItem();
+  const moreRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isShowingMore &&
+        moreRef.current &&
+        !moreRef.current.contains(event.target as Node)
+      ) {
+        toggleMore();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isShowingMore, toggleMore]);
 
   return (
     <div className='flex items-center justify-between'>
@@ -40,7 +59,7 @@ export default function CommentHeader({
           )}
         </div>
       </div>
-      <div className='relative'>
+      <div className='relative' ref={moreRef}>
         {userType === 'me' && (
           <>
             {isShowingMore && <EditCommentMenu />}
