@@ -1,4 +1,5 @@
-// import { useCommentSectionUi } from '@/screen/emoticon/emoticon-comment-section/provider';
+import { DEFAULT_COMMENT_FORM_ID } from '@/screen/emoticon/emoticon-comment-section/const';
+import { useCommentSectionUi } from '@/screen/emoticon/emoticon-comment-section/provider/use-comment-section-ui';
 import CommentForm from './comment-form';
 
 export default function DefaultCommentForm({
@@ -6,9 +7,7 @@ export default function DefaultCommentForm({
 }: {
   emoticonSetId: string;
 }) {
-  //   const showCommentForm = useCommentSectionUi(
-  //     (state) => state.commentFormCommentId === null,
-  //   );
+  const { isShowingForm } = useCommentSectionUi(DEFAULT_COMMENT_FORM_ID);
 
-  return <>{<CommentForm emoticonSetId={emoticonSetId} />}</>;
+  return <>{isShowingForm && <CommentForm emoticonSetId={emoticonSetId} />}</>;
 }

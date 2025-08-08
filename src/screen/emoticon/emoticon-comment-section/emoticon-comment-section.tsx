@@ -7,7 +7,7 @@ import { Pagination } from '@/shared/ui/navigation';
 import { CommentDetail } from '@/entity/comment/api/types';
 import { useCommentQuery } from '@/entity/comment/query/comment-infinity-query';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
-import { Comment, CommentForm, DefaultCommentForm } from '@/feature/comment/ui';
+import { Comment, DefaultCommentForm } from '@/feature/comment/ui';
 import { CommentSectionUiProvider } from './provider/use-comment-section-ui';
 
 const COUNT_PER_PAGE = 100;

@@ -11,7 +11,7 @@ import {
   useCreateCommentReaction,
   useDeleteCommentReaction,
 } from '@/entity/comment_reactions/query/comment-reaciton-mutation-query';
-import useCommentSectionUi from '@/screen/emoticon/emoticon-comment-section/provider/use-comment-section-ui';
+import { useCommentSectionUi } from '@/screen/emoticon/emoticon-comment-section/provider/use-comment-section-ui';
 import { useAuth } from '../auth/provider/auth-provider';
 import { CommentForm, EditCommentMenu, EmoticonReaction } from './ui';
 
@@ -43,7 +43,7 @@ export default memo(function Comment({
     toggleMore,
     toggleReaction,
     toggleForm,
-  } = useCommentSectionUi();
+  } = useCommentSectionUi(comment.id);
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -93,7 +93,7 @@ export default memo(function Comment({
             <div className='relative'>
               {isMe && (
                 <>
-                  {isShowingMore(comment.id) && (
+                  {isShowingMore && (
                     <EditCommentMenu
                       handleEdit={handleEdit}
                       handleDelete={() => {
@@ -106,7 +106,7 @@ export default memo(function Comment({
                   )}
                   <button
                     className='padding-0 bg-interactive-secondary-subtle cursor-pointer'
-                    onClick={() => toggleMore(comment.id)}
+                    onClick={toggleMore}
                   >
                     <Icon name='more-vertical' className='text-secondary' />
                   </button>
@@ -189,12 +189,12 @@ export default memo(function Comment({
             <div className='flex items-center gap-8'>
               <Button
                 variant='secondary'
-                styleVariant={isShowingForm(comment.id) ? 'outlined' : 'filled'}
+                styleVariant={isShowingForm ? 'outlined' : 'filled'}
                 size='sm'
-                onClick={() => toggleForm(comment.id)}
+                onClick={toggleForm}
               >
                 <p className='text-body-sm'>
-                  {isShowingForm(comment.id) ? '취소' : '답글'}
+                  {isShowingForm ? '취소' : '답글'}
                 </p>
               </Button>
               <p className='text-tertiary text-body-sm'>
@@ -207,9 +207,9 @@ export default memo(function Comment({
                 variant='secondary'
                 iconSize={16}
                 styleVariant='transparent'
-                onClick={() => toggleReaction(comment.id)}
+                onClick={toggleReaction}
               />
-              {isShowingReaction(comment.id) && (
+              {isShowingReaction && (
                 <div className='margin-r-8 absolute top-1/2 right-full -translate-y-1/2'>
                   <EmoticonReaction commentId={comment.id} />
                 </div>
@@ -219,7 +219,7 @@ export default memo(function Comment({
 
           <div className='border-ghost w-full border-b-[0.6px]' />
 
-          {isShowingForm(comment.id) && (
+          {isShowingForm && (
             <CommentForm
               emoticonSetId={emoticonSetId}
               parentCommentId={comment.id}
