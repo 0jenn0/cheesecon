@@ -1,9 +1,6 @@
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@/shared/lib';
 import { CommentDetail } from '@/entity/comment';
-import {
-  useCreateCommentReaction,
-  useDeleteCommentReaction,
-} from '@/entity/comment_reactions/query/comment-reaciton-mutation-query';
+import { useOptimisticCommentReaction } from '@/entity/comment_reactions/query/comment-reaciton-mutation-query';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
 
 export default function CommentReaction({
@@ -12,37 +9,42 @@ export default function CommentReaction({
   comment: CommentDetail;
 }) {
   const { session } = useAuth();
-  const { mutate: deleteCommentReaction } = useDeleteCommentReaction();
-  const { mutate: createCommentReaction } = useCreateCommentReaction();
+  const { optimisticReactionSummary, handleAddOptimisticReaction, isPending } =
+    useOptimisticCommentReaction(
+      comment.reaction_summary,
+      comment.reactions ?? [],
+    );
 
   return (
     <div className='padding-y-2 flex items-center gap-12'>
-      {comment.reaction_summary.length > 0 &&
-        comment.reaction_summary.map((reaction) => {
-          const isSelectedEmoticon = comment.reactions?.find(
+      {optimisticReactionSummary.reactionSummary.length > 0 &&
+        optimisticReactionSummary.reactionSummary.map((reaction) => {
+          const isSelectedEmoticon = optimisticReactionSummary.reactions?.find(
             (r) => r.emoji === reaction.emoji && r.user_id === session?.user.id,
           );
-
           return (
             <button
               key={reaction.emoji}
+              disabled={isPending}
               className={cn(
                 'border-radius-lg padding-x-8 padding-y-2 flex cursor-pointer items-center gap-4',
                 isSelectedEmoticon
                   ? 'bg-interactive-primary-subtle border-interactive-primary border'
-                  : 'bg-interactive-secondary-subtle',
+                  : 'bg-interactive-secondary-subtle border border-white',
               )}
               onClick={() => {
                 if (isSelectedEmoticon) {
-                  deleteCommentReaction({
-                    commentId: comment.id,
-                    emoji: reaction.emoji,
-                  });
+                  handleAddOptimisticReaction(
+                    comment.id,
+                    reaction.emoji,
+                    'remove',
+                  );
                 } else {
-                  createCommentReaction({
-                    commentId: comment.id,
-                    emoji: reaction.emoji,
-                  });
+                  handleAddOptimisticReaction(
+                    comment.id,
+                    reaction.emoji,
+                    'add',
+                  );
                 }
               }}
             >

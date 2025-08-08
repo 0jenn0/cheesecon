@@ -1,6 +1,7 @@
-import { useOptimistic, useState } from 'react';
-import { CommentDetail } from '@/entity/comment/api';
+import { useOptimistic, useTransition } from 'react';
+import { CommentDetail, CommentReactionSummary } from '@/entity/comment/api';
 import { COMMENT_QUERY_KEY } from '@/entity/comment/query/query-key';
+import { CommentReaction } from '@/entity/comment/type';
 import { LikeResult } from '@/entity/like/api';
 import { queryClient } from '@/provider/QueryProvider';
 import { Tables } from '@/types/types_db';
@@ -28,17 +29,91 @@ export function useCreateCommentReaction() {
 }
 
 export function useOptimisticCommentReaction(
-  commentId: string,
-  initialReactionCount: number = 0,
+  initialReactionSummary: CommentReactionSummary[],
+  initialReactions: CommentReaction[],
 ) {
-  const [optimisticState, addOptimisticLike] = useOptimistic(
-    initialReactionCount,
+  const [isPending, startTransition] = useTransition();
+  const [optimisticReactionSummary, addOptimisticReaction] = useOptimistic<
+    {
+      reactionSummary: CommentReactionSummary[];
+      reactions: CommentReaction[];
+    },
+    {
+      commentId: string;
+      emoji: string;
+      actionType: 'add' | 'remove';
+    }
+  >(
+    { reactionSummary: initialReactionSummary, reactions: initialReactions },
     (state, action) => {
-      if (action === 'add') {
-        return state + 1;
-      } else if (action === 'remove') {
-        return state - 1;
+      const { emoji, actionType } = action;
+
+      if (actionType === 'add') {
+        const existingIndex = state.reactionSummary.findIndex(
+          (reaction) => reaction.emoji === emoji,
+        );
+
+        if (existingIndex >= 0) {
+          return {
+            ...state,
+            reactionSummary: state.reactionSummary.map((reaction, index) =>
+              index === existingIndex
+                ? { ...reaction, count: reaction.count + 1 }
+                : reaction,
+            ),
+            reactions: [
+              ...state.reactions,
+              {
+                emoji,
+                comment_id: state.reactions[0].comment_id,
+                created_at: state.reactions[0].created_at,
+                id: state.reactions[0].id,
+                user_id: state.reactions[0].user_id,
+              },
+            ],
+          };
+        } else {
+          return {
+            ...state,
+            reactionSummary: [...state.reactionSummary, { emoji, count: 1 }],
+          };
+        }
       }
+
+      if (actionType === 'remove') {
+        const existingIndex = state.reactionSummary.findIndex(
+          (reaction) => reaction.emoji === emoji,
+        );
+
+        if (existingIndex >= 0) {
+          const currentCount = state.reactionSummary[existingIndex].count;
+          const newCount = currentCount - 1;
+
+          if (newCount <= 0) {
+            return {
+              ...state,
+              reactionSummary: state.reactionSummary.filter(
+                (_, index) => index !== existingIndex,
+              ),
+            };
+          } else {
+            return {
+              ...state,
+              reactionSummary: state.reactionSummary.map((reaction, index) =>
+                index === existingIndex
+                  ? { ...reaction, count: newCount }
+                  : reaction,
+              ),
+              reactions: state.reactions.filter(
+                (reaction) =>
+                  reaction.emoji !== action.emoji &&
+                  reaction.user_id !== state.reactions[0].user_id,
+              ),
+            };
+          }
+        }
+      }
+
       return state;
     },
   );
@@ -46,22 +121,34 @@ export function useOptimisticCommentReaction(
   const handleAddOptimisticReaction = async (
     commentId: string,
     emoji: string,
-    action: 'add' | 'remove',
+    actionType: 'add' | 'remove',
   ) => {
-    addOptimisticLike(action);
+    startTransition(() => {
+      addOptimisticReaction({ commentId, emoji, actionType });
+    });
 
-    const result = await createCommentReaction({ commentId, emoji });
+    try {
+      if (actionType === 'add') {
+        await createCommentReaction({ commentId, emoji });
+      } else if (actionType === 'remove') {
+        await deleteCommentReaction({ commentId, emoji });
+      }
 
-    if (result) {
-      queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
+        queryKey: COMMENT_QUERY_KEY.lists(),
+      });
+    } catch (error) {
+      console.error('코멘트 리액션 API 에러:', error);
+      await queryClient.refetchQueries({
         queryKey: COMMENT_QUERY_KEY.detail(commentId),
       });
     }
   };
 
   return {
-    optimisticState,
+    optimisticReactionSummary,
     handleAddOptimisticReaction,
+    isPending,
   };
 }
 
