@@ -43,3 +43,5 @@ export { default as User } from './user.svg';
 export { default as Eye } from './eye.svg';
 export { default as EyeOff } from './eye-off.svg';
 export { default as HeartFilled } from './heart-filled.svg';
+export { default as MoreVertical } from './more-vertical.svg';
+export { default as SmilePlus } from './smile-plus.svg';

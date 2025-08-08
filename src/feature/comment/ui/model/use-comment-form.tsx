@@ -1,29 +1,43 @@
+'use client';
+
 import { useState } from 'react';
-import { useCreateCommentMutation } from '@/entity/comment/query/comment-mutation';
+import {
+  useCreateCommentMutation,
+  useUpdateCommentMutation,
+} from '@/entity/comment/query/comment-mutation';
 import { CreateCommentParams } from '@/entity/comment/type';
 import { useUploadImageMutation } from '@/feature/upload-image/model/upload-image-mutation';
 
 export default function useCommentForm({
   emoticonSetId,
   parentCommentId,
+  commentId,
 }: {
   emoticonSetId: string;
   parentCommentId?: string;
+  commentId?: string;
+  isEditing?: boolean;
 }) {
   const [comment, setComment] = useState<CreateCommentParams>({
     content: '',
-    set_id: emoticonSetId || null,
+    set_id: emoticonSetId && emoticonSetId.trim() !== '' ? emoticonSetId : null,
     parent_comment_id: parentCommentId ?? null,
     image_id: null,
     images: null,
   });
 
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
-  const { mutate: createComment, isPending } = useCreateCommentMutation();
+  const { mutate: createComment, isPending } = useCreateCommentMutation({
+    emoticonSetId,
+  });
+  const { mutate: updateComment } = useUpdateCommentMutation({
+    emoticonSetId,
+  });
+
   const uploadImageMutation = useUploadImageMutation();
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setComment({ ...comment, content: e.target.value });
+    setComment((prev) => ({ ...prev, content: e.target.value }));
   };
 
   const handleImageUpload = async (files: File[]) => {
@@ -60,7 +74,43 @@ export default function useCommentForm({
     setUploadedImages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleUpdateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (
+      !commentId ||
+      (!comment.content.trim() && uploadedImages.length === 0)
+    ) {
+      return;
+    }
+
+    updateComment(
+      {
+        commentId,
+        content: comment.content,
+        images: uploadedImages.length > 0 ? uploadedImages : null,
+      },
+      {
+        onSuccess: () => {
+          setComment({
+            content: '',
+            set_id:
+              emoticonSetId && emoticonSetId.trim() !== ''
+                ? emoticonSetId
+                : null,
+            parent_comment_id: parentCommentId ?? null,
+            image_id: null,
+            images: null,
+          });
+          setUploadedImages([]);
+        },
+        onError: (error) => {
+          console.error('Error updating comment:', error);
+        },
+      },
+    );
+  };
+  const handleCreateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!comment.content.trim() && uploadedImages.length === 0) {
@@ -78,7 +128,10 @@ export default function useCommentForm({
         onSuccess: () => {
           setComment({
             content: '',
-            set_id: emoticonSetId || null,
+            set_id:
+              emoticonSetId && emoticonSetId.trim() !== ''
+                ? emoticonSetId
+                : null,
             parent_comment_id: null,
             image_id: null,
             images: null,
@@ -96,7 +149,8 @@ export default function useCommentForm({
     handleChange,
     handleImageUpload,
     handleRemoveImage,
-    handleSubmit,
+    handleUpdateSubmit,
+    handleCreateSubmit,
     isPending: isPending || uploadImageMutation.isPending,
   };
 }

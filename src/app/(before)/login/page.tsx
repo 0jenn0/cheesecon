@@ -19,7 +19,7 @@ export default function LoginPage() {
       <div className='flex w-full flex-col items-center gap-12'>
         {/* <LoginButton provider='naver' onClick={() => {}} /> */}
         <LoginButton
-          provider='kakao'
+          provider='kakaotalk'
           onClick={() => signInWithProvider('kakao')}
         />
         <LoginButton

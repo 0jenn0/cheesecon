@@ -1,11 +1,11 @@
 export const EMOTICON_TYPE = ['static', 'emotion'] as const;
-export const EMOTICON_PLATFORM = ['kakao', 'line'] as const;
+export const EMOTICON_PLATFORM = ['kakaotalk', 'line'] as const;
 
 export type EmoticonPlatform = (typeof EMOTICON_PLATFORM)[number];
 export type EmoticonType = (typeof EMOTICON_TYPE)[number];
 
 export const EMOTICON_CONFIG = {
-  kakao: {
+  kakaotalk: {
     static: {
       count: 32,
       size: 320,

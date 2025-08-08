@@ -1,12 +1,22 @@
 import { Modal } from '@/shared/ui/feedback';
-import useModal from '@/shared/ui/feedback/modal/modal-provider';
+import { useModal } from '@/shared/ui/feedback/modal';
 import { Button } from '@/shared/ui/input';
-import useEmoticonContext from './emoticon-section/provider/emotion-provider';
+import { EmoticonItem } from './emoticon-section/provider/emotion-provider';
 
-export default function DeleteConfirmModal() {
+export default function DeleteConfirmModal({
+  items,
+  handleEmoticonItem,
+}: {
+  items: EmoticonItem[];
+  handleEmoticonItem: (
+    imageNumber: number,
+    action: 'UPLOAD' | 'UNCHECK',
+    options?: { imageUrl?: string },
+  ) => void;
+}) {
   const { closeModal } = useModal();
 
-  const { items, handleEmoticonItem } = useEmoticonContext();
+  // const { items, handleEmoticonItem } = useEmoticonContext();
   const checkedItems = items.filter((item) => item.isChecked);
   const checkedItemsImageNumber = checkedItems.map((item) => item.imageNumber);
   const checkItemsCount = checkedItemsImageNumber.length;
@@ -21,7 +31,8 @@ export default function DeleteConfirmModal() {
   };
 
   return (
-    <Modal.Root>
+    // <Modal.Root isOpen={true} onClose={closeModal}>
+    <>
       <Modal.Header>
         <h2 className='text-body-lg font-semibold'>이모티콘 이미지 삭제</h2>
       </Modal.Header>
@@ -52,6 +63,7 @@ export default function DeleteConfirmModal() {
           </Button>
         </div>
       </Modal.Footer>
-    </Modal.Root>
+    </>
+    // </Modal.Root>
   );
 }

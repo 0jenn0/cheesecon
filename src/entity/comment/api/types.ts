@@ -1,9 +1,25 @@
 import { ApiResult, BaseApiRequest, BaseApiResponse } from '@/shared/types';
 import { Profile } from '@/entity/profile';
-import { Comment, CommentSortParams, CreateCommentParams } from '../type';
+import {
+  Comment,
+  CommentReaction,
+  CommentSortParams,
+  CreateCommentParams,
+} from '../type';
 
 export type CreateCommentRequest = {
   comment: CreateCommentParams;
+};
+
+export type CommentReactionSummary = {
+  emoji: string;
+  count: number;
+};
+
+export type CommentDetail = Comment & {
+  reaction_summary: CommentReactionSummary[];
+  reactions?: CommentReaction[];
+  profile: Profile;
 };
 
 export type GetCommentsRequest = BaseApiRequest &
@@ -13,13 +29,9 @@ export type GetCommentsRequest = BaseApiRequest &
     parent_comment_id?: string | null;
   };
 
-export interface CommentWithProfile extends Comment {
-  profile: Pick<Profile, 'id' | 'nickname' | 'avatar_url'>;
-}
-
 export type CreateCommentResponse = {
   comment: Comment;
 };
 
 export type CreateCommentResult = ApiResult<CreateCommentResponse>;
-export type GetCommentsResult = ApiResult<BaseApiResponse<CommentWithProfile>>;
+export type GetCommentsResult = ApiResult<BaseApiResponse<CommentDetail>>;

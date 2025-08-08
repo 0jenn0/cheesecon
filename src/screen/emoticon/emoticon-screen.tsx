@@ -1,29 +1,18 @@
-'use client';
+'use server';
 
-import { useEffect } from 'react';
-import { useEmoticonSetDetailQuery } from '@/entity/emoticon-set/query/emoticon-set-query';
+import { getEmoticonSetDetail } from '@/entity/emoticon-set';
 import { trackEmoticonView } from '@/entity/view/api';
-import { useAuth } from '@/feature/auth/provider/auth-provider';
-import {
-  EmoticonCommentSection,
-  EmoticonInfoSection,
-  EmoticonScreenSkeleton,
-} from './ui';
+import { EmoticonCommentSection, EmoticonInfoSection } from './ui';
 import EmoticonImageSection from './ui/emoticon-image-section';
 
-export default function EmoticonScreen({
+export default async function EmoticonScreen({
   emoticonSetId,
 }: {
   emoticonSetId: string;
 }) {
-  const { data, isLoading } = useEmoticonSetDetailQuery(emoticonSetId);
-  const { session } = useAuth();
+  const data = await getEmoticonSetDetail(emoticonSetId);
+  await trackEmoticonView(emoticonSetId);
 
-  useEffect(() => {
-    trackEmoticonView(emoticonSetId, session?.user.id);
-  }, [emoticonSetId, session?.user.id]);
-
-  if (isLoading) return <EmoticonScreenSkeleton />;
   if (!data) return <div>데이터를 찾을 수 없습니다.</div>;
 
   return (
@@ -31,7 +20,6 @@ export default function EmoticonScreen({
       <EmoticonInfoSection emoticonSetDetail={data} />
       <EmoticonImageSection emoticonImages={data.emoticon_images} />
       <EmoticonCommentSection
-        comments={data.comments}
         authorId={data.user_id ?? ''}
         emoticonSetId={emoticonSetId}
       />

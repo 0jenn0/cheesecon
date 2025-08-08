@@ -32,7 +32,7 @@ export default function EmoticonScreenSkeleton() {
 
         <div className='flex flex-col gap-8'>
           {Array.from({ length: 3 }).map((_, index) => (
-            <div className='flex items-center gap-16'>
+            <div className='flex items-center gap-16' key={index}>
               <div className='w-[100px]flex-col flex min-w-[100px]'>
                 <Skeleton className='h-[16px] w-[80]' />
               </div>

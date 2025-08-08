@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+'use client';
+
+import { useState } from 'react';
 import { cn } from '@/shared/lib';
 import { Spinner } from '@/shared/ui/feedback';
 import { Checkbox } from '@/shared/ui/input';

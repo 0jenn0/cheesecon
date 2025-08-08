@@ -1,3 +1,6 @@
+'use client';
+
+import Image from 'next/image';
 import { ComponentPropsWithRef, PropsWithChildren } from 'react';
 import { VariantProps, cva } from 'class-variance-authority';
 import { cn } from '@/shared/lib';
@@ -49,7 +52,7 @@ function EmoticonItemRoot({
 }
 
 const contentVariants = cva(
-  'flex aspect-square h-full w-full flex-col items-center justify-center gap-0 bg-cover bg-center bg-no-repeat',
+  'flex aspect-square h-full w-full flex-col items-center justify-center gap-0',
   {
     variants: {
       isDragging: {
@@ -69,18 +72,45 @@ function EmoticonItemContent({
   className,
   ...props
 }: EmoticonItemContentProps) {
-  const { imageUrl, isUploading, isDragging } = useEmoticonItem();
+  const { imageUrl, isUploading, imageNumber, isDragging } = useEmoticonItem();
 
   return (
     <>
       {!isUploading && (
-        <div
-          className={cn(contentVariants({ isDragging }), className)}
-          style={imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined}
-          {...props}
-        >
-          {children}
-        </div>
+        <>
+          {imageUrl ? (
+            <div className='relative'>
+              <div
+                className={cn(contentVariants({ isDragging }), className)}
+                {...props}
+              >
+                <div className='b absolute inset-0 z-30 flex flex-col'>
+                  {children}
+                </div>
+              </div>
+              <Image
+                src={imageUrl}
+                alt='emoticon'
+                priority={imageNumber <= 8}
+                fetchPriority={imageNumber <= 8 ? 'high' : 'low'}
+                loading={imageNumber <= 8 ? 'eager' : 'lazy'}
+                width={100}
+                height={100}
+                className={cn(
+                  contentVariants({ isDragging }),
+                  'absolute inset-0',
+                )}
+              />
+            </div>
+          ) : (
+            <div
+              className={cn(contentVariants({ isDragging }), className)}
+              {...props}
+            >
+              {children}
+            </div>
+          )}
+        </>
       )}
       {/* {shouldShowErrorIcon && (
         <div className='flex h-full w-full flex-col items-center justify-center gap-8'>

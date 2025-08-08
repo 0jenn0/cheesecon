@@ -1,4 +1,6 @@
-import { ComponentProps, useState } from 'react';
+'use client';
+
+import { ComponentProps } from 'react';
 import { VariantProps } from 'class-variance-authority';
 import { cn } from '@/shared/lib/utils';
 import { Icon } from '@/shared/ui/display';

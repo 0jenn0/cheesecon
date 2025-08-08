@@ -27,7 +27,7 @@ export default function EmoticonInfoForm() {
 
     let mappedValue = value;
     if (name === 'platform') {
-      mappedValue = value === '카카오톡' ? 'kakao' : 'line';
+      mappedValue = value === '카카오톡' ? 'kakaotalk' : 'line';
     } else if (name === 'type') {
       mappedValue = value === '움직이는 이모티콘' ? 'emotion' : 'static';
     }

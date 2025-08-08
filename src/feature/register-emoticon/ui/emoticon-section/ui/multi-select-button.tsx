@@ -1,6 +1,5 @@
-import useModal from '@/shared/ui/feedback/modal/modal-provider';
+import { useModal } from '@/shared/ui/feedback/modal';
 import { Button } from '@/shared/ui/input';
-import DeleteConfirmModal from '../../delete-confirm-modal';
 import useEmoticonContext from '../provider/emotion-provider';
 import useUIContext from '../provider/ui-provider';
 
@@ -17,7 +16,11 @@ export default function MultiSelectButton() {
     });
   };
 
-  const handleDeleteSelectedItems = () => openModal();
+  const handleDeleteSelectedItems = () =>
+    openModal('deleteConfirm', {
+      items,
+      handleEmoticonItem,
+    });
 
   const isCheckedItems = items.filter((item) => item.isChecked).length;
 
@@ -55,7 +58,6 @@ export default function MultiSelectButton() {
           </Button>
         </div>
       )}
-      <DeleteConfirmModal />
     </>
   );
 }

@@ -23,12 +23,15 @@ export type CreateCommentParams = {
 };
 
 export type UpdateCommentParams = {
-  id: string;
+  commentId: string;
   content?: string;
   images?: string[] | null;
   updated_at?: string | null;
 };
 
 export type DeleteCommentParams = {
-  id: string;
+  commentId?: string;
+  emoticonSetId?: string;
+  onSuccess?: () => void;
+  onError?: (error: unknown) => void;
 };
