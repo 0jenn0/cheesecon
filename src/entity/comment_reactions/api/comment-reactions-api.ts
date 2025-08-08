@@ -29,9 +29,6 @@ export async function createCommentReaction({
     error: authError,
   } = await supabase.auth.getUser();
 
-  console.log('user:', user);
-  console.log('authError:', authError);
-
   if (authError || !user) {
     throw new Error('로그인 후 이용해주세요.');
   }

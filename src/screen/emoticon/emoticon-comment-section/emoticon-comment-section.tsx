@@ -103,8 +103,13 @@ function renderComment({
       <Comment
         comment={comment}
         asChild={depth > 0}
-        isMe={session?.user.id === comment.user_id}
-        isAuthor={comment.user_id === authorId}
+        userType={
+          session?.user.id === comment.user_id
+            ? 'me'
+            : comment.user_id === authorId
+              ? 'author'
+              : 'other'
+        }
         emoticonSetId={emoticonSetId}
         parentNickname={parentNickname}
       />

@@ -54,7 +54,7 @@ export const useDeleteCommentMutation = (params?: DeleteCommentParams) => {
     onSuccess: (_, { emoticonSetId }) => {
       if (emoticonSetId && emoticonSetId.trim() !== '') {
         queryClient.invalidateQueries({
-          queryKey: EMOTICON_SET_QUERY_KEY.byId(emoticonSetId),
+          queryKey: COMMENT_QUERY_KEY.lists(),
         });
       }
       params?.onSuccess?.();

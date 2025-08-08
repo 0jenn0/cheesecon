@@ -32,8 +32,6 @@ export async function getActiveUsers(
       .from('comments')
       .select('user_id');
 
-    const { data: likeStats } = await supabase.from('likes').select('user_id');
-
     // 통계 데이터를 사용자별로 그룹화
     const emoticonCountByUser = new Map<string, number>();
     const likesReceivedByUser = new Map<string, number>();

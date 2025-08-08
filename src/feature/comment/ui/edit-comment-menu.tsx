@@ -1,32 +1,45 @@
 import { ComponentPropsWithRef } from 'react';
 import { cn } from '@/shared/lib/utils';
+import { useModal } from '@/shared/ui/feedback/modal';
 import { IconProps } from '@/shared/ui/icon/icon';
 import { Button } from '@/shared/ui/input';
+import { useDeleteCommentMutation } from '@/entity/comment/query/comment-mutation';
+import { useCommentSectionUi } from '@/screen/emoticon/emoticon-comment-section/provider/use-comment-section-ui';
+import { useCommentItem } from './comment/provider';
 
-export interface EditCommentMenuProps extends ComponentPropsWithRef<'ul'> {
-  handleEdit: () => void;
-  handleDelete: () => void;
-}
+export interface EditCommentMenuProps extends ComponentPropsWithRef<'ul'> {}
+
+const items = [
+  {
+    label: '수정',
+    icon: 'edit-2',
+  },
+  {
+    label: '삭제',
+    icon: 'trash',
+  },
+] satisfies { label: string; icon: IconProps['name'] }[];
 
 export default function EditCommentMenu({
   id,
-  handleEdit,
-  handleDelete,
   className,
   ...props
 }: EditCommentMenuProps) {
-  const items = [
-    {
-      label: '수정',
-      icon: 'edit-2',
-      onClick: () => handleEdit(),
-    },
-    {
-      label: '삭제',
-      icon: 'trash',
-      onClick: () => handleDelete(),
-    },
-  ] satisfies { label: string; icon: IconProps['name']; onClick: () => void }[];
+  const { toggleMore } = useCommentSectionUi(id ?? '');
+  const { toggleEditing, commentId } = useCommentItem();
+  const { openModal } = useModal();
+
+  const handleEdit = () => {
+    toggleMore();
+    toggleEditing();
+  };
+
+  const handleDelete = () => {
+    toggleMore();
+    openModal('deleteComment', {
+      commentId,
+    });
+  };
 
   return (
     <ul
@@ -45,7 +58,10 @@ export default function EditCommentMenu({
             variant='secondary'
             styleVariant='transparent'
             size='sm'
-            onClick={item.onClick}
+            onClick={() => {
+              item.label === '수정' && handleEdit();
+              item.label === '삭제' && handleDelete();
+            }}
             iconSize={16}
             leadingIcon={item.icon}
           >

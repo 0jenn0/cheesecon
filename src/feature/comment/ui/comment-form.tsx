@@ -6,15 +6,14 @@ import { cn } from '@/shared/lib';
 import { Avatar } from '@/shared/ui/display';
 import { Button, IconButton, TextArea } from '@/shared/ui/input';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
+import { useCommentItem } from './comment/provider';
 import { useCommentForm } from './model';
 
 interface CommentFormProps extends ComponentPropsWithRef<'div'> {
   emoticonSetId: string;
   commentId?: string;
   parentCommentId?: string;
-  setIsEditing?: (isEditing: boolean) => void;
   initialValue?: string;
-  isEditing?: boolean;
 }
 
 export default function CommentForm({
@@ -23,8 +22,6 @@ export default function CommentForm({
   parentCommentId,
   initialValue,
   className,
-  isEditing = false,
-  setIsEditing,
   ...props
 }: CommentFormProps) {
   const {
@@ -40,6 +37,8 @@ export default function CommentForm({
     parentCommentId,
     commentId,
   });
+
+  const { isEditing, toggleEditing } = useCommentItem();
 
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -62,11 +61,10 @@ export default function CommentForm({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     if (isEditing) {
       handleUpdateSubmit(e);
-      setIsEditing?.(false);
     } else {
       handleCreateSubmit(e);
-      setIsEditing?.(false);
     }
+    toggleEditing();
   };
 
   return (
