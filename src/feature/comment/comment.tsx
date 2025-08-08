@@ -52,6 +52,7 @@ export default memo(function Comment({
 
   const handleEdit = () => {
     setIsEditing((prev) => !prev);
+    toggleMore();
   };
 
   return (
@@ -101,12 +102,18 @@ export default memo(function Comment({
                           commentId: comment.id,
                           emoticonSetId: emoticonSetId,
                         });
+                        toggleMore();
                       }}
                     />
                   )}
                   <button
                     className='padding-0 bg-interactive-secondary-subtle cursor-pointer'
-                    onClick={toggleMore}
+                    onClick={() => {
+                      if (isEditing) {
+                        setIsEditing(false);
+                      }
+                      toggleMore();
+                    }}
                   >
                     <Icon name='more-vertical' className='text-secondary' />
                   </button>
