@@ -134,14 +134,13 @@ function ColorPicker({
         style={{ overflow: 'hidden' }}
       >
         {Object.entries(COLOR_MAP).map(([color, value]) => (
-          <>
+          <div key={color} className='flex items-center gap-4'>
             <ColorChip
-              key={color}
               color={color as keyof typeof COLOR_MAP}
               onClick={handleChangeColor}
             />
             <div className='height-24 border-r border-gray-300' />
-          </>
+          </div>
         ))}
         <motion.button
           type='button'
