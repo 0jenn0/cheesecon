@@ -3,7 +3,7 @@
 import { PropsWithChildren, useEffect, useRef } from 'react';
 import { Icon } from '@/shared/ui/display';
 import { CommentDetail } from '@/entity/comment';
-import { useCommentSectionUi } from '@/screen/emoticon/emoticon-comment-section/provider/use-comment-section-ui';
+import { useCommentSectionUi } from '@/feature/comment/ui/emoticon-comment-section/provider/use-comment-section-ui';
 import EditCommentMenu from '../../edit-comment-menu';
 import { useCommentItem } from '../provider/use-comment';
 

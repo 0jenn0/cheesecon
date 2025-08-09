@@ -4,7 +4,7 @@ import { useModal } from '@/shared/ui/feedback/modal';
 import { IconProps } from '@/shared/ui/icon/icon';
 import { Button } from '@/shared/ui/input';
 import { useDeleteCommentMutation } from '@/entity/comment/query/comment-mutation';
-import { useCommentSectionUi } from '@/screen/emoticon/emoticon-comment-section/provider/use-comment-section-ui';
+import { useCommentSectionUi } from '@/feature/comment/ui/emoticon-comment-section/provider/use-comment-section-ui';
 import { useCommentItem } from './comment/provider';
 
 export interface EditCommentMenuProps extends ComponentPropsWithRef<'ul'> {}

@@ -2,7 +2,7 @@
 
 import { Avatar, Icon } from '@/shared/ui/display';
 import { CommentDetail } from '@/entity/comment/api/types';
-import { useCommentSectionUi } from '@/screen/emoticon/emoticon-comment-section/provider/use-comment-section-ui';
+import { useCommentSectionUi } from '@/feature/comment/ui/emoticon-comment-section/provider/use-comment-section-ui';
 import { CommentForm } from '..';
 import { CommentItemProvider } from './provider';
 import {
