@@ -25,6 +25,7 @@ export type CommentDetail = Comment & {
 export type GetCommentsRequest = BaseApiRequest &
   CommentSortParams & {
     set_id?: string;
+    image_id?: string;
     user_id?: string;
     parent_comment_id?: string | null;
   };

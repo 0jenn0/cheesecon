@@ -27,6 +27,10 @@ export async function getComments(
       query = query.eq('set_id', request?.set_id);
     }
 
+    if (request?.image_id) {
+      query = query.eq('image_id', request?.image_id);
+    }
+
     if (request?.user_id) {
       query = query.eq('user_id', request.user_id);
     }

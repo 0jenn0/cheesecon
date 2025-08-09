@@ -257,22 +257,32 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
+          image_id: string | null
           set_id: string | null
           user_id: string | null
         }
         Insert: {
           created_at?: string | null
           id?: string
+          image_id?: string | null
           set_id?: string | null
           user_id?: string | null
         }
         Update: {
           created_at?: string | null
           id?: string
+          image_id?: string | null
           set_id?: string | null
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "likes_image_id_fkey"
+            columns: ["image_id"]
+            isOneToOne: false
+            referencedRelation: "emoticon_images"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "likes_set_id_fkey"
             columns: ["set_id"]
@@ -451,9 +461,21 @@ export type Database = {
           weekly_activity_score: number
         }[]
       }
+      increment_view_count: {
+        Args: { p_set_id: string; p_user_id?: string }
+        Returns: undefined
+      }
+      increment_view_count_safe: {
+        Args: { p_set_id: string; p_user_id?: string }
+        Returns: boolean
+      }
       recalculate_user_stats: {
         Args: { target_user_id: string }
         Returns: undefined
+      }
+      toggle_like: {
+        Args: { p_set_id: string; p_user_id: string }
+        Returns: Json
       }
     }
     Enums: {
