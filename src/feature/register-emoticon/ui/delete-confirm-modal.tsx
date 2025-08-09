@@ -31,7 +31,6 @@ export default function DeleteConfirmModal({
   };
 
   return (
-    // <Modal.Root isOpen={true} onClose={closeModal}>
     <>
       <Modal.Header>
         <h2 className='text-body-lg font-semibold'>이모티콘 이미지 삭제</h2>
@@ -64,6 +63,5 @@ export default function DeleteConfirmModal({
         </div>
       </Modal.Footer>
     </>
-    // </Modal.Root>
   );
 }
