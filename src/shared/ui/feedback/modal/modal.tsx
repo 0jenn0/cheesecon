@@ -2,6 +2,7 @@
 
 import { ComponentPropsWithRef, ReactNode, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { AnimatePresence, MotionProps, motion } from 'framer-motion';
 import { cn } from '@/shared/lib';
 import { IconButton } from '../../input';
 import { useModal } from './modal-provider';
@@ -97,32 +98,41 @@ function ModalContainer({
   };
 
   return (
-    <div
-      className='z-index-modal tablet:items-center tablet:justify-center fixed inset-0 flex items-end justify-center'
-      onClick={handleOverlayClick}
-    >
-      <div className={cn('absolute inset-0 bg-black/50', overlayClassName)} />
-      <div
-        className={cn(
-          'z-index-modal relative max-h-[90vh] w-full overflow-auto',
-          'tablet:w-auto tablet:max-w-[90vw]',
-          modalClassName,
-        )}
-        onClick={(e) => e.stopPropagation()}
+    <AnimatePresence mode='wait'>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{
+          opacity: { duration: 0.15, ease: 'easeInOut' },
+        }}
+        className='z-index-modal tablet:items-center tablet:justify-center fixed inset-0 flex items-end justify-center'
+        onClick={handleOverlayClick}
       >
-        <section
+        <div className={cn('absolute inset-0 bg-black/50', overlayClassName)} />
+
+        <div
           className={cn(
-            'bg-primary padding-24 flex flex-col gap-24',
-            'w-full rounded-t-2xl',
-            'tablet:rounded-2xl tablet:min-w-[400px]',
-            className,
+            'z-index-modal relative max-h-[90vh] w-full overflow-auto',
+            'tablet:w-auto tablet:max-w-[90vw]',
+            modalClassName,
           )}
-          {...props}
+          onClick={(e) => e.stopPropagation()}
         >
-          {children}
-        </section>
-      </div>
-    </div>
+          <section
+            className={cn(
+              'bg-primary tablet:padding-24 padding-16 tablet:gap-24 flex flex-col gap-16',
+              'w-full rounded-t-2xl',
+              'tablet:rounded-2xl tablet:min-w-[400px]',
+              className,
+            )}
+            {...props}
+          >
+            {children}
+          </section>
+        </div>
+      </motion.div>
+    </AnimatePresence>
   );
 }
 
@@ -165,6 +175,7 @@ function ModalHeader({
   const handleClose = () => {
     if (onClose) {
       onClose();
+      closeModal();
     } else {
       closeModal();
     }
