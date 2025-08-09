@@ -16,7 +16,7 @@ export default function CommentReaction({
     );
 
   return (
-    <div className='padding-y-2 flex items-center gap-12'>
+    <div className='padding-y-2 flex items-center gap-4'>
       {optimisticReactionSummary.reactionSummary.length > 0 &&
         optimisticReactionSummary.reactionSummary.map((reaction) => {
           const isSelectedEmoticon = optimisticReactionSummary.reactions?.find(
