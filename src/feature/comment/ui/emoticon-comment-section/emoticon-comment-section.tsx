@@ -17,6 +17,7 @@ interface EmoticonCommentSectionProps extends ComponentPropsWithRef<'section'> {
   authorId: string;
   targetType: 'emoticon_set' | 'emoticon_image';
   targetId: string;
+  headerAction?: React.ReactNode;
 }
 
 export default function EmoticonCommentSection({
@@ -24,6 +25,7 @@ export default function EmoticonCommentSection({
   targetType,
   targetId,
   className,
+  headerAction,
   ...props
 }: EmoticonCommentSectionProps) {
   const queryKey = targetType === 'emoticon_set' ? 'set_id' : 'image_id';
@@ -53,10 +55,17 @@ export default function EmoticonCommentSection({
         )}
         {...props}
       >
-        <div className='b padding-8 border-ghost flex items-center gap-4 border-b'>
-          <h1 className='font-semibold'>댓글</h1>
-          <p>({comments?.length || 0}개)</p>
+        <div className='flex flex-col gap-8'>
+          <div className='border-ghost flex items-center justify-between'>
+            <div className='padding-8 flex items-center gap-4'>
+              <h1 className='font-semibold'>댓글</h1>
+              <p>({comments?.length || 0}개)</p>
+            </div>
+            {headerAction}
+          </div>
+          <div className='border-ghost border-b' />
         </div>
+
         <div className='flex w-full flex-1 flex-col gap-24'>
           {parentComments.length > 0 &&
             parentComments.map((comment: CommentDetail) =>

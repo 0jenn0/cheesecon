@@ -2,8 +2,10 @@
 
 import { useRouter } from 'next/navigation';
 import { Modal } from '@/shared/ui/feedback';
+import { Button } from '@/shared/ui/input';
 import { EmoticonImage, EmoticonSetDetail } from '@/entity/emoticon-set';
 import { EmoticonCommentSection } from '../comment/ui/emoticon-comment-section';
+import LikeButton from '../like/ui/like-button/like-button';
 import ImageViewer from './image-viewer';
 
 interface ViewEmoticonImageModalProps {
@@ -70,6 +72,13 @@ export default function ViewEmoticonImageModal({
             authorId={emoticonSet?.user_id ?? ''}
             targetType='emoticon_image'
             targetId={emoticonImage?.id ?? ''}
+            headerAction={
+              <LikeButton
+                targetType='emoticon_image'
+                targetId={emoticonImage.id}
+                initialLikesCount={emoticonImage.likes_count ?? 0}
+              />
+            }
           />
         </div>
       </Modal.Body>

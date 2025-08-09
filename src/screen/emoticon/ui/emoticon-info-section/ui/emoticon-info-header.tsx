@@ -42,7 +42,8 @@ export default function EmoticonInfoHeader({
             <p>{author_name}</p>
           </div>
           <LikeButton
-            setId={emoticonSetDetail.id}
+            targetType='emoticon_set'
+            targetId={emoticonSetDetail.id}
             initialLikesCount={emoticonSetDetail.likes_count ?? 0}
           />
         </div>
