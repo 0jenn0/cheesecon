@@ -6,9 +6,7 @@ import { DeleteCommentParams } from '../type';
 import { COMMENT_QUERY_KEY } from './query-key';
 import { CommentMutationParams } from './types';
 
-export const useCreateCommentMutation = (
-  params?: CommentMutationParams & { emoticonSetId?: string },
-) => {
+export const useCreateCommentMutation = (params?: CommentMutationParams) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -19,6 +17,12 @@ export const useCreateCommentMutation = (
       if (params?.emoticonSetId && params.emoticonSetId.trim() !== '') {
         queryClient.invalidateQueries({
           queryKey: EMOTICON_SET_QUERY_KEY.byId(params.emoticonSetId),
+        });
+      }
+
+      if (params?.emoticonImageId && params.emoticonImageId.trim() !== '') {
+        queryClient.invalidateQueries({
+          queryKey: COMMENT_QUERY_KEY.lists(),
         });
       }
 
@@ -52,6 +56,8 @@ export const useDeleteCommentMutation = (params?: DeleteCommentParams) => {
   return useMutation({
     mutationFn: deleteComment,
     onSuccess: (_, { emoticonSetId }) => {
+      queryClient.invalidateQueries({ queryKey: COMMENT_QUERY_KEY.lists() });
+
       if (emoticonSetId && emoticonSetId.trim() !== '') {
         queryClient.invalidateQueries({
           queryKey: COMMENT_QUERY_KEY.lists(),
