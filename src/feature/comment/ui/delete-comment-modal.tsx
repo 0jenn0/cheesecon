@@ -1,5 +1,4 @@
-import { Modal } from '@/shared/ui/feedback';
-import { useModal } from '@/shared/ui/feedback/modal';
+import { Modal, useModal } from '@/shared/ui/feedback';
 import { Button } from '@/shared/ui/input';
 import { useDeleteCommentMutation } from '@/entity/comment/query/comment-mutation';
 

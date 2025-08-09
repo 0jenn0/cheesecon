@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useModal } from '@/shared/ui/feedback/modal/modal-provider';
+import { useModal } from '@/shared/ui/feedback';
 import { EmoticonImage, EmoticonSetDetail } from '@/entity/emoticon-set/type';
 
 export default function EmoticonModalScreen({

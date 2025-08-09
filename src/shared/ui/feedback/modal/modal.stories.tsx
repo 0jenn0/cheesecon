@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/nextjs';
 import Button from '../../input/button/button';
 import Modal from './modal';
-import useModal, { ModalProvider } from './modal-provider';
+import { ModalProvider, useModal } from './modal-provider';
 
 export default {
   title: 'UI/Feedback/Modal',

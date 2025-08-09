@@ -1,9 +1,8 @@
 import { ComponentPropsWithRef } from 'react';
 import { cn } from '@/shared/lib/utils';
-import { useModal } from '@/shared/ui/feedback/modal';
+import { useModal } from '@/shared/ui/feedback';
 import { IconProps } from '@/shared/ui/icon/icon';
 import { Button } from '@/shared/ui/input';
-import { useDeleteCommentMutation } from '@/entity/comment/query/comment-mutation';
 import { useCommentSectionUi } from '@/feature/comment/ui/emoticon-comment-section/provider/use-comment-section-ui';
 import { useCommentItem } from './comment/provider';
 

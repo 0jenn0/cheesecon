@@ -1,5 +1,4 @@
-import { Modal } from '@/shared/ui/feedback';
-import { useModal } from '@/shared/ui/feedback/modal';
+import { Modal, useModal } from '@/shared/ui/feedback';
 import { Button } from '@/shared/ui/input';
 import { EmoticonItem } from './emoticon-section/provider/emotion-provider';
 
@@ -16,7 +15,6 @@ export default function DeleteConfirmModal({
 }) {
   const { closeModal } = useModal();
 
-  // const { items, handleEmoticonItem } = useEmoticonContext();
   const checkedItems = items.filter((item) => item.isChecked);
   const checkedItemsImageNumber = checkedItems.map((item) => item.imageNumber);
   const checkItemsCount = checkedItemsImageNumber.length;

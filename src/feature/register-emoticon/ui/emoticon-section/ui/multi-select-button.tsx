@@ -1,4 +1,4 @@
-import { useModal } from '@/shared/ui/feedback/modal';
+import { useModal } from '@/shared/ui/feedback';
 import { Button } from '@/shared/ui/input';
 import useEmoticonContext from '../provider/emotion-provider';
 import useUIContext from '../provider/ui-provider';
