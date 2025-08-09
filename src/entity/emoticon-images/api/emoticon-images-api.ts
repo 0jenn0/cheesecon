@@ -1,6 +1,7 @@
 'use server';
 
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
+import { GetEmoticonImageResult } from './type';
 
 export interface CreateEmoticonImageProps {
   setId: string;
@@ -28,54 +29,53 @@ export async function createEmoticonImage({
   return data;
 }
 
-// export async function getEmoticonImages(setId: string) {
-//   const supabase = await createServerSupabaseClient();
-//   const rawData = await supabase
-//     .from('emoticon_images')
-//     .select('*')
-//     .eq('set_id', setId);
-
-//   // 데이터 정리
-//   return (
-//     rawData.data?.map((item) => ({
-//       ...item,
-//       created_at: item.created_at
-//         ? new Date(item.created_at).toISOString()
-//         : null,
-//       comments_count: item.comments_count ?? 0,
-//     })) || []
-//   );
-// }
-
-export async function getEmoticonImages(setId: string) {
+export async function getEmoticonImageDetail(
+  setId: string,
+  imageId: string,
+): Promise<GetEmoticonImageResult> {
   try {
     const supabase = await createServerSupabaseClient();
 
-    const { data: allData, error: allError } = await supabase
-      .from('emoticon_images')
-      .select('*')
-      .limit(5);
-
     const { data, error } = await supabase
       .from('emoticon_images')
-      .select('*')
+      .select(`*, likes(count)`)
       .eq('set_id', setId)
-      .order('image_order', { ascending: true });
-
-    const { data: setExists, error: setError } = await supabase
-      .from('emoticon_sets')
-      .select('id, title')
-      .eq('id', setId)
+      .eq('id', imageId)
       .single();
 
     if (error) {
       console.error('Query error:', error);
-      throw error;
+      return {
+        success: false,
+        error: {
+          message: error.message,
+          code: error.code,
+        },
+      };
     }
 
-    return data || [];
+    if (!data) {
+      return {
+        success: false,
+        error: {
+          message: '데이터를 찾을 수 없습니다.',
+          code: 'NOT_FOUND',
+        },
+      };
+    }
+
+    return {
+      success: true,
+      data,
+    };
   } catch (err) {
     console.error('getEmoticonImages 전체 에러:', err);
-    throw err;
+    return {
+      success: false,
+      error: {
+        message: '서버 오류가 발생했습니다.',
+        code: 'INTERNAL_ERROR',
+      },
+    };
   }
 }

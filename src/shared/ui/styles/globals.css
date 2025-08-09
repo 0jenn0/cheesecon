@@ -22,8 +22,11 @@ html {
 
 :root {
   scrollbar-gutter: stable;
+}
+
+* {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-border-secondary) var(--color-bg-secondary);
+  scrollbar-color: var(--color-border-ghost) var(--color-bg-primary);
 }
 
 ::-webkit-scrollbar {

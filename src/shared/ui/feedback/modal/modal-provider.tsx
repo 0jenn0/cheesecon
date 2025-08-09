@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  Suspense,
-  createContext,
-  lazy,
-  useCallback,
-  useContext,
-  useState,
-} from 'react';
+import { createContext, useCallback, useContext, useState } from 'react';
 import Modal from './modal';
 import { MODAL_CONFIG } from './modal-config';
 
@@ -61,8 +54,8 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     >
       {children}
       <Modal.Portal isOpen={isOpen} onClose={closeModal}>
-        {isOpen && modalType && ModalComponent && (
-          <ModalComponent {...(modalProps ?? {})} />
+        {isOpen && modalType && ModalComponent && modalProps && (
+          <ModalComponent {...(modalProps as any)} />
         )}
       </Modal.Portal>
     </ModalContext.Provider>

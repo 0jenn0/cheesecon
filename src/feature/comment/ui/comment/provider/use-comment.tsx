@@ -2,7 +2,8 @@ import { PropsWithChildren, createContext, useContext, useState } from 'react';
 
 interface CommentItemContext {
   commentId: string;
-  emoticonSetId: string;
+  targetId: string;
+  targetType: 'emoticon_set' | 'emoticon_image';
   isEditing: boolean;
   toggleEditing: () => void;
   userType: 'me' | 'author' | 'other';
@@ -10,7 +11,8 @@ interface CommentItemContext {
 
 const CommentItemContext = createContext<CommentItemContext>({
   commentId: '',
-  emoticonSetId: '',
+  targetId: '',
+  targetType: 'emoticon_set',
   isEditing: false,
   toggleEditing: () => {},
   userType: 'other',
@@ -19,7 +21,8 @@ const CommentItemContext = createContext<CommentItemContext>({
 export function CommentItemProvider({
   children,
   commentId,
-  emoticonSetId,
+  targetId,
+  targetType,
   userType = 'other',
 }: PropsWithChildren<Omit<CommentItemContext, 'toggleEditing' | 'isEditing'>>) {
   const [isEditing, setIsEditing] = useState(false);
@@ -30,7 +33,14 @@ export function CommentItemProvider({
 
   return (
     <CommentItemContext.Provider
-      value={{ commentId, emoticonSetId, isEditing, toggleEditing, userType }}
+      value={{
+        commentId,
+        targetId,
+        targetType,
+        isEditing,
+        toggleEditing,
+        userType,
+      }}
     >
       {children}
     </CommentItemContext.Provider>

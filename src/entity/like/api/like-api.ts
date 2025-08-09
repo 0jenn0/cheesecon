@@ -9,14 +9,16 @@ export interface LikeResult {
 }
 
 export async function toggleLike(
-  setId: string,
+  targetType: 'emoticon_set' | 'emoticon_image',
+  targetId: string,
   userId: string,
 ): Promise<LikeResult> {
   const supabase = createBrowserSupabaseClient();
 
   try {
     const { data, error } = await supabase.rpc('toggle_like' as any, {
-      p_set_id: setId,
+      p_set_id: targetType === 'emoticon_set' ? targetId : undefined,
+      p_image_id: targetType === 'emoticon_image' ? targetId : undefined,
       p_user_id: userId,
     });
 
@@ -35,7 +37,8 @@ export async function toggleLike(
 
 // 현재 사용자의 좋아요 상태 확인
 export async function getLikeStatus(
-  setId: string,
+  targetType: 'emoticon_set' | 'emoticon_image',
+  targetId: string,
   userId: string,
 ): Promise<boolean> {
   const supabase = createBrowserSupabaseClient();
@@ -44,7 +47,7 @@ export async function getLikeStatus(
     const { data, error } = await supabase
       .from('likes')
       .select('id')
-      .eq('set_id', setId)
+      .eq(targetType === 'emoticon_set' ? 'set_id' : 'image_id', targetId)
       .eq('user_id', userId)
       .single();
 

@@ -34,7 +34,8 @@ function likeReducer(state: LikeState, action: LikeAction): LikeState {
 }
 
 export function useOptimisticLike(
-  setId: string,
+  targetType: 'emoticon_set' | 'emoticon_image',
+  targetId: string,
   userId?: string,
   initialLikesCount: number = 0,
 ) {
@@ -52,7 +53,7 @@ export function useOptimisticLike(
   );
 
   useEffect(() => {
-    if (!userId || !setId) {
+    if (!userId || !targetId) {
       setActualState({
         isLiked: false,
         likesCount: initialLikesCount,
@@ -62,13 +63,13 @@ export function useOptimisticLike(
 
     const loadLikeStatus = async () => {
       try {
-        const isLiked = await getLikeStatus(setId, userId);
+        const isLiked = await getLikeStatus(targetType, targetId, userId);
 
         const supabase = createBrowserSupabaseClient();
         const { data: setData } = await supabase
           .from('emoticon_sets')
           .select('likes_count')
-          .eq('id', setId)
+          .eq('id', targetId)
           .single();
 
         const actualLikesCount = setData?.likes_count || initialLikesCount;
@@ -86,7 +87,7 @@ export function useOptimisticLike(
     };
 
     loadLikeStatus();
-  }, [setId, userId, initialLikesCount]);
+  }, [targetId, userId, initialLikesCount]);
 
   const handleToggleLike = () => {
     if (!userId) {
@@ -99,7 +100,7 @@ export function useOptimisticLike(
       addOptimisticLike({ type: 'toggle' });
 
       try {
-        const result = await toggleLike(setId, userId);
+        const result = await toggleLike(targetType, targetId, userId);
 
         if (result.success) {
           setActualState({

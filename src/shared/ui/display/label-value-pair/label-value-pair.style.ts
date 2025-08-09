@@ -9,11 +9,14 @@ export const labelValuePairVariants = cva('flex w-full gap-16', {
   },
 });
 
-export const labelVariants = cva('text-body-sm text-secondary min-w-[100px]', {
-  variants: {
-    direction: {
-      row: 'border-ghost border-r',
-      column: '',
+export const labelVariants = cva(
+  'text-body-sm text-secondary tablet:min-w-[160px] min-w-[100px]',
+  {
+    variants: {
+      direction: {
+        row: 'border-ghost border-r',
+        column: '',
+      },
     },
   },
-});
+);

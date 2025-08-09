@@ -19,10 +19,13 @@ export default async function EmoticonScreen({
     <div className='padding-y-16 tablet:padding-y-24 tablet:gap-24 flex flex-col gap-16'>
       <EmoticonInfoSection emoticonSetDetail={data} />
       <EmoticonImageSection emoticonImages={data.emoticon_images} />
-      <EmoticonCommentSection
-        authorId={data.user_id ?? ''}
-        emoticonSetId={emoticonSetId}
-      />
+      <div className='padding-16 tablet:padding-24 bg-primary border-radius-2xl'>
+        <EmoticonCommentSection
+          authorId={data.user_id ?? ''}
+          targetType='emoticon_set'
+          targetId={emoticonSetId}
+        />
+      </div>
     </div>
   );
 }

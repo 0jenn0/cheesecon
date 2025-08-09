@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { ComponentProps } from 'react';
 import { cn } from '@/shared/lib';
 import EmoticonItem from '@/shared/ui/display/emoticon-item/emoticon-item';
@@ -29,11 +30,13 @@ export default function EmoticonImageSection({
             className,
           )}
         >
-          {emoticonImages.map((image: EmoticonImage) => (
-            <li key={image.id}>
-              <EmoticonImageItem image={image} />
-            </li>
-          ))}
+          {emoticonImages
+            .toSorted((a, b) => a.image_order - b.image_order)
+            .map((image: EmoticonImage) => (
+              <li key={image.id}>
+                <EmoticonImageItem image={image} />
+              </li>
+            ))}
         </ul>
       </section>
     </EmoticonProvider>
@@ -53,11 +56,13 @@ function EmoticonImageItem({ image }: { image: EmoticonImage }) {
       isUploading={false}
       isDragging={false}
     >
-      <EmoticonItem.Content>
-        <EmoticonItem.Header />
-        <EmoticonItem.Body />
-        <EmoticonItem.Footer />
-      </EmoticonItem.Content>
+      <Link href={`/emoticon/${image.set_id}/${image.id}`} scroll={false}>
+        <EmoticonItem.Content>
+          <EmoticonItem.Header />
+          <EmoticonItem.Body />
+          <EmoticonItem.Footer />
+        </EmoticonItem.Content>
+      </Link>
       <EmoticonItem.BottomBar />
     </EmoticonItem.Root>
   );

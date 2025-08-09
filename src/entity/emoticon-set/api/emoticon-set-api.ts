@@ -86,9 +86,12 @@ export async function getEmoticonSets({
 
   const { data, error, count } = await supabase
     .from('emoticon_sets')
-    .select('*,emoticon_images(id,image_url,image_order)', {
-      count: 'exact',
-    })
+    .select(
+      '*,emoticon_images(id,image_url,image_order),likes(count),comments(count)',
+      {
+        count: 'exact',
+      },
+    )
     .order(param.orderBy, { ascending: param.order === 'asc' })
     .range(offset, offset + limit - 1);
 
@@ -119,7 +122,11 @@ export async function getEmoticonSetDetail(
     .select(
       `
   *,
-  emoticon_images(*),
+emoticon_images(
+        *,
+        likes:likes(count),
+        comments:comments(count)
+      ),
   likes(count),
   views(count),
   comments(
@@ -141,6 +148,12 @@ export async function getEmoticonSetDetail(
     throw new Error('이모티콘 세트를 찾을 수 없습니다.');
   }
 
+  const emoticon_images = (data.emoticon_images || []).map((image) => ({
+    ...image,
+    likes_count: image.likes?.[0]?.count ?? 0,
+    comments_count: image.comments?.[0]?.count ?? 0,
+  }));
+
   const parentCommentIds = (data.comments || [])
     .filter((comment) => comment.parent_comment_id)
     .map((comment) => comment.parent_comment_id)
@@ -161,7 +174,7 @@ export async function getEmoticonSetDetail(
 
   const formattedData: EmoticonSetDetail = {
     ...data,
-    emoticon_images: data.emoticon_images || [],
+    emoticon_images,
     comments: (data.comments || []).map((comment) => {
       const parentComment = comment.parent_comment_id
         ? parentCommentsMap.get(comment.parent_comment_id)

@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { getTimeAgo } from '@/shared/lib/utils';
 import { Button, IconButton } from '@/shared/ui/input';
 import { CommentDetail } from '@/entity/comment';
-import { useCommentSectionUi } from '@/screen/emoticon/emoticon-comment-section/provider/use-comment-section-ui';
+import { useCommentSectionUi } from '@/feature/comment/ui/emoticon-comment-section/provider/use-comment-section-ui';
 import { EmoticonReaction } from '../..';
 
 export default function CommentFooter({ comment }: { comment: CommentDetail }) {

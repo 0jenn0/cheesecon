@@ -1,5 +1,6 @@
 'use client';
 
+import { ComponentPropsWithRef } from 'react';
 import { cn } from '@/shared/lib';
 import { usePagination } from '@/shared/lib/use-pagination';
 import { Icon } from '@/shared/ui/display';
@@ -12,15 +13,25 @@ import { CommentSectionUiProvider } from './provider/use-comment-section-ui';
 
 const COUNT_PER_PAGE = 100;
 
+interface EmoticonCommentSectionProps extends ComponentPropsWithRef<'section'> {
+  authorId: string;
+  targetType: 'emoticon_set' | 'emoticon_image';
+  targetId: string;
+  headerAction?: React.ReactNode;
+}
+
 export default function EmoticonCommentSection({
   authorId,
-  emoticonSetId,
-}: {
-  authorId: string;
-  emoticonSetId: string;
-}) {
+  targetType,
+  targetId,
+  className,
+  headerAction,
+  ...props
+}: EmoticonCommentSectionProps) {
+  const queryKey = targetType === 'emoticon_set' ? 'set_id' : 'image_id';
+
   const { data } = useCommentQuery({
-    set_id: emoticonSetId,
+    [queryKey]: targetId,
     limit: COUNT_PER_PAGE,
   });
 
@@ -29,19 +40,33 @@ export default function EmoticonCommentSection({
   const { currentPage, handlePageChange, totalPages } =
     usePagination(COUNT_PER_PAGE);
 
+  const { session } = useAuth();
+
   const parentComments =
     comments?.filter((comment: CommentDetail) => !comment.parent_comment_id) ||
     [];
 
   return (
     <CommentSectionUiProvider>
-      <section className='tablet:border-radius-2xl bg-primary tablet:padding-24 tablet:gap-24 padding-16 flex flex-col gap-16'>
-        <div className='flex items-center gap-4'>
-          <h1 className='font-semibold'>댓글</h1>
-          <p>({comments?.length || 0}개)</p>
+      <section
+        className={cn(
+          'tablet:gap-24 flex h-full w-full flex-col gap-16',
+          className,
+        )}
+        {...props}
+      >
+        <div className='flex flex-col gap-8'>
+          <div className='border-ghost flex items-center justify-between'>
+            <div className='padding-8 flex items-center gap-4'>
+              <h1 className='font-semibold'>댓글</h1>
+              <p>({comments?.length || 0}개)</p>
+            </div>
+            {headerAction}
+          </div>
+          <div className='border-ghost border-b' />
         </div>
-        <div className='border-ghost border-b' />
-        <div className='flex w-full flex-col gap-24'>
+
+        <div className='flex w-full flex-1 flex-col gap-24'>
           {parentComments.length > 0 &&
             parentComments.map((comment: CommentDetail) =>
               renderComment({
@@ -49,7 +74,9 @@ export default function EmoticonCommentSection({
                 parentNickname: comment.profile.nickname,
                 comments,
                 authorId,
-                emoticonSetId,
+                targetId,
+                targetType,
+                session,
               }),
             )}
           {parentComments.length === 0 && (
@@ -64,13 +91,15 @@ export default function EmoticonCommentSection({
           )}
         </div>
 
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages || 1}
-          onPageChange={handlePageChange}
-          className='mt-6'
-        />
-        <DefaultCommentForm emoticonSetId={emoticonSetId} />
+        <div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages || 1}
+            onPageChange={handlePageChange}
+            className='mt-6'
+          />
+          <DefaultCommentForm targetId={targetId} targetType={targetType} />
+        </div>
       </section>
     </CommentSectionUiProvider>
   );
@@ -82,17 +111,19 @@ function renderComment({
   parentNickname,
   comments,
   authorId,
-  emoticonSetId,
+  targetId,
+  targetType,
+  session,
 }: {
   comment: CommentDetail;
   depth?: number;
   parentNickname: string;
   comments: CommentDetail[];
   authorId: string;
-  emoticonSetId: string;
+  targetId: string;
+  targetType: 'emoticon_set' | 'emoticon_image';
+  session: any;
 }) {
-  const { session } = useAuth();
-
   const childComments =
     comments?.filter(
       (c: CommentDetail) => c.parent_comment_id === comment.id,
@@ -110,7 +141,8 @@ function renderComment({
               ? 'author'
               : 'other'
         }
-        emoticonSetId={emoticonSetId}
+        targetId={targetId}
+        targetType={targetType}
         parentNickname={parentNickname}
       />
       {childComments.map((childComment) => (
@@ -121,7 +153,9 @@ function renderComment({
             parentNickname,
             comments,
             authorId,
-            emoticonSetId,
+            targetId,
+            targetType,
+            session,
           })}
         </div>
       ))}
