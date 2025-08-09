@@ -36,7 +36,7 @@ export function CommentSectionUiProvider({ children }: PropsWithChildren) {
     const state: UiState = {
       showMore: new Set(),
       showReaction: new Set(),
-      showForm: new Set(),
+      showForm: new Set([DEFAULT_COMMENT_FORM_ID]),
     };
 
     const listeners = new Set<() => void>();
@@ -124,7 +124,7 @@ export function useCommentSectionUi(commentId: string) {
   const isShowingForm = useSyncExternalStore(
     store.subscribe,
     useCallback(() => store.isShowingForm(commentId), [store, commentId]),
-    useCallback(() => false, []),
+    useCallback(() => true, [store]),
   );
 
   const toggleMore = useCallback(
