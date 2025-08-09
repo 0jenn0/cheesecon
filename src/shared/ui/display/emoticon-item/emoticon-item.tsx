@@ -35,6 +35,8 @@ function EmoticonItemRoot({
   isDragging,
   children,
   className,
+  commentsCount,
+  likesCount,
 }: EmoticonItemProps) {
   return (
     <EmoticonItemProvider
@@ -45,6 +47,8 @@ function EmoticonItemRoot({
       imageUrl={imageUrl}
       isUploading={isUploading}
       isDragging={isDragging}
+      commentsCount={commentsCount}
+      likesCount={likesCount}
     >
       <div className={cn('flex flex-col gap-0', className)}>{children}</div>
     </EmoticonItemProvider>
