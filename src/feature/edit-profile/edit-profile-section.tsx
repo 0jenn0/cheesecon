@@ -102,7 +102,7 @@ export default function EditProfileSection() {
           maxLength={10}
         />
       ) : (
-        <span className='text-body-lg height-32 flex items-center'>
+        <span className='text-body-lg height-32 flex items-center font-semibold'>
           {optimisticProfile.nickname}
         </span>
       )}
