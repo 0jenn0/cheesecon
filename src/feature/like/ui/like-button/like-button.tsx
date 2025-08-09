@@ -11,19 +11,22 @@ import { likeButtonVariants } from './like-button.style';
 export interface LikeButtonProps
   extends ComponentProps<'button'>,
     VariantProps<typeof likeButtonVariants> {
-  setId: string;
+  targetType: 'emoticon_set' | 'emoticon_image';
+  targetId: string;
   initialLikesCount: number;
 }
 
 export default function LikeButton({
-  setId,
+  targetType,
+  targetId,
   initialLikesCount,
   className,
   ...props
 }: LikeButtonProps) {
   const { session } = useAuth();
   const { isLiked, likesCount, isLoading, toggleLike } = useOptimisticLike(
-    setId,
+    targetType,
+    targetId,
     session?.user.id,
     initialLikesCount,
   );
@@ -34,9 +37,9 @@ export default function LikeButton({
         likeButtonVariants({ variant: isLiked ? 'filled' : 'default' }),
         className,
       )}
-      {...props}
       onClick={toggleLike}
       disabled={isLoading}
+      {...props}
     >
       <Icon
         name={isLiked ? 'heart-filled' : 'heart'}
