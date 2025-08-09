@@ -30,3 +30,8 @@ export function getTimeAgo(date: string) {
 
   return '방금 전';
 }
+
+export function formatDate(date: string) {
+  const [year, month, day] = new Date(date).toLocaleDateString().split('.');
+  return `${year}년 ${month}월 ${day}일`;
+}
