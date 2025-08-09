@@ -7,12 +7,13 @@ export default function CommentContent({
 }: {
   comment: CommentDetail;
 }) {
-  const { isEditing, emoticonSetId } = useCommentItem();
+  const { isEditing, targetId, targetType } = useCommentItem();
   return (
     <>
       {isEditing ? (
         <CommentForm
-          emoticonSetId={emoticonSetId}
+          targetId={targetId}
+          targetType={targetType}
           commentId={comment.id}
           parentCommentId={comment.id}
           className='padding-t-8'

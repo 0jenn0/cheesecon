@@ -17,7 +17,8 @@ interface CommentProps {
   comment: CommentDetail;
   asChild?: boolean;
   userType?: 'me' | 'author' | 'other';
-  emoticonSetId: string;
+  targetId: string;
+  targetType: 'emoticon_set' | 'emoticon_image';
   parentNickname?: string;
 }
 
@@ -25,7 +26,8 @@ export default function Comment({
   comment,
   asChild = false,
   userType = 'other',
-  emoticonSetId,
+  targetId,
+  targetType,
   parentNickname,
 }: CommentProps) {
   const { isShowingForm } = useCommentSectionUi(comment.id);
@@ -33,7 +35,8 @@ export default function Comment({
   return (
     <CommentItemProvider
       commentId={comment.id}
-      emoticonSetId={emoticonSetId}
+      targetId={targetId}
+      targetType={targetType}
       userType={userType}
     >
       <div className='flex w-full gap-4'>
@@ -67,7 +70,8 @@ export default function Comment({
 
             {isShowingForm && (
               <CommentForm
-                emoticonSetId={emoticonSetId}
+                targetId={targetId}
+                targetType={targetType}
                 parentCommentId={comment.id}
                 className='padding-t-8'
               />

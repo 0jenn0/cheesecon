@@ -9,29 +9,32 @@ import { CreateCommentParams } from '@/entity/comment/type';
 import { useUploadImageMutation } from '@/feature/upload-image/model/upload-image-mutation';
 
 export default function useCommentForm({
-  emoticonSetId,
+  targetId,
+  targetType,
   parentCommentId,
   commentId,
 }: {
-  emoticonSetId: string;
+  targetId: string;
+  targetType: 'emoticon_set' | 'emoticon_image';
   parentCommentId?: string;
   commentId?: string;
   isEditing?: boolean;
 }) {
-  const [comment, setComment] = useState<CreateCommentParams>({
+  const key = targetType === 'emoticon_set' ? 'set_id' : 'image_id';
+
+  const [comment, setComment] = useState<CreateCommentParams>(() => ({
     content: '',
-    set_id: emoticonSetId && emoticonSetId.trim() !== '' ? emoticonSetId : null,
+    [key]: targetId,
     parent_comment_id: parentCommentId ?? null,
-    image_id: null,
     images: null,
-  });
+  }));
 
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const { mutate: createComment, isPending } = useCreateCommentMutation({
-    emoticonSetId,
+    [key]: targetId ?? '',
   });
   const { mutate: updateComment } = useUpdateCommentMutation({
-    emoticonSetId,
+    [key]: targetId ?? '',
   });
 
   const uploadImageMutation = useUploadImageMutation();
@@ -94,10 +97,7 @@ export default function useCommentForm({
         onSuccess: () => {
           setComment({
             content: '',
-            set_id:
-              emoticonSetId && emoticonSetId.trim() !== ''
-                ? emoticonSetId
-                : null,
+            [key]: targetId,
             parent_comment_id: parentCommentId ?? null,
             image_id: null,
             images: null,
@@ -128,10 +128,7 @@ export default function useCommentForm({
         onSuccess: () => {
           setComment({
             content: '',
-            set_id:
-              emoticonSetId && emoticonSetId.trim() !== ''
-                ? emoticonSetId
-                : null,
+            [key]: targetId,
             parent_comment_id: null,
             image_id: null,
             images: null,

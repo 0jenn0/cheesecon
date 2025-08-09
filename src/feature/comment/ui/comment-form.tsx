@@ -10,14 +10,16 @@ import { useCommentItem } from './comment/provider';
 import { useCommentForm } from './model';
 
 interface CommentFormProps extends ComponentPropsWithRef<'div'> {
-  emoticonSetId: string;
+  targetId: string;
+  targetType: 'emoticon_set' | 'emoticon_image';
   commentId?: string;
   parentCommentId?: string;
   initialValue?: string;
 }
 
 export default function CommentForm({
-  emoticonSetId,
+  targetId,
+  targetType,
   commentId,
   parentCommentId,
   initialValue,
@@ -33,7 +35,8 @@ export default function CommentForm({
     uploadedImages,
     isPending,
   } = useCommentForm({
-    emoticonSetId,
+    targetId,
+    targetType,
     parentCommentId,
     commentId,
   });

@@ -3,11 +3,19 @@ import { useCommentSectionUi } from '@/screen/emoticon/emoticon-comment-section/
 import CommentForm from './comment-form';
 
 export default function DefaultCommentForm({
-  emoticonSetId,
+  targetId,
+  targetType,
 }: {
-  emoticonSetId: string;
+  targetId: string;
+  targetType: 'emoticon_set' | 'emoticon_image';
 }) {
   const { isShowingForm } = useCommentSectionUi(DEFAULT_COMMENT_FORM_ID);
 
-  return <>{isShowingForm && <CommentForm emoticonSetId={emoticonSetId} />}</>;
+  return (
+    <>
+      {isShowingForm && (
+        <CommentForm targetId={targetId} targetType={targetType} />
+      )}
+    </>
+  );
 }
