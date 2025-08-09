@@ -30,11 +30,13 @@ export default function EmoticonImageSection({
             className,
           )}
         >
-          {emoticonImages.map((image: EmoticonImage) => (
-            <li key={image.id}>
-              <EmoticonImageItem image={image} />
-            </li>
-          ))}
+          {emoticonImages
+            .toSorted((a, b) => a.image_order - b.image_order)
+            .map((image: EmoticonImage) => (
+              <li key={image.id}>
+                <EmoticonImageItem image={image} />
+              </li>
+            ))}
         </ul>
       </section>
     </EmoticonProvider>
