@@ -13,7 +13,7 @@ export default function EmoticonSection() {
     <UIProvider>
       <section className='tablet:border-radius-xl tablet: tablet:padding-24 tablet:bg-white tablet:border-radius-2xl flex w-full flex-col gap-24'>
         <div className='tablet:flex-row tablet:justify-between tablet:items-center flex w-full flex-col gap-16'>
-          <h2 className='text-heading-sm'>이모티콘 시안들</h2>
+          <h2 className='text-heading-sm'>이모티콘 시안</h2>
           <div className='tablet:hidden block w-full'>
             <MultiUploadButton />
           </div>
