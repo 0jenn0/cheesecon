@@ -5,7 +5,7 @@ import { ComponentPropsWithRef, useCallback, useRef } from 'react';
 import { cn } from '@/shared/lib';
 import { Avatar } from '@/shared/ui/display';
 import { Button, IconButton, TextArea } from '@/shared/ui/input';
-import { useAuth } from '@/feature/auth/provider/auth-provider';
+import { useGetProfile } from '@/entity/profile/query/profile-query';
 import { useCommentItem } from './comment/provider';
 import { useCommentForm } from './model';
 
@@ -43,7 +43,9 @@ export default function CommentForm({
 
   const { isEditing, toggleEditing } = useCommentItem();
 
-  const { user } = useAuth();
+  const { data } = useGetProfile();
+  const user = data?.success ? data.data : null;
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = useCallback(() => {
@@ -74,8 +76,8 @@ export default function CommentForm({
     <div className={cn('flex gap-12', className)} {...props}>
       {!isEditing ? (
         <Avatar
-          name={user?.name ?? ''}
-          imageUrl={user?.avatarUrl}
+          name={user?.nickname ?? ''}
+          imageUrl={user?.avatar_url ?? ''}
           profileType='image'
           size='sm'
         />
