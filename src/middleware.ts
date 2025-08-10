@@ -2,12 +2,23 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { type CookieOptions, createServerClient } from '@supabase/ssr';
 
 const publicPaths = ['/login', '/popular', '/new', '/activity', '/emoticon'];
+const authPaths = ['/auth/callback'];
 
 function isPublicPath(pathname: string): boolean {
-  return publicPaths.some((path) => pathname.startsWith(path));
+  return publicPaths.some((path) => pathname === path);
 }
 
-export const applyMiddlewareSupabaseClient = async (request: NextRequest) => {
+function isAuthPath(pathname: string): boolean {
+  return authPaths.some((path) => pathname.startsWith(path));
+}
+
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  if (isAuthPath(pathname)) {
+    return NextResponse.next();
+  }
+
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -28,11 +39,6 @@ export const applyMiddlewareSupabaseClient = async (request: NextRequest) => {
             value,
             ...options,
           });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          });
           response.cookies.set({
             name,
             value,
@@ -45,11 +51,6 @@ export const applyMiddlewareSupabaseClient = async (request: NextRequest) => {
             value: '',
             ...options,
           });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          });
           response.cookies.set({
             name,
             value: '',
@@ -60,73 +61,33 @@ export const applyMiddlewareSupabaseClient = async (request: NextRequest) => {
     },
   );
 
-  await supabase.auth.getUser();
-
-  return response;
-};
-
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  if (pathname.startsWith('/emoticon-register')) {
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return request.cookies.get(name)?.value;
-          },
-          set(name: string, value: string, options: CookieOptions) {},
-          remove(name: string, options: CookieOptions) {},
-        },
-      },
-    );
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      const loginUrl = new URL('/login', request.url);
-      return NextResponse.redirect(loginUrl);
-    }
-
-    return await applyMiddlewareSupabaseClient(request);
-  }
-
-  if (isPublicPath(pathname)) {
-    return await applyMiddlewareSupabaseClient(request);
-  }
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {},
-        remove(name: string, options: CookieOptions) {},
-      },
-    },
-  );
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
+  if (isPublicPath(pathname)) {
+    return response;
+  }
+
   if (!user) {
     const loginUrl = new URL('/login', request.url);
+    loginUrl.searchParams.set('next', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  return await applyMiddlewareSupabaseClient(request);
+  return response;
 }
 
 export const config = {
   matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder
+     * - api routes
+     */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
