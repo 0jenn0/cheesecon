@@ -29,7 +29,7 @@ export default function HelloSection() {
         leadingIcon='edit'
         textClassName='font-semibold text-body-sm '
         onClick={() => {
-          router.push('/emoticon-register');
+          router.push('/register');
         }}
       >
         새 이모티콘 등록하기
