@@ -1,6 +1,12 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { type CookieOptions, createServerClient } from '@supabase/ssr';
 
+const publicPaths = ['/login', '/popular', '/new', '/activity', '/emoticon'];
+
+function isPublicPath(pathname: string): boolean {
+  return publicPaths.some((path) => pathname.startsWith(path));
+}
+
 export const applyMiddlewareSupabaseClient = async (request: NextRequest) => {
   let response = NextResponse.next({
     request: {
@@ -60,6 +66,62 @@ export const applyMiddlewareSupabaseClient = async (request: NextRequest) => {
 };
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  if (pathname.startsWith('/emoticon-register')) {
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return request.cookies.get(name)?.value;
+          },
+          set(name: string, value: string, options: CookieOptions) {},
+          remove(name: string, options: CookieOptions) {},
+        },
+      },
+    );
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      const loginUrl = new URL('/login', request.url);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    return await applyMiddlewareSupabaseClient(request);
+  }
+
+  if (isPublicPath(pathname)) {
+    return await applyMiddlewareSupabaseClient(request);
+  }
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {},
+        remove(name: string, options: CookieOptions) {},
+      },
+    },
+  );
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    const loginUrl = new URL('/login', request.url);
+    return NextResponse.redirect(loginUrl);
+  }
+
   return await applyMiddlewareSupabaseClient(request);
 }
 
