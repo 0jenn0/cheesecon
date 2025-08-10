@@ -42,7 +42,7 @@ export type GetTrendingEmoticonsResult =
 export type GetMyStatsResult = ApiResult<GetMyStatsResponse>;
 
 export type ProfileUpdateRequest = Partial<
-  Pick<Profile, 'nickname' | 'avatar_url'>
+  Pick<Profile, 'nickname' | 'avatar_url' | 'description'>
 >;
 export type ProfileUpdateResponse = Profile;
 export type ProfileUpdateResult = ApiResult<ProfileUpdateResponse>;

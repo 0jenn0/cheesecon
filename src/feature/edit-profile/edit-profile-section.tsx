@@ -3,48 +3,82 @@
 import { useState } from 'react';
 import { formatDate } from '@/shared/lib/utils';
 import { Avatar, Icon } from '@/shared/ui/display';
-import Spinner from '@/shared/ui/feedback/spinner/spinner';
 import { Button } from '@/shared/ui/input';
 import { useOptimisticUpdateProfile } from '@/entity/profile/query/profile-mutate-query';
+import { Profile } from '@/entity/profile/type';
 import EditAvatar from './edit-avatar';
 
-export default function EditProfileSection() {
-  const [isEditing, setIsEditing] = useState(false);
-  const [inputValue, setInputValue] = useState('');
+export default function EditProfileSection({
+  initialProfile,
+}: {
+  initialProfile: Profile | null;
+}) {
   const { updateOptimisticProfile, isPending, optimisticProfile } =
-    useOptimisticUpdateProfile();
-  const [imageUrl, setImageUrl] = useState<string>(
-    () => optimisticProfile?.avatar_url || '',
-  );
+    useOptimisticUpdateProfile(initialProfile);
 
-  const toggleEdit = () => {
-    if (isEditing) {
-      const newNickname = inputValue.trim();
-      if (
-        newNickname &&
-        (newNickname !== optimisticProfile?.nickname ||
-          imageUrl !== optimisticProfile?.avatar_url)
-      ) {
-        updateOptimisticProfile({
-          nickname: newNickname,
-          avatar_url: imageUrl,
-        });
-      }
-    } else {
-      setInputValue(optimisticProfile?.nickname || '');
+  const [isEditing, setIsEditing] = useState(false);
+
+  const [tempNickname, setTempNickname] = useState('');
+  const [tempDescription, setTempDescription] = useState('');
+  const [tempImageUrl, setTempImageUrl] = useState('');
+
+  const displayNickname = isEditing
+    ? tempNickname
+    : optimisticProfile?.nickname || '';
+  const displayDescription = isEditing
+    ? tempDescription
+    : optimisticProfile?.description || '';
+  const displayImageUrl = isEditing
+    ? tempImageUrl
+    : optimisticProfile?.avatar_url || '';
+
+  const handleEditStart = () => {
+    setTempNickname(optimisticProfile?.nickname || '');
+    setTempDescription(optimisticProfile?.description || '');
+    setTempImageUrl(optimisticProfile?.avatar_url || '');
+    setIsEditing(true);
+  };
+
+  const handleSave = () => {
+    const newNickname = tempNickname.trim();
+    const newDescription = tempDescription.trim();
+
+    const hasChanges =
+      newNickname !== optimisticProfile?.nickname ||
+      newDescription !== optimisticProfile?.description ||
+      tempImageUrl !== optimisticProfile?.avatar_url;
+
+    if (hasChanges && newNickname) {
+      updateOptimisticProfile({
+        nickname: newNickname,
+        avatar_url: tempImageUrl,
+        description: newDescription,
+      });
     }
-    setIsEditing((prev) => !prev);
+    setIsEditing(false);
   };
 
   const handleCancel = () => {
     setIsEditing(false);
-    setInputValue(optimisticProfile?.nickname || '');
+    setTempNickname('');
+    setTempDescription('');
+    setTempImageUrl('');
+  };
+
+  const toggleEdit = () => {
+    if (isEditing) {
+      handleSave();
+    } else {
+      handleEditStart();
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      toggleEdit();
+      if (isEditing) {
+        handleSave();
+      }
     }
     if (e.key === 'Escape') {
       e.preventDefault();
@@ -52,9 +86,16 @@ export default function EditProfileSection() {
     }
   };
 
-  if (!optimisticProfile) {
-    return <Spinner size='lg' variant='primary' />;
-  }
+  const profileData = optimisticProfile ??
+    initialProfile ?? {
+      avatar_url: '',
+      created_at: '',
+      id: '',
+      nickname: '',
+      provider: '',
+      updated_at: '',
+      description: '',
+    };
 
   return (
     <section className='padding-32 bg-primary tablet:border-radius-2xl relative flex flex-col items-center gap-12'>
@@ -76,41 +117,61 @@ export default function EditProfileSection() {
 
       {isEditing ? (
         <EditAvatar
-          profile={optimisticProfile}
-          onImageUpload={setImageUrl}
+          profile={profileData}
+          onImageUpload={setTempImageUrl}
           isEditing={isEditing}
           setIsEditing={setIsEditing}
         />
       ) : (
         <Avatar
-          imageUrl={optimisticProfile.avatar_url ?? ''}
+          imageUrl={displayImageUrl}
           size='lg'
-          name={optimisticProfile.nickname}
+          name={displayNickname}
           profileType='image'
         />
       )}
 
-      {isEditing ? (
-        <input
-          name='nickname'
-          type='text'
-          className='text-body-lg border-interactive-secondary border-radius-md height-32 padding-x-8 border outline-none'
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          placeholder='닉네임을 입력해주세요.'
-          onKeyDown={handleKeyDown}
-          maxLength={10}
-        />
-      ) : (
-        <span className='text-body-lg height-32 flex items-center font-semibold'>
-          {optimisticProfile.nickname}
-        </span>
-      )}
+      <div className='flex flex-col items-center gap-8'>
+        {isEditing ? (
+          <input
+            name='nickname'
+            type='text'
+            className='text-body-lg border-interactive-secondary padding-x-8 h-[28px] border-b outline-none'
+            value={tempNickname}
+            onChange={(e) => setTempNickname(e.target.value)}
+            placeholder='닉네임을 입력해주세요.'
+            onKeyDown={handleKeyDown}
+            maxLength={10}
+          />
+        ) : (
+          <span className='text-body-lg flex h-[28px] items-center font-semibold'>
+            {displayNickname}
+          </span>
+        )}
+
+        {isEditing ? (
+          <input
+            name='description'
+            type='text'
+            className='text-body-lg border-interactive-secondary padding-x-8 h-[28px] border-b outline-none'
+            value={tempDescription}
+            onChange={(e) => setTempDescription(e.target.value)}
+            placeholder='소개를 입력해주세요.'
+            onKeyDown={handleKeyDown}
+            maxLength={10}
+          />
+        ) : (
+          <span className='text-body-md flex h-[28px] items-center'>
+            {displayDescription || '아직 소개가 없어요.'}
+          </span>
+        )}
+      </div>
 
       <div className='flex items-center gap-1'>
         <Icon name='calendar' size={12} className='text-tertiary' />
         <span className='text-body-sm text-tertiary'>
-          {formatDate(optimisticProfile.created_at ?? '')} 부터 활동 중
+          {optimisticProfile?.created_at &&
+            formatDate(optimisticProfile.created_at) + ' 부터 활동 중'}
         </span>
       </div>
     </section>

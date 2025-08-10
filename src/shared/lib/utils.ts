@@ -32,6 +32,15 @@ export function getTimeAgo(date: string) {
 }
 
 export function formatDate(date: string) {
-  const [year, month, day] = new Date(date).toLocaleDateString().split('.');
+  if (!date || date.trim() === '') {
+    return '';
+  }
+
+  const dateObj = new Date(date);
+  if (isNaN(dateObj.getTime())) {
+    return '';
+  }
+
+  const [year, month, day] = dateObj.toLocaleDateString().split('.');
   return `${year}년 ${month}월 ${day}일`;
 }
