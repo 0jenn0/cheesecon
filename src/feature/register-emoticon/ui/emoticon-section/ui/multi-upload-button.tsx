@@ -88,6 +88,7 @@ export default function MultiUploadButton() {
             // TODO: 토스트 처리
             // console.log('Upload successful:', result);
           } catch (error) {
+            console.error('Upload error for file:', file.name, error);
             // TODO: 토스트 처리
             // console.error('Upload error for file:', file.name, error);
             // alert(`${file.name} 업로드 실패`);
