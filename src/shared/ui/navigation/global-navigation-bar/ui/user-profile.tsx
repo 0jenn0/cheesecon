@@ -50,6 +50,7 @@ export default function UserProfile({ className, ...props }: UserProfileProps) {
         styleVariant='transparent'
         icon={isLoggedIn ? 'log-out' : 'log-in'}
         onClick={isLoggedIn ? handleSignOut : handleSignIn}
+        iconSize={20}
       />
     </div>
   );
