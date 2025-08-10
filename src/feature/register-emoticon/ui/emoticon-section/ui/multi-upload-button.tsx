@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import ProgressBar from '@/shared/ui/feedback/progress-bar/progress-bar';
 import { Button } from '@/shared/ui/input';
 import useEmoticonRegister from '@/feature/register-emoticon/model/hook';
@@ -20,118 +19,116 @@ export default function MultiUploadButton() {
   const uploadImageMutation = useUploadImageMutation();
   const { handleEmoticonItem, items } = useEmoticonContext();
   const { handleSetImageUrl } = useEmoticonRegister();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const headerElement = window.document.querySelector('header');
     setHeaderHeight(headerElement?.clientHeight);
   }, []);
 
-  const handleFileUpload = async (acceptedFiles: File[]) => {
-    if (acceptedFiles.length === 0) {
-      // TODO: 토스트 처리
-      console.log('No files to upload');
-      return;
-    }
-
-    // 업로드 가능한 빈 슬롯 확인
-    const emptySlots = items.filter((item) => item.imageUrl === '');
-    const maxUploadCount = Math.min(acceptedFiles.length, emptySlots.length);
-
-    if (maxUploadCount === 0) {
-      console.log('No empty slots available');
-      // TODO: 토스트로 "업로드 가능한 슬롯이 없습니다" 메시지 표시
-      return;
-    }
-
-    const filesToUpload = acceptedFiles.slice(0, maxUploadCount);
-
-    setCurrentUploadCount({
-      current: 0,
-      total: filesToUpload.length,
-    });
-    setIsUploading(true);
-
-    try {
-      const uploadPromises = filesToUpload.map(async (file, index) => {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        const targetSlot = emptySlots[index];
-        const imageNumber = targetSlot.imageNumber;
-
-        try {
-          const result = await uploadImageMutation.mutateAsync(formData);
-
-          handleEmoticonItem(imageNumber, 'UPLOAD', {
-            imageUrl: result.url,
-          });
-
-          handleSetImageUrl([
-            {
-              imageUrl: result.url,
-              imageOrder: imageNumber,
-            },
-          ]);
-
-          setCurrentUploadCount((prev) => ({
-            current: prev.current + 1,
-            total: prev.total,
-          }));
-
-          return { success: true, file: file.name, url: result.url };
-        } catch (error) {
-          console.error('Upload error for file:', file.name, error);
-          return { success: false, file: file.name, error };
-        }
-      });
-
-      const results = await Promise.all(uploadPromises);
-
-      const successCount = results.filter((r) => r.success).length;
-      const failCount = results.filter((r) => !r.success).length;
-
-      if (failCount > 0) {
-        console.log(`${successCount}개 성공, ${failCount}개 실패`);
-        // TODO: 토스트로 부분 실패 메시지 표시
-      } else {
-        console.log(`${successCount}개 파일 업로드 완료`);
-        // TODO: 토스트로 성공 메시지 표시
+  const handleFileUpload = useCallback(
+    async (files: File[]) => {
+      if (files.length === 0) {
+        console.log('No files to upload');
+        return;
       }
-    } catch (error) {
-      console.error('Upload process error:', error);
-      // TODO: 토스트로 에러 메시지 표시
-    } finally {
-      setIsUploading(false);
-      setCurrentUploadCount({ current: 0, total: 0 });
-    }
-  };
 
-  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
-    onDrop: handleFileUpload,
-    accept: {
-      'image/jpeg': ['.jpeg', '.jpg'],
-      'image/png': ['.png'],
-      'image/gif': ['.gif'],
-      'image/webp': ['.webp'],
+      const emptySlots = items.filter((item) => item.imageUrl === '');
+      if (emptySlots.length === 0) {
+        // TODO: 토스트 처리
+        // console.log('빈 슬롯이 없습니다');
+        return;
+      }
+
+      const filesToUpload = files.slice(
+        0,
+        Math.min(files.length, emptySlots.length),
+      );
+
+      if (filesToUpload.length < files.length) {
+        // TODO: 토스트 처리
+        // alert(
+        //   `${emptySlots.length}개 슬롯만 사용 가능합니다. ${filesToUpload.length}개 파일만 업로드됩니다.`,
+        // );
+      }
+
+      setCurrentUploadCount({
+        current: 0,
+        total: filesToUpload.length,
+      });
+      setIsUploading(true);
+
+      try {
+        for (const [index, file] of filesToUpload.entries()) {
+          const formData = new FormData();
+          formData.append('file', file);
+
+          const targetSlot = emptySlots[index];
+          const imageNumber = targetSlot.imageNumber;
+
+          try {
+            const result = await uploadImageMutation.mutateAsync(formData);
+
+            handleEmoticonItem(imageNumber, 'UPLOAD', {
+              imageUrl: result.url,
+            });
+
+            handleSetImageUrl([
+              {
+                imageUrl: result.url,
+                imageOrder: imageNumber,
+              },
+            ]);
+
+            setCurrentUploadCount((prev) => ({
+              current: prev.current + 1,
+              total: prev.total,
+            }));
+
+            // TODO: 토스트 처리
+            // console.log('Upload successful:', result);
+          } catch (error) {
+            // TODO: 토스트 처리
+            // console.error('Upload error for file:', file.name, error);
+            // alert(`${file.name} 업로드 실패`);
+          }
+        }
+        // TODO: 토스트 처리
+        console.log(`총 ${filesToUpload.length}개 파일 업로드 완료`);
+      } finally {
+        setIsUploading(false);
+        setCurrentUploadCount({ current: 0, total: 0 });
+
+        // input 초기화
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+      }
     },
-    multiple: true,
-    maxFiles: 32,
-    noClick: true,
-    noKeyboard: true,
-    disabled: isUploading,
-  });
+    [items, uploadImageMutation, handleEmoticonItem, handleSetImageUrl],
+  );
 
-  const handleButtonClick = () => {
-    if (!isUploading) {
-      open();
+  const handleButtonClick = useCallback(() => {
+    if (!isUploading && fileInputRef.current) {
+      fileInputRef.current.click();
     }
-  };
+  }, [isUploading]);
+
+  const handleFileChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const files = event.target.files;
+      if (files && files.length > 0) {
+        const fileArray = Array.from(files);
+        handleFileUpload(fileArray);
+      }
+    },
+    [handleFileUpload],
+  );
+
+  const emptySlotCount = items.filter((item) => item.imageUrl === '').length;
 
   return (
-    <div
-      {...getRootProps()}
-      className={`relative ${isDragActive ? 'opacity-70' : ''}`}
-    >
+    <div className='relative'>
       {isUploading && (
         <ProgressBar
           className='fixed left-0 z-50 w-full'
@@ -143,7 +140,15 @@ export default function MultiUploadButton() {
         />
       )}
 
-      <input {...getInputProps()} />
+      <input
+        ref={fileInputRef}
+        type='file'
+        accept='image/png,image/jpeg,image/jpg,image/gif,image/webp'
+        multiple
+        onChange={handleFileChange}
+        className='hidden'
+        disabled={isUploading || emptySlotCount === 0}
+      />
 
       <Button
         variant='primary'
@@ -151,10 +156,11 @@ export default function MultiUploadButton() {
         className='tablet:w-fit w-full'
         leadingIcon='image-plus'
         onClick={handleButtonClick}
-        disabled={isUploading}
-        isLoading={isUploading}
+        disabled={isUploading || emptySlotCount === 0}
       >
-        {isUploading ? '업로드 중...' : '다중 업로드'}
+        {isUploading
+          ? `업로드 중 (${currentUploadCount.current}/${currentUploadCount.total})`
+          : `다중 업로드`}
       </Button>
     </div>
   );
