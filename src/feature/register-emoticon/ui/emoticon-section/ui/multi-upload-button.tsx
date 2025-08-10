@@ -28,48 +28,63 @@ export default function MultiUploadButton() {
   }, []);
 
   const handleFileUpload = async (acceptedFiles: File[]) => {
+    if (acceptedFiles.length === 0) {
+      // TODO: 토스트 처리
+      // console.log('No files to upload');
+      return;
+    }
+
     setCurrentUploadCount({
       current: 0,
       total: acceptedFiles.length,
     });
     setIsUploading(true);
 
-    for (const [index, file] of acceptedFiles.entries()) {
-      const formData = new FormData();
-      formData.append('file', file);
+    try {
+      for (const [index, file] of acceptedFiles.entries()) {
+        const formData = new FormData();
+        formData.append('file', file);
 
-      const currentEmoticonItems = items.every((item) => item.imageUrl === '')
-        ? items
-        : items.filter((item) => item.imageUrl === '');
+        const currentEmoticonItems = items.every((item) => item.imageUrl === '')
+          ? items
+          : items.filter((item) => item.imageUrl === '');
 
-      const imageNumber = currentEmoticonItems[0 + index].imageNumber;
+        if (currentEmoticonItems.length === 0) {
+          console.log('No emoticon items available');
+          break;
+        }
 
-      try {
-        const result = await uploadImageMutation.mutateAsync(formData);
-        handleEmoticonItem(imageNumber, 'UPLOAD', {
-          imageUrl: result.url,
-        });
+        const imageNumber = currentEmoticonItems[0 + index].imageNumber;
 
-        handleSetImageUrl([
-          {
+        try {
+          const result = await uploadImageMutation.mutateAsync(formData);
+          handleEmoticonItem(imageNumber, 'UPLOAD', {
             imageUrl: result.url,
-            imageOrder: imageNumber,
-          },
-        ]);
+          });
 
-        // TODO: 토스트로 성공처리
-        console.log('Upload successful:', result);
-        setCurrentUploadCount((prev) => ({
-          current: prev.current + 1,
-          total: prev.total,
-        }));
-        // TODO: 이미지 업로드 성공 후 리다이렉팅 추가
-      } catch (error) {
-        // TODO: 토스트로 에러처리
-        console.error('Upload error:', error);
+          handleSetImageUrl([
+            {
+              imageUrl: result.url,
+              imageOrder: imageNumber,
+            },
+          ]);
+          // TODO: 토스트 처리
+          // console.log('Upload successful:', result);
+          setCurrentUploadCount((prev) => ({
+            current: prev.current + 1,
+            total: prev.total,
+          }));
+        } catch (error) {
+          console.error('Upload error for file:', file.name, error);
+        }
+      }
+    } finally {
+      setIsUploading(false);
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
       }
     }
-    setIsUploading(false);
   };
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -89,9 +104,9 @@ export default function MultiUploadButton() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files.length > 0) {
-      handleFileUpload(Array.from(files));
+      const fileArray = Array.from(files);
+      handleFileUpload(fileArray);
     }
-    event.target.value = '';
   };
 
   return (
