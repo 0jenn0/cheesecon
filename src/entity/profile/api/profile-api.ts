@@ -57,10 +57,6 @@ export async function getActiveUsers(
         );
       }
     });
-    console.log(
-      'Emoticon count by user:',
-      Object.fromEntries(emoticonCountByUser),
-    );
 
     // 댓글 수 계산
     commentStats?.forEach((stat) => {
