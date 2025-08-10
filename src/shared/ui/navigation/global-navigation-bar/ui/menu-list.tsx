@@ -11,10 +11,12 @@ import MenuItem from './menu-item/menu-item';
 type Menu = {
   label: string;
   href: string;
+  onClick?: () => void;
 };
 
 export interface MenuListProps extends ComponentPropsWithRef<'ul'> {
   menus: Menu[];
+  onClick?: () => void;
 }
 
 export default function MenuList({ menus, ...props }: MenuListProps) {
@@ -54,7 +56,12 @@ export default function MenuList({ menus, ...props }: MenuListProps) {
     >
       {menus.map((menu, index) => (
         <li key={`${menu.label}-${index}`} className='cursor-pointer'>
-          <MenuItem label={menu.label} href={menu.href} as={Link} />
+          <MenuItem
+            label={menu.label}
+            href={menu.href}
+            as={Link}
+            onClick={menu.onClick}
+          />
         </li>
       ))}
       <li className='cursor-pointer'>

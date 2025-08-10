@@ -39,9 +39,10 @@ export default function MenuButton() {
             <MenuList
               menus={[
                 { label: '홈', href: '/popular' },
-                { label: '이모티콘 등록하기', href: '/emoticon-register' },
+                { label: '이모티콘 등록하기', href: '/register' },
                 { label: '마이 페이지', href: '/my/activity' },
               ]}
+              onClick={() => setIsOpen(false)}
             />
             <motion.div
               className='z-index-modal-backdrop absolute top-full right-0 left-0 flex h-screen flex-1 bg-black/50'
