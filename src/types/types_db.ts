@@ -373,6 +373,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string | null
+          description: string | null
           id: string
           nickname: string
           provider: string
@@ -381,6 +382,7 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           created_at?: string | null
+          description?: string | null
           id: string
           nickname: string
           provider: string
@@ -389,6 +391,7 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           created_at?: string | null
+          description?: string | null
           id?: string
           nickname?: string
           provider?: string
@@ -574,6 +577,35 @@ export type Database = {
       }
     }
     Functions: {
+      get_emoticon_sets_with_like_status: {
+        Args: {
+          p_limit?: number
+          p_offset?: number
+          p_order_by?: string
+          p_order_direction?: string
+          p_user_id_filter?: string
+          p_title_filter?: string
+          p_current_user_id?: string
+        }
+        Returns: {
+          sets: Json
+          total_count: number
+        }[]
+      }
+      get_liked_emoticon_sets_optimized: {
+        Args: {
+          p_user_id: string
+          p_limit?: number
+          p_offset?: number
+          p_order_by?: string
+          p_order_direction?: string
+          p_title_filter?: string
+        }
+        Returns: {
+          sets: Json
+          total_count: number
+        }[]
+      }
       get_weekly_top_users: {
         Args: { limit_count?: number }
         Returns: {
