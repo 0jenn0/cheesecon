@@ -36,7 +36,7 @@ export default function Navigation({ className, ...props }: NavigationProps) {
         styleVariant='transparent'
         size='sm'
         as={Link}
-        href='/my'
+        href='/my/activity'
       >
         마이 페이지
       </Button>
