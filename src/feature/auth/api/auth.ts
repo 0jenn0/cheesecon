@@ -3,9 +3,9 @@
 import { createBrowserSupabaseClient } from '@/shared/lib/supabase/client';
 import { Provider, Session } from '@supabase/supabase-js';
 
-export interface AuthApiResponse<T = any> {
+export interface AuthApiResponse<T = unknown> {
   data: T | null;
-  error: any;
+  error: unknown;
 }
 
 export const authApi = {

@@ -44,10 +44,7 @@ const meta: Meta<typeof Placeholder> = {
       control: { type: 'text' },
       description: '입력 필드 클래스명',
     },
-    placeholderClassName: {
-      control: { type: 'text' },
-      description: '플레이스홀더 컨테이너 클래스명',
-    },
+
     onTrailingIconClick: {
       action: 'trailing icon clicked',
       description: '트레일링 아이콘 클릭 핸들러',

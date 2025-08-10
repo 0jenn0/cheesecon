@@ -8,8 +8,6 @@ import { Profile } from '@/entity/profile';
 import { useUploadImageMutation } from '../upload-image/model/upload-image-mutation';
 
 interface EditAvatarProps extends ComponentPropsWithRef<'div'> {
-  isEditing: boolean;
-  setIsEditing: (isEditing: boolean) => void;
   profile: Profile;
   onImageUpload: (imageUrl: string) => void;
 }
@@ -18,8 +16,6 @@ export default function EditAvatar({
   className,
   profile,
   onImageUpload,
-  isEditing,
-  setIsEditing,
   ...props
 }: EditAvatarProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);

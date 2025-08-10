@@ -7,7 +7,7 @@ import {
 } from '@/feature/view-profile';
 
 export default function ActivityScreen() {
-  const { data, isLoading, isError, fetchNextPage, hasNextPage } =
+  const { data, isLoading, fetchNextPage, hasNextPage } =
     useActiveUsersInfinityQuery();
 
   const flattenedData = data?.pages.flatMap((page) =>

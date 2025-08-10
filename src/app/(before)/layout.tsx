@@ -1,5 +1,3 @@
-import { HelloSection } from '@/screen/main/ui';
-
 export default function BeforeLayout({
   children,
 }: {

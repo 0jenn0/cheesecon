@@ -13,7 +13,7 @@ export interface ProfileActivity extends Profile {
 export interface UserDetailStats {
   profile: Profile;
   emoticons: EmoticonSet[];
-  recentComments: any[]; // TODO: Comment 타입 사용
+  recentComments: Comment[];
   likesGiven: number;
 }
 

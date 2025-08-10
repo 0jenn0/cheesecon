@@ -2,7 +2,6 @@ import Image from 'next/image';
 import { ComponentPropsWithRef } from 'react';
 import { Icon } from '@/shared/ui/display';
 import { ICON_NAMES } from '@/shared/ui/icon/config';
-import { EmoticonSet } from '@/entity/emoticon-set/type';
 import { ProfileActivity } from '@/entity/profile/type';
 
 interface ProfileViewItemProps extends ComponentPropsWithRef<'section'> {
@@ -51,20 +50,14 @@ function Content({ profileActivity }: { profileActivity: ProfileActivity }) {
       <div className='flex w-full justify-between'>
         <div className='flex gap-12'>
           <IconLabel
-            profileActivity={profileActivity}
             icon='message-circle'
             label={profileActivity.comment_count}
           />
           <IconLabel
-            profileActivity={profileActivity}
             icon='heart'
             label={profileActivity.total_likes_received}
           />
-          <IconLabel
-            profileActivity={profileActivity}
-            icon='image'
-            label={profileActivity.emoticon_count}
-          />
+          <IconLabel icon='image' label={profileActivity.emoticon_count} />
         </div>
       </div>
     </div>
@@ -72,11 +65,9 @@ function Content({ profileActivity }: { profileActivity: ProfileActivity }) {
 }
 
 function IconLabel({
-  profileActivity,
   icon,
   label,
 }: {
-  profileActivity: ProfileActivity;
   icon: (typeof ICON_NAMES)[number];
   label: number | null;
 }) {

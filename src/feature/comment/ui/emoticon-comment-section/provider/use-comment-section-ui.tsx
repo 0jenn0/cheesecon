@@ -124,7 +124,7 @@ export function useCommentSectionUi(commentId: string) {
   const isShowingForm = useSyncExternalStore(
     store.subscribe,
     useCallback(() => store.isShowingForm(commentId), [store, commentId]),
-    useCallback(() => true, [store]),
+    useCallback(() => true, []),
   );
 
   const toggleMore = useCallback(

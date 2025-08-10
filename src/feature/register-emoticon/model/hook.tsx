@@ -15,7 +15,10 @@ interface EmoticonRegisterContextType {
   handleSetImageUrl: (newImageUrls: ImageUrlWithOrder[]) => void;
   validationErrors: ValidationErrors;
   isValid: boolean;
-  validateField: (field: keyof EmoticonSet, value: any) => void;
+  validateField: (
+    field: keyof EmoticonSet,
+    value: EmoticonSet[keyof EmoticonSet],
+  ) => void;
   validateAll: () => boolean;
   clearValidationErrors: () => void;
 }
@@ -100,7 +103,10 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
     setIsValid(isValidResult);
   };
 
-  const validateField = (field: keyof EmoticonSet, value: any) => {
+  const validateField = (
+    field: keyof EmoticonSet,
+    value: EmoticonSet[keyof EmoticonSet],
+  ) => {
     const updatedEmoticonSet = { ...emoticonSet, [field]: value };
     const result = validateEmoticonSet(updatedEmoticonSet);
 

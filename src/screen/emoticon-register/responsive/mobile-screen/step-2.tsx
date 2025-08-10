@@ -1,10 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useIntersectionObserver } from '@/shared/lib';
-import {
-  EmoticonInfoForm,
-  EmoticonSection,
-  SecretNumberForm,
-} from '@/feature/register-emoticon/ui';
+import { EmoticonSection } from '@/feature/register-emoticon/ui';
 import { ImageDropzone } from '@/feature/upload-image/ui';
 import { useEmoticonRegisterContext } from '../../model/emoticon-register-context';
 

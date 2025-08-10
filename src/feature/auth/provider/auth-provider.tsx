@@ -1,8 +1,8 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { Provider, Session, User } from '@supabase/supabase-js';
-import { authApi } from '../api';
+import { Provider, Session } from '@supabase/supabase-js';
+import { AuthApiResponse, authApi } from '../api';
 import { signInWithProvider } from '../model';
 import { AuthUser } from '../type/user';
 
@@ -11,9 +11,7 @@ interface AuthContextType {
   session: Session | null;
   isLoading: boolean;
   error: Error | null;
-  signInWithProvider: (
-    provider: Provider,
-  ) => Promise<{ data: any; error: any }>;
+  signInWithProvider: (provider: Provider) => Promise<AuthApiResponse>;
   signOut: () => Promise<void>;
 }
 

@@ -1,5 +1,3 @@
-import { BaseApiRequest } from '@/shared/types';
-
 export type ImageQueryKey = {
   all: readonly ['images'];
   url: (path: string) => readonly [...(readonly ['images']), string];

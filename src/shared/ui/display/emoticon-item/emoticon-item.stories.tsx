@@ -3,9 +3,9 @@ import EmoticonItem from './emoticon-item';
 
 const imageUrl = 'https://picsum.photos/240/240';
 
-const meta: Meta<typeof EmoticonItem> = {
+const meta: Meta<typeof EmoticonItem.Root> = {
   title: 'UI/Display/EmoticonItem',
-  component: EmoticonItem,
+  component: EmoticonItem.Root,
   parameters: {
     layout: 'centered',
     docs: {
@@ -16,13 +16,19 @@ const meta: Meta<typeof EmoticonItem> = {
     },
   },
   decorators: [
-    (Story) => (
+    () => (
       <div className='w-[240px]'>
-        <Story />
+        <EmoticonItem.Root imageNumber={1}>
+          <EmoticonItem.Content>
+            <EmoticonItem.Body>
+              <EmoticonItem.Header />
+            </EmoticonItem.Body>
+            <EmoticonItem.Footer />
+          </EmoticonItem.Content>
+        </EmoticonItem.Root>
       </div>
     ),
   ],
-
   argTypes: {
     imageNumber: {
       control: { type: 'number' },
@@ -32,37 +38,33 @@ const meta: Meta<typeof EmoticonItem> = {
       control: { type: 'text' },
       description: '이모티콘 이미지 URL',
     },
-    showBottomBar: {
-      control: { type: 'boolean' },
-      description: '하단 바 표시 여부',
-    },
-    showGrip: {
-      control: { type: 'boolean' },
-      description: '그립 표시 여부',
-    },
     showCheckbox: {
       control: { type: 'boolean' },
       description: '체크박스 표시 여부',
     },
-    isLoading: {
+    showGripIcon: {
       control: { type: 'boolean' },
-      description: '로딩 상태 표시 여부',
+      description: '그립 아이콘 표시 여부',
     },
-    likeCount: {
-      control: { type: 'number' },
-      description: '좋아요 수',
+    showNumberBadge: {
+      control: { type: 'boolean' },
+      description: '번호 배지 표시 여부',
     },
-    commentCount: {
-      control: { type: 'number' },
-      description: '댓글 수',
+    isUploading: {
+      control: { type: 'boolean' },
+      description: '업로드 중인 상태',
     },
     isDragging: {
       control: { type: 'boolean' },
       description: '드래그 중인 상태',
     },
-    isChanged: {
-      control: { type: 'boolean' },
-      description: '순서가 변경된 상태',
+    commentsCount: {
+      control: { type: 'number' },
+      description: '댓글 수',
+    },
+    likesCount: {
+      control: { type: 'number' },
+      description: '좋아요 수',
     },
   },
   tags: ['autodocs'],
@@ -75,6 +77,16 @@ export const Default: Story = {
   args: {
     imageNumber: 1,
   },
+  render: (args) => (
+    <EmoticonItem.Root {...args}>
+      <EmoticonItem.Content>
+        <EmoticonItem.Body>
+          <EmoticonItem.Header />
+        </EmoticonItem.Body>
+        <EmoticonItem.Footer />
+      </EmoticonItem.Content>
+    </EmoticonItem.Root>
+  ),
 };
 
 export const WithImage: Story = {
@@ -82,24 +94,16 @@ export const WithImage: Story = {
     imageNumber: 1,
     imageUrl,
   },
-};
-
-export const WithBottomBar: Story = {
-  args: {
-    imageNumber: 1,
-    imageUrl,
-    showBottomBar: true,
-    likeCount: 42,
-    commentCount: 12,
-  },
-};
-
-export const WithGrip: Story = {
-  args: {
-    imageNumber: 1,
-    imageUrl,
-    showGrip: true,
-  },
+  render: (args) => (
+    <EmoticonItem.Root {...args}>
+      <EmoticonItem.Content>
+        <EmoticonItem.Body>
+          <EmoticonItem.Header />
+        </EmoticonItem.Body>
+        <EmoticonItem.Footer />
+      </EmoticonItem.Content>
+    </EmoticonItem.Root>
+  ),
 };
 
 export const WithCheckbox: Story = {
@@ -108,13 +112,69 @@ export const WithCheckbox: Story = {
     imageUrl,
     showCheckbox: true,
   },
+  render: (args) => (
+    <EmoticonItem.Root {...args}>
+      <EmoticonItem.Content>
+        <EmoticonItem.Body>
+          <EmoticonItem.Header />
+        </EmoticonItem.Body>
+        <EmoticonItem.Footer />
+      </EmoticonItem.Content>
+    </EmoticonItem.Root>
+  ),
 };
 
-export const Loading: Story = {
+export const WithGripIcon: Story = {
   args: {
     imageNumber: 1,
-    isLoading: true,
+    imageUrl,
+    showGripIcon: true,
   },
+  render: (args) => (
+    <EmoticonItem.Root {...args}>
+      <EmoticonItem.Content>
+        <EmoticonItem.Body>
+          <EmoticonItem.Header />
+        </EmoticonItem.Body>
+        <EmoticonItem.Footer />
+      </EmoticonItem.Content>
+    </EmoticonItem.Root>
+  ),
+};
+
+export const WithNumberBadge: Story = {
+  args: {
+    imageNumber: 1,
+    imageUrl,
+    showNumberBadge: true,
+  },
+  render: (args) => (
+    <EmoticonItem.Root {...args}>
+      <EmoticonItem.Content>
+        <EmoticonItem.Body>
+          <EmoticonItem.Header />
+        </EmoticonItem.Body>
+        <EmoticonItem.Footer />
+      </EmoticonItem.Content>
+    </EmoticonItem.Root>
+  ),
+};
+
+export const Uploading: Story = {
+  args: {
+    imageNumber: 1,
+    isUploading: true,
+  },
+  render: (args) => (
+    <EmoticonItem.Root {...args}>
+      <EmoticonItem.Content>
+        <EmoticonItem.Body>
+          <EmoticonItem.Header />
+        </EmoticonItem.Body>
+        <EmoticonItem.Footer />
+      </EmoticonItem.Content>
+    </EmoticonItem.Root>
+  ),
 };
 
 export const Dragging: Story = {
@@ -123,184 +183,34 @@ export const Dragging: Story = {
     imageUrl,
     isDragging: true,
   },
-};
-
-export const Changed: Story = {
-  args: {
-    imageNumber: 1,
-    imageUrl,
-    isChanged: true,
-  },
-};
-
-export const FullFeatured: Story = {
-  args: {
-    imageNumber: 1,
-    imageUrl,
-    showBottomBar: true,
-    showGrip: true,
-    showCheckbox: true,
-    likeCount: 128,
-    commentCount: 32,
-  },
-};
-
-export const HighLikes: Story = {
-  args: {
-    imageNumber: 1,
-    imageUrl,
-    showBottomBar: true,
-    likeCount: 999,
-    commentCount: 5,
-  },
-};
-
-export const HighComments: Story = {
-  args: {
-    imageNumber: 1,
-    imageUrl,
-    showBottomBar: true,
-    likeCount: 15,
-    commentCount: 256,
-  },
-};
-
-export const NoImage: Story = {
-  args: {
-    imageNumber: 1,
-    showBottomBar: true,
-    likeCount: 0,
-    commentCount: 0,
-  },
-};
-
-export const WithCheckboxAndBottomBar: Story = {
-  args: {
-    imageNumber: 1,
-    imageUrl,
-    showCheckbox: true,
-    showBottomBar: true,
-    likeCount: 42,
-    commentCount: 12,
-  },
-};
-
-export const WithCheckboxAndGrip: Story = {
-  args: {
-    imageNumber: 1,
-    imageUrl,
-    showCheckbox: true,
-    showGrip: true,
-  },
-};
-
-export const Grid: Story = {
-  render: () => (
-    <div className='grid w-[720px] grid-cols-3 gap-4'>
-      <EmoticonItem
-        imageNumber={1}
-        imageUrl={imageUrl}
-        showBottomBar={true}
-        likeCount={42}
-        commentCount={12}
-      />
-      <EmoticonItem
-        imageNumber={2}
-        imageUrl={imageUrl}
-        showBottomBar={true}
-        likeCount={128}
-        commentCount={32}
-        isChanged={true}
-      />
-      <EmoticonItem
-        imageNumber={3}
-        imageUrl={imageUrl}
-        showBottomBar={true}
-        likeCount={999}
-        commentCount={5}
-      />
-      <EmoticonItem
-        imageNumber={4}
-        imageUrl={imageUrl}
-        showBottomBar={true}
-        likeCount={15}
-        commentCount={256}
-      />
-      <EmoticonItem
-        imageNumber={5}
-        imageUrl={imageUrl}
-        showBottomBar={true}
-        likeCount={0}
-        commentCount={0}
-      />
-      <EmoticonItem
-        imageNumber={6}
-        imageUrl={imageUrl}
-        showBottomBar={true}
-        likeCount={67}
-        commentCount={8}
-      />
-    </div>
+  render: (args) => (
+    <EmoticonItem.Root {...args}>
+      <EmoticonItem.Content>
+        <EmoticonItem.Body>
+          <EmoticonItem.Header />
+        </EmoticonItem.Body>
+        <EmoticonItem.Footer />
+      </EmoticonItem.Content>
+    </EmoticonItem.Root>
   ),
-  parameters: {
-    layout: 'padded',
-  },
 };
 
-export const GridWithCheckboxes: Story = {
-  render: () => (
-    <div className='grid w-[720px] grid-cols-3 gap-4'>
-      <EmoticonItem
-        imageNumber={1}
-        imageUrl={imageUrl}
-        showCheckbox={true}
-        showBottomBar={true}
-        likeCount={42}
-        commentCount={12}
-      />
-      <EmoticonItem
-        imageNumber={2}
-        imageUrl={imageUrl}
-        showCheckbox={true}
-        showBottomBar={true}
-        likeCount={128}
-        commentCount={32}
-      />
-      <EmoticonItem
-        imageNumber={3}
-        imageUrl={imageUrl}
-        showCheckbox={true}
-        showBottomBar={true}
-        likeCount={999}
-        commentCount={5}
-      />
-      <EmoticonItem
-        imageNumber={4}
-        imageUrl={imageUrl}
-        showCheckbox={true}
-        showBottomBar={true}
-        likeCount={15}
-        commentCount={256}
-      />
-      <EmoticonItem
-        imageNumber={5}
-        imageUrl={imageUrl}
-        showCheckbox={true}
-        showBottomBar={true}
-        likeCount={0}
-        commentCount={0}
-      />
-      <EmoticonItem
-        imageNumber={6}
-        imageUrl={imageUrl}
-        showCheckbox={true}
-        showBottomBar={true}
-        likeCount={67}
-        commentCount={8}
-      />
-    </div>
-  ),
-  parameters: {
-    layout: 'padded',
+export const WithStats: Story = {
+  args: {
+    imageNumber: 1,
+    imageUrl,
+    likesCount: 42,
+    commentsCount: 12,
   },
+  render: (args) => (
+    <EmoticonItem.Root {...args}>
+      <EmoticonItem.Content>
+        <EmoticonItem.Body>
+          <EmoticonItem.Header />
+        </EmoticonItem.Body>
+        <EmoticonItem.Footer />
+        <EmoticonItem.BottomBar />
+      </EmoticonItem.Content>
+    </EmoticonItem.Root>
+  ),
 };

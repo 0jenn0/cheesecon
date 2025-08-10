@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation';
 import { Modal } from '@/shared/ui/feedback';
-import { Button } from '@/shared/ui/input';
 import { EmoticonImage, EmoticonSetDetail } from '@/entity/emoticon-set';
 import { EmoticonCommentSection } from '../comment/ui/emoticon-comment-section';
 import LikeButton from '../like/ui/like-button/like-button';
@@ -17,11 +16,11 @@ export default function ViewEmoticonImageModal({
   emoticonImage,
   emoticonSet,
 }: ViewEmoticonImageModalProps) {
+  const router = useRouter();
+
   if (!emoticonImage || !emoticonSet) {
     return null;
   }
-
-  const router = useRouter();
 
   const prevImage = emoticonSet.emoticon_images.find(
     (image: EmoticonImage) =>

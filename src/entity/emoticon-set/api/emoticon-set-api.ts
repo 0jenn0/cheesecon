@@ -2,7 +2,6 @@
 
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
 import { ImageUrlWithOrder } from '@/shared/types';
-import { Tables } from '@/types/types_db';
 import { EmoticonImageRequest, EmoticonSet, EmoticonSetDetail } from '../type';
 import {
   CreateEmoticonSetResult,

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { ComponentPropsWithRef, useState } from 'react';
 import { VariantProps } from 'class-variance-authority';
 import { cn } from '@/shared/lib/utils';
@@ -40,10 +41,12 @@ export default function Avatar({
         <span className={letterVariants({ size })}>{firstLetter}</span>
       )}
       {profileType === 'image' && imageUrl && !imageError && (
-        <img
+        <Image
           className='h-full w-full object-cover'
           src={imageUrl}
           alt={name}
+          width={size === 'sm' ? 24 : 48}
+          height={size === 'sm' ? 24 : 48}
           onError={handleImageError}
         />
       )}

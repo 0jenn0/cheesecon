@@ -1,6 +1,5 @@
 import { Button } from '@/shared/ui/input';
 import { useRegisterMutation } from '@/entity/emoticon-set/query/emoticon-set-mutation';
-import { useAuth } from '@/feature/auth/provider/auth-provider';
 import useEmoticonRegister from '../model/hook';
 
 export function RegisterBottomBar() {

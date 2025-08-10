@@ -2,7 +2,7 @@
 
 import { ComponentPropsWithRef, ReactNode, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { AnimatePresence, MotionProps, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/shared/lib';
 import { IconButton } from '../../input';
 import { useModal } from './modal-provider';

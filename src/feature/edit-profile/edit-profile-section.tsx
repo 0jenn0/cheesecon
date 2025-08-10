@@ -116,12 +116,7 @@ export default function EditProfileSection({
       </div>
 
       {isEditing ? (
-        <EditAvatar
-          profile={profileData}
-          onImageUpload={setTempImageUrl}
-          isEditing={isEditing}
-          setIsEditing={setIsEditing}
-        />
+        <EditAvatar profile={profileData} onImageUpload={setTempImageUrl} />
       ) : (
         <Avatar
           imageUrl={displayImageUrl}

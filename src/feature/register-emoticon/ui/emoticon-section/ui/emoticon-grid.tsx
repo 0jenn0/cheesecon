@@ -13,17 +13,20 @@ export default function EmoticonGrid() {
       handleEmoticonItem(imageNumber, 'UPLOAD', { imageUrl });
       handleSetImageUrl([{ imageUrl, imageOrder: imageNumber }]);
     },
-    [handleEmoticonItem],
+    [handleEmoticonItem, handleSetImageUrl],
   );
-  const handleDragEnd = useCallback((event: DragEndEvent) => {
-    const { active, over } = event;
-    if (over) {
-      handleEmoticonItem(Number(active.id), 'CHANGE_ORDER', {
-        newImageNumber: Number(over.id),
-      });
-      setChangeStack(Number(active.id), Number(over.id));
-    }
-  }, []);
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+      if (over) {
+        handleEmoticonItem(Number(active.id), 'CHANGE_ORDER', {
+          newImageNumber: Number(over.id),
+        });
+        setChangeStack(Number(active.id), Number(over.id));
+      }
+    },
+    [handleEmoticonItem, setChangeStack],
+  );
   return (
     <DndContext onDragEnd={handleDragEnd}>
       <SortableContext

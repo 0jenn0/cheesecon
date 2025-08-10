@@ -5,7 +5,7 @@ import { CommentInfiniteQueryParams } from './types';
 
 export const useCommentQuery = (params: CommentInfiniteQueryParams) => {
   return useQuery({
-    queryKey: COMMENT_QUERY_KEY.list(JSON.stringify(params)),
+    queryKey: COMMENT_QUERY_KEY.list(params),
     queryFn: async () => {
       const data = await getComments({
         ...params,

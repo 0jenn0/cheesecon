@@ -70,7 +70,7 @@ export default function TextAreaField({
           disabled={disabled ?? false}
           className={textAreaClassName}
           onChange={onChange}
-          {...(props as any)}
+          {...(props as Record<string, unknown>)}
         />
         {helpMessage && (
           <HelpMessage variant={variant}>{helpMessage[variant]}</HelpMessage>

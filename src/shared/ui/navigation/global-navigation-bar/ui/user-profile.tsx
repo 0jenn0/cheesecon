@@ -8,11 +8,12 @@ import { IconButton } from '@/shared/ui/input';
 import { useGetProfile } from '@/entity/profile/query/profile-query';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
 
-interface UserProfileProps extends ComponentPropsWithRef<'div'> {}
-
-export default function UserProfile({ className, ...props }: UserProfileProps) {
+export default function UserProfile({
+  className,
+  ...props
+}: ComponentPropsWithRef<'div'>) {
   const { user, isLoading, signOut } = useAuth();
-  const { data, isLoading: isProfileLoading } = useGetProfile();
+  const { data } = useGetProfile();
 
   const profile = data?.success ? data.data : null;
 

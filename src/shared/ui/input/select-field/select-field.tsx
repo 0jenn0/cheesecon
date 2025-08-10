@@ -4,7 +4,6 @@ import { Label, Select } from '..';
 import { IconProps } from '../../icon/icon';
 import { LabelProps } from '../label/label';
 import { HelpMessage } from '../part';
-import Placeholder from '../placeholder/placeholder';
 
 export const SELECT_VARIANT = ['default', 'success', 'error'] as const;
 export type SelectVariant = (typeof SELECT_VARIANT)[number];

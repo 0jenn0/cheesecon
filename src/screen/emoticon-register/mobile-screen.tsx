@@ -20,7 +20,7 @@ export default function EmoticonRegisterMobileScreen() {
     if (isEmoticonSectionVisible && currentStep === 0) {
       handleStepChange(STEP_COUNT - 1);
     }
-  }, [isEmoticonSectionVisible, currentStep]);
+  }, [isEmoticonSectionVisible, currentStep, handleStepChange]);
 
   return (
     <>

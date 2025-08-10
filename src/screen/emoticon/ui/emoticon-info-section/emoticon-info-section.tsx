@@ -1,6 +1,6 @@
 import { ComponentProps } from 'react';
 import { LabelValuePair } from '@/shared/ui/display';
-import { EmoticonSet, EmoticonSetDetail } from '@/entity/emoticon-set/type';
+import { EmoticonSetDetail } from '@/entity/emoticon-set/type';
 import {
   EmoticonInfoHeader,
   EmoticonPlatformItem,

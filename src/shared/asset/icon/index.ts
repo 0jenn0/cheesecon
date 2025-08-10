@@ -1,5 +1,3 @@
-import { exportPages } from 'next/dist/export/worker';
-
 export { default as GoogleLogin } from './google-login.svg';
 export { default as KakaoLogin } from './kakao-login.svg';
 export { default as KakaoLogo } from './kakao-logo.svg';

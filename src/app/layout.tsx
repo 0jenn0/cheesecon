@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { ReactScan } from '@/shared/lib';
 import { ModalProvider } from '@/shared/ui/feedback/modal/modal-provider';
 import GlobalNavigationBar from '@/shared/ui/navigation/global-navigation-bar/global-navigation-bar';
 import AuthProvider from '@/feature/auth/provider/auth-provider';

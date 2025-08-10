@@ -78,7 +78,7 @@ export function useOptimisticLike(
           isLiked,
           likesCount: actualLikesCount,
         });
-      } catch (error) {
+      } catch {
         setActualState({
           isLiked: false,
           likesCount: initialLikesCount,
@@ -87,7 +87,7 @@ export function useOptimisticLike(
     };
 
     loadLikeStatus();
-  }, [targetId, userId, initialLikesCount]);
+  }, [targetId, userId, initialLikesCount, targetType]);
 
   const handleToggleLike = () => {
     if (!userId) {

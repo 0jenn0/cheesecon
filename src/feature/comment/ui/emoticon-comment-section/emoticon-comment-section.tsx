@@ -9,6 +9,7 @@ import { CommentDetail } from '@/entity/comment/api/types';
 import { useCommentQuery } from '@/entity/comment/query/comment-infinity-query';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { Comment, DefaultCommentForm } from '@/feature/comment/ui';
+import { Session } from '@supabase/supabase-js';
 import { CommentSectionUiProvider } from './provider/use-comment-section-ui';
 
 const COUNT_PER_PAGE = 100;
@@ -122,7 +123,7 @@ function renderComment({
   authorId: string;
   targetId: string;
   targetType: 'emoticon_set' | 'emoticon_image';
-  session: any;
+  session: Session | null;
 }) {
   const childComments =
     comments?.filter(

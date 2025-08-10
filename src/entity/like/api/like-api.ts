@@ -16,7 +16,7 @@ export async function toggleLike(
   const supabase = createBrowserSupabaseClient();
 
   try {
-    const { data, error } = await supabase.rpc('toggle_like' as any, {
+    const { data, error } = await supabase.rpc('toggle_like', {
       p_set_id: targetType === 'emoticon_set' ? targetId : undefined,
       p_image_id: targetType === 'emoticon_image' ? targetId : undefined,
       p_user_id: userId,

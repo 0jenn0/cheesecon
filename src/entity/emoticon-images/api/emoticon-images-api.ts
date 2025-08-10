@@ -29,6 +29,43 @@ export async function createEmoticonImage({
   return data;
 }
 
+export async function getEmoticonImages(setId: string) {
+  try {
+    const supabase = await createServerSupabaseClient();
+
+    const { data, error } = await supabase
+      .from('emoticon_images')
+      .select(`*, likes(count)`)
+      .eq('set_id', setId)
+      .order('image_order');
+
+    if (error) {
+      console.error('Query error:', error);
+      return {
+        success: false,
+        error: {
+          message: error.message,
+          code: error.code,
+        },
+      };
+    }
+
+    return {
+      success: true,
+      data: data || [],
+    };
+  } catch (err) {
+    console.error('getEmoticonImages 전체 에러:', err);
+    return {
+      success: false,
+      error: {
+        message: '서버 오류가 발생했습니다.',
+        code: 'INTERNAL_ERROR',
+      },
+    };
+  }
+}
+
 export async function getEmoticonImageDetail(
   setId: string,
   imageId: string,

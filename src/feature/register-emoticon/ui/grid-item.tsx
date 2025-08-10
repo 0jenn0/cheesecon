@@ -1,4 +1,4 @@
-import { ComponentPropsWithRef, useCallback, useRef, useState } from 'react';
+import { ComponentPropsWithRef, useCallback, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { cn } from '@/shared/lib/utils';
 import { Icon } from '@/shared/ui/display';
@@ -20,7 +20,6 @@ const GridItem = ({
   imageNumber,
   imageUrl,
   onImageUpload,
-  ref,
   ...props
 }: GridItemProps) => {
   const { isMultipleSelect, isOrderChange } = useUIContext();

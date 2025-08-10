@@ -2,7 +2,7 @@
 
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
 import { ApiResult, BaseApiResponse } from '@/shared/types';
-import { Profile, ProfileActivity } from '../type';
+import { ProfileActivity } from '../type';
 import {
   GetProfileResult,
   ProfileUpdateRequest,

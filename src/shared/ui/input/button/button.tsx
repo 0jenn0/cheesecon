@@ -9,7 +9,10 @@ import { buttonVariants, iconVariants, textVariants } from './button.styles';
 
 type PolymorphicRef<T extends ElementType> = ComponentPropsWithRef<T>['ref'];
 
-type PolymorphicComponentProp<T extends ElementType, Props = {}> = {
+type PolymorphicComponentProp<
+  T extends ElementType,
+  Props = Record<string, never>,
+> = {
   as?: T;
   ref?: PolymorphicRef<T>;
 } & Props &

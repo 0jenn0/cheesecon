@@ -2,7 +2,10 @@ import { ComponentPropsWithRef, ElementType } from 'react';
 
 type PolymorphicRef<T extends ElementType> = ComponentPropsWithRef<T>['ref'];
 
-type PolymorphicComponentProp<T extends ElementType, Props = {}> = {
+type PolymorphicComponentProp<
+  T extends ElementType,
+  Props = Record<string, never>,
+> = {
   as?: T;
   ref?: PolymorphicRef<T>;
 } & Props &

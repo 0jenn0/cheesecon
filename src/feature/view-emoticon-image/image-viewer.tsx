@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { ComponentPropsWithRef, useEffect, useState } from 'react';
+import { ComponentPropsWithRef, useState } from 'react';
 import { PanInfo, motion } from 'framer-motion';
 import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
@@ -27,13 +27,7 @@ interface ImageViewerProps extends ComponentPropsWithRef<'div'> {
   isInModal?: boolean;
 }
 
-export default function ImageViewer({
-  images,
-  currentImageOrder: propCurrentImageOrder,
-  onImageOrderChange,
-  isInModal = false,
-  ...props
-}: ImageViewerProps) {
+export default function ImageViewer({ images }: ImageViewerProps) {
   const [color, setColor] = useState<keyof typeof COLOR_MAP>('blue');
 
   const handleChangeColor = (color: keyof typeof COLOR_MAP) => {
@@ -133,7 +127,7 @@ function ColorPicker({
         }}
         style={{ overflow: 'hidden' }}
       >
-        {Object.entries(COLOR_MAP).map(([color, value]) => (
+        {Object.entries(COLOR_MAP).map(([color]) => (
           <div key={color} className='flex items-center gap-4'>
             <ColorChip
               color={color as keyof typeof COLOR_MAP}
@@ -186,7 +180,7 @@ function ImageCarousel({
   );
 
   const router = useRouter();
-  const handleDragEnd = (event: any, info: PanInfo) => {
+  const handleDragEnd = (_event: unknown, info: PanInfo) => {
     const threshold = 60;
 
     if (info.offset.x > threshold) {

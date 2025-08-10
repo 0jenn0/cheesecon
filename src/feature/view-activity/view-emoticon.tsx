@@ -2,15 +2,10 @@
 
 import { useState } from 'react';
 import { usePagination } from '@/shared/lib/use-pagination';
-import EmoticonItem from '@/shared/ui/display/emoticon-item/emoticon-item';
 import { Button, Placeholder } from '@/shared/ui/input';
 import { Pagination } from '@/shared/ui/navigation';
 import { useEmoticonSetPaginationQuery } from '@/entity/emoticon-set';
 import { useAuth } from '../auth/provider/auth-provider';
-import {
-  EmoticonViewSection,
-  EmoticonViewSkeleton,
-} from '../view-emotion/emoticon-view-section';
 import {
   EmoticonViewItem,
   EmoticonViewItemSkeleton,

@@ -1,5 +1,5 @@
 import { ComponentPropsWithRef } from 'react';
-import { VariantProps, cva } from 'class-variance-authority';
+import { VariantProps } from 'class-variance-authority';
 import { ICON_NAMES } from '@/shared/ui/icon/config';
 import Icon from '@/shared/ui/icon/icon';
 import { helpMessageVariants, iconVariants } from './help-message.style';
@@ -10,7 +10,6 @@ export interface HelpMessageProps
 
 export default function HelpMessage({
   variant = 'default',
-  className,
   children,
   ...props
 }: HelpMessageProps) {

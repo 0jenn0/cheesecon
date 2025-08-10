@@ -1,4 +1,3 @@
-import { createBrowserSupabaseClient } from '@/shared/lib/supabase/client';
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
 
 function hasViewedInSession(setId: string, userId?: string): boolean {
@@ -19,13 +18,10 @@ export async function incrementViewCount(setId: string, userId?: string) {
   const supabase = await createServerSupabaseClient();
 
   try {
-    const { data, error } = await supabase.rpc(
-      'increment_view_count_safe' as any,
-      {
-        p_set_id: setId,
-        p_user_id: userId || null,
-      },
-    );
+    const { data, error } = await supabase.rpc('increment_view_count_safe', {
+      p_set_id: setId,
+      p_user_id: userId || undefined,
+    });
 
     if (error) {
       console.error('조회수 증가 실패:', error);

@@ -33,13 +33,13 @@ export type ActiveCommentersQueryResult = ProfileQueryResult<{
 }>;
 
 export type DashboardStatsQueryResult = ProfileQueryResult<{
-  stats: any; // TODO: 구체적인 타입 정의 필요
+  stats: unknown; // TODO: 구체적인 타입 정의 필요
 }>;
 
 export type UserDetailStatsQueryResult = ProfileQueryResult<{
   profile: Profile;
   emoticons: EmoticonSet[];
-  recentComments: any[]; // TODO: Comment 타입 사용
+  recentComments: unknown[]; // TODO: Comment 타입 사용
   likesGiven: number;
 }>;
 

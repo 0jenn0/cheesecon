@@ -6,8 +6,6 @@ import { Button } from '@/shared/ui/input';
 import { useCommentSectionUi } from '@/feature/comment/ui/emoticon-comment-section/provider/use-comment-section-ui';
 import { useCommentItem } from './comment/provider';
 
-export interface EditCommentMenuProps extends ComponentPropsWithRef<'ul'> {}
-
 const items = [
   {
     label: '수정',
@@ -23,7 +21,7 @@ export default function EditCommentMenu({
   id,
   className,
   ...props
-}: EditCommentMenuProps) {
+}: ComponentPropsWithRef<'ul'>) {
   const { toggleMore } = useCommentSectionUi(id ?? '');
   const { toggleEditing, commentId } = useCommentItem();
   const { openModal } = useModal();
@@ -58,8 +56,11 @@ export default function EditCommentMenu({
             styleVariant='transparent'
             size='sm'
             onClick={() => {
-              item.label === '수정' && handleEdit();
-              item.label === '삭제' && handleDelete();
+              if (item.label === '수정') {
+                handleEdit();
+              } else if (item.label === '삭제') {
+                handleDelete();
+              }
             }}
             iconSize={16}
             leadingIcon={item.icon}

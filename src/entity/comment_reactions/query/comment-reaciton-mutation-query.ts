@@ -1,10 +1,8 @@
 import { useOptimistic, useTransition } from 'react';
-import { CommentDetail, CommentReactionSummary } from '@/entity/comment/api';
+import { CommentReactionSummary } from '@/entity/comment/api';
 import { COMMENT_QUERY_KEY } from '@/entity/comment/query/query-key';
 import { CommentReaction } from '@/entity/comment/type';
-import { LikeResult } from '@/entity/like/api';
 import { queryClient } from '@/provider/QueryProvider';
-import { Tables } from '@/types/types_db';
 import { useMutation } from '@tanstack/react-query';
 import {
   createCommentReaction,

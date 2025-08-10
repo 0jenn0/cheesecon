@@ -1,8 +1,6 @@
-import { ComponentProps, Ref, useEffect, useRef } from 'react';
+import { ComponentProps, Ref, useEffect } from 'react';
 import { useIntersectionObserver } from '@/shared/lib';
-import { Icon } from '@/shared/ui/display';
-import { EmoticonSet } from '@/entity/emoticon-set/type';
-import { Profile, ProfileActivity } from '@/entity/profile/type';
+import { ProfileActivity } from '@/entity/profile/type';
 import { ProfileViewFallback, ProfileViewItem } from '.';
 
 export interface ProfileViewSectionProps extends ComponentProps<'section'> {

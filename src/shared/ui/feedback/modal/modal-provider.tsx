@@ -9,8 +9,8 @@ export type ModalType = keyof typeof MODAL_CONFIG;
 export interface ModalContextType {
   isOpen: boolean;
   modalType: ModalType | null;
-  modalProps: Record<string, any> | null;
-  openModal: (modalType: ModalType, props?: Record<string, any>) => void;
+  modalProps: Record<string, unknown> | null;
+  openModal: (modalType: ModalType, props?: Record<string, unknown>) => void;
   closeModal: () => void;
 }
 
@@ -27,14 +27,14 @@ export const ModalContext = createContext<ModalContextType>(defaultContext);
 export function ModalProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [modalType, setModalType] = useState<ModalType | null>(null);
-  const [modalProps, setModalProps] = useState<Record<string, any> | null>(
+  const [modalProps, setModalProps] = useState<Record<string, unknown> | null>(
     null,
   );
 
   const ModalComponent = modalType ? MODAL_CONFIG[modalType] : null;
 
   const openModal = useCallback(
-    (type: ModalType, props?: Record<string, any>) => {
+    (type: ModalType, props?: Record<string, unknown>) => {
       setModalType(type);
       setModalProps(props || null);
       setIsOpen(true);
@@ -55,7 +55,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
       {children}
       <Modal.Portal isOpen={isOpen} onClose={closeModal}>
         {isOpen && modalType && ModalComponent && modalProps && (
-          <ModalComponent {...(modalProps as any)} />
+          <ModalComponent {...(modalProps as any)} /> // eslint-disable-line @typescript-eslint/no-explicit-any
         )}
       </Modal.Portal>
     </ModalContext.Provider>

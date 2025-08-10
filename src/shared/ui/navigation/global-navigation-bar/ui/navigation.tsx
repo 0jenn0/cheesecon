@@ -3,9 +3,10 @@ import { ComponentPropsWithRef } from 'react';
 import { cn } from '@/shared/lib';
 import { Button } from '@/shared/ui/input';
 
-interface NavigationProps extends ComponentPropsWithRef<'nav'> {}
-
-export default function Navigation({ className, ...props }: NavigationProps) {
+export default function Navigation({
+  className,
+  ...props
+}: ComponentPropsWithRef<'nav'>) {
   return (
     <nav className={cn('flex items-center gap-12', className)} {...props}>
       <Button

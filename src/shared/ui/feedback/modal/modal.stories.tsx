@@ -5,7 +5,7 @@ import { ModalProvider, useModal } from './modal-provider';
 
 export default {
   title: 'UI/Feedback/Modal',
-  component: Modal.Root,
+  component: Modal.Portal,
   parameters: {
     layout: 'centered',
   },
@@ -16,9 +16,9 @@ export default {
       </ModalProvider>
     ),
   ],
-} as Meta<typeof Modal.Root>;
+} as Meta<typeof Modal.Portal>;
 
-export const Default: StoryObj<typeof Modal.Root> = {
+export const Default: StoryObj<typeof Modal.Portal> = {
   args: {
     isOpen: true,
   },
@@ -27,8 +27,8 @@ export const Default: StoryObj<typeof Modal.Root> = {
 
     return (
       <>
-        <Button onClick={openModal}>모달 열기</Button>
-        <Modal.Root>
+        <Button onClick={() => openModal('deleteConfirm')}>모달 열기</Button>
+        <Modal.Portal>
           <Modal.Header>
             <h2 className='text-lg font-semibold'>모달 제목</h2>
           </Modal.Header>
@@ -50,7 +50,7 @@ export const Default: StoryObj<typeof Modal.Root> = {
               확인
             </Button>
           </Modal.Footer>
-        </Modal.Root>
+        </Modal.Portal>
       </>
     );
   },

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useModal } from '@/shared/ui/feedback';
 import { EmoticonImage, EmoticonSetDetail } from '@/entity/emoticon-set/type';
 
@@ -13,16 +13,16 @@ export default function EmoticonModalScreen({
 }) {
   const { openModal } = useModal();
 
-  const handleOpenModal = () => {
+  const handleOpenModal = useCallback(() => {
     openModal('viewEmoticonImage', {
       emoticonImage: initialEmoticonImage,
       emoticonSet: initialEmoticonSet,
     });
-  };
+  }, [openModal, initialEmoticonImage, initialEmoticonSet]);
 
   useEffect(() => {
     handleOpenModal();
-  }, []);
+  }, [handleOpenModal]);
 
   return <div></div>;
 }

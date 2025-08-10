@@ -14,7 +14,7 @@ export type GetActiveCommentersResponse = {
 };
 
 export type GetDashboardStatsResponse = {
-  stats: any; // TODO: 구체적인 타입 정의 필요
+  stats: unknown; // TODO: 구체적인 타입 정의 필요
 };
 
 export type GetUserDetailStatsRequest = BaseApiRequest & {

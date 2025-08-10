@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 import useIntersectionObserver from '@/shared/lib/use-intersection-observer';
 import {
   EmoticonInfoForm,
@@ -39,7 +39,7 @@ export default function EmoticonRegisterDesktopScreen() {
         });
       }
     }
-  }, [isEmoticonSectionVisibleMobile]);
+  }, [isEmoticonSectionVisibleMobile, emoticonSectionRef]);
 
   return (
     <>

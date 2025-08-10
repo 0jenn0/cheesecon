@@ -13,7 +13,12 @@ export const validateImageUrls = (data: unknown) => {
 };
 
 export const validateEmoticonSetField = (field: string, value: unknown) => {
-  const fieldSchema = (emoticonSetSchema.shape as any)[field];
+  const fieldSchema = (
+    emoticonSetSchema.shape as Record<
+      string,
+      { safeParse: (value: unknown) => unknown }
+    >
+  )[field];
   if (!fieldSchema) {
     return { success: true as const, data: value };
   }

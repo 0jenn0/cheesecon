@@ -39,9 +39,8 @@ const meta: Meta<typeof IconButton> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Default: StoryObj<typeof meta> = {
   args: {
     children: '버튼',
     variant: 'primary',
@@ -50,12 +49,12 @@ export const Default: Story = {
   },
 };
 
-export const AllVariants: Story = {
+export const AllVariants: StoryObj<typeof meta> = {
   args: {
     icon: 'plus',
   },
   decorators: [
-    (Story) => (
+    () => (
       <div className='flex gap-24'>
         <IconButton variant='primary' icon='logo' />
         <IconButton variant='secondary' icon='logo' />
@@ -65,12 +64,12 @@ export const AllVariants: Story = {
   ],
 };
 
-export const AllStyleVariants: Story = {
+export const AllStyleVariants: StoryObj<typeof meta> = {
   args: {
     icon: 'logo',
   },
   decorators: [
-    (Story) => (
+    () => (
       <div className='flex flex-col gap-16'>
         <div className='flex gap-16'>
           <IconButton styleVariant='filled' icon='logo' />
@@ -82,12 +81,12 @@ export const AllStyleVariants: Story = {
   ],
 };
 
-export const Primary: Story = {
+export const Primary: StoryObj<typeof meta> = {
   args: {
     icon: 'logo',
   },
   decorators: [
-    (Story) => (
+    () => (
       <div className='flex flex-col gap-24'>
         <div>
           <h3 className='mb-16 text-lg font-semibold'>
@@ -181,12 +180,12 @@ export const Primary: Story = {
   ],
 };
 
-export const Secondary: Story = {
+export const Secondary: StoryObj<typeof meta> = {
   args: {
     icon: 'logo',
   },
   decorators: [
-    (Story) => (
+    () => (
       <div className='flex flex-col gap-24'>
         <div>
           <h3 className='mb-16 text-lg font-semibold'>
@@ -280,12 +279,12 @@ export const Secondary: Story = {
   ],
 };
 
-export const Danger: Story = {
+export const Danger: StoryObj<typeof meta> = {
   args: {
     icon: 'logo',
   },
   decorators: [
-    (Story) => (
+    () => (
       <div className='flex flex-col gap-24'>
         <div>
           <h3 className='mb-16 text-lg font-semibold'>

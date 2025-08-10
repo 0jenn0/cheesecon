@@ -1,8 +1,7 @@
 'use client';
 
-import { ComponentPropsWithRef, useState } from 'react';
+import { ComponentPropsWithRef } from 'react';
 import { cn } from '@/shared/lib/utils';
-import Icon from '@/shared/ui/icon/icon';
 import Placeholder from '../../../placeholder/placeholder';
 import { useSelect } from '../../provider/select-provider';
 import { selectPlaceholderVariants } from './select-placeholder.style';

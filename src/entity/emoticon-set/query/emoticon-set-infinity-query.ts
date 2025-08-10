@@ -1,8 +1,5 @@
 import { SortOrder } from '@/shared/types';
-import {
-  UseInfiniteQueryOptions,
-  useInfiniteQuery,
-} from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { GetEmoticonSetsResult, getEmoticonSets } from '../api';
 import { EmoticonSetOrderBy } from '../type';
 import { EMOTICON_SET_QUERY_KEY } from './query-key';
