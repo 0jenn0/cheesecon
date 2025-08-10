@@ -80,61 +80,135 @@ export async function getEmoticonSets({
   param = {
     orderBy: 'created_at' as const,
     order: 'desc' as const,
+    userId: '',
+    title: '',
   },
 }: GetEmoticonSetsRequest): Promise<GetEmoticonSetsResult> {
   const supabase = await createServerSupabaseClient();
 
-  const { data, error, count } = await supabase
-    .from('emoticon_sets')
-    .select(
-      '*,emoticon_images(id,image_url,image_order),likes(count),comments(count)',
-      {
-        count: 'exact',
-      },
-    )
-    .order(param.orderBy, { ascending: param.order === 'asc' })
-    .range(offset, offset + limit - 1);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const currentUserId = user?.id;
+
+  const { data, error } = await supabase.rpc(
+    'get_emoticon_sets_with_like_status',
+    {
+      p_limit: limit,
+      p_offset: offset,
+      p_order_by: param.orderBy,
+      p_order_direction: param.order,
+      p_user_id_filter: param.userId || undefined,
+      p_title_filter: param.title || undefined,
+      p_current_user_id: currentUserId || undefined,
+    },
+  );
 
   if (error) {
     console.error('Emoticon sets 조회 에러:', error);
     throw new Error(`이모티콘 세트 조회에 실패했습니다: ${error.message}`);
   }
 
+  const result = data?.[0] || { sets: [], total_count: 0 };
+
   return {
     success: true,
     data: {
-      data: data || [],
-      hasMore: count ? offset + limit < count : false,
-      total: count || 0,
+      data: (result.sets as EmoticonSet[]) || [],
+      hasMore: offset + limit < (result.total_count || 0),
+      total: result.total_count || 0,
       currentPage: Math.floor(offset / limit) + 1,
-      totalPages: count ? Math.ceil(count / limit) : 0,
+      totalPages: Math.ceil((result.total_count || 0) / limit),
     },
   };
 }
+
+export async function getLikedEmoticonSets({
+  limit = 10,
+  offset = 0,
+  param = {
+    orderBy: 'created_at' as const,
+    order: 'desc' as const,
+    userId: '',
+    title: '',
+  },
+}: GetEmoticonSetsRequest): Promise<GetEmoticonSetsResult> {
+  const supabase = await createServerSupabaseClient();
+
+  if (!param.userId) {
+    return {
+      success: true,
+      data: {
+        data: [],
+        hasMore: false,
+        total: 0,
+        currentPage: 1,
+        totalPages: 0,
+      },
+    };
+  }
+
+  const { data, error } = await supabase.rpc(
+    'get_liked_emoticon_sets_optimized',
+    {
+      p_user_id: param.userId,
+      p_limit: limit,
+      p_offset: offset,
+      p_order_by: param.orderBy,
+      p_order_direction: param.order,
+      p_title_filter: param.title || undefined,
+    },
+  );
+
+  if (error) {
+    console.error('Liked emoticon sets 조회 에러:', error);
+    throw new Error(
+      `좋아요한 이모티콘 세트 조회에 실패했습니다: ${error.message}`,
+    );
+  }
+
+  const result = data?.[0] || { sets: [], total_count: 0 };
+
+  return {
+    success: true,
+    data: {
+      data: (result.sets as EmoticonSet[]) || [],
+      hasMore: offset + limit < (result.total_count || 0),
+      total: result.total_count || 0,
+      currentPage: Math.floor(offset / limit) + 1,
+      totalPages: Math.ceil((result.total_count || 0) / limit),
+    },
+  };
+}
+
 export async function getEmoticonSetDetail(
   id: string,
 ): Promise<EmoticonSetDetail> {
   const supabase = await createServerSupabaseClient();
 
-  // 1. 메인 데이터 조회
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const currentUserId = user?.id;
+
   const { data, error } = await supabase
     .from('emoticon_sets')
     .select(
       `
-  *,
-emoticon_images(
+      *,
+      emoticon_images(
         *,
         likes:likes(count),
         comments:comments(count)
       ),
-  likes(count),
-  views(count),
-  comments(
-    *,
-    profile:profiles!comments_user_id_fkey(*),
-    comment_reactions(*)
-  )
-`,
+      likes(count),
+      views(count),
+      comments(
+        *,
+        profile:profiles!comments_user_id_fkey(*),
+        comment_reactions(*)
+      )
+      `,
     )
     .eq('id', id)
     .single();
@@ -146,6 +220,18 @@ emoticon_images(
 
   if (!data) {
     throw new Error('이모티콘 세트를 찾을 수 없습니다.');
+  }
+
+  let isLiked = false;
+  if (currentUserId) {
+    const { data: likeData } = await supabase
+      .from('likes')
+      .select('id')
+      .eq('user_id', currentUserId)
+      .eq('set_id', id)
+      .single();
+
+    isLiked = !!likeData;
   }
 
   const emoticon_images = (data.emoticon_images || []).map((image) => ({
@@ -175,6 +261,7 @@ emoticon_images(
   const formattedData: EmoticonSetDetail = {
     ...data,
     emoticon_images,
+    is_liked: isLiked,
     comments: (data.comments || []).map((comment) => {
       const parentComment = comment.parent_comment_id
         ? parentCommentsMap.get(comment.parent_comment_id)
@@ -189,6 +276,7 @@ emoticon_images(
           provider: '',
           created_at: null,
           updated_at: null,
+          description: '',
         },
         comment_reactions: comment.comment_reactions || [],
         parent: parentComment

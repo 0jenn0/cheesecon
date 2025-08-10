@@ -2,7 +2,12 @@
 
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
 import { ApiResult, BaseApiResponse } from '@/shared/types';
-import { ProfileActivity } from '../type';
+import { Profile, ProfileActivity } from '../type';
+import {
+  GetProfileResult,
+  ProfileUpdateRequest,
+  ProfileUpdateResult,
+} from './types';
 
 /**
  * 활성 사용자 목록을 가져오는 함수
@@ -52,10 +57,6 @@ export async function getActiveUsers(
         );
       }
     });
-    console.log(
-      'Emoticon count by user:',
-      Object.fromEntries(emoticonCountByUser),
-    );
 
     // 댓글 수 계산
     commentStats?.forEach((stat) => {
@@ -119,4 +120,61 @@ export async function getActiveUsers(
       },
     };
   }
+}
+
+export async function updateProfile(
+  request: ProfileUpdateRequest,
+): Promise<ProfileUpdateResult> {
+  const supabase = await createServerSupabaseClient();
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user?.id) {
+    return {
+      success: false,
+      error: { message: 'User를 찾을 수 없습니다.' },
+    };
+  }
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .update(request)
+    .eq('id', user.id)
+    .select()
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: { message: error.message },
+    };
+  }
+
+  return { success: true, data };
+}
+
+export async function getProfile(): Promise<GetProfileResult> {
+  const supabase = await createServerSupabaseClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user?.id) {
+    return { success: false, error: { message: 'User를 찾을 수 없습니다.' } };
+  }
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single();
+
+  if (error) {
+    return { success: false, error: { message: error.message } };
+  }
+
+  return { success: true, data };
 }

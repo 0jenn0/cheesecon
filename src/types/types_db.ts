@@ -58,6 +58,20 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "comment_reactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_stats"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "comment_reactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_stats_with_weekly"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       comments: {
@@ -136,6 +150,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_stats"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_stats_with_weekly"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -251,6 +279,20 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "emoticon_sets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_stats"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "emoticon_sets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_stats_with_weekly"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       likes: {
@@ -311,12 +353,27 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_stats"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_stats_with_weekly"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       profiles: {
         Row: {
           avatar_url: string | null
           created_at: string | null
+          description: string | null
           id: string
           nickname: string
           provider: string
@@ -325,6 +382,7 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           created_at?: string | null
+          description?: string | null
           id: string
           nickname: string
           provider: string
@@ -333,6 +391,7 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           created_at?: string | null
+          description?: string | null
           id?: string
           nickname?: string
           provider?: string
@@ -387,6 +446,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "views_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_stats"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "views_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_stats_with_weekly"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -446,10 +519,93 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "emoticon_sets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_stats"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "emoticon_sets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_stats_with_weekly"
+            referencedColumns: ["user_id"]
+          },
         ]
+      }
+      user_stats: {
+        Row: {
+          activity_score: number | null
+          avatar_url: string | null
+          comment_count: number | null
+          created_at: string | null
+          emoticon_count: number | null
+          nickname: string | null
+          total_likes_given: number | null
+          total_likes_received: number | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
+      user_stats_with_weekly: {
+        Row: {
+          activity_score: number | null
+          avatar_url: string | null
+          comment_count: number | null
+          comments_change: number | null
+          created_at: string | null
+          emoticon_count: number | null
+          emoticons_change: number | null
+          last_week_comments: number | null
+          last_week_emoticons: number | null
+          last_week_likes_given: number | null
+          last_week_likes_received: number | null
+          likes_given_change: number | null
+          likes_received_change: number | null
+          nickname: string | null
+          this_week_comments: number | null
+          this_week_emoticons: number | null
+          this_week_likes_given: number | null
+          this_week_likes_received: number | null
+          total_likes_given: number | null
+          total_likes_received: number | null
+          user_id: string | null
+        }
+        Relationships: []
       }
     }
     Functions: {
+      get_emoticon_sets_with_like_status: {
+        Args: {
+          p_limit?: number
+          p_offset?: number
+          p_order_by?: string
+          p_order_direction?: string
+          p_user_id_filter?: string
+          p_title_filter?: string
+          p_current_user_id?: string
+        }
+        Returns: {
+          sets: Json
+          total_count: number
+        }[]
+      }
+      get_liked_emoticon_sets_optimized: {
+        Args: {
+          p_user_id: string
+          p_limit?: number
+          p_offset?: number
+          p_order_by?: string
+          p_order_direction?: string
+          p_title_filter?: string
+        }
+        Returns: {
+          sets: Json
+          total_count: number
+        }[]
+      }
       get_weekly_top_users: {
         Args: { limit_count?: number }
         Returns: {
@@ -473,8 +629,12 @@ export type Database = {
         Args: { target_user_id: string }
         Returns: undefined
       }
+      sync_all_counts: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       toggle_like: {
-        Args: { p_set_id: string; p_user_id: string }
+        Args: { p_user_id: string; p_set_id?: string; p_image_id?: string }
         Returns: Json
       }
     }

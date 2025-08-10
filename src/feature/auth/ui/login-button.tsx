@@ -1,7 +1,7 @@
 import { ComponentPropsWithRef } from 'react';
 import { cva } from 'class-variance-authority';
 import { Icon } from '@/shared/ui/display';
-import { LOGIN_PROVIDER, type LoginProvider, PROVIDER_CONFIG } from '../config';
+import { type LoginProvider, PROVIDER_CONFIG } from '../config';
 
 export const loginButtonVariants = cva(
   'tablet:max-w-[460px] border-radius-xl padding-x-12 padding-y-8 flex w-full cursor-pointer items-center justify-center',
@@ -9,7 +9,7 @@ export const loginButtonVariants = cva(
     variants: {
       provider: {
         google: 'border-secondary bg-primary border',
-        kakao: 'bg-[#FEE500] hover:bg-[#FEE500]/80',
+        kakaotalk: 'bg-[#FEE500] hover:bg-[#FEE500]/80',
         naver: 'bg-[#03C75A] hover:bg-[#03C75A]/80',
       },
     },

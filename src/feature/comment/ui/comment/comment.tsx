@@ -63,7 +63,9 @@ export default function Comment({
               <CommentImages images={comment.images} />
             )}
 
-            <CommentReaction comment={comment} />
+            {comment.reactions && comment.reactions?.length > 0 && (
+              <CommentReaction comment={comment} />
+            )}
             <CommentFooter comment={comment} />
 
             <div className='border-ghost w-full border-b-[0.6px]' />

@@ -30,3 +30,17 @@ export function getTimeAgo(date: string) {
 
   return '방금 전';
 }
+
+export function formatDate(date: string) {
+  if (!date || date.trim() === '') {
+    return '';
+  }
+
+  const dateObj = new Date(date);
+  if (isNaN(dateObj.getTime())) {
+    return '';
+  }
+
+  const [year, month, day] = dateObj.toLocaleDateString().split('.');
+  return `${year}년 ${month}월 ${day}일`;
+}

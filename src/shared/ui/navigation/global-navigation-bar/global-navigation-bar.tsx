@@ -8,9 +8,9 @@ export default function GlobalNavigationBar() {
   const pathname = usePathname();
 
   const isTabActive =
-    pathname.includes('/popular') ||
-    pathname.includes('/new') ||
-    pathname.includes('/activity');
+    pathname.startsWith('/popular') ||
+    pathname.startsWith('/new') ||
+    pathname.startsWith('/activity');
 
   return (
     <div className='sticky top-0 right-0 left-0 z-10'>

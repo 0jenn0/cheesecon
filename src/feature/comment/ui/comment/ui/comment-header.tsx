@@ -57,6 +57,9 @@ export default function CommentHeader({
               작가
             </div>
           )}
+          <span className='text-body-sm text-tertiary font-regular'>
+            {comment.profile.description}
+          </span>
         </div>
       </div>
       <div className='relative' ref={moreRef}>

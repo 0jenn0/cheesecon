@@ -9,4 +9,5 @@ export const PROFILE_QUERY_KEYS = {
   trendingEmoticons: () =>
     [...PROFILE_QUERY_KEYS.all, 'trending-emoticons'] as const,
   myStats: () => [...PROFILE_QUERY_KEYS.all, 'my-stats'] as const,
+  me: () => [...PROFILE_QUERY_KEYS.all, 'me'] as const,
 } as const;

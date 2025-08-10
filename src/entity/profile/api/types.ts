@@ -40,3 +40,11 @@ export type GetUserDetailStatsResult = ApiResult<GetUserDetailStatsResponse>;
 export type GetTrendingEmoticonsResult =
   ApiResult<GetTrendingEmoticonsResponse>;
 export type GetMyStatsResult = ApiResult<GetMyStatsResponse>;
+
+export type ProfileUpdateRequest = Partial<
+  Pick<Profile, 'nickname' | 'avatar_url' | 'description'>
+>;
+export type ProfileUpdateResponse = Profile;
+export type ProfileUpdateResult = ApiResult<ProfileUpdateResponse>;
+
+export type GetProfileResult = ApiResult<Profile>;

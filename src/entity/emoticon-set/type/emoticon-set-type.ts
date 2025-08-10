@@ -1,7 +1,9 @@
 import { BaseSortParams } from '@/shared/types';
 import { Tables } from '@/types/types_db';
 
-export type EmoticonSet = Tables<'emoticon_sets'>;
+export type EmoticonSet = Tables<'emoticon_sets'> & {
+  is_liked?: boolean;
+};
 
 export type EmoticonSetDetail = Tables<'emoticon_sets'> & {
   emoticon_images: Tables<'emoticon_images'>[];
@@ -15,6 +17,7 @@ export type EmoticonSetDetail = Tables<'emoticon_sets'> & {
       profile: Tables<'profiles'>;
     };
   })[];
+  is_liked: boolean;
 };
 
 export type EmoticonSetRequest = Omit<
@@ -50,4 +53,6 @@ export type EmoticonSetOrderBy =
 
 export type EmoticonSetSortParams = BaseSortParams & {
   orderBy: EmoticonSetOrderBy;
+  userId?: string;
+  title?: string;
 };

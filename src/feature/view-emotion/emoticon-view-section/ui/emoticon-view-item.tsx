@@ -6,14 +6,19 @@ import { ComponentPropsWithRef } from 'react';
 import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
 import { ICON_NAMES } from '@/shared/ui/icon/config';
-import { EmoticonSet } from '@/entity/emoticon-set/type';
+import { EmoticonSet, EmoticonSetDetail } from '@/entity/emoticon-set/type';
 
 interface EmoticonViewItemProps extends ComponentPropsWithRef<'section'> {
-  item: EmoticonSet;
-  index: number;
+  item: EmoticonSetDetail | EmoticonSet;
+  index?: number;
+  hideLikes?: boolean;
 }
 
-function EmoticonViewItem({ item, index }: EmoticonViewItemProps) {
+function EmoticonViewItem({
+  item,
+  index,
+  hideLikes = false,
+}: EmoticonViewItemProps) {
   const router = useRouter();
 
   const handleClick = () => {
@@ -23,19 +28,23 @@ function EmoticonViewItem({ item, index }: EmoticonViewItemProps) {
   return (
     <section className='group flex cursor-pointer gap-24' onClick={handleClick}>
       <Thumbnail index={index} item={item} />
-      <Content item={item} />
+      <Content item={item} hideLikes={hideLikes} />
     </section>
   );
 }
 
 export default EmoticonViewItem;
 
-function Thumbnail({ index, item }: { index: number; item: EmoticonSet }) {
+function Thumbnail({ index, item }: { index?: number; item: EmoticonSet }) {
   return (
     <div className='border-radius-lg relative flex gap-8 overflow-hidden font-semibold'>
       <div className='flex flex-col justify-between'>
         <div className='height-24 width-24 flex items-center justify-center'>
-          <span className='text-body-sm font-regular'>{index}</span>
+          {index && (
+            <span className='text-body-sm text-secondary font-regular'>
+              {index}
+            </span>
+          )}
         </div>
         <div className='flex flex-col items-center gap-4'>
           <EmoticonType type={item.type} />
@@ -82,7 +91,13 @@ function EmoticonPlatform({ platform }: { platform: EmoticonSet['platform'] }) {
   );
 }
 
-function Content({ item }: { item: EmoticonSet }) {
+function Content({
+  item,
+  hideLikes,
+}: {
+  item: EmoticonSet;
+  hideLikes?: boolean;
+}) {
   return (
     <div className='flex h-full flex-1 flex-col justify-center gap-24'>
       <h1 className='text-body-lg w-fit transition-all duration-200 group-hover:underline'>
@@ -91,12 +106,14 @@ function Content({ item }: { item: EmoticonSet }) {
       <div className='flex w-full justify-between'>
         <p className='text-body-sm text-gray-500'>{item.author_name}</p>
         <div className='flex gap-12'>
-          <IconLabel
-            item={item}
-            icon='message-circle'
-            label={item.comments_count}
-          />
-          <IconLabel item={item} icon='heart' label={item.likes_count} />
+          <IconLabel icon='message-circle' label={item.comments_count} />
+          {!hideLikes && (
+            <IconLabel
+              icon={item.is_liked ? 'heart-filled' : 'heart'}
+              iconClassName={item.is_liked ? 'text-rose-400' : 'text-gray-500'}
+              label={item.likes_count}
+            />
+          )}
         </div>
       </div>
     </div>
@@ -104,17 +121,17 @@ function Content({ item }: { item: EmoticonSet }) {
 }
 
 function IconLabel({
-  item,
   icon,
   label,
+  iconClassName,
 }: {
-  item: EmoticonSet;
   icon: (typeof ICON_NAMES)[number];
   label: number | null;
+  iconClassName?: string;
 }) {
   return (
     <div className='flex gap-2'>
-      <Icon name={icon} className='icon-disabled' />
+      <Icon name={icon} className={cn('text-gray-500', iconClassName)} />
       <p className='text-body-sm text-secondary'>{label}</p>
     </div>
   );

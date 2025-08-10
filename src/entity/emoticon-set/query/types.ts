@@ -1,4 +1,4 @@
-import { BaseApiRequest, BaseApiResponse } from '@/shared/types';
+import { BaseApiRequest, BaseApiResponse, SortOrder } from '@/shared/types';
 import { EmoticonSet, EmoticonSetOrderBy } from '../type';
 
 export type EmoticonSetQueryKey = {
@@ -11,6 +11,27 @@ export type EmoticonSetQueryKey = {
     string,
     number | undefined,
     number | undefined,
+  ];
+  pagination: (
+    order: EmoticonSetOrderBy,
+    param: {
+      page: number;
+      limit: number;
+      order: SortOrder;
+      userId?: string;
+      title?: string;
+      isLiked?: boolean;
+    },
+  ) => readonly [
+    ...(readonly ['emoticon-sets']),
+    'pagination',
+    string,
+    number,
+    number,
+    string,
+    string | undefined,
+    string | undefined,
+    boolean | undefined,
   ];
   byId: (id: string) => readonly ['emoticon-sets', string];
 };

@@ -1,7 +1,24 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { type CookieOptions, createServerClient } from '@supabase/ssr';
 
-export const applyMiddlewareSupabaseClient = async (request: NextRequest) => {
+const publicPaths = ['/login', '/popular', '/new', '/activity', '/emoticon'];
+const authPaths = ['/auth/callback'];
+
+function isPublicPath(pathname: string): boolean {
+  return publicPaths.some((path) => pathname.startsWith(path));
+}
+
+function isAuthPath(pathname: string): boolean {
+  return authPaths.some((path) => pathname.startsWith(path));
+}
+
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  if (isAuthPath(pathname)) {
+    return NextResponse.next();
+  }
+
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -22,11 +39,6 @@ export const applyMiddlewareSupabaseClient = async (request: NextRequest) => {
             value,
             ...options,
           });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          });
           response.cookies.set({
             name,
             value,
@@ -39,11 +51,6 @@ export const applyMiddlewareSupabaseClient = async (request: NextRequest) => {
             value: '',
             ...options,
           });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          });
           response.cookies.set({
             name,
             value: '',
@@ -54,17 +61,33 @@ export const applyMiddlewareSupabaseClient = async (request: NextRequest) => {
     },
   );
 
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (isPublicPath(pathname)) {
+    return response;
+  }
+
+  if (!user) {
+    const loginUrl = new URL('/login', request.url);
+    loginUrl.searchParams.set('next', pathname);
+    return NextResponse.redirect(loginUrl);
+  }
 
   return response;
-};
-
-export async function middleware(request: NextRequest) {
-  return await applyMiddlewareSupabaseClient(request);
 }
 
 export const config = {
   matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder
+     * - api routes
+     */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
