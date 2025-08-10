@@ -19,7 +19,7 @@ export interface MenuListProps extends ComponentPropsWithRef<'ul'> {
   onClick?: () => void;
 }
 
-export default function MenuList({ menus, ...props }: MenuListProps) {
+export default function MenuList({ menus, onClick, ...props }: MenuListProps) {
   const { user, isLoading, signOut } = useAuth();
   const router = useRouter();
 
@@ -55,13 +55,12 @@ export default function MenuList({ menus, ...props }: MenuListProps) {
       id={props.id}
     >
       {menus.map((menu, index) => (
-        <li key={`${menu.label}-${index}`} className='cursor-pointer'>
-          <MenuItem
-            label={menu.label}
-            href={menu.href}
-            as={Link}
-            onClick={menu.onClick}
-          />
+        <li
+          key={`${menu.label}-${index}`}
+          className='cursor-pointer'
+          onClick={onClick}
+        >
+          <MenuItem label={menu.label} href={menu.href} as={Link} />
         </li>
       ))}
       <li className='cursor-pointer'>
