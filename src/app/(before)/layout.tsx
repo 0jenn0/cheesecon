@@ -1,4 +1,3 @@
-import { Tabs } from '@/shared/ui/navigation';
 import { HelloSection } from '@/screen/main/ui';
 
 export default function BeforeLayout({
@@ -7,9 +6,7 @@ export default function BeforeLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className='tablet:gap-24 flex h-full w-full flex-col items-center gap-16'>
-      <div />
-      <HelloSection />
+    <div className='padding-y-16 tablet:padding-y-24 tablet:gap-24 flex h-full w-full flex-col items-center gap-16'>
       {children}
     </div>
   );
