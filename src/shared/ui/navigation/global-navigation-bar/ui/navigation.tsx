@@ -25,7 +25,7 @@ export default function Navigation({ className, ...props }: NavigationProps) {
         styleVariant='transparent'
         size='sm'
         as={Link}
-        href='/emoticon-register'
+        href='/register'
       >
         이모티콘 등록
       </Button>

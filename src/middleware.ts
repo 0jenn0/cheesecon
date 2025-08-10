@@ -5,7 +5,7 @@ const publicPaths = ['/login', '/popular', '/new', '/activity', '/emoticon'];
 const authPaths = ['/auth/callback'];
 
 function isPublicPath(pathname: string): boolean {
-  return publicPaths.some((path) => pathname === path);
+  return publicPaths.some((path) => pathname.startsWith(path));
 }
 
 function isAuthPath(pathname: string): boolean {
