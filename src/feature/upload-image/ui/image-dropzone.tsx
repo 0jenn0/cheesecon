@@ -174,8 +174,7 @@ export default function ImageDropzone({
                 <p>최대 {maxSize}MB</p>
               </div>
 
-              {/* 모바일용 파일 선택 버튼 */}
-              <div className='tablet:hidden mt-16 block'>
+              <div className='mt-16 block'>
                 <Button
                   variant='primary'
                   size='sm'

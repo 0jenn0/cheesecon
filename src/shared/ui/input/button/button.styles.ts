@@ -88,7 +88,7 @@ export const iconVariants = cva('', {
       primary: 'text-interactive-primary',
       secondary: 'text-interactive-secondary',
       danger: 'text-danger-bold',
-      disabled: 'text-disabled',
+      disabled: 'text-tertiary',
     },
     styleVariant: {
       outlined: '',
