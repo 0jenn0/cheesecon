@@ -9,7 +9,7 @@ export const loginButtonVariants = cva(
     variants: {
       provider: {
         google: 'border-secondary bg-primary border',
-        kakao: 'bg-[#FEE500] hover:bg-[#FEE500]/80',
+        kakaotalk: 'bg-[#FEE500] hover:bg-[#FEE500]/80',
         naver: 'bg-[#03C75A] hover:bg-[#03C75A]/80',
       },
     },
