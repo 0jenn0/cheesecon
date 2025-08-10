@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import ProgressBar from '@/shared/ui/feedback/progress-bar/progress-bar';
 import { Button } from '@/shared/ui/input';
@@ -20,7 +20,6 @@ export default function MultiUploadButton() {
   const uploadImageMutation = useUploadImageMutation();
   const { handleEmoticonItem, items } = useEmoticonContext();
   const { handleSetImageUrl } = useEmoticonRegister();
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const headerElement = window.document.querySelector('header');
@@ -30,34 +29,39 @@ export default function MultiUploadButton() {
   const handleFileUpload = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) {
       // TODO: 토스트 처리
-      // console.log('No files to upload');
+      console.log('No files to upload');
       return;
     }
 
+    // 업로드 가능한 빈 슬롯 확인
+    const emptySlots = items.filter((item) => item.imageUrl === '');
+    const maxUploadCount = Math.min(acceptedFiles.length, emptySlots.length);
+
+    if (maxUploadCount === 0) {
+      console.log('No empty slots available');
+      // TODO: 토스트로 "업로드 가능한 슬롯이 없습니다" 메시지 표시
+      return;
+    }
+
+    const filesToUpload = acceptedFiles.slice(0, maxUploadCount);
+
     setCurrentUploadCount({
       current: 0,
-      total: acceptedFiles.length,
+      total: filesToUpload.length,
     });
     setIsUploading(true);
 
     try {
-      for (const [index, file] of acceptedFiles.entries()) {
+      const uploadPromises = filesToUpload.map(async (file, index) => {
         const formData = new FormData();
         formData.append('file', file);
 
-        const currentEmoticonItems = items.every((item) => item.imageUrl === '')
-          ? items
-          : items.filter((item) => item.imageUrl === '');
-
-        if (currentEmoticonItems.length === 0) {
-          console.log('No emoticon items available');
-          break;
-        }
-
-        const imageNumber = currentEmoticonItems[0 + index].imageNumber;
+        const targetSlot = emptySlots[index];
+        const imageNumber = targetSlot.imageNumber;
 
         try {
           const result = await uploadImageMutation.mutateAsync(formData);
+
           handleEmoticonItem(imageNumber, 'UPLOAD', {
             imageUrl: result.url,
           });
@@ -68,52 +72,69 @@ export default function MultiUploadButton() {
               imageOrder: imageNumber,
             },
           ]);
-          // TODO: 토스트 처리
-          // console.log('Upload successful:', result);
+
           setCurrentUploadCount((prev) => ({
             current: prev.current + 1,
             total: prev.total,
           }));
+
+          return { success: true, file: file.name, url: result.url };
         } catch (error) {
           console.error('Upload error for file:', file.name, error);
+          return { success: false, file: file.name, error };
         }
+      });
+
+      const results = await Promise.all(uploadPromises);
+
+      const successCount = results.filter((r) => r.success).length;
+      const failCount = results.filter((r) => !r.success).length;
+
+      if (failCount > 0) {
+        console.log(`${successCount}개 성공, ${failCount}개 실패`);
+        // TODO: 토스트로 부분 실패 메시지 표시
+      } else {
+        console.log(`${successCount}개 파일 업로드 완료`);
+        // TODO: 토스트로 성공 메시지 표시
       }
+    } catch (error) {
+      console.error('Upload process error:', error);
+      // TODO: 토스트로 에러 메시지 표시
     } finally {
       setIsUploading(false);
-
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
+      setCurrentUploadCount({ current: 0, total: 0 });
     }
   };
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop: handleFileUpload,
     accept: {
-      'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.webp'],
+      'image/jpeg': ['.jpeg', '.jpg'],
+      'image/png': ['.png'],
+      'image/gif': ['.gif'],
+      'image/webp': ['.webp'],
     },
     multiple: true,
     maxFiles: 32,
     noClick: true,
+    noKeyboard: true,
+    disabled: isUploading,
   });
 
-  const handleFileSelect = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const fileArray = Array.from(files);
-      handleFileUpload(fileArray);
+  const handleButtonClick = () => {
+    if (!isUploading) {
+      open();
     }
   };
 
   return (
-    <div {...getRootProps()}>
+    <div
+      {...getRootProps()}
+      className={`relative ${isDragActive ? 'opacity-70' : ''}`}
+    >
       {isUploading && (
         <ProgressBar
-          className='fixed left-0 w-full'
+          className='fixed left-0 z-50 w-full'
           style={{
             top: headerHeight ? `${headerHeight}px` : '56px',
           }}
@@ -121,25 +142,19 @@ export default function MultiUploadButton() {
           total={currentUploadCount.total}
         />
       )}
-      <input {...getInputProps()} />
 
-      <input
-        ref={fileInputRef}
-        type='file'
-        accept='image/png,image/jpeg,image/gif,image/webp'
-        multiple
-        onChange={handleFileChange}
-        className='hidden'
-      />
+      <input {...getInputProps()} />
 
       <Button
         variant='primary'
         textClassName='text-body-sm font-semibold'
         className='tablet:w-fit w-full'
         leadingIcon='image-plus'
-        onClick={handleFileSelect}
+        onClick={handleButtonClick}
+        disabled={isUploading}
+        isLoading={isUploading}
       >
-        다중 업로드
+        {isUploading ? '업로드 중...' : '다중 업로드'}
       </Button>
     </div>
   );
