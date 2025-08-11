@@ -1,6 +1,9 @@
+'use client';
+
 import Image from 'next/image';
 import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
+import { useModal } from '@/shared/ui/feedback';
 import { IconButton } from '@/shared/ui/input';
 import { EmoticonSetDetail } from '@/entity/emoticon-set/type';
 import LikeButton from '@/feature/like/ui/like-button/like-button';
@@ -19,6 +22,13 @@ export default function EmoticonInfoHeader({
     views_count,
     comments_count,
   } = emoticonSetDetail;
+  const { openModal } = useModal();
+
+  const handleShareLink = () => {
+    openModal('shareLink', {
+      emoticonSetId: emoticonSetDetail.id,
+    });
+  };
 
   return (
     <div className={cn('bg-primary flex w-full items-center gap-16')}>
@@ -68,7 +78,12 @@ export default function EmoticonInfoHeader({
             </div>
           </div>
           <div className='flex items-center gap-8'>
-            <IconButton variant='secondary' icon='link' iconSize={20} />
+            <IconButton
+              variant='secondary'
+              icon='link'
+              iconSize={20}
+              onClick={handleShareLink}
+            />
             <IconButton variant='secondary' icon='edit-2' iconSize={20} />
           </div>
         </div>
