@@ -8,7 +8,6 @@ export const emoticonSetSchema = z.object({
   type: z.string().min(1, '타입은 필수에요'),
   description: z.string().min(10, '설명은 10자 이상이어야 해요'),
   is_private: z.boolean().nullable(),
-  password_hash: z.string().nullable(),
   comments_count: z.number().int().min(0).nullable(),
   likes_count: z.number().int().min(0).nullable(),
   views_count: z.number().int().min(0).nullable(),

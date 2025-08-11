@@ -50,16 +50,15 @@ export default function EmoticonRegisterDesktopScreen() {
           </h1>
           <div className='border-ghost border-b' />
           <div className='flex flex-1 gap-24'>
+            <div className='max-w-[320px] flex-1'>
+              <ImageDropzone maxSize={5} />
+            </div>
             <section className='flex flex-1 flex-col gap-24'>
               <h2 className='text-heading-sm'>이모티콘 정보</h2>
               <EmoticonInfoForm />
               <div className='border-ghost border-b' />
               <SecretNumberForm />
             </section>
-
-            <div className='max-w-[320px] flex-1'>
-              <ImageDropzone maxSize={5} />
-            </div>
           </div>
         </div>
 
