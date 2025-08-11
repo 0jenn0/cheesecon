@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import ProgressBar from '@/shared/ui/feedback/progress-bar/progress-bar';
 import { Button } from '@/shared/ui/input';
 import useEmoticonRegister from '@/feature/register-emoticon/model/hook';
-import { useUploadImageMutation } from '@/feature/upload-image/model/upload-image-mutation';
+import { useUploadImageToBucketMutation } from '@/feature/upload-image/model/upload-image-mutation';
 import useEmoticonContext from '../provider/emotion-provider';
 
 export default function MultiUploadButton() {
@@ -16,7 +16,7 @@ export default function MultiUploadButton() {
   const [headerHeight, setHeaderHeight] = useState<number | undefined>(
     undefined,
   );
-  const uploadImageMutation = useUploadImageMutation();
+  const uploadImageMutation = useUploadImageToBucketMutation();
   const { handleEmoticonItem, items } = useEmoticonContext();
   const { handleSetImageUrl } = useEmoticonRegister();
   const fileInputRef = useRef<HTMLInputElement>(null);

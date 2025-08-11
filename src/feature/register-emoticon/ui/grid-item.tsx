@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import { cn } from '@/shared/lib/utils';
 import { Icon } from '@/shared/ui/display';
 import EmoticonItem from '@/shared/ui/display/emoticon-item/emoticon-item';
-import { useUploadImageMutation } from '@/feature/upload-image/model/upload-image-mutation';
+import { useUploadImageToBucketMutation } from '@/feature/upload-image/model/upload-image-mutation';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import useUIContext from './emoticon-section/provider/ui-provider';
@@ -23,7 +23,7 @@ const GridItem = ({
   ...props
 }: GridItemProps) => {
   const { isMultipleSelect, isOrderChange } = useUIContext();
-  const uploadImageMutation = useUploadImageMutation();
+  const uploadImageMutation = useUploadImageToBucketMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const onDrop = useCallback(

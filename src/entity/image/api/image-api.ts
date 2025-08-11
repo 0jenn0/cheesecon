@@ -4,7 +4,7 @@ import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
 import { ImageUploadResult, ImageUrlResult } from '../type';
 import { sanitizeFileName } from '../util';
 
-export async function uploadImage(
+export async function uploadImageToBucket(
   formData: FormData,
 ): Promise<ImageUploadResult> {
   const supabase = await createServerSupabaseClient();

@@ -8,7 +8,7 @@ import { Icon } from '@/shared/ui/display';
 import { Spinner } from '@/shared/ui/feedback';
 import { Button } from '@/shared/ui/input';
 import useEmoticonRegister from '@/feature/register-emoticon/model/hook';
-import { useUploadImageMutation } from '../model/upload-image-mutation';
+import { useUploadImageToBucketMutation } from '../model/upload-image-mutation';
 
 export interface ImageDropzoneProps extends ComponentPropsWithRef<'div'> {
   maxSize?: number;
@@ -23,7 +23,7 @@ export default function ImageDropzone({
 }: ImageDropzoneProps) {
   const { emoticonSet, setEmoticonSet } = useEmoticonRegister();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const uploadImageMutation = useUploadImageMutation();
+  const uploadImageMutation = useUploadImageToBucketMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const onDrop = useCallback(
