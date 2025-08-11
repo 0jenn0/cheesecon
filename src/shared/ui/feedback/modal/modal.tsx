@@ -128,7 +128,7 @@ function ModalContainer({
         >
           <section
             className={cn(
-              'bg-primary tablet:padding-24 padding-16 tablet:gap-24 flex flex-col gap-16',
+              'bg-primary tablet:padding-24 padding-16 flex flex-col gap-16',
               'w-full rounded-t-2xl',
               'tablet:rounded-2xl tablet:min-w-[400px]',
               className,

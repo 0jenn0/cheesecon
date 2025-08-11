@@ -1,10 +1,10 @@
 import { cva } from 'class-variance-authority';
 
-export const labelValuePairVariants = cva('flex w-full gap-16', {
+export const labelValuePairVariants = cva('flex w-full', {
   variants: {
     direction: {
-      row: 'flex-row items-center',
-      column: 'flex-col items-start',
+      row: 'flex-row items-center gap-16',
+      column: 'flex-col items-start gap-8',
     },
   },
 });
