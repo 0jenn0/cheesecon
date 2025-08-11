@@ -33,4 +33,5 @@ export type ImageUrlWithOrder = {
   imageUrl: string;
   imageOrder: number;
   blurUrl?: string | null;
+  webpUrl?: string | null;
 };

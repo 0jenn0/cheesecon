@@ -58,7 +58,10 @@ function EmoticonImageItem({ image }: { image: EmoticonImage }) {
       isUploading={false}
       isDragging={false}
     >
-      <Link href={`/emoticon/${image.set_id}/${image.id}`} scroll={false}>
+      <Link
+        href={`/emoticon/${image.set_id}?imageId=${image.id}`}
+        scroll={false}
+      >
         <EmoticonItem.Content>
           <EmoticonItem.Header />
           <EmoticonItem.Body />

@@ -180,6 +180,7 @@ function ImageCarousel({
   );
 
   const router = useRouter();
+
   const handleDragEnd = (_event: unknown, info: PanInfo) => {
     const threshold = 60;
 
@@ -188,14 +189,14 @@ function ImageCarousel({
       const prevImageId = images.prev?.id;
 
       if (prevImageId) {
-        router.push(`/emoticon/${setId}/${prevImageId}`);
+        router.push(`/emoticon/${setId}?imageId=${prevImageId}`);
       }
     } else if (info.offset.x < -threshold) {
       setDragDirection('right');
       const nextImageId = images.next?.id;
 
       if (nextImageId) {
-        router.push(`/emoticon/${setId}/${nextImageId}`);
+        router.push(`/emoticon/${setId}?imageId=${nextImageId}`);
       }
     }
   };
@@ -252,12 +253,20 @@ function ImageCarousel({
             >
               {image ? (
                 <Image
-                  src={image?.image_url}
+                  src={image.image_url}
                   alt='이모티콘 이미지'
-                  width={500}
-                  height={500}
+                  width={240}
+                  height={240}
                   className='select-cover object-contain'
                   draggable={false}
+                  priority={index === 1}
+                  loading={index === 1 ? 'eager' : 'lazy'}
+                  fetchPriority={index === 1 ? 'high' : 'auto'}
+                  sizes={
+                    index === 1
+                      ? '(min-width:1024px) 360px, 240px'
+                      : '(min-width:1024px) 240px, 140px'
+                  }
                 />
               ) : null}
             </motion.div>
@@ -267,10 +276,9 @@ function ImageCarousel({
 
       <div className='pointer-events-none absolute top-0 left-0 h-full w-16 bg-gradient-to-r from-white/30 to-transparent' />
       <div className='pointer-events-none absolute top-0 right-0 h-full w-16 bg-gradient-to-l from-white/30 to-transparent' />
-
       {images.prev && (
         <Link
-          href={`/emoticon/${setId}/${images.prev.id}`}
+          href={`/emoticon/${setId}?imageId=${images.prev.id}`}
           className='padding-12 absolute top-1/2 left-4 flex -translate-y-1/2 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-white active:scale-95'
           onClick={() => setDragDirection('left')}
         >
@@ -284,7 +292,7 @@ function ImageCarousel({
 
       {images.next && (
         <Link
-          href={`/emoticon/${setId}/${images.next.id}`}
+          href={`/emoticon/${setId}?imageId=${images.next.id}`}
           className='padding-12 absolute top-1/2 right-4 flex -translate-y-1/2 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:bg-white active:scale-95'
           onClick={() => setDragDirection('right')}
         >

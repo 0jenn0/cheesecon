@@ -18,7 +18,7 @@ export type EmoticonItemAction =
 // FIX: 개발할때만 2개 업로드로
 const INITIAL_ITEMS = Array.from(
   // { length: EMOTICON_CONFIG.kakaotalk.static.count },
-  { length: 2 },
+  { length: 24 },
   (_, i) => ({
     imageNumber: i + 1,
     imageUrl: '',
@@ -44,6 +44,7 @@ export interface EmoticonContextType {
       imageNumbers?: number[];
       imageUrl?: string;
       blurUrl?: string | null;
+      webpUrl?: string | null;
     },
   ) => void;
 }
@@ -136,11 +137,12 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
       imageNumber: typeOfImageNumber,
       imageUrl: string,
       blurUrl?: string | null,
+      webpUrl?: string | null,
     ) => {
       setItems((prevItems) =>
         prevItems.map((item) =>
           item.imageNumber === imageNumber
-            ? { ...item, imageUrl, blurUrl }
+            ? { ...item, imageUrl, blurUrl, webpUrl }
             : item,
         ),
       );
@@ -163,9 +165,10 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
         imageNumbers?: typeOfImageNumber[];
         imageUrl?: string;
         blurUrl?: string | null;
+        webpUrl?: string | null;
       },
     ) => {
-      const { newImageNumber, imageUrl, blurUrl } = params || {};
+      const { newImageNumber, imageUrl, blurUrl, webpUrl } = params || {};
       switch (action) {
         case 'CHECK':
           handleCheckEmoticonItem(imageNumber);
@@ -182,7 +185,7 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
           break;
         case 'UPLOAD':
           if (imageUrl || imageUrl === '') {
-            handleUploadEmoticonItem(imageNumber, imageUrl, blurUrl);
+            handleUploadEmoticonItem(imageNumber, imageUrl, blurUrl, webpUrl);
           } else {
             throw new Error('imageUrl이 필요합니다.');
           }

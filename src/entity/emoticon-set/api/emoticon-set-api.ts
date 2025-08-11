@@ -27,7 +27,8 @@ export async function createEmoticonSet(
 
   const emoticonSetId = crypto.randomUUID();
 
-  const { ...emoticonSetFields } = emoticonSet;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { representative_image, ...emoticonSetFields } = emoticonSet;
 
   const emoticonRequest = {
     ...emoticonSetFields,
@@ -64,6 +65,7 @@ export async function createEmoticonSet(
           imageUrl: emoticonSet.representative_image.image_url,
           imageOrder: emoticonSet.representative_image.image_order,
           blurUrl: emoticonSet.representative_image.blur_url,
+          webpUrl: emoticonSet.representative_image.webp_url,
         },
       ];
 
@@ -76,6 +78,7 @@ export async function createEmoticonSet(
           image_url: imageUrl.imageUrl,
           image_order: imageUrl.imageOrder,
           blur_url: imageUrl.blurUrl ?? null,
+          webp_url: imageUrl.webpUrl ?? null,
           is_representative:
             imageUrl.imageUrl === emoticonSet.representative_image.image_url,
         }),
@@ -102,7 +105,9 @@ export async function createEmoticonSet(
     success: true,
     data: {
       emoticonSet: data,
-      emoticonImages: emoticonImages,
+      emoticonImages: emoticonImages.filter(
+        (img) => img.id !== representativeImage.id,
+      ),
       representativeImage: representativeImage,
     },
   };
@@ -618,4 +623,21 @@ export async function getEmoticonSetForLock(
   };
 
   return formattedData;
+}
+
+export async function getAuthorId(id: string): Promise<string> {
+  const supabase = await createServerSupabaseClient();
+
+  const { data, error } = await supabase
+    .from('emoticon_sets')
+    .select('user_id')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error('Emoticon set 조회 에러:', error);
+    throw new Error(`이모티콘 세트 조회에 실패했습니다: ${error.message}`);
+  }
+
+  return data?.user_id ?? '';
 }

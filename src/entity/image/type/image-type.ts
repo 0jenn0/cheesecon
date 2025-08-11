@@ -2,6 +2,7 @@ export interface ImageUploadResult {
   path: string;
   url: string;
   blurUrl?: string | null;
+  webpUrl?: string | null;
   isRepresentative?: boolean;
 }
 

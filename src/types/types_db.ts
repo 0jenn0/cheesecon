@@ -171,6 +171,7 @@ export type Database = {
           is_representative: boolean | null
           likes_count: number | null
           set_id: string | null
+          webp_url: string | null
         }
         Insert: {
           blur_url?: string | null
@@ -182,6 +183,7 @@ export type Database = {
           is_representative?: boolean | null
           likes_count?: number | null
           set_id?: string | null
+          webp_url?: string | null
         }
         Update: {
           blur_url?: string | null
@@ -193,6 +195,7 @@ export type Database = {
           is_representative?: boolean | null
           likes_count?: number | null
           set_id?: string | null
+          webp_url?: string | null
         }
         Relationships: [
           {
