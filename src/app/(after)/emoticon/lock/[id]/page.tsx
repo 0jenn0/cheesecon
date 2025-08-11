@@ -1,9 +1,8 @@
 'use server';
 
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
-import { SecretNumberModal } from '@/feature/ask-secret-number';
-import SecretOnlyLoggedIn from '@/feature/ask-secret-number/ui/secret-only-logged-in';
 import { EmoticonScreen } from '@/screen';
+import LockModal from '@/screen/lock/lock-modal';
 
 export default async function ImageFullPage({
   params,
@@ -18,7 +17,7 @@ export default async function ImageFullPage({
 
   return (
     <>
-      {user ? <SecretNumberModal id={id} /> : <SecretOnlyLoggedIn />}
+      <LockModal id={id} />
       <EmoticonScreen emoticonSetId={id} isUnlocked={false} />
     </>
   );
