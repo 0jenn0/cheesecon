@@ -63,7 +63,7 @@ export default function MenuList({ menus, onClick, ...props }: MenuListProps) {
           <MenuItem label={menu.label} href={menu.href} as={Link} />
         </li>
       ))}
-      <li className='cursor-pointer'>
+      <li className='w-full cursor-pointer'>
         <MenuItem
           label={isLoggedIn ? '로그아웃' : '로그인'}
           onClick={handleLogout}
