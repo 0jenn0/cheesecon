@@ -480,27 +480,6 @@ export async function getEmoticonSetDetail(
   return formattedData;
 }
 
-export async function checkSecretNumber(
-  id: string,
-  password: string,
-): Promise<boolean> {
-  const supabase = await createBrowserSupabaseClient();
-
-  const { data, error } = await supabase
-    .from('emoticon_sets')
-    .select('*')
-    .eq('id', id)
-    .eq('password_hash', password)
-    .single();
-
-  if (error) {
-    console.error('Secret number 조회 에러:', error);
-    throw new Error(`비밀번호 조회에 실패했습니다: ${error.message}`);
-  }
-
-  return !!data;
-}
-
 export async function getEmoticonSetIsPrivate(id: string): Promise<boolean> {
   const supabase = await createServerSupabaseClient();
 
