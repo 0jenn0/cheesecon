@@ -58,7 +58,7 @@ export default function SecretNumberModal({ id }: { id: string }) {
   return (
     <Modal.Container>
       <form onSubmit={handleSubmit}>
-        <Modal.Header>
+        <Modal.Header onClose={() => router.back()}>
           <Modal.Title>비밀 게시물</Modal.Title>
         </Modal.Header>
 
