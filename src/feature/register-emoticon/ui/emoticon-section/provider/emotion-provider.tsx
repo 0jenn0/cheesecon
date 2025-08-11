@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useState } from 'react';
+import { EMOTICON_CONFIG } from '@/feature/register-emoticon/config/emoticon-config';
 
 export interface EmoticonItem {
   imageNumber: number;
@@ -15,10 +16,15 @@ export type EmoticonItemAction =
   | 'UPLOAD'
   | 'RESTORE_INITIAL_ORDER';
 
-const INITIAL_ITEMS = Array.from({ length: 24 }, (_, i) => ({
-  imageNumber: i + 1,
-  imageUrl: '',
-}));
+// FIX: 개발할때만 2개 업로드로
+const INITIAL_ITEMS = Array.from(
+  // { length: EMOTICON_CONFIG.kakaotalk.static.count },
+  { length: 2 },
+  (_, i) => ({
+    imageNumber: i + 1,
+    imageUrl: '',
+  }),
+);
 
 export interface EmoticonContextType {
   items: EmoticonItem[];
