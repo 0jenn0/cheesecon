@@ -14,13 +14,13 @@ export const emoticonSetSchema = z.object({
   views_count: z.number().int().min(0).nullable(),
   created_at: z.string().nullable(),
   updated_at: z.string().nullable(),
-  representative_image_url: z
-    .string()
-    .startsWith('http', { message: '올바른 URL 형식이 아니에요' })
-    .nullable()
-    .refine((val) => val !== null && val.length > 0, {
-      message: '대표 이미지는 필수에요',
-    }),
+  representative_image: z.object({
+    id: z.string().nullable(),
+    image_url: z.string().nullable(),
+    blur_url: z.string().nullable(),
+    image_order: z.number().int().min(0).nullable(),
+    is_representative: z.boolean().nullable(),
+  }),
   user_id: z.string().nullable(),
 });
 

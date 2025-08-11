@@ -1,7 +1,7 @@
 import { ImageUrlWithOrder } from '@/shared/types';
 import { useMutation } from '@tanstack/react-query';
 import { createEmoticonSet } from '../api/emoticon-set-api';
-import { EmoticonSet } from '../type';
+import { EmoticonSet, EmoticonSetWithRepresentativeImage } from '../type';
 
 export interface RegisterMutationProps {
   imageUrls: ImageUrlWithOrder[];
@@ -9,7 +9,7 @@ export interface RegisterMutationProps {
 
 export function useRegisterMutation({ imageUrls }: RegisterMutationProps) {
   return useMutation({
-    mutationFn: (emoticonSet: EmoticonSet) =>
+    mutationFn: (emoticonSet: EmoticonSetWithRepresentativeImage) =>
       createEmoticonSet(emoticonSet, imageUrls),
     onSuccess: (data) => {
       console.log('이모티콘 등록 성공:', data);

@@ -131,13 +131,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "comments_set_id_fkey"
-            columns: ["set_id"]
-            isOneToOne: false
-            referencedRelation: "trending_emoticons"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "comments_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -169,29 +162,35 @@ export type Database = {
       }
       emoticon_images: {
         Row: {
+          blur_url: string | null
           comments_count: number | null
           created_at: string | null
           id: string
           image_order: number
           image_url: string
+          is_representative: boolean | null
           likes_count: number | null
           set_id: string | null
         }
         Insert: {
+          blur_url?: string | null
           comments_count?: number | null
           created_at?: string | null
           id?: string
           image_order: number
           image_url: string
+          is_representative?: boolean | null
           likes_count?: number | null
           set_id?: string | null
         }
         Update: {
+          blur_url?: string | null
           comments_count?: number | null
           created_at?: string | null
           id?: string
           image_order?: number
           image_url?: string
+          is_representative?: boolean | null
           likes_count?: number | null
           set_id?: string | null
         }
@@ -201,13 +200,6 @@ export type Database = {
             columns: ["set_id"]
             isOneToOne: false
             referencedRelation: "emoticon_sets"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "emoticon_images_set_id_fkey"
-            columns: ["set_id"]
-            isOneToOne: false
-            referencedRelation: "trending_emoticons"
             referencedColumns: ["id"]
           },
         ]
@@ -223,7 +215,6 @@ export type Database = {
           likes_count: number | null
           password_hash: string | null
           platform: string
-          representative_image_url: string
           title: string
           type: string
           updated_at: string | null
@@ -240,7 +231,6 @@ export type Database = {
           likes_count?: number | null
           password_hash?: string | null
           platform: string
-          representative_image_url: string
           title: string
           type: string
           updated_at?: string | null
@@ -257,7 +247,6 @@ export type Database = {
           likes_count?: number | null
           password_hash?: string | null
           platform?: string
-          representative_image_url?: string
           title?: string
           type?: string
           updated_at?: string | null
@@ -330,13 +319,6 @@ export type Database = {
             columns: ["set_id"]
             isOneToOne: false
             referencedRelation: "emoticon_sets"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "likes_set_id_fkey"
-            columns: ["set_id"]
-            isOneToOne: false
-            referencedRelation: "trending_emoticons"
             referencedColumns: ["id"]
           },
           {
@@ -427,13 +409,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "views_set_id_fkey"
-            columns: ["set_id"]
-            isOneToOne: false
-            referencedRelation: "trending_emoticons"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "views_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -483,58 +458,6 @@ export type Database = {
         }
         Relationships: []
       }
-      trending_emoticons: {
-        Row: {
-          author_avatar: string | null
-          author_name: string | null
-          author_nickname: string | null
-          comments_count: number | null
-          created_at: string | null
-          description: string | null
-          id: string | null
-          is_private: boolean | null
-          likes_count: number | null
-          password_hash: string | null
-          platform: string | null
-          recent_likes_count: number | null
-          representative_image_url: string | null
-          title: string | null
-          type: string | null
-          updated_at: string | null
-          user_id: string | null
-          views_count: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "emoticon_sets_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "active_commenters"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "emoticon_sets_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "emoticon_sets_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_stats"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "emoticon_sets_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_stats_with_weekly"
-            referencedColumns: ["user_id"]
-          },
-        ]
-      }
       user_stats: {
         Row: {
           activity_score: number | null
@@ -578,29 +501,48 @@ export type Database = {
     }
     Functions: {
       get_emoticon_sets_with_like_status: {
-        Args: {
-          p_limit?: number
-          p_offset?: number
-          p_order_by?: string
-          p_order_direction?: string
-          p_user_id_filter?: string
-          p_title_filter?: string
-          p_current_user_id?: string
-        }
+        Args:
+          | {
+              p_limit?: number
+              p_offset?: number
+              p_order_by?: string
+              p_order_direction?: string
+              p_user_id_filter?: string
+              p_title_filter?: string
+              p_current_user_id?: string
+            }
+          | {
+              p_limit?: number
+              p_offset?: number
+              p_order_by?: string
+              p_order_direction?: string
+              p_user_id_filter?: string
+              p_title_filter?: string
+              p_current_user_id?: string
+            }
         Returns: {
           sets: Json
           total_count: number
         }[]
       }
       get_liked_emoticon_sets_optimized: {
-        Args: {
-          p_user_id: string
-          p_limit?: number
-          p_offset?: number
-          p_order_by?: string
-          p_order_direction?: string
-          p_title_filter?: string
-        }
+        Args:
+          | {
+              p_user_id: string
+              p_limit?: number
+              p_offset?: number
+              p_order_by?: string
+              p_order_direction?: string
+              p_title_filter?: string
+            }
+          | {
+              p_user_id: string
+              p_limit?: number
+              p_offset?: number
+              p_order_by?: string
+              p_order_direction?: string
+              p_title_filter?: string
+            }
         Returns: {
           sets: Json
           total_count: number

@@ -21,7 +21,8 @@ export default function ImageDropzone({
   className,
   ...props
 }: ImageDropzoneProps) {
-  const { emoticonSet, setEmoticonSet } = useEmoticonRegister();
+  const { emoticonSetWithRepresentativeImage, setEmoticonSet } =
+    useEmoticonRegister();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const uploadImageMutation = useUploadImageToBucketMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -39,8 +40,14 @@ export default function ImageDropzone({
           const result = await uploadImageMutation.mutateAsync(formData);
           setImageUrl(result.url);
           setEmoticonSet({
-            ...emoticonSet,
-            representative_image_url: result.url,
+            ...emoticonSetWithRepresentativeImage,
+            representative_image: {
+              ...emoticonSetWithRepresentativeImage.representative_image,
+              image_url: result.url,
+              blur_url: result.blurUrl ?? null,
+              image_order: 0,
+              is_representative: true,
+            },
           });
           // TODO: 토스트로 성공처리
           console.log('Upload successful:', result);
@@ -50,7 +57,7 @@ export default function ImageDropzone({
         }
       }
     },
-    [uploadImageMutation, emoticonSet, setEmoticonSet],
+    [uploadImageMutation, emoticonSetWithRepresentativeImage, setEmoticonSet],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

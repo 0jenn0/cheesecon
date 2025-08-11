@@ -38,6 +38,7 @@ export interface EmoticonContextType {
       newImageNumber?: number;
       imageNumbers?: number[];
       imageUrl?: string;
+      blurUrl?: string | null;
     },
   ) => void;
 }
@@ -126,10 +127,16 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
   );
 
   const handleUploadEmoticonItem = useCallback(
-    (imageNumber: typeOfImageNumber, imageUrl: string) => {
+    (
+      imageNumber: typeOfImageNumber,
+      imageUrl: string,
+      blurUrl?: string | null,
+    ) => {
       setItems((prevItems) =>
         prevItems.map((item) =>
-          item.imageNumber === imageNumber ? { ...item, imageUrl } : item,
+          item.imageNumber === imageNumber
+            ? { ...item, imageUrl, blurUrl }
+            : item,
         ),
       );
     },
@@ -150,9 +157,10 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
         newImageNumber?: typeOfImageNumber;
         imageNumbers?: typeOfImageNumber[];
         imageUrl?: string;
+        blurUrl?: string | null;
       },
     ) => {
-      const { newImageNumber, imageUrl } = params || {};
+      const { newImageNumber, imageUrl, blurUrl } = params || {};
       switch (action) {
         case 'CHECK':
           handleCheckEmoticonItem(imageNumber);
@@ -169,7 +177,7 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
           break;
         case 'UPLOAD':
           if (imageUrl || imageUrl === '') {
-            handleUploadEmoticonItem(imageNumber, imageUrl);
+            handleUploadEmoticonItem(imageNumber, imageUrl, blurUrl);
           } else {
             throw new Error('imageUrl이 필요합니다.');
           }

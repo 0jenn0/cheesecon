@@ -1,16 +1,22 @@
 'use server';
 
+import { createBrowserSupabaseClient } from '@/shared/lib/supabase/client';
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
 import { ImageUrlWithOrder } from '@/shared/types';
-import { EmoticonImageRequest, EmoticonSet, EmoticonSetDetail } from '../type';
+import {
+  EmoticonImage,
+  EmoticonImageRequest,
+  EmoticonSetDetail,
+  EmoticonSetWithRepresentativeImage,
+} from '../type';
 import {
   CreateEmoticonSetResult,
   GetEmoticonSetsRequest,
-  GetEmoticonSetsResult,
+  GetEmoticonSetsWithRepresentativeImageResult,
 } from './types';
 
 export async function createEmoticonSet(
-  emoticonSet: EmoticonSet,
+  emoticonSet: EmoticonSetWithRepresentativeImage,
   imageUrls: ImageUrlWithOrder[],
 ): Promise<CreateEmoticonSetResult> {
   const supabase = await createServerSupabaseClient();
@@ -22,8 +28,10 @@ export async function createEmoticonSet(
 
   const emoticonSetId = crypto.randomUUID();
 
-  const emoticonRequest: EmoticonSet = {
-    ...emoticonSet,
+  const { representative_image, ...emoticonSetFields } = emoticonSet;
+
+  const emoticonRequest = {
+    ...emoticonSetFields,
     id: emoticonSetId,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -44,14 +52,35 @@ export async function createEmoticonSet(
     throw new Error(`이모티콘 세트 생성에 실패했습니다: ${error.message}`);
   }
 
+  const { id, ...representativeImageWithoutId } = representative_image;
+
+  const isRepresentativeInImageUrls = imageUrls.some(
+    (imageUrl) =>
+      imageUrl.imageUrl === emoticonSet.representative_image.image_url,
+  );
+
+  const allImageUrls = isRepresentativeInImageUrls
+    ? imageUrls
+    : [
+        ...imageUrls,
+        {
+          imageUrl: emoticonSet.representative_image.image_url,
+          imageOrder: emoticonSet.representative_image.image_order,
+          blurUrl: emoticonSet.representative_image.blur_url,
+        },
+      ];
+
   const { data: emoticonImages, error: emoticonImagesError } = await supabase
     .from('emoticon_images')
     .insert(
-      imageUrls.map(
+      allImageUrls.map(
         (imageUrl): EmoticonImageRequest => ({
           set_id: emoticonSetId,
           image_url: imageUrl.imageUrl,
           image_order: imageUrl.imageOrder,
+          blur_url: imageUrl.blurUrl ?? null,
+          is_representative:
+            imageUrl.imageUrl === emoticonSet.representative_image.image_url,
         }),
       ),
     )
@@ -64,16 +93,25 @@ export async function createEmoticonSet(
     );
   }
 
+  const representativeImage = emoticonImages.find(
+    (img) => img.is_representative,
+  );
+
+  if (!representativeImage) {
+    throw new Error('대표 이미지를 찾을 수 없습니다.');
+  }
+
   return {
     success: true,
     data: {
       emoticonSet: data,
       emoticonImages: emoticonImages,
+      representativeImage: representativeImage,
     },
   };
 }
 
-export async function getEmoticonSets({
+export async function getEmoticonSetsWithRepresentativeImage({
   limit = 10,
   offset = 0,
   param = {
@@ -82,44 +120,114 @@ export async function getEmoticonSets({
     userId: '',
     title: '',
   },
-}: GetEmoticonSetsRequest): Promise<GetEmoticonSetsResult> {
+}: GetEmoticonSetsRequest): Promise<GetEmoticonSetsWithRepresentativeImageResult> {
   const supabase = await createServerSupabaseClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const currentUserId = user?.id;
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const currentUserId = user?.id;
 
-  const { data, error } = await supabase.rpc(
-    'get_emoticon_sets_with_like_status',
-    {
-      p_limit: limit,
-      p_offset: offset,
-      p_order_by: param.orderBy,
-      p_order_direction: param.order,
-      p_user_id_filter: param.userId || undefined,
-      p_title_filter: param.title || undefined,
-      p_current_user_id: currentUserId || undefined,
-    },
-  );
+    let query = supabase.from('emoticon_sets').select(
+      `
+        *,
+        emoticon_images!inner (*),
+        likes!left(count)
+      `,
+      { count: 'exact' },
+    );
 
-  if (error) {
-    console.error('Emoticon sets 조회 에러:', error);
-    throw new Error(`이모티콘 세트 조회에 실패했습니다: ${error.message}`);
+    // 필터 적용
+    if (param.userId) {
+      query = query.eq('user_id', param.userId);
+    }
+    if (param.title) {
+      query = query.ilike('title', `%${param.title}%`);
+    }
+
+    // 정렬 적용
+    const orderColumn =
+      param.orderBy === 'created_at'
+        ? 'created_at'
+        : param.orderBy === 'likes_count'
+          ? 'likes_count'
+          : param.orderBy === 'views_count'
+            ? 'views_count'
+            : 'created_at';
+
+    query = query.order(orderColumn, {
+      ascending: param.order === 'asc',
+    });
+
+    // 페이지네이션
+    query = query.range(offset, offset + limit - 1);
+
+    const { data: sets, error, count } = await query;
+
+    if (error) {
+      console.error('Query error:', error);
+      throw new Error(`이모티콘 세트 조회에 실패했습니다: ${error.message}`);
+    }
+
+    if (sets && sets.length > 0) {
+      const setIds = sets.map((s) => s.id);
+
+      let likedSets: string[] = [];
+      if (currentUserId) {
+        const { data: likes } = await supabase
+          .from('likes')
+          .select('set_id')
+          .in('set_id', setIds)
+          .eq('user_id', currentUserId);
+
+        likedSets =
+          likes
+            ?.map((l) => l.set_id)
+            .filter((id): id is string => id !== null) || [];
+      }
+
+      const formattedSets = sets.map((set) => {
+        const representativeImage =
+          set.emoticon_images?.find((img: any) => img.is_representative) ||
+          set.emoticon_images?.[0];
+
+        const { emoticon_images, ...setWithoutImages } = set;
+
+        return {
+          ...setWithoutImages,
+          representative_image: representativeImage,
+          is_liked: likedSets.includes(set.id),
+          likes_count: set.likes?.[0]?.count || 0,
+        };
+      });
+
+      return {
+        success: true,
+        data: {
+          data: formattedSets,
+          hasMore: offset + limit < (count || 0),
+          total: count || 0,
+          currentPage: Math.floor(offset / limit) + 1,
+          totalPages: Math.ceil((count || 0) / limit),
+        },
+      };
+    }
+
+    return {
+      success: true,
+      data: {
+        data: [],
+        hasMore: false,
+        total: 0,
+        currentPage: 1,
+        totalPages: 0,
+      },
+    };
+  } catch (error) {
+    console.error('getEmoticonSets error:', error);
+    throw error;
   }
-
-  const result = data?.[0] || { sets: [], total_count: 0 };
-
-  return {
-    success: true,
-    data: {
-      data: (result.sets as EmoticonSet[]) || [],
-      hasMore: offset + limit < (result.total_count || 0),
-      total: result.total_count || 0,
-      currentPage: Math.floor(offset / limit) + 1,
-      totalPages: Math.ceil((result.total_count || 0) / limit),
-    },
-  };
 }
 
 export async function getLikedEmoticonSets({
@@ -131,7 +239,7 @@ export async function getLikedEmoticonSets({
     userId: '',
     title: '',
   },
-}: GetEmoticonSetsRequest): Promise<GetEmoticonSetsResult> {
+}: GetEmoticonSetsRequest): Promise<GetEmoticonSetsWithRepresentativeImageResult> {
   const supabase = await createServerSupabaseClient();
 
   if (!param.userId) {
@@ -147,37 +255,100 @@ export async function getLikedEmoticonSets({
     };
   }
 
-  const { data, error } = await supabase.rpc(
-    'get_liked_emoticon_sets_optimized',
-    {
-      p_user_id: param.userId,
-      p_limit: limit,
-      p_offset: offset,
-      p_order_by: param.orderBy,
-      p_order_direction: param.order,
-      p_title_filter: param.title || undefined,
-    },
-  );
+  try {
+    const { data: likedSets } = await supabase
+      .from('likes')
+      .select('set_id')
+      .eq('user_id', param.userId);
 
-  if (error) {
-    console.error('Liked emoticon sets 조회 에러:', error);
-    throw new Error(
-      `좋아요한 이모티콘 세트 조회에 실패했습니다: ${error.message}`,
-    );
+    if (!likedSets || likedSets.length === 0) {
+      return {
+        success: true,
+        data: {
+          data: [],
+          hasMore: false,
+          total: 0,
+          currentPage: 1,
+          totalPages: 0,
+        },
+      };
+    }
+
+    const setIds = likedSets.map((l) => l.set_id).filter((id) => id !== null);
+
+    let query = supabase
+      .from('emoticon_sets')
+      .select(
+        `
+        *,
+        emoticon_images!inner (*),
+        likes!left(count)
+      `,
+        { count: 'exact' },
+      )
+      .in('id', setIds);
+
+    if (param.title) {
+      query = query.ilike('title', `%${param.title}%`);
+    }
+
+    query = query.order(param.orderBy, {
+      ascending: param.order === 'asc',
+    });
+
+    query = query.range(offset, offset + limit - 1);
+
+    const { data: sets, error, count } = await query;
+
+    if (error) {
+      console.error('Query error:', error);
+      throw new Error(
+        `좋아요한 이모티콘 세트 조회에 실패했습니다: ${error.message}`,
+      );
+    }
+
+    if (sets && sets.length > 0) {
+      const formattedSets = sets.map((set) => {
+        const representativeImage =
+          set.emoticon_images?.find((img: any) => img.is_representative) ||
+          set.emoticon_images?.[0];
+
+        const { emoticon_images, ...setWithoutImages } = set;
+
+        return {
+          ...setWithoutImages,
+          representative_image: representativeImage,
+          is_liked: true,
+          likes_count: set.likes?.[0]?.count || 0,
+        };
+      });
+
+      return {
+        success: true,
+        data: {
+          data: formattedSets as unknown as EmoticonSetWithRepresentativeImage[],
+          hasMore: offset + limit < (count || 0),
+          total: count || 0,
+          currentPage: Math.floor(offset / limit) + 1,
+          totalPages: Math.ceil((count || 0) / limit),
+        },
+      };
+    }
+
+    return {
+      success: true,
+      data: {
+        data: [],
+        hasMore: false,
+        total: 0,
+        currentPage: 1,
+        totalPages: 0,
+      },
+    };
+  } catch (error) {
+    console.error('getLikedEmoticonSets error:', error);
+    throw error;
   }
-
-  const result = data?.[0] || { sets: [], total_count: 0 };
-
-  return {
-    success: true,
-    data: {
-      data: (result.sets as EmoticonSet[]) || [],
-      hasMore: offset + limit < (result.total_count || 0),
-      total: result.total_count || 0,
-      currentPage: Math.floor(offset / limit) + 1,
-      totalPages: Math.ceil((result.total_count || 0) / limit),
-    },
-  };
 }
 
 export async function getEmoticonSetDetail(
@@ -195,7 +366,7 @@ export async function getEmoticonSetDetail(
     .select(
       `
       *,
-      emoticon_images(
+      emoticon_images!emoticon_images_set_id_fkey(
         *,
         likes:likes(count),
         comments:comments(count)
@@ -233,6 +404,11 @@ export async function getEmoticonSetDetail(
     isLiked = !!likeData;
   }
 
+  const representativeImage =
+    (data.emoticon_images || []).find(
+      (img: EmoticonImage) => img.is_representative,
+    ) || data.emoticon_images?.[0];
+
   const emoticon_images = (data.emoticon_images || []).map((image) => ({
     ...image,
     likes_count: image.likes?.[0]?.count ?? 0,
@@ -259,7 +435,176 @@ export async function getEmoticonSetDetail(
 
   const formattedData: EmoticonSetDetail = {
     ...data,
-    emoticon_images,
+    representative_image: representativeImage,
+    emoticon_images: data.emoticon_images.filter(
+      (image) => image.id !== representativeImage.id,
+    ),
+    is_liked: isLiked,
+    comments: (data.comments || []).map((comment) => {
+      const parentComment = comment.parent_comment_id
+        ? parentCommentsMap.get(comment.parent_comment_id)
+        : null;
+
+      return {
+        ...comment,
+        profile: comment.profile || {
+          id: '',
+          nickname: '',
+          avatar_url: null,
+          provider: '',
+          created_at: null,
+          updated_at: null,
+          description: '',
+        },
+        comment_reactions: comment.comment_reactions || [],
+        parent: parentComment
+          ? {
+              id: parentComment.id,
+              profile: parentComment.profile || {
+                id: '',
+                nickname: '',
+                avatar_url: null,
+                provider: '',
+                created_at: null,
+                updated_at: null,
+              },
+            }
+          : undefined,
+      };
+    }),
+    likes: data.likes?.[0]?.count ?? 0,
+    views: data.views?.[0]?.count ?? 0,
+    comments_count: data.comments.length,
+  };
+
+  return formattedData;
+}
+
+export async function checkSecretNumber(
+  id: string,
+  password: string,
+): Promise<boolean> {
+  const supabase = await createBrowserSupabaseClient();
+
+  const { data, error } = await supabase
+    .from('emoticon_sets')
+    .select('*')
+    .eq('id', id)
+    .eq('password_hash', password)
+    .single();
+
+  if (error) {
+    console.error('Secret number 조회 에러:', error);
+    throw new Error(`비밀번호 조회에 실패했습니다: ${error.message}`);
+  }
+
+  return !!data;
+}
+
+export async function getEmoticonSetIsPrivate(id: string): Promise<boolean> {
+  const supabase = await createServerSupabaseClient();
+
+  const { data, error } = await supabase
+    .from('emoticon_sets')
+    .select('is_private')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error('Emoticon set 조회 에러:', error);
+    throw new Error(`이모티콘 세트 조회에 실패했습니다: ${error.message}`);
+  }
+
+  return data?.is_private ?? false;
+}
+
+export async function getEmoticonSetForLock(
+  id: string,
+): Promise<EmoticonSetDetail> {
+  const supabase = await createServerSupabaseClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const currentUserId = user?.id;
+
+  const { data, error } = await supabase
+    .from('emoticon_sets')
+    .select(
+      `
+      *,
+      emoticon_images!emoticon_images_set_id_fkey(
+        *,
+        likes:likes(count),
+        comments:comments(count)
+      ),
+      likes(count),
+      views(count),
+      comments(
+        *,
+        profile:profiles!comments_user_id_fkey(*),
+        comment_reactions(*)
+      )
+      `,
+    )
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error('Emoticon set 조회 에러:', error);
+    throw new Error(`이모티콘 세트 조회에 실패했습니다: ${error.message}`);
+  }
+
+  if (!data) {
+    throw new Error('이모티콘 세트를 찾을 수 없습니다.');
+  }
+
+  let isLiked = false;
+  if (currentUserId) {
+    const { data: likeData } = await supabase
+      .from('likes')
+      .select('id')
+      .eq('user_id', currentUserId)
+      .eq('set_id', id)
+      .single();
+
+    isLiked = !!likeData;
+  }
+
+  // 대표 이미지 찾기
+  const representativeImage =
+    (data.emoticon_images || []).find(
+      (img: EmoticonImage) => img.is_representative,
+    ) || data.emoticon_images?.[0];
+
+  const parentCommentIds = (data.comments || [])
+    .filter((comment) => comment.parent_comment_id)
+    .map((comment) => comment.parent_comment_id)
+    .filter((id): id is string => id !== null);
+
+  let parentCommentsMap = new Map();
+
+  if (parentCommentIds.length > 0) {
+    const { data: parentComments } = await supabase
+      .from('comments')
+      .select('id, profile:profiles!comments_user_id_fkey(*)')
+      .in('id', parentCommentIds);
+
+    if (parentComments) {
+      parentCommentsMap = new Map(parentComments.map((pc) => [pc.id, pc]));
+    }
+  }
+
+  const formattedData: EmoticonSetDetail = {
+    ...data,
+    representative_image: representativeImage,
+    emoticon_images: (data.emoticon_images || []).map((image) => ({
+      ...image,
+      image_url: image.blur_url || '',
+      blur_url: null,
+      likes_count: image.likes?.[0]?.count ?? 0,
+      comments_count: image.comments?.[0]?.count ?? 0,
+    })),
     is_liked: isLiked,
     comments: (data.comments || []).map((comment) => {
       const parentComment = comment.parent_comment_id

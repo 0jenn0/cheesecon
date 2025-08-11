@@ -1,8 +1,8 @@
 import { SortOrder } from '@/shared/types';
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import {
-  GetEmoticonSetsResult,
-  getEmoticonSets,
+  GetEmoticonSetsWithRepresentativeImageResult,
+  getEmoticonSetsWithRepresentativeImage,
   getLikedEmoticonSets,
 } from '../api';
 import { EmoticonSetOrderBy } from '../type';
@@ -22,13 +22,15 @@ export interface EmoticonSetPaginationQueryParams {
 
 export const useEmoticonSetPaginationQuery = (
   params?: EmoticonSetPaginationQueryParams,
-  options?: UseQueryOptions<GetEmoticonSetsResult>,
+  options?: UseQueryOptions<GetEmoticonSetsWithRepresentativeImageResult>,
 ) => {
   const page = params?.page || 1;
   const limit = params?.limit || LIMIT;
   const offset = (page - 1) * limit;
 
-  const apiFunction = params?.isLiked ? getLikedEmoticonSets : getEmoticonSets;
+  const apiFunction = params?.isLiked
+    ? getLikedEmoticonSets
+    : getEmoticonSetsWithRepresentativeImage;
 
   return useQuery({
     queryKey: EMOTICON_SET_QUERY_KEY.pagination(

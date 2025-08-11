@@ -1,6 +1,9 @@
 import { SortOrder } from '@/shared/types';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { GetEmoticonSetsResult, getEmoticonSets } from '../api';
+import {
+  GetEmoticonSetsWithRepresentativeImageResult,
+  getEmoticonSetsWithRepresentativeImage,
+} from '../api';
 import { EmoticonSetOrderBy } from '../type';
 import { EMOTICON_SET_QUERY_KEY } from './query-key';
 
@@ -16,7 +19,7 @@ export interface EmoticonSetInfinityQueryParams {
 export const useEmoticonSetInfinityQuery = (
   params?: EmoticonSetInfinityQueryParams,
   options?: {
-    onSuccess?: (data: GetEmoticonSetsResult) => void;
+    onSuccess?: (data: GetEmoticonSetsWithRepresentativeImageResult) => void;
     onError?: (error: Error) => void;
   },
 ) => {
@@ -26,7 +29,7 @@ export const useEmoticonSetInfinityQuery = (
       limit: params?.limit || LIMIT,
     }),
     queryFn: ({ pageParam = 0 }) =>
-      getEmoticonSets({
+      getEmoticonSetsWithRepresentativeImage({
         offset: pageParam,
         limit: params?.limit || LIMIT,
         param: {

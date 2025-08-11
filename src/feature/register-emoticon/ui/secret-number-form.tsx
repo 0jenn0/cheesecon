@@ -3,19 +3,22 @@ import { Checkbox, TextField } from '@/shared/ui/input';
 import useEmoticonRegister from '../model/hook';
 
 export default function SecretNumberForm() {
-  const { emoticonSet, setEmoticonSet } = useEmoticonRegister();
+  const { emoticonSetWithRepresentativeImage, setEmoticonSet } =
+    useEmoticonRegister();
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmoticonSet({
-      ...emoticonSet,
+      ...emoticonSetWithRepresentativeImage,
       is_private: e.target.checked,
-      password_hash: e.target.checked ? emoticonSet.password_hash : null,
+      password_hash: e.target.checked
+        ? emoticonSetWithRepresentativeImage.password_hash
+        : null,
     });
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmoticonSet({
-      ...emoticonSet,
+      ...emoticonSetWithRepresentativeImage,
       password_hash: e.target.value || null,
     });
   };
@@ -25,9 +28,13 @@ export default function SecretNumberForm() {
       <div className='flex flex-col gap-12'>
         <div className='flex w-full items-center gap-12'>
           <Checkbox
-            checked={emoticonSet.is_private ?? false}
+            checked={emoticonSetWithRepresentativeImage.is_private ?? false}
             onChange={handleCheckboxChange}
-            status={emoticonSet.is_private ? 'checked' : 'unchecked'}
+            status={
+              emoticonSetWithRepresentativeImage.is_private
+                ? 'checked'
+                : 'unchecked'
+            }
             id='secretNumberCheck'
           />
           <div className='flex items-center gap-4'>
@@ -47,7 +54,7 @@ export default function SecretNumberForm() {
         </span>
       </div>
 
-      {emoticonSet.is_private && (
+      {emoticonSetWithRepresentativeImage.is_private && (
         <div className='flex flex-col gap-16'>
           <TextField
             name='secretNumber'

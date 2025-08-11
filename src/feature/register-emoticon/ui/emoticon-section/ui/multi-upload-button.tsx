@@ -61,6 +61,7 @@ export default function MultiUploadButton() {
       try {
         for (const [index, file] of filesToUpload.entries()) {
           const formData = new FormData();
+
           formData.append('file', file);
 
           const targetSlot = emptySlots[index];
@@ -71,12 +72,14 @@ export default function MultiUploadButton() {
 
             handleEmoticonItem(imageNumber, 'UPLOAD', {
               imageUrl: result.url,
+              blurUrl: result.blurUrl,
             });
 
             handleSetImageUrl([
               {
                 imageUrl: result.url,
                 imageOrder: imageNumber,
+                blurUrl: result.blurUrl,
               },
             ]);
 

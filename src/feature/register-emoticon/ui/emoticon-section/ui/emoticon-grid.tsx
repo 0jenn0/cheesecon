@@ -9,9 +9,9 @@ export default function EmoticonGrid() {
   const { items, setChangeStack, handleEmoticonItem } = useEmoticonContext();
   const { handleSetImageUrl } = useEmoticonRegister();
   const handleImageUpload = useCallback(
-    (imageNumber: number, imageUrl: string) => {
-      handleEmoticonItem(imageNumber, 'UPLOAD', { imageUrl });
-      handleSetImageUrl([{ imageUrl, imageOrder: imageNumber }]);
+    (imageNumber: number, imageUrl: string, blurUrl: string | null) => {
+      handleEmoticonItem(imageNumber, 'UPLOAD', { imageUrl, blurUrl });
+      handleSetImageUrl([{ imageUrl, imageOrder: imageNumber, blurUrl }]);
     },
     [handleEmoticonItem, handleSetImageUrl],
   );

@@ -6,10 +6,13 @@ import { ComponentPropsWithRef } from 'react';
 import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
 import { ICON_NAMES } from '@/shared/ui/icon/config';
-import { EmoticonSet, EmoticonSetDetail } from '@/entity/emoticon-set/type';
+import {
+  EmoticonSetDetail,
+  EmoticonSetWithRepresentativeImage,
+} from '@/entity/emoticon-set/type';
 
 interface EmoticonViewItemProps extends ComponentPropsWithRef<'section'> {
-  item: EmoticonSetDetail | EmoticonSet;
+  item: EmoticonSetDetail | EmoticonSetWithRepresentativeImage;
   index?: number;
   hideLikes?: boolean;
 }
@@ -35,7 +38,13 @@ function EmoticonViewItem({
 
 export default EmoticonViewItem;
 
-function Thumbnail({ index, item }: { index?: number; item: EmoticonSet }) {
+function Thumbnail({
+  index,
+  item,
+}: {
+  index?: number;
+  item: EmoticonSetWithRepresentativeImage;
+}) {
   return (
     <div className='border-radius-lg relative flex gap-8 overflow-hidden font-semibold'>
       <div className='flex flex-col justify-between'>
@@ -52,7 +61,7 @@ function Thumbnail({ index, item }: { index?: number; item: EmoticonSet }) {
         </div>
       </div>
       <Image
-        src={item.representative_image_url}
+        src={item.representative_image.image_url}
         alt={item.title}
         className='border-radius-lg border-ghost tablet:w-[96px] tablet:h-[96px] h-[80px] w-[80px] border object-cover transition-all duration-200'
         width={80}
@@ -62,7 +71,11 @@ function Thumbnail({ index, item }: { index?: number; item: EmoticonSet }) {
   );
 }
 
-function EmoticonType({ type }: { type: EmoticonSet['type'] }) {
+function EmoticonType({
+  type,
+}: {
+  type: EmoticonSetWithRepresentativeImage['type'];
+}) {
   return (
     <div
       className={cn(
@@ -79,7 +92,11 @@ function EmoticonType({ type }: { type: EmoticonSet['type'] }) {
   );
 }
 
-function EmoticonPlatform({ platform }: { platform: EmoticonSet['platform'] }) {
+function EmoticonPlatform({
+  platform,
+}: {
+  platform: EmoticonSetWithRepresentativeImage['platform'];
+}) {
   return (
     <div className='flex h-[24px] w-[24px] items-center justify-center'>
       <Icon
@@ -95,7 +112,7 @@ function Content({
   item,
   hideLikes,
 }: {
-  item: EmoticonSet;
+  item: EmoticonSetWithRepresentativeImage;
   hideLikes?: boolean;
 }) {
   return (

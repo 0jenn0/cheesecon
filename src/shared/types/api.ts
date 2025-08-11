@@ -32,4 +32,5 @@ export type ApiResult<T> =
 export type ImageUrlWithOrder = {
   imageUrl: string;
   imageOrder: number;
+  blurUrl?: string | null;
 };

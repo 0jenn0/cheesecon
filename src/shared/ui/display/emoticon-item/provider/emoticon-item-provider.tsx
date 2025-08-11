@@ -5,6 +5,7 @@ import { PropsWithChildren, createContext, useContext } from 'react';
 export interface EmoticonItemContextType {
   imageNumber: number;
   imageUrl: string;
+  blurUrl: string | null;
   commentsCount: number;
   likesCount: number;
 
@@ -19,6 +20,7 @@ export interface EmoticonItemContextType {
 export const emoticonItemContext = createContext<EmoticonItemContextType>({
   imageNumber: 0,
   imageUrl: '',
+  blurUrl: null,
   commentsCount: 0,
   likesCount: 0,
 
@@ -33,6 +35,7 @@ export const emoticonItemContext = createContext<EmoticonItemContextType>({
 export function EmoticonItemProvider({
   imageNumber,
   imageUrl = '',
+  blurUrl = null,
   commentsCount = 0,
   likesCount = 0,
   showCheckbox = false,
@@ -43,6 +46,7 @@ export function EmoticonItemProvider({
   children,
 }: PropsWithChildren<{
   imageNumber: number;
+  blurUrl: string | null;
   commentsCount?: number;
   likesCount?: number;
   showCheckbox?: boolean;
@@ -57,6 +61,7 @@ export function EmoticonItemProvider({
       value={{
         imageNumber,
         imageUrl,
+        blurUrl,
         commentsCount,
         likesCount,
 
