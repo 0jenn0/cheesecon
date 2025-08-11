@@ -28,8 +28,7 @@ export async function createEmoticonSet(
 
   const emoticonSetId = crypto.randomUUID();
 
-  const { representative_image, password_hash, ...emoticonSetFields } =
-    emoticonSet;
+  const { password_hash, ...emoticonSetFields } = emoticonSet;
 
   let hashedPassword: string | null = null;
   if (password_hash && password_hash.trim() !== '') {
@@ -58,8 +57,6 @@ export async function createEmoticonSet(
     console.error('Emoticon set 생성 에러:', error);
     throw new Error(`이모티콘 세트 생성에 실패했습니다: ${error.message}`);
   }
-
-  const { id: _id } = representative_image;
 
   const isRepresentativeInImageUrls = imageUrls.some(
     (imageUrl) =>
@@ -199,7 +196,7 @@ export async function getEmoticonSetsWithRepresentativeImage({
           set.emoticon_images?.find((img) => img.is_representative === true) ||
           set.emoticon_images?.[0];
 
-        const { emoticon_images: _emoticon_images, ...setWithoutImages } = set;
+        const { ...setWithoutImages } = set;
 
         return {
           ...setWithoutImages,
@@ -320,7 +317,7 @@ export async function getLikedEmoticonSets({
           set.emoticon_images?.find((img) => img.is_representative === true) ||
           set.emoticon_images?.[0];
 
-        const { emoticon_images: _emoticon_images, ...setWithoutImages } = set;
+        const { ...setWithoutImages } = set;
 
         return {
           ...setWithoutImages,

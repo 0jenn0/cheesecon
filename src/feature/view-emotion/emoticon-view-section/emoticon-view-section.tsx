@@ -1,10 +1,10 @@
 import { ComponentProps, Ref, useEffect } from 'react';
 import { useIntersectionObserver } from '@/shared/lib';
-import { EmoticonSet } from '@/entity/emoticon-set/type';
+import { EmoticonSetWithRepresentativeImage } from '@/entity/emoticon-set/type';
 import { EmoticonViewItem } from './ui';
 
 export interface EmoticonViewSectionProps extends ComponentProps<'section'> {
-  items: EmoticonSet[];
+  items: EmoticonSetWithRepresentativeImage[];
   title: string;
   fetchNextPage: () => void;
   hasNextPage: boolean;

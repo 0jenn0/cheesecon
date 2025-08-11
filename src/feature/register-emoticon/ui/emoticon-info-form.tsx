@@ -1,7 +1,6 @@
 'use client';
 
 import { SelectField, TextAreaField, TextField } from '@/shared/ui/input';
-import { EmoticonSetWithRepresentativeImage } from '@/entity/emoticon-set';
 import useEmoticonRegister from '../model/hook';
 
 export default function EmoticonInfoForm() {

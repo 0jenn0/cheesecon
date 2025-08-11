@@ -1,11 +1,12 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 import { Icon } from '@/shared/ui/display';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { LoginButton } from '@/feature/auth/ui';
 
-export default function LoginPage() {
+function LoginContent() {
   const { signInWithProvider } = useAuth();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get('redirect') || '/';
@@ -35,5 +36,13 @@ export default function LoginPage() {
         <LoginButton provider='google' onClick={() => handleSignIn('google')} />
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>로딩 중...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }
