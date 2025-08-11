@@ -22,7 +22,6 @@ export interface MenuListProps extends ComponentPropsWithRef<'ul'> {
 export default function MenuList({ menus, onClick, ...props }: MenuListProps) {
   const { user, isLoading, signOut } = useAuth();
   const router = useRouter();
-
   const isLoggedIn = !isLoading && user !== null && user.email !== '';
 
   const handleSignOut = async () => {
