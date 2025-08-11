@@ -35,4 +35,6 @@ export const EMOTICON_SET_QUERY_KEY: EmoticonSetQueryKey = {
       param.isLiked,
     ] as const,
   byId: (id: string) => [...EMOTICON_SET_QUERY_KEY.all, id] as const,
+  checkSecretNumber: (id: string, password: string) =>
+    [...EMOTICON_SET_QUERY_KEY.all, 'checkSecretNumber', id, password] as const,
 };

@@ -34,6 +34,10 @@ export type EmoticonSetQueryKey = {
     boolean | undefined,
   ];
   byId: (id: string) => readonly ['emoticon-sets', string];
+  checkSecretNumber: (
+    id: string,
+    password: string,
+  ) => readonly ['emoticon-sets', 'checkSecretNumber', string, string];
 };
 
 export type EmoticonSetQueryResult = BaseApiResponse<EmoticonSet>;
