@@ -213,7 +213,6 @@ export type Database = {
           id: string
           is_private: boolean | null
           likes_count: number | null
-          password_hash: string | null
           platform: string
           title: string
           type: string
@@ -229,7 +228,6 @@ export type Database = {
           id?: string
           is_private?: boolean | null
           likes_count?: number | null
-          password_hash?: string | null
           platform: string
           title: string
           type: string
@@ -245,7 +243,6 @@ export type Database = {
           id?: string
           is_private?: boolean | null
           likes_count?: number | null
-          password_hash?: string | null
           platform?: string
           title?: string
           type?: string
