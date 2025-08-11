@@ -3,9 +3,9 @@ module.exports = {
   ci: {
     collect: {
       url: [
-        'http://localhost:3000/emoticon/255d2134-830c-48ed-aa05-cc6e019445aa/fe19f6af-6851-4eb1-956b-ddee439871c1',
+        'http://localhost:3000/emoticon/8ee0d74a-5e41-4234-b470-1434f91a07cc?imageId=e72aa680-653b-47ac-adba-8a97d07269dc',
       ],
-      numberOfRuns: 1,
+      numberOfRuns: 2,
       settings: {
         chromeFlags: [
           '--no-sandbox',
