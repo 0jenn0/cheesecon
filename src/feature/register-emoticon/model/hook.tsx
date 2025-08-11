@@ -1,9 +1,6 @@
 import { PropsWithChildren, createContext, useContext, useState } from 'react';
 import { ImageUrlWithOrder } from '@/shared/types';
-import {
-  EmoticonSet,
-  EmoticonSetWithRepresentativeImage,
-} from '@/entity/emoticon-set/type';
+import { EmoticonSetWithRepresentativeImage } from '@/entity/emoticon-set/type';
 import { validateEmoticonSet, validateImageUrls } from '../lib/validation';
 
 interface ValidationErrors {

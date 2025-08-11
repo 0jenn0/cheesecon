@@ -2,7 +2,7 @@
 
 import bcrypt from 'bcryptjs';
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
-import { ApiResult, ImageUrlWithOrder } from '@/shared/types';
+import { ImageUrlWithOrder } from '@/shared/types';
 import {
   EmoticonImage,
   EmoticonImageRequest,
@@ -59,7 +59,7 @@ export async function createEmoticonSet(
     throw new Error(`이모티콘 세트 생성에 실패했습니다: ${error.message}`);
   }
 
-  const { id, ...representativeImageWithoutId } = representative_image;
+  const { id: _id } = representative_image;
 
   const isRepresentativeInImageUrls = imageUrls.some(
     (imageUrl) =>
@@ -196,10 +196,10 @@ export async function getEmoticonSetsWithRepresentativeImage({
 
       const formattedSets = sets.map((set) => {
         const representativeImage =
-          set.emoticon_images?.find((img: any) => img.is_representative) ||
+          set.emoticon_images?.find((img) => img.is_representative === true) ||
           set.emoticon_images?.[0];
 
-        const { emoticon_images, ...setWithoutImages } = set;
+        const { emoticon_images: _emoticon_images, ...setWithoutImages } = set;
 
         return {
           ...setWithoutImages,
@@ -317,10 +317,10 @@ export async function getLikedEmoticonSets({
     if (sets && sets.length > 0) {
       const formattedSets = sets.map((set) => {
         const representativeImage =
-          set.emoticon_images?.find((img: any) => img.is_representative) ||
+          set.emoticon_images?.find((img) => img.is_representative === true) ||
           set.emoticon_images?.[0];
 
-        const { emoticon_images, ...setWithoutImages } = set;
+        const { emoticon_images: _emoticon_images, ...setWithoutImages } = set;
 
         return {
           ...setWithoutImages,
@@ -415,12 +415,6 @@ export async function getEmoticonSetDetail(
     (data.emoticon_images || []).find(
       (img: EmoticonImage) => img.is_representative,
     ) || data.emoticon_images?.[0];
-
-  const emoticon_images = (data.emoticon_images || []).map((image) => ({
-    ...image,
-    likes_count: image.likes?.[0]?.count ?? 0,
-    comments_count: image.comments?.[0]?.count ?? 0,
-  }));
 
   const parentCommentIds = (data.comments || [])
     .filter((comment) => comment.parent_comment_id)

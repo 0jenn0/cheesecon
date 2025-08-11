@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { ComponentPropsWithRef, PropsWithChildren, useState } from 'react';
+import { ComponentPropsWithRef, PropsWithChildren } from 'react';
 import { VariantProps, cva } from 'class-variance-authority';
 import { cn } from '@/shared/lib';
 import useEmoticonContext from '@/feature/register-emoticon/ui/emoticon-section/provider/emotion-provider';

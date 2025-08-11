@@ -47,8 +47,14 @@ export default function SecretNumberModal({ id }: { id: string }) {
         if (res?.ok === false) {
           setPasswordError(res.message ?? '비밀번호 확인에 실패했습니다.');
         }
-      } catch (err: any) {
-        if (err?.digest === 'NEXT_REDIRECT') return;
+      } catch (err: unknown) {
+        if (
+          err &&
+          typeof err === 'object' &&
+          'digest' in err &&
+          err.digest === 'NEXT_REDIRECT'
+        )
+          return;
         console.error(err);
         setPasswordError('알 수 없는 오류가 발생했습니다.');
       }

@@ -1,7 +1,6 @@
 'use client';
 
 import { createContext, useCallback, useContext, useState } from 'react';
-import { EMOTICON_CONFIG } from '@/feature/register-emoticon/config/emoticon-config';
 
 export interface EmoticonItem {
   imageNumber: number;
