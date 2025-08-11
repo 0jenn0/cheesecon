@@ -4,14 +4,11 @@ import { useState } from 'react';
 import { Icon } from '@/shared/ui/display';
 import { Modal } from '@/shared/ui/feedback';
 import { Button, TextField } from '@/shared/ui/input';
-import { checkSecretNumber } from '@/entity/emoticon-set';
 
 export default function SecretNumberModal({ id }: { id: string }) {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
 
-  const handleCheckSecretNumber = async () => {
-    const isSecretNumber = await checkSecretNumber(id, password);
   };
 
   return (
