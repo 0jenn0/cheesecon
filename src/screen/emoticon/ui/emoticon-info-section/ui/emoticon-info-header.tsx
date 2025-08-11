@@ -6,6 +6,7 @@ import { Icon } from '@/shared/ui/display';
 import { useModal } from '@/shared/ui/feedback';
 import { IconButton } from '@/shared/ui/input';
 import { EmoticonSetDetail } from '@/entity/emoticon-set/type';
+import { useAuth } from '@/feature/auth/provider/auth-provider';
 import LikeButton from '@/feature/like/ui/like-button/like-button';
 import { SecretIcon } from '.';
 
@@ -14,6 +15,7 @@ export default function EmoticonInfoHeader({
 }: {
   emoticonSetDetail: EmoticonSetDetail;
 }) {
+  const { session } = useAuth();
   const {
     author_name,
     representative_image,
@@ -24,9 +26,13 @@ export default function EmoticonInfoHeader({
   } = emoticonSetDetail;
   const { openModal } = useModal();
 
+  const isAuthor = emoticonSetDetail.user_id === session?.user.id;
+  const canShare = (is_private && isAuthor) || !is_private;
+
   const handleShareLink = () => {
     openModal('shareLink', {
       emoticonSetId: emoticonSetDetail.id,
+      isPrivate: is_private ?? false,
     });
   };
 
@@ -78,13 +84,24 @@ export default function EmoticonInfoHeader({
             </div>
           </div>
           <div className='flex items-center gap-8'>
-            <IconButton
-              variant='secondary'
-              icon='link'
-              iconSize={20}
-              onClick={handleShareLink}
-            />
-            <IconButton variant='secondary' icon='edit-2' iconSize={20} />
+            {canShare ? (
+              <IconButton
+                variant='secondary'
+                icon='link'
+                iconSize={20}
+                onClick={handleShareLink}
+              />
+            ) : (
+              <div className='h-[36px] w-[36px]' />
+            )}
+            {isAuthor && (
+              <IconButton
+                variant='secondary'
+                icon='edit-2'
+                iconSize={20}
+                // onClick={handleEdit} TODO: 수정 기능 추가
+              />
+            )}
           </div>
         </div>
       </div>
