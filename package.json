@@ -28,6 +28,7 @@
     "react-dom": "^19.0.0",
     "react-dropzone": "^14.3.8",
     "react-scan": "^0.4.3",
+    "sharp": "^0.34.3",
     "zod": "^4.0.14",
     "zustand": "^5.0.7"
   },
