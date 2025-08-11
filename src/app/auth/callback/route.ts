@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
 
   let targetUrl = redirect || next;
 
-  if (redirect) {
+  if (redirect && !redirect.startsWith('http')) {
     targetUrl = redirect;
   }
 

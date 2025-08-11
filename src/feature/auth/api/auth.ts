@@ -19,8 +19,9 @@ export const authApi = {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-          queryParams: redirectUrl ? { redirect: redirectUrl } : undefined,
+          redirectTo: redirectUrl
+            ? `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectUrl)}`
+            : `${window.location.origin}/auth/callback`,
         },
       });
 
