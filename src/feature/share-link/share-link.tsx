@@ -1,13 +1,12 @@
 'use client';
 
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, IconButton } from '@/shared/ui/input';
 import { createShareLinkAction } from '@/app/(after)/emoticon/[id]/share/actions';
 
 export default function ShareLink({ id }: { id: string }) {
   const [isCopied, setIsCopied] = useState(false);
 
-  const [pending, start] = useTransition();
   const [url, setUrl] = useState<string | null>(null);
   const [err, setErr] = useState(false);
 

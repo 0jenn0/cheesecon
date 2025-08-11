@@ -62,13 +62,17 @@ export async function createShareLinkAction(id: string, hours = 24) {
 
   if (error || !data) return { ok: false, message: 'not found' };
   if (data.user_id !== user.id) return { ok: false, message: 'forbidden' };
+  const isPrivate = data.is_private;
 
   const exp = Date.now() + hours * 60 * 60 * 1000;
   const token = await signShareToken({ id, typ: 'share', ver: 1, exp });
 
   const origin =
     process.env.NEXT_PUBLIC_APP_ORIGIN || (await headers()).get('origin') || '';
-  const url = `${origin}/emoticon/access/${token}`;
+
+  const url = isPrivate
+    ? `${origin}/emoticon/access/${token}`
+    : `${origin}/emoticon/${id}`;
 
   return { ok: true, url, exp };
 }

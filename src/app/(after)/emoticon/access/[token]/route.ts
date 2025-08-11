@@ -6,6 +6,8 @@ export const dynamic = 'force-dynamic';
 const SECRET = process.env.EMOTICON_LOCK_SECRET || '';
 const ENC = new TextEncoder();
 
+const EXPIRED_ROUTE = '/emoticon/share-expired';
+
 function b64url(bytes: Uint8Array) {
   return Buffer.from(bytes)
     .toString('base64')
@@ -31,23 +33,33 @@ async function hmac(data: string) {
     await crypto.subtle.sign('HMAC', key, ENC.encode(data)),
   );
 }
+
 type SharePayload = { id: string; typ: 'share'; ver: 1; exp: number };
 type LockPayload = { id: string; sub: string; exp: number };
 
-async function verifyShareToken(token: string): Promise<SharePayload | null> {
+type ShareVerifyResult =
+  | { status: 'ok'; payload: SharePayload }
+  | { status: 'expired'; payload: SharePayload }
+  | { status: 'invalid' };
+
+async function verifyShareTokenDetailed(
+  token: string,
+): Promise<ShareVerifyResult> {
   try {
     const [body, sig] = token.split('.');
-    if (!body || !sig) return null;
+    if (!body || !sig) return { status: 'invalid' };
     const expected = b64url(await hmac(body));
-    if (sig !== expected) return null;
+    if (sig !== expected) return { status: 'invalid' };
     const payload = b64urlToJson(body) as SharePayload;
-    if (payload.typ !== 'share' || payload.ver !== 1) return null;
-    if (Date.now() > payload.exp) return null;
-    return payload;
+    if (payload.typ !== 'share' || payload.ver !== 1)
+      return { status: 'invalid' };
+    if (Date.now() > payload.exp) return { status: 'expired', payload };
+    return { status: 'ok', payload };
   } catch {
-    return null;
+    return { status: 'invalid' };
   }
 }
+
 async function signLockToken(payload: LockPayload) {
   const body = b64url(ENC.encode(JSON.stringify(payload)));
   const sig = b64url(await hmac(body));
@@ -61,24 +73,31 @@ export async function GET(
   const token = ctx.params.token;
   const url = new URL(req.url);
 
-  if (!SECRET) {
+  if (!SECRET)
     return NextResponse.redirect(new URL('/login?error=misconfigured', url));
-  }
 
-  const share = await verifyShareToken(token);
-  if (!share) {
+  const result = await verifyShareTokenDetailed(token);
+
+  if (result.status === 'expired') {
+    const id = result.payload.id;
+    return NextResponse.redirect(
+      new URL(`${EXPIRED_ROUTE}?id=${encodeURIComponent(id)}`, url),
+    );
+  }
+  if (result.status !== 'ok') {
     return NextResponse.redirect(new URL('/login?error=invalid_share', url));
   }
 
-  // 공유 링크로 들어왔으니, 접근 쿠키 발급(24h) 후 정상 URL로 리다이렉트
   const accessToken = await signLockToken({
-    id: share.id,
+    id: result.payload.id,
     sub: 'share',
-    exp: Date.now() + 24 * 60 * 60 * 1000,
+    exp: Date.now() + 24 * 60 * 60 * 1000, // 링크 만료 시간 24시간
   });
-  const cookieName = `emoticon:${share.id}`;
+  const cookieName = `emoticon:${result.payload.id}`;
 
-  const res = NextResponse.redirect(new URL(`/emoticon/${share.id}`, url));
+  const res = NextResponse.redirect(
+    new URL(`/emoticon/${result.payload.id}`, url),
+  );
   res.cookies.set(cookieName, accessToken, {
     httpOnly: true,
     secure: true,
