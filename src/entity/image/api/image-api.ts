@@ -11,6 +11,8 @@ export async function uploadImageToBucket(
   const supabase = await createServerSupabaseClient();
   const file = formData.get('file') as File;
 
+  const webpBuffer = await convertToWebPwidthSharp(file);
+
   if (!file) {
     throw new Error('파일이 없습니다.');
   }
@@ -28,19 +30,34 @@ export async function uploadImageToBucket(
     .from(bucketName)
     .upload(safeFileName, safeFile, { upsert: true });
 
+  const { data: webpData, error: webpError } = await supabase.storage
+    .from(bucketName)
+    .upload(safeFileName, webpBuffer, {
+      upsert: true,
+      contentType: 'image/webp',
+    });
+
   if (error) {
     console.error('Supabase upload error:', error);
     throw new Error(`업로드 중 오류가 발생했습니다: ${error.message}`);
+  }
+
+  if (webpError) {
+    console.error('WebP 업로드 중 오류가 발생했습니다:', webpError);
+    throw new Error(`WebP 업로드 중 오류가 발생했습니다: ${webpError.message}`);
   }
 
   const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucketName}/${data.path}`;
 
   const blurUrl = await generateBlurDataUrl(imageUrl);
 
+  const webpUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucketName}/${webpData.path}`;
+
   return {
     path: data.path,
     url: imageUrl,
     blurUrl,
+    webpUrl,
   };
 }
 
@@ -75,4 +92,10 @@ export async function generateBlurDataUrl(
     console.error('블러 생성 실패:', error);
     return null;
   }
+}
+
+async function convertToWebPwidthSharp(file: File): Promise<Buffer> {
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+  return await sharp(buffer).webp({ quality: 80 }).toBuffer();
 }

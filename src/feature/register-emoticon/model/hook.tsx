@@ -44,6 +44,7 @@ const EmoticonRegisterContext = createContext<EmoticonRegisterContextType>({
       blur_url: null,
       image_order: 0,
       is_representative: false,
+      webp_url: null,
     },
   },
   imageUrls: [],
@@ -88,6 +89,7 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
         blur_url: null,
         image_order: 0,
         is_representative: true,
+        webp_url: null,
       },
     });
   const [imageUrls, setImageUrls] = useState<ImageUrlWithOrder[]>([]);
@@ -108,6 +110,7 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
   };
 
   const handleSetImageUrl = (newImageUrls: ImageUrlWithOrder[]) => {
+    // console.log('handleSetImageUrl 호출됨, newImageUrls:', newImageUrls);
     setImageUrls((prev) => [...prev, ...newImageUrls]);
 
     const emoticonSetResult = validateEmoticonSet(

@@ -8,7 +8,12 @@ export type EmoticonSet = Tables<'emoticon_sets'> & {
 export type EmoticonSetWithRepresentativeImage = EmoticonSet & {
   representative_image: Pick<
     Tables<'emoticon_images'>,
-    'id' | 'image_url' | 'blur_url' | 'image_order' | 'is_representative'
+    | 'id'
+    | 'image_url'
+    | 'blur_url'
+    | 'image_order'
+    | 'is_representative'
+    | 'webp_url'
   >;
 };
 
@@ -51,6 +56,7 @@ export type EmoticonImageRequest = {
   image_url: string;
   image_order: number;
   blur_url: string | null;
+  webp_url: string | null;
   is_representative: boolean;
 };
 

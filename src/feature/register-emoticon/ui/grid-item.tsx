@@ -17,6 +17,7 @@ export interface GridItemProps
     imageNumber: number,
     preview: string,
     blurUrl: string | null,
+    webpUrl: string | null,
   ) => void;
 }
 const GridItem = ({
@@ -40,7 +41,12 @@ const GridItem = ({
         try {
           const result = await uploadImageMutation.mutateAsync(formData);
 
-          onImageUpload?.(imageNumber, result.url, result.blurUrl ?? null);
+          onImageUpload?.(
+            imageNumber,
+            result.url,
+            result.blurUrl ?? null,
+            result.webpUrl ?? null,
+          );
           // TODO: 토스트로 성공처리
           console.log('Upload successful:', result);
           // TODO: 이미지 업로드 성공 후 리다이렉팅 추가

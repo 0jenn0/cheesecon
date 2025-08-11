@@ -73,6 +73,7 @@ export default function MultiUploadButton() {
             handleEmoticonItem(imageNumber, 'UPLOAD', {
               imageUrl: result.url,
               blurUrl: result.blurUrl,
+              webpUrl: result.webpUrl,
             });
 
             handleSetImageUrl([
@@ -80,6 +81,7 @@ export default function MultiUploadButton() {
                 imageUrl: result.url,
                 imageOrder: imageNumber,
                 blurUrl: result.blurUrl,
+                webpUrl: result.webpUrl,
               },
             ]);
 
