@@ -24,7 +24,7 @@ export default function EmoticonInfoHeader({
     <div className={cn('bg-primary flex w-full items-center gap-16')}>
       <div className='border-ghost tablet:w-[160px] tablet:h-[160px] border-radius-lg aspect-square h-[100px] w-[100px] overflow-hidden border'>
         <Image
-          src={representative_image.blur_url ?? ''}
+          src={representative_image.image_url ?? ''}
           alt={author_name}
           width={160}
           height={160}

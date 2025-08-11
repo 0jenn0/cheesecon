@@ -597,7 +597,11 @@ export async function getEmoticonSetForLock(
 
   const formattedData: EmoticonSetDetail = {
     ...data,
-    representative_image: representativeImage,
+    representative_image: {
+      ...representativeImage,
+      image_url: representativeImage.blur_url || '',
+      blur_url: null,
+    },
     emoticon_images: (data.emoticon_images || []).map((image) => ({
       ...image,
       image_url: image.blur_url || '',
