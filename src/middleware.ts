@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { type CookieOptions, createServerClient } from '@supabase/ssr';
+import { getEmoticonSetIsPrivate } from './entity/emoticon-set';
 
 const publicPaths = ['/login', '/popular', '/new', '/activity', '/emoticon'];
 const authPaths = ['/auth/callback'];
@@ -17,6 +18,26 @@ export async function middleware(request: NextRequest) {
 
   if (isAuthPath(pathname)) {
     return NextResponse.next();
+  }
+
+  if (pathname.startsWith('/emoticon')) {
+    if (pathname.startsWith('/emoticon/lock')) {
+      return NextResponse.next();
+    }
+
+    const id = pathname.split('/').pop();
+
+    if (!id) {
+      return NextResponse.next();
+    }
+
+    const isPrivate = await getEmoticonSetIsPrivate(id);
+
+    if (isPrivate) {
+      return NextResponse.redirect(
+        new URL(`/emoticon/lock/${id}`, request.url),
+      );
+    }
   }
 
   const response = NextResponse.next({

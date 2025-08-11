@@ -45,7 +45,7 @@ export default function MenuButton() {
               onClick={() => setIsOpen(false)}
             />
             <motion.div
-              className='z-index-modal-backdrop absolute top-full right-0 left-0 flex h-screen flex-1 bg-black/50'
+              className='z-index-modal-backdrop absolute top-full right-0 left-0 flex h-screen flex-1 bg-black/70'
               onClick={() => setIsOpen(false)}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
