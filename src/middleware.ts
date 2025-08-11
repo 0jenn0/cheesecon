@@ -77,6 +77,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/popular', request.url));
   }
 
+  if (pathname.startsWith('/emoticon/access/')) {
+    return NextResponse.next();
+  }
+
   if (isAuthPath(pathname)) return NextResponse.next();
 
   if (pathname.startsWith('/emoticon')) {
