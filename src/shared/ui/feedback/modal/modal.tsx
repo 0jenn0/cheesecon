@@ -97,6 +97,13 @@ function ModalContainer({
     }
   };
 
+  useEffect(() => {
+    const handleScroll = (event: WheelEvent) => {
+      event.preventDefault();
+    };
+    document.addEventListener('wheel', handleScroll, { passive: false });
+  }, []);
+
   return (
     <AnimatePresence mode='wait'>
       <motion.div
@@ -109,7 +116,7 @@ function ModalContainer({
         className='z-index-modal tablet:items-center tablet:justify-center fixed inset-0 flex items-end justify-center'
         onClick={handleOverlayClick}
       >
-        <div className={cn('absolute inset-0 bg-black/50', overlayClassName)} />
+        <div className={cn('absolute inset-0 bg-black/70', overlayClassName)} />
 
         <div
           className={cn(

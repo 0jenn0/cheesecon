@@ -54,7 +54,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     >
       {children}
       <Modal.Portal isOpen={isOpen} onClose={closeModal}>
-        {isOpen && modalType && ModalComponent && modalProps && (
+        {isOpen && modalType && ModalComponent && (
           <ModalComponent {...(modalProps as any)} /> // eslint-disable-line @typescript-eslint/no-explicit-any
         )}
       </Modal.Portal>
