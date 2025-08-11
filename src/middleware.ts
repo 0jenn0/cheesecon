@@ -73,6 +73,10 @@ function isAuthPath(pathname: string): boolean {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  if (pathname === '/') {
+    return NextResponse.redirect(new URL('/popular', request.url));
+  }
+
   if (isAuthPath(pathname)) return NextResponse.next();
 
   if (pathname.startsWith('/emoticon')) {

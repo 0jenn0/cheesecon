@@ -27,6 +27,7 @@ export default function MenuList({ menus, onClick, ...props }: MenuListProps) {
 
   const handleSignOut = async () => {
     await signOut();
+    router.push('/popular');
   };
 
   const handleSignIn = () => {
@@ -39,6 +40,7 @@ export default function MenuList({ menus, onClick, ...props }: MenuListProps) {
     } else {
       handleSignIn();
     }
+    onClick?.();
   };
 
   return (
@@ -55,15 +57,18 @@ export default function MenuList({ menus, onClick, ...props }: MenuListProps) {
       id={props.id}
     >
       {menus.map((menu, index) => (
-        <li
-          key={`${menu.label}-${index}`}
-          className='cursor-pointer'
-          onClick={onClick}
-        >
-          <MenuItem label={menu.label} href={menu.href} as={Link} />
+        <li key={`${menu.label}-${index}`} className='w-full'>
+          <MenuItem
+            label={menu.label}
+            href={menu.href}
+            as={Link}
+            onClick={() => {
+              onClick?.();
+            }}
+          />
         </li>
       ))}
-      <li className='w-full cursor-pointer'>
+      <li className='w-full'>
         <MenuItem
           label={isLoggedIn ? '로그아웃' : '로그인'}
           onClick={handleLogout}
