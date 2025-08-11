@@ -1,8 +1,8 @@
 'use server';
 
-import { createBrowserSupabaseClient } from '@/shared/lib/supabase/client';
+import bcrypt from 'bcryptjs';
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
-import { ImageUrlWithOrder } from '@/shared/types';
+import { ApiResult, ImageUrlWithOrder } from '@/shared/types';
 import {
   EmoticonImage,
   EmoticonImageRequest,
@@ -28,7 +28,13 @@ export async function createEmoticonSet(
 
   const emoticonSetId = crypto.randomUUID();
 
-  const { representative_image, ...emoticonSetFields } = emoticonSet;
+  const { representative_image, password_hash, ...emoticonSetFields } =
+    emoticonSet;
+
+  let hashedPassword: string | null = null;
+  if (password_hash && password_hash.trim() !== '') {
+    hashedPassword = await bcrypt.hash(password_hash.trim(), 12);
+  }
 
   const emoticonRequest = {
     ...emoticonSetFields,
@@ -39,6 +45,7 @@ export async function createEmoticonSet(
     comments_count: 0,
     likes_count: 0,
     views_count: 0,
+    password_hash: hashedPassword,
   };
 
   const { data, error } = await supabase
