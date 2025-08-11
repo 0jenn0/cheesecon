@@ -37,6 +37,7 @@ export interface TextFieldProps
   labelClassName?: string;
   placeholderClassName?: string;
   name?: string;
+  inputProps?: ComponentPropsWithRef<'input'>;
 }
 
 export default function TextField({
@@ -53,6 +54,7 @@ export default function TextField({
   placeholderClassName,
   onChange,
   name,
+  inputProps,
 }: TextFieldProps) {
   return (
     <div
@@ -75,6 +77,7 @@ export default function TextField({
           disabled={disabled ?? false}
           className={placeholderClassName}
           onChange={onChange}
+          {...inputProps}
         />
         {helpMessage && (
           <HelpMessage variant={variant}>{helpMessage[variant]}</HelpMessage>
