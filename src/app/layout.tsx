@@ -21,7 +21,12 @@ export default async function RootLayout({
     <ReactQueryClientProvider>
       <AuthProvider>
         <ModalProvider>
-          <html lang='en'>
+          <link
+            rel='preconnect'
+            href='https://vbdbvqzfphlwkizvsjkx.supabase.co'
+            crossOrigin=''
+          />
+          <html lang='ko'>
             {/* <ReactScan /> */}
             <body className='bg-secondary flex h-screen flex-col antialiased'>
               <div id='modal' />
