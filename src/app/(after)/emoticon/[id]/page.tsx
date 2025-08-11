@@ -1,4 +1,5 @@
-import { getEmoticonSetDetail } from '@/entity/emoticon-set';
+import { getEmoticonImages } from '@/entity/emoticon-images/api';
+import { getAuthorId } from '@/entity/emoticon-set';
 import ViewEmoticonImageModal from '@/feature/view-emoticon-image/view-emoticon-image-modal';
 import { EmoticonScreen } from '@/screen';
 
@@ -12,15 +13,18 @@ export default async function ImageFullPage({
   const { id } = await params;
   const { imageId } = await searchParams;
 
-  const emoticonSetDetail = await getEmoticonSetDetail(id);
-  const authorId = emoticonSetDetail.user_id;
-  const allImages = emoticonSetDetail.emoticon_images;
+  const [authorId, imagesRes] = await Promise.all([
+    getAuthorId(id),
+    getEmoticonImages(id),
+  ]);
+
+  const allImages = imagesRes?.success ? imagesRes.data : [];
 
   return (
     <>
       {imageId ? (
         <ViewEmoticonImageModal
-          allImages={allImages}
+          allImages={allImages ?? []}
           imageId={imageId}
           authorId={authorId}
         />
