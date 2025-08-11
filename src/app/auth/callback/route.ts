@@ -4,10 +4,17 @@ import { createServerClient } from '@supabase/ssr';
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
+  const redirect = searchParams.get('redirect');
   const next = searchParams.get('next') ?? '/popular';
 
+  let targetUrl = redirect || next;
+
+  if (redirect && !redirect.startsWith('http')) {
+    targetUrl = redirect;
+  }
+
   if (code) {
-    const redirectTo = new URL(`${origin}${next}`);
+    const redirectTo = new URL(`${origin}${targetUrl}`);
     const response = NextResponse.redirect(redirectTo);
 
     const supabase = createServerClient(

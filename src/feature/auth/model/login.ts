@@ -9,6 +9,9 @@ export interface LoginParams {
   provider?: Provider;
 }
 
-export const signInWithProvider = async (provider: Provider) => {
-  return await authApi.signInWithProvider(provider);
+export const signInWithProvider = async (
+  provider: Provider,
+  redirectUrl?: string,
+) => {
+  return await authApi.signInWithProvider(provider, redirectUrl);
 };

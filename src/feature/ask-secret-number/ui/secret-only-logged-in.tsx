@@ -1,12 +1,20 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Icon } from '@/shared/ui/display';
 import { Modal } from '@/shared/ui/feedback';
 import { Button } from '@/shared/ui/input';
 
 export default function SecretOnlyLoggedIn() {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const currentUrl = searchParams.toString()
+    ? `${pathname}?${searchParams.toString()}`
+    : pathname;
+
+  const loginUrl = `/login?redirect=${currentUrl}`;
 
   return (
     <Modal.Container>
@@ -38,7 +46,7 @@ export default function SecretOnlyLoggedIn() {
           className='w-full'
           variant='primary'
           type='button'
-          onClick={() => router.push('/login')}
+          onClick={() => router.push(loginUrl)}
         >
           로그인
         </Button>
