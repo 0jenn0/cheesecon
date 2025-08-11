@@ -21,6 +21,7 @@ export interface EmoticonItemProps extends ComponentPropsWithRef<'div'> {
   showGripIcon?: boolean;
   showNumberBadge?: boolean;
   imageUrl?: string;
+  blurUrl?: string | null;
   isUploading?: boolean;
   isDragging?: boolean;
 }
@@ -31,6 +32,7 @@ function EmoticonItemRoot({
   showGripIcon,
   showNumberBadge,
   imageUrl,
+  blurUrl,
   isUploading,
   isDragging,
   children,
@@ -40,6 +42,7 @@ function EmoticonItemRoot({
 }: EmoticonItemProps) {
   return (
     <EmoticonItemProvider
+      blurUrl={blurUrl ?? null}
       showGripIcon={showGripIcon}
       imageNumber={imageNumber}
       showCheckbox={showCheckbox}
@@ -76,7 +79,8 @@ function EmoticonItemContent({
   className,
   ...props
 }: EmoticonItemContentProps) {
-  const { imageUrl, isUploading, imageNumber, isDragging } = useEmoticonItem();
+  const { imageUrl, blurUrl, isUploading, imageNumber, isDragging } =
+    useEmoticonItem();
 
   return (
     <>
@@ -92,19 +96,35 @@ function EmoticonItemContent({
                   {children}
                 </div>
               </div>
-              <Image
-                src={imageUrl}
-                alt='emoticon'
-                priority={imageNumber <= 8}
-                fetchPriority={imageNumber <= 8 ? 'high' : 'low'}
-                loading={imageNumber <= 8 ? 'eager' : 'lazy'}
-                width={100}
-                height={100}
-                className={cn(
-                  contentVariants({ isDragging }),
-                  'absolute inset-0',
-                )}
-              />
+              {blurUrl ? (
+                <Image
+                  src={imageUrl}
+                  placeholder='blur'
+                  blurDataURL={blurUrl ?? ''}
+                  alt='emoticon'
+                  priority={imageNumber <= 8}
+                  className={cn(
+                    contentVariants({ isDragging }),
+                    'absolute inset-0',
+                  )}
+                  width={100}
+                  height={100}
+                />
+              ) : (
+                <Image
+                  src={imageUrl}
+                  alt='emoticon'
+                  priority={imageNumber <= 8}
+                  // fetchPriority={imageNumber <= 8 ? 'high' : 'low'}
+                  // loading={imageNumber <= 8 ? 'eager' : 'lazy'}
+                  width={100}
+                  height={100}
+                  className={cn(
+                    contentVariants({ isDragging }),
+                    'absolute inset-0',
+                  )}
+                />
+              )}
             </div>
           ) : (
             <div

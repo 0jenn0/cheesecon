@@ -1,5 +1,5 @@
-import { uploadImage } from '@/entity/image/api';
+import { uploadImageToBucket } from '@/entity/image/api';
 
 export const uploadImageApi = {
-  upload: uploadImage,
+  upload: uploadImageToBucket,
 };

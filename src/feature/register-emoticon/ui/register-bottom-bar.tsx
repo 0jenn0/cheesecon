@@ -3,8 +3,12 @@ import { useRegisterMutation } from '@/entity/emoticon-set/query/emoticon-set-mu
 import useEmoticonRegister from '../model/hook';
 
 export function RegisterBottomBar() {
-  const { emoticonSet, imageUrls, validateAll, isValid, validationErrors } =
-    useEmoticonRegister();
+  const {
+    emoticonSetWithRepresentativeImage,
+    imageUrls,
+    validateAll,
+    validationErrors,
+  } = useEmoticonRegister();
   const registerMutation = useRegisterMutation({ imageUrls });
 
   const handleRegister = () => {
@@ -16,7 +20,7 @@ export function RegisterBottomBar() {
       return;
     }
 
-    registerMutation.mutate(emoticonSet);
+    registerMutation.mutate(emoticonSetWithRepresentativeImage);
   };
 
   return (
@@ -25,7 +29,7 @@ export function RegisterBottomBar() {
         textClassName='text-body-lg font-semibold'
         className='padding-32'
         onClick={handleRegister}
-        disabled={registerMutation.isPending || !isValid}
+        // disabled={registerMutation.isPending || !isValid}
         isLoading={registerMutation.isPending}
       >
         등록하기

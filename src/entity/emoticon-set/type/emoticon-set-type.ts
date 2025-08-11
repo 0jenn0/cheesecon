@@ -5,7 +5,15 @@ export type EmoticonSet = Tables<'emoticon_sets'> & {
   is_liked?: boolean;
 };
 
+export type EmoticonSetWithRepresentativeImage = EmoticonSet & {
+  representative_image: Pick<
+    Tables<'emoticon_images'>,
+    'id' | 'image_url' | 'blur_url' | 'image_order' | 'is_representative'
+  >;
+};
+
 export type EmoticonSetDetail = Tables<'emoticon_sets'> & {
+  representative_image: Tables<'emoticon_images'>;
   emoticon_images: Tables<'emoticon_images'>[];
   likes: number;
   views: number;
@@ -42,6 +50,8 @@ export type EmoticonImageRequest = {
   set_id: string;
   image_url: string;
   image_order: number;
+  blur_url: string | null;
+  is_representative: boolean;
 };
 
 export type EmoticonSetOrderBy =

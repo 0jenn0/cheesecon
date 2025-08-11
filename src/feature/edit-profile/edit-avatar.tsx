@@ -5,7 +5,7 @@ import { cn } from '@/shared/lib';
 import { Avatar, Icon } from '@/shared/ui/display';
 import Spinner from '@/shared/ui/feedback/spinner/spinner';
 import { Profile } from '@/entity/profile';
-import { useUploadImageMutation } from '../upload-image/model/upload-image-mutation';
+import { useUploadImageToBucketMutation } from '../upload-image/model/upload-image-mutation';
 
 interface EditAvatarProps extends ComponentPropsWithRef<'div'> {
   profile: Profile;
@@ -22,7 +22,7 @@ export default function EditAvatar({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { mutateAsync: uploadImageMutation, isPending } =
-    useUploadImageMutation();
+    useUploadImageToBucketMutation();
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();

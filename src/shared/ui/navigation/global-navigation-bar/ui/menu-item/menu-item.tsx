@@ -29,9 +29,9 @@ export default function MenuItem<T extends ElementType = 'button'>({
 
   return (
     <Component
-      {...props}
       href={href}
-      className='text-body-md bg-interactive-secondary-subtle padding-x-16 padding-y-8 flex cursor-pointer items-center gap-4 select-none'
+      {...props}
+      className='text-body-md bg-interactive-secondary-subtle padding-x-16 padding-y-8 flex w-full cursor-pointer items-center gap-4 select-none'
     >
       {label}
     </Component>

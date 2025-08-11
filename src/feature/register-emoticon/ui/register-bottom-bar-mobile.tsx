@@ -13,8 +13,12 @@ export function RegisterBottomBarMobile({
   STEP_COUNT: number;
   handleStepChange: (step: number) => void;
 }) {
-  const { emoticonSet, imageUrls, validateAll, isValid } =
-    useEmoticonRegister();
+  const {
+    emoticonSetWithRepresentativeImage,
+    imageUrls,
+    validateAll,
+    isValid,
+  } = useEmoticonRegister();
   const registerMutation = useRegisterMutation({ imageUrls });
 
   const handleRegister = () => {
@@ -25,7 +29,7 @@ export function RegisterBottomBarMobile({
       return;
     }
 
-    registerMutation.mutate(emoticonSet);
+    registerMutation.mutate(emoticonSetWithRepresentativeImage);
   };
 
   return (

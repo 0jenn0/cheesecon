@@ -1,6 +1,6 @@
 import { PropsWithChildren, createContext, useContext, useState } from 'react';
 import { ImageUrlWithOrder } from '@/shared/types';
-import { EmoticonSet } from '@/entity/emoticon-set/type';
+import { EmoticonSetWithRepresentativeImage } from '@/entity/emoticon-set/type';
 import { validateEmoticonSet, validateImageUrls } from '../lib/validation';
 
 interface ValidationErrors {
@@ -9,22 +9,22 @@ interface ValidationErrors {
 }
 
 interface EmoticonRegisterContextType {
-  emoticonSet: EmoticonSet;
+  emoticonSetWithRepresentativeImage: EmoticonSetWithRepresentativeImage;
   imageUrls: ImageUrlWithOrder[];
-  setEmoticonSet: (emoticonSet: EmoticonSet) => void;
+  setEmoticonSet: (emoticonSet: EmoticonSetWithRepresentativeImage) => void;
   handleSetImageUrl: (newImageUrls: ImageUrlWithOrder[]) => void;
   validationErrors: ValidationErrors;
   isValid: boolean;
   validateField: (
-    field: keyof EmoticonSet,
-    value: EmoticonSet[keyof EmoticonSet],
+    field: keyof EmoticonSetWithRepresentativeImage,
+    value: EmoticonSetWithRepresentativeImage[keyof EmoticonSetWithRepresentativeImage],
   ) => void;
   validateAll: () => boolean;
   clearValidationErrors: () => void;
 }
 
 const EmoticonRegisterContext = createContext<EmoticonRegisterContextType>({
-  emoticonSet: {
+  emoticonSetWithRepresentativeImage: {
     id: '',
     author_name: '',
     description: '',
@@ -36,10 +36,16 @@ const EmoticonRegisterContext = createContext<EmoticonRegisterContextType>({
     created_at: null,
     updated_at: null,
     platform: '',
-    representative_image_url: '',
     title: '',
     type: '',
     user_id: '',
+    representative_image: {
+      id: '',
+      image_url: '',
+      blur_url: null,
+      image_order: 0,
+      is_representative: false,
+    },
   },
   imageUrls: [],
   validationErrors: {},
@@ -62,30 +68,39 @@ const EmoticonRegisterContext = createContext<EmoticonRegisterContextType>({
 });
 
 export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
-  const [emoticonSet, setEmoticonSetState] = useState<EmoticonSet>({
-    id: '',
-    author_name: '',
-    description: '',
-    is_private: null,
-    password_hash: null,
-    comments_count: null,
-    likes_count: null,
-    views_count: null,
-    created_at: null,
-    updated_at: null,
-    platform: '',
-    representative_image_url: '',
-    title: '',
-    type: '',
-    user_id: '',
-  });
+  const [emoticonSetWithRepresentativeImage, setEmoticonSetState] =
+    useState<EmoticonSetWithRepresentativeImage>({
+      id: '',
+      author_name: '',
+      description: '',
+      is_private: null,
+      password_hash: null,
+      comments_count: null,
+      likes_count: null,
+      views_count: null,
+      created_at: null,
+      updated_at: null,
+      platform: '',
+      title: '',
+      type: '',
+      user_id: '',
+      representative_image: {
+        id: '',
+        image_url: '',
+        blur_url: null,
+        image_order: 0,
+        is_representative: true,
+      },
+    });
   const [imageUrls, setImageUrls] = useState<ImageUrlWithOrder[]>([]);
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>(
     {},
   );
   const [isValid, setIsValid] = useState(false);
 
-  const setEmoticonSet = (newEmoticonSet: EmoticonSet) => {
+  const setEmoticonSet = (
+    newEmoticonSet: EmoticonSetWithRepresentativeImage,
+  ) => {
     setEmoticonSetState(newEmoticonSet);
 
     const emoticonSetResult = validateEmoticonSet(newEmoticonSet);
@@ -97,17 +112,22 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
   const handleSetImageUrl = (newImageUrls: ImageUrlWithOrder[]) => {
     setImageUrls((prev) => [...prev, ...newImageUrls]);
 
-    const emoticonSetResult = validateEmoticonSet(emoticonSet);
+    const emoticonSetResult = validateEmoticonSet(
+      emoticonSetWithRepresentativeImage,
+    );
     const imageUrlsResult = validateImageUrls([...imageUrls, ...newImageUrls]);
     const isValidResult = emoticonSetResult.success && imageUrlsResult.success;
     setIsValid(isValidResult);
   };
 
   const validateField = (
-    field: keyof EmoticonSet,
-    value: EmoticonSet[keyof EmoticonSet],
+    field: keyof EmoticonSetWithRepresentativeImage,
+    value: EmoticonSetWithRepresentativeImage[keyof EmoticonSetWithRepresentativeImage],
   ) => {
-    const updatedEmoticonSet = { ...emoticonSet, [field]: value };
+    const updatedEmoticonSet = {
+      ...emoticonSetWithRepresentativeImage,
+      [field]: value,
+    };
     const result = validateEmoticonSet(updatedEmoticonSet);
 
     if (!result.success) {
@@ -138,7 +158,10 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
       }));
     }
 
-    const updatedEmoticonSetForValidation = { ...emoticonSet, [field]: value };
+    const updatedEmoticonSetForValidation = {
+      ...emoticonSetWithRepresentativeImage,
+      [field]: value,
+    };
     const emoticonSetResult = validateEmoticonSet(
       updatedEmoticonSetForValidation,
     );
@@ -148,7 +171,9 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
   };
 
   const validateAll = (): boolean => {
-    const emoticonSetResult = validateEmoticonSet(emoticonSet);
+    const emoticonSetResult = validateEmoticonSet(
+      emoticonSetWithRepresentativeImage,
+    );
     const imageUrlsResult = validateImageUrls(imageUrls);
 
     const errors: ValidationErrors = {};
@@ -192,7 +217,7 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
   return (
     <EmoticonRegisterContext.Provider
       value={{
-        emoticonSet,
+        emoticonSetWithRepresentativeImage,
         setEmoticonSet,
         imageUrls,
         handleSetImageUrl,

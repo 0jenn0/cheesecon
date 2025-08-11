@@ -6,7 +6,7 @@ import {
   useUpdateCommentMutation,
 } from '@/entity/comment/query/comment-mutation';
 import { CreateCommentParams } from '@/entity/comment/type';
-import { useUploadImageMutation } from '@/feature/upload-image/model/upload-image-mutation';
+import { useUploadImageToBucketMutation } from '@/feature/upload-image/model/upload-image-mutation';
 
 export default function useCommentForm({
   targetId,
@@ -37,7 +37,7 @@ export default function useCommentForm({
     [key]: targetId ?? '',
   });
 
-  const uploadImageMutation = useUploadImageMutation();
+  const uploadImageMutation = useUploadImageToBucketMutation();
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment((prev) => ({ ...prev, content: e.target.value }));

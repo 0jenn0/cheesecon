@@ -9,14 +9,19 @@ export interface AuthApiResponse<T = unknown> {
 }
 
 export const authApi = {
-  signInWithProvider: async (provider: Provider): Promise<AuthApiResponse> => {
+  signInWithProvider: async (
+    provider: Provider,
+    redirectUrl?: string,
+  ): Promise<AuthApiResponse> => {
     const supabase = createBrowserSupabaseClient();
 
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: redirectUrl
+            ? `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectUrl)}`
+            : `${window.location.origin}/auth/callback`,
         },
       });
 

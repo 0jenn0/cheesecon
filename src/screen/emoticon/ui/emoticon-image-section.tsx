@@ -44,12 +44,14 @@ export default function EmoticonImageSection({
 }
 
 function EmoticonImageItem({ image }: { image: EmoticonImage }) {
-  const { image_order, image_url, comments_count, likes_count } = image;
+  const { image_order, image_url, blur_url, comments_count, likes_count } =
+    image;
 
   return (
     <EmoticonItem.Root
       imageNumber={image_order}
       imageUrl={image_url}
+      blurUrl={blur_url}
       commentsCount={comments_count ?? 0}
       likesCount={likes_count ?? 0}
       className='cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95'

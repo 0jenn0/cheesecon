@@ -1,11 +1,11 @@
-import { uploadImage } from '@/entity/image/api';
+import { uploadImageToBucket } from '@/entity/image/api';
 import { IMAGE_QUERY_KEY } from '@/entity/image/query/query-key';
 import { queryClient } from '@/provider/QueryProvider';
 import { useMutation } from '@tanstack/react-query';
 
-export const useUploadImageMutation = () => {
+export const useUploadImageToBucketMutation = () => {
   return useMutation({
-    mutationFn: uploadImage,
+    mutationFn: (formData: FormData) => uploadImageToBucket(formData),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: IMAGE_QUERY_KEY.all,

@@ -1,10 +1,11 @@
 'use server';
 
+import sharp from 'sharp';
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
 import { ImageUploadResult, ImageUrlResult } from '../type';
 import { sanitizeFileName } from '../util';
 
-export async function uploadImage(
+export async function uploadImageToBucket(
   formData: FormData,
 ): Promise<ImageUploadResult> {
   const supabase = await createServerSupabaseClient();
@@ -32,9 +33,14 @@ export async function uploadImage(
     throw new Error(`업로드 중 오류가 발생했습니다: ${error.message}`);
   }
 
+  const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucketName}/${data.path}`;
+
+  const blurUrl = await generateBlurDataUrl(imageUrl);
+
   return {
     path: data.path,
-    url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucketName}/${data.path}`,
+    url: imageUrl,
+    blurUrl,
   };
 }
 
@@ -46,4 +52,27 @@ export async function getImageUrl(path: string): Promise<ImageUrlResult> {
     .getPublicUrl(path);
 
   return data;
+}
+
+export async function generateBlurDataUrl(
+  imageUrl: string,
+): Promise<string | null> {
+  try {
+    const response = await fetch(imageUrl);
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    const processedBuffer = await sharp(buffer)
+      .resize(10, 10, { fit: 'inside' })
+      .flatten({ background: { r: 255, g: 255, b: 255, alpha: 0 } })
+      .png()
+      .blur(1)
+      .toBuffer();
+
+    const base64 = `data:image/png;base64,${processedBuffer.toString('base64')}`;
+    return base64;
+  } catch (error) {
+    console.error('블러 생성 실패:', error);
+    return null;
+  }
 }

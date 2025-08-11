@@ -1,13 +1,11 @@
-import { use } from 'react';
 import { EmoticonScreen } from '@/screen';
 
-export default function EmoticonPage({
+export default async function EmoticonPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = use(params);
-  const emoticonSetId = id;
+  const { id } = await params;
 
-  return <EmoticonScreen emoticonSetId={emoticonSetId} />;
+  return <EmoticonScreen emoticonSetId={id} isUnlocked={true} />;
 }

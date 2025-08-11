@@ -50,7 +50,7 @@ function ChangeItem({ changes }: { changes: number }) {
       <span className='text-body-sm'>이번 주</span>
       <div className='flex items-center gap-2'>
         <Icon name={isPositive ? 'plus' : 'minus'} size={12} />
-        <span className='text-body-sm font-bold'>{changes}</span>
+        <span className='text-body-sm font-bold'>{Math.abs(changes)}</span>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import { cn } from '@/shared/lib/utils';
 import { Icon } from '@/shared/ui/display';
 import EmoticonItem from '@/shared/ui/display/emoticon-item/emoticon-item';
-import { useUploadImageMutation } from '@/feature/upload-image/model/upload-image-mutation';
+import { useUploadImageToBucketMutation } from '@/feature/upload-image/model/upload-image-mutation';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import useUIContext from './emoticon-section/provider/ui-provider';
@@ -13,7 +13,11 @@ export interface GridItemProps
   id: number;
   imageNumber: number;
   imageUrl?: string;
-  onImageUpload?: (imageNumber: number, preview: string) => void;
+  onImageUpload?: (
+    imageNumber: number,
+    preview: string,
+    blurUrl: string | null,
+  ) => void;
 }
 const GridItem = ({
   id,
@@ -23,7 +27,7 @@ const GridItem = ({
   ...props
 }: GridItemProps) => {
   const { isMultipleSelect, isOrderChange } = useUIContext();
-  const uploadImageMutation = useUploadImageMutation();
+  const uploadImageMutation = useUploadImageToBucketMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const onDrop = useCallback(
@@ -35,7 +39,8 @@ const GridItem = ({
         });
         try {
           const result = await uploadImageMutation.mutateAsync(formData);
-          onImageUpload?.(imageNumber, result.url);
+
+          onImageUpload?.(imageNumber, result.url, result.blurUrl ?? null);
           // TODO: 토스트로 성공처리
           console.log('Upload successful:', result);
           // TODO: 이미지 업로드 성공 후 리다이렉팅 추가

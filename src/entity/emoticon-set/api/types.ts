@@ -5,7 +5,11 @@ import {
   ImageUrlWithOrder,
 } from '@/shared/types';
 import { Tables } from '@/types/types_db';
-import { EmoticonSet, EmoticonSetSortParams } from '../type';
+import {
+  EmoticonSet,
+  EmoticonSetSortParams,
+  EmoticonSetWithRepresentativeImage,
+} from '../type';
 
 export type CreateEmoticonSetRequest = {
   emoticonSet: EmoticonSet;
@@ -19,7 +23,11 @@ export type GetEmoticonSetsRequest = BaseApiRequest & {
 export type CreateEmoticonSetResponse = {
   emoticonSet: EmoticonSet;
   emoticonImages: Tables<'emoticon_images'>[];
+  representativeImage: Tables<'emoticon_images'>;
 };
 
 export type CreateEmoticonSetResult = ApiResult<CreateEmoticonSetResponse>;
-export type GetEmoticonSetsResult = ApiResult<BaseApiResponse<EmoticonSet>>;
+
+export type GetEmoticonSetsWithRepresentativeImageResult = ApiResult<
+  BaseApiResponse<EmoticonSetWithRepresentativeImage>
+>;

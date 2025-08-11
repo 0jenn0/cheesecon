@@ -15,10 +15,15 @@ export type EmoticonItemAction =
   | 'UPLOAD'
   | 'RESTORE_INITIAL_ORDER';
 
-const INITIAL_ITEMS = Array.from({ length: 24 }, (_, i) => ({
-  imageNumber: i + 1,
-  imageUrl: '',
-}));
+// FIX: 개발할때만 2개 업로드로
+const INITIAL_ITEMS = Array.from(
+  // { length: EMOTICON_CONFIG.kakaotalk.static.count },
+  { length: 2 },
+  (_, i) => ({
+    imageNumber: i + 1,
+    imageUrl: '',
+  }),
+);
 
 export interface EmoticonContextType {
   items: EmoticonItem[];
@@ -38,6 +43,7 @@ export interface EmoticonContextType {
       newImageNumber?: number;
       imageNumbers?: number[];
       imageUrl?: string;
+      blurUrl?: string | null;
     },
   ) => void;
 }
@@ -126,10 +132,16 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
   );
 
   const handleUploadEmoticonItem = useCallback(
-    (imageNumber: typeOfImageNumber, imageUrl: string) => {
+    (
+      imageNumber: typeOfImageNumber,
+      imageUrl: string,
+      blurUrl?: string | null,
+    ) => {
       setItems((prevItems) =>
         prevItems.map((item) =>
-          item.imageNumber === imageNumber ? { ...item, imageUrl } : item,
+          item.imageNumber === imageNumber
+            ? { ...item, imageUrl, blurUrl }
+            : item,
         ),
       );
     },
@@ -150,9 +162,10 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
         newImageNumber?: typeOfImageNumber;
         imageNumbers?: typeOfImageNumber[];
         imageUrl?: string;
+        blurUrl?: string | null;
       },
     ) => {
-      const { newImageNumber, imageUrl } = params || {};
+      const { newImageNumber, imageUrl, blurUrl } = params || {};
       switch (action) {
         case 'CHECK':
           handleCheckEmoticonItem(imageNumber);
@@ -169,7 +182,7 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
           break;
         case 'UPLOAD':
           if (imageUrl || imageUrl === '') {
-            handleUploadEmoticonItem(imageNumber, imageUrl);
+            handleUploadEmoticonItem(imageNumber, imageUrl, blurUrl);
           } else {
             throw new Error('imageUrl이 필요합니다.');
           }

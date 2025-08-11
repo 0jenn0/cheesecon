@@ -23,7 +23,7 @@ export default async function ImageFullPage({
         }
         emoticonSet={emoticonSet}
       />
-      <EmoticonScreen emoticonSetId={id} />
+      <EmoticonScreen emoticonSetId={id} isUnlocked={true} />
     </>
   );
 }

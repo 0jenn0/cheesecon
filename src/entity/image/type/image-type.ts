@@ -1,6 +1,8 @@
 export interface ImageUploadResult {
   path: string;
   url: string;
+  blurUrl?: string | null;
+  isRepresentative?: boolean;
 }
 
 export interface ImageUrlResult {

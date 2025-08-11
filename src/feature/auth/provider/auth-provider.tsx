@@ -11,7 +11,10 @@ interface AuthContextType {
   session: Session | null;
   isLoading: boolean;
   error: Error | null;
-  signInWithProvider: (provider: Provider) => Promise<AuthApiResponse>;
+  signInWithProvider: (
+    provider: Provider,
+    redirectUrl?: string,
+  ) => Promise<AuthApiResponse>;
   signOut: () => Promise<void>;
 }
 
@@ -42,9 +45,12 @@ export default function AuthProvider({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const signInWithProviderAuth = async (provider: Provider) => {
+  const signInWithProviderAuth = async (
+    provider: Provider,
+    redirectUrl?: string,
+  ) => {
     try {
-      const result = await signInWithProvider(provider);
+      const result = await signInWithProvider(provider, redirectUrl);
       if (result.error) {
         setError(result.error as Error);
       }
