@@ -1,6 +1,5 @@
 'use server';
 
-import bcrypt from 'bcryptjs';
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
 import { ImageUrlWithOrder } from '@/shared/types';
 import {
@@ -28,7 +27,7 @@ export async function createEmoticonSet(
 
   const emoticonSetId = crypto.randomUUID();
 
-  const { representative_image, ...emoticonSetFields } = emoticonSet;
+  const { ...emoticonSetFields } = emoticonSet;
 
   const emoticonRequest = {
     ...emoticonSetFields,

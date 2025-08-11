@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button, IconButton } from '@/shared/ui/input';
 import { createShareLinkAction } from '@/app/(after)/emoticon/[id]/share/actions';
 
@@ -10,7 +10,7 @@ export default function ShareLink({ id }: { id: string }) {
   const [url, setUrl] = useState<string | null>(null);
   const [err, setErr] = useState(false);
 
-  const fetchUrl = async () => {
+  const fetchUrl = useCallback(async () => {
     setErr(false);
 
     const res = await createShareLinkAction(id, 24);
@@ -20,11 +20,11 @@ export default function ShareLink({ id }: { id: string }) {
     } else {
       setErr(true);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     fetchUrl();
-  }, []);
+  }, [fetchUrl]);
 
   const onClick = async () => {
     await navigator.clipboard.writeText(url!);

@@ -3,13 +3,13 @@
 import { useRouter } from 'next/navigation';
 import { Icon, LabelValuePair } from '@/shared/ui/display';
 import { Modal } from '@/shared/ui/feedback';
-import { Button, IconButton } from '@/shared/ui/input';
+import { Button } from '@/shared/ui/input';
 import { useEmoticonSetDetailQuery } from '@/entity/emoticon-set/query/emoticon-set-query';
 
 export default function AccessExpiredModal({ id }: { id: string }) {
   const router = useRouter();
 
-  const { data: emoticonSet, isLoading } = useEmoticonSetDetailQuery(id);
+  const { data: emoticonSet } = useEmoticonSetDetailQuery(id);
   const author = emoticonSet?.author_name;
   const title = emoticonSet?.title;
 

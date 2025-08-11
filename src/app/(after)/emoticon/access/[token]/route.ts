@@ -68,9 +68,9 @@ async function signLockToken(payload: LockPayload) {
 
 export async function GET(
   req: NextRequest,
-  ctx: { params: { token: string } },
+  { params }: { params: Promise<{ token: string }> },
 ) {
-  const token = ctx.params.token;
+  const { token } = await params;
   const url = new URL(req.url);
 
   if (!SECRET)
