@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { type CookieOptions, createServerClient } from '@supabase/ssr';
 import { getEmoticonSetIsPrivate } from './entity/emoticon-set';
+import { createServerSupabaseClient } from './shared/lib/supabase/server';
 
 const ENC = new TextEncoder();
 const SECRET = process.env.EMOTICON_LOCK_SECRET!;
@@ -103,9 +104,32 @@ export async function middleware(request: NextRequest) {
       const cookieName = `emoticon:${id}`;
       const token = request.cookies.get(cookieName)?.value ?? null;
 
+      const supabase = await createServerSupabaseClient();
+      const { data: emoticonSetAuthor } = await supabase
+        .from('emoticon_sets')
+        .select('user_id')
+        .eq('id', id)
+        .single();
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      const isAuthor = emoticonSetAuthor?.user_id === user?.id;
+      if (isAuthor) {
+        return NextResponse.next();
+      }
+      const isLoggedIn = !!user;
+
       if (token) {
         const v = await verifyLockTokenDetailed(token, id);
         if (v.status === 'ok') {
+          if (!isLoggedIn) {
+            const nowPathWithSearch = pathname + (request.nextUrl.search || '');
+            const loginUrl = new URL('/login', request.url);
+            loginUrl.searchParams.set('redirect', nowPathWithSearch);
+            return NextResponse.redirect(loginUrl);
+          }
         } else if (v.status === 'expired') {
           const resp = NextResponse.redirect(
             new URL(
