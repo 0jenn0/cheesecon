@@ -98,10 +98,10 @@ function ModalContainer({
   };
 
   useEffect(() => {
-    const handleScroll = (event: WheelEvent) => {
-      event.preventDefault();
+    document.documentElement.style.overflow = 'hidden';
+    return () => {
+      document.documentElement.style.overflow = 'auto';
     };
-    document.addEventListener('wheel', handleScroll, { passive: false });
   }, []);
 
   return (

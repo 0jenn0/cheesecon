@@ -18,14 +18,15 @@ export default async function ImageFullPage({
     getEmoticonImages(id),
   ]);
 
-  const allImages = imagesRes?.success ? imagesRes.data : [];
+  const allImages = (imagesRes?.success ? imagesRes.data : [])?.filter(
+    (image) => image.is_representative !== true,
+  );
 
   return (
     <>
       {imageId ? (
         <ViewEmoticonImageModal
           allImages={allImages ?? []}
-          imageId={imageId}
           authorId={authorId}
         />
       ) : (

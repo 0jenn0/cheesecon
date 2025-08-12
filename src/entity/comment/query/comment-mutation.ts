@@ -1,14 +1,12 @@
 import { EMOTICON_SET_QUERY_KEY } from '@/entity/emoticon-set';
 import { queryClient } from '@/provider/QueryProvider';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { createComment, deleteComment, updateComment } from '../api';
 import { DeleteCommentParams } from '../type';
 import { COMMENT_QUERY_KEY } from './query-key';
 import { CommentMutationParams } from './types';
 
 export const useCreateCommentMutation = (params?: CommentMutationParams) => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: createComment,
     onSuccess: () => {

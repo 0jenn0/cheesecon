@@ -45,6 +45,7 @@ export interface EmoticonContextType {
       imageUrl?: string;
       blurUrl?: string | null;
       webpUrl?: string | null;
+      webpUrl?: string | null;
     },
   ) => void;
 }
@@ -138,10 +139,12 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
       imageUrl: string,
       blurUrl?: string | null,
       webpUrl?: string | null,
+      webpUrl?: string | null,
     ) => {
       setItems((prevItems) =>
         prevItems.map((item) =>
           item.imageNumber === imageNumber
+            ? { ...item, imageUrl, blurUrl, webpUrl }
             ? { ...item, imageUrl, blurUrl, webpUrl }
             : item,
         ),
@@ -166,8 +169,10 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
         imageUrl?: string;
         blurUrl?: string | null;
         webpUrl?: string | null;
+        webpUrl?: string | null;
       },
     ) => {
+      const { newImageNumber, imageUrl, blurUrl, webpUrl } = params || {};
       const { newImageNumber, imageUrl, blurUrl, webpUrl } = params || {};
       switch (action) {
         case 'CHECK':
@@ -185,6 +190,7 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
           break;
         case 'UPLOAD':
           if (imageUrl || imageUrl === '') {
+            handleUploadEmoticonItem(imageNumber, imageUrl, blurUrl, webpUrl);
             handleUploadEmoticonItem(imageNumber, imageUrl, blurUrl, webpUrl);
           } else {
             throw new Error('imageUrl이 필요합니다.');

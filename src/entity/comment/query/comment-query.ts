@@ -5,7 +5,12 @@ import { CommentInfiniteQueryParams } from './types';
 
 export const useCommentQuery = (params: CommentInfiniteQueryParams) => {
   return useQuery({
-    queryKey: COMMENT_QUERY_KEY.list(params),
+    queryKey: COMMENT_QUERY_KEY.list(
+      params.image_id ? 'image' : 'set',
+      params.image_id ?? params.set_id ?? null,
+      params.limit ?? 100,
+      params.offset ?? 0,
+    ),
     queryFn: async () => {
       const data = await getComments({
         ...params,

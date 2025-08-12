@@ -1,8 +1,6 @@
 export const COMMENT_QUERY_KEY = {
-  all: ['comment'] as const,
-  lists: () => [...COMMENT_QUERY_KEY.all, 'list'] as const,
-  list: (filters: Record<string, string | number | null>) =>
-    [...COMMENT_QUERY_KEY.lists(), filters] as const,
-  details: () => [...COMMENT_QUERY_KEY.all, 'detail'] as const,
-  detail: (id: string) => [...COMMENT_QUERY_KEY.details(), id] as const,
-} as const;
+  root: ['comments'] as const,
+  lists: () => [...COMMENT_QUERY_KEY.root, 'list'] as const,
+  list: (scope: 'image' | 'set', id: string | null, limit = 100, offset = 0) =>
+    [...COMMENT_QUERY_KEY.lists(), scope, id, limit, offset] as const,
+};
