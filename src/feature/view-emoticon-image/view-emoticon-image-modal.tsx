@@ -1,12 +1,10 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import { cn } from '@/shared/lib';
 import { Modal, Spinner } from '@/shared/ui/feedback';
-import { COMMENT_QUERY_KEY } from '@/entity/comment/query/query-key';
 import { EmoticonImage } from '@/entity/emoticon-set';
-import { useQueryClient } from '@tanstack/react-query';
 import { EmoticonCommentSection } from '../comment/ui/emoticon-comment-section';
 import LikeButton from '../like/ui/like-button/like-button';
 import ColorPicker, { ColorMap } from './color-picker';
@@ -28,60 +26,6 @@ export default function ViewEmoticonImageModal({
   const [isDragging, setIsDragging] = useState(false);
   const emoticonImage = allImages.find((image) => image.id === imageId);
   const [color, setColor] = useState<ColorMap>('blue');
-  const queryClient = useQueryClient();
-
-  const currentImageIndex = useMemo(() => {
-    if (!emoticonImage || !allImages.length) return -1;
-    return allImages.findIndex((img) => img.id === emoticonImage.id);
-  }, [emoticonImage, allImages]);
-
-  const imagesToPrefetch = useMemo(() => {
-    if (currentImageIndex === -1 || !allImages.length) return [];
-
-    const images: EmoticonImage[] = [];
-
-    if (emoticonImage) {
-      images.push(emoticonImage);
-    }
-
-    if (currentImageIndex > 0) {
-      images.push(allImages[currentImageIndex - 1]);
-    }
-
-    if (currentImageIndex < allImages.length - 1) {
-      images.push(allImages[currentImageIndex + 1]);
-    }
-
-    return images;
-  }, [currentImageIndex, allImages, emoticonImage]);
-
-  useEffect(() => {
-    imagesToPrefetch.forEach((image) => {
-      if (image?.id) {
-        const queryKey = COMMENT_QUERY_KEY.list({
-          scope: 'image',
-          id: image.id,
-          limit: 100,
-          offset: 0,
-        });
-        queryClient.prefetchQuery({
-          queryKey,
-          queryFn: async ({ signal }) => {
-            const { getComments } = await import('@/entity/comment/api');
-            return getComments(
-              {
-                image_id: image.id,
-                limit: 100,
-                offset: 0,
-              },
-              signal,
-            );
-          },
-          staleTime: 30_000,
-        });
-      }
-    });
-  }, [imagesToPrefetch, queryClient]);
 
   return (
     <Modal.Container className='tablet:w-[72dvw] tablet:h-[80dvh] h-[90dvh] max-w-[1024px] select-none'>
