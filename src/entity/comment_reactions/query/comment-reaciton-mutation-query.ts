@@ -138,7 +138,7 @@ export function useOptimisticCommentReaction(
     } catch (error) {
       console.error('코멘트 리액션 API 에러:', error);
       await queryClient.refetchQueries({
-        queryKey: COMMENT_QUERY_KEY.detail(commentId),
+        queryKey: COMMENT_QUERY_KEY.lists(),
       });
     }
   };
