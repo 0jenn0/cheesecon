@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/shared/lib';
 import { Modal, Spinner } from '@/shared/ui/feedback';
@@ -28,7 +28,6 @@ export default function ViewEmoticonImageModal({
   const emoticonImage = allImages.find((image) => image.id === imageId);
   const [color, setColor] = useState<ColorMap>('blue');
 
-  console.log(allImages.find((image) => image.id === imageId));
   return (
     <Modal.Container className='tablet:w-[72dvw] tablet:h-[80dvh] h-[90dvh] max-w-[1024px] select-none'>
       <Modal.Header
@@ -60,7 +59,7 @@ export default function ViewEmoticonImageModal({
         <div className='laptop:w-1/2 w-full min-w-0 flex-shrink-0'>
           {emoticonImage && (
             <div className='flex h-full w-full items-center justify-center overflow-hidden'>
-              <div className='laptop:hidden relative flex'>
+              <div className='relative flex'>
                 <ColorPicker
                   color={color}
                   handleChangeColor={setColor}
@@ -68,36 +67,19 @@ export default function ViewEmoticonImageModal({
                 />
                 <CenterFocusCarousel
                   color={color}
-                  images={allImages.sort(
-                    (a, b) => a.image_order - b.image_order,
-                  )}
-                  itemWidth={260}
+                  images={allImages}
+                  itemWidth={240}
                   gap={20}
                   centerScale={1.2}
                   setIsDragging={setIsDragging}
                   setImageId={setImageId}
                   currentImageOrder={emoticonImage.image_order}
-                />
-              </div>
-              <div className='laptop:flex hidden'>
-                <CenterFocusCarousel
-                  color={color}
-                  images={allImages.sort(
-                    (a, b) => a.image_order - b.image_order,
-                  )}
-                  currentImageOrder={emoticonImage.image_order}
-                  itemWidth={300}
-                  gap={20}
-                  centerScale={1.2}
-                  setIsDragging={setIsDragging}
-                  setImageId={setImageId}
                 />
               </div>
             </div>
           )}
         </div>
-
-        <div className='laptop:w-1/2 w-full min-w-0 flex-1 flex-shrink-0'>
+        {/* <div className='laptop:w-1/2 w-full min-w-0 flex-1 flex-shrink-0'>
           {!isDragging && (
             <AnimatePresence>
               <motion.div
@@ -110,7 +92,7 @@ export default function ViewEmoticonImageModal({
                   className='padding-0 h-full'
                   authorId={authorId}
                   targetType='emoticon_image'
-                  targetId={emoticonImage?.id ?? ''}
+                  targetId={emoticonImage?.id || ''}
                   headerAction={
                     <LikeButton
                       targetType='emoticon_image'
@@ -121,6 +103,31 @@ export default function ViewEmoticonImageModal({
               </motion.div>
             </AnimatePresence>
           )}
+        </div> */}
+        <div className='laptop:w-1/2 w-full min-w-0 flex-1 flex-shrink-0'>
+          <div
+            className={cn(
+              'transition-opacity duration-200',
+              isDragging ? 'pointer-events-none opacity-0' : 'opacity-100',
+            )}
+          >
+            <AnimatePresence>
+              <motion.div /* ... */>
+                <EmoticonCommentSection
+                  className='padding-0 h-full'
+                  authorId={authorId}
+                  targetType='emoticon_image'
+                  targetId={emoticonImage?.id ?? ''} // enabled: !!targetId 덕분에 안전
+                  headerAction={
+                    <LikeButton
+                      targetType='emoticon_image'
+                      targetId={imageId ?? ''}
+                    />
+                  }
+                />
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
       </Modal.Body>
     </Modal.Container>

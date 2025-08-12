@@ -1,9 +1,10 @@
 'use client';
 
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
+  type MotionValue,
   PanInfo,
   animate,
   motion,
@@ -22,6 +23,7 @@ interface CenterFocusCarouselProps {
   setIsDragging: (isDragging: boolean) => void;
   setImageId: (imageId: string) => void;
   color: ColorMap;
+  suppressPublish?: boolean;
 }
 
 function CarouselItem({
@@ -42,21 +44,19 @@ function CarouselItem({
   itemWidth: number;
   gap: number;
   centerScale: number;
-  x: ReturnType<typeof useMotionValue<number>>;
+  x: MotionValue<number>;
   baseLeft: (i: number) => number;
   centerX: number;
   N: number;
   goToExtended: (extIdx: number) => void;
   color: ColorMap;
 }) {
-  const distance = useTransform(x, (v: number) => {
+  const distance = useTransform(x, (v) => {
     const cardCenter = v + baseLeft(extIdx) + itemWidth / 2;
     return Math.abs(cardCenter - centerX);
   });
 
-  const scale = useTransform(distance, (d: number) => {
-    const stops = [0, itemWidth * 0.8, itemWidth * 1.5, itemWidth * 3];
-    const values = [centerScale, Math.max(1, centerScale * 0.9), 1, 0.85];
+  const lerpStops = (d: number, stops: number[], values: number[]) => {
     const i = stops.findIndex((s) => d <= s);
     if (i === -1) return values[values.length - 1];
     if (i <= 0) return values[0];
@@ -66,42 +66,31 @@ function CarouselItem({
       v1 = values[i];
     const t = Math.max(0, Math.min(1, (d - d0) / (d1 - d0)));
     return v0 + (v1 - v0) * t;
-  });
+  };
 
-  const opacity = useTransform(distance, (d: number) => {
-    const stops = [0, itemWidth * 0.5, itemWidth * 1.5, itemWidth * 3];
-    const values = [1, 0.2, 0.5, 0.4];
-    const i = stops.findIndex((s) => d <= s);
-    if (i === -1) return values[values.length - 1];
-    if (i <= 0) return values[0];
-    const d0 = stops[i - 1],
-      d1 = stops[i];
-    const v0 = values[i - 1],
-      v1 = values[i];
-    const t = Math.max(0, Math.min(1, (d - d0) / (d1 - d0)));
-    return v0 + (v1 - v0) * t;
-  });
-
-  const zIndex = useTransform(distance, (d: number) => {
-    const stops = [0, itemWidth * 0.5, itemWidth * 2];
-    const values = [30, 15, 1];
-    const i = stops.findIndex((s) => d <= s);
-    if (i === -1) return values[values.length - 1];
-    if (i <= 0) return values[0];
-    const d0 = stops[i - 1],
-      d1 = stops[i];
-    const v0 = values[i - 1],
-      v1 = values[i];
-    const t = Math.max(0, Math.min(1, (d - d0) / (d1 - d0)));
-    return v0 + (v1 - v0) * t;
-  });
+  const scale = useTransform(distance, (d) =>
+    lerpStops(
+      d,
+      [0, itemWidth * 0.8, itemWidth * 1.5, itemWidth * 3],
+      [centerScale, Math.max(1, centerScale * 0.9), 1, 0.85],
+    ),
+  );
+  const opacity = useTransform(distance, (d) =>
+    lerpStops(
+      d,
+      [0, itemWidth * 0.5, itemWidth * 1.5, itemWidth * 3],
+      [1, 0.2, 0.5, 0.4],
+    ),
+  );
+  const zIndex = useTransform(distance, (d) =>
+    lerpStops(d, [0, itemWidth * 0.5, itemWidth * 2], [30, 15, 1]),
+  );
 
   const origIdx = ((extIdx % N) + N) % N;
   const displayOrder = origIdx + 1;
 
   return (
     <div
-      key={`${image.id}-${Math.floor(extIdx / N)}`}
       className='relative flex-shrink-0 select-none'
       style={{
         width: itemWidth,
@@ -113,12 +102,7 @@ function CarouselItem({
     >
       <motion.div
         className='group relative h-full w-full cursor-pointer overflow-hidden rounded-2xl bg-white'
-        style={{
-          scale,
-          opacity,
-          zIndex,
-          transformOrigin: 'center center',
-        }}
+        style={{ scale, opacity, zIndex, transformOrigin: 'center center' }}
         whileHover={{ y: -5, transition: { duration: 0.2 } }}
       >
         <Image
@@ -129,9 +113,7 @@ function CarouselItem({
           sizes={`${itemWidth}px`}
           draggable={false}
           priority
-          style={{
-            backgroundColor: COLOR_MAP[color],
-          }}
+          style={{ backgroundColor: COLOR_MAP[color] }}
         />
       </motion.div>
     </div>
@@ -143,16 +125,20 @@ export function CenterFocusCarousel({
   itemWidth = 120,
   gap = 20,
   centerScale = 1.2,
-  currentImageOrder,
+  currentImageOrder = 1,
   setIsDragging: setIsDraggingToParent,
   setImageId,
   color,
+  suppressPublish = false,
 }: CenterFocusCarouselProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const x = useMotionValue(0);
   const [isDragging, setIsDragging] = useState(false);
   const [centerIdx, setCenterIdx] = useState(0);
+  const lastPublishedIdRef = useRef<string | null>(null);
+  const didInitRef = useRef(false);
 
   const [visibleSlots, setVisibleSlots] = useState<number>(3);
   useEffect(() => {
@@ -169,17 +155,18 @@ export function CenterFocusCarousel({
   }, []);
 
   const N = images.length;
-  const noImages = N === 0;
+  if (N === 0) return null;
 
-  const currentIdx0 = useMemo(() => {
-    const order = Math.max(1, Math.min(N, currentImageOrder ?? 1));
-    return order - 1;
-  }, [N, currentImageOrder]);
-
-  const extended = useMemo(() => {
-    return [...images, ...images, ...images];
+  useEffect(() => {
+    didInitRef.current = false;
+    lastPublishedIdRef.current = null;
   }, [images]);
 
+  const initialOrigIdxRef = useRef<number>(
+    Math.max(0, Math.min(N - 1, currentImageOrder - 1)),
+  );
+
+  const extended = useMemo(() => [...images, ...images, ...images], [images]);
   const toOriginal = (extIdx: number) => ((extIdx % N) + N) % N;
   const fromOriginalMiddle = (origIdx: number) => N + origIdx;
 
@@ -188,15 +175,13 @@ export function CenterFocusCarousel({
     itemWidth * visibleSlots + gap * Math.floor(visibleSlots);
   const baseLeft = (i: number) => i * slot;
   const centerX = containerWidth / 2;
-
   const getTargetX = (i: number) => centerX - (baseLeft(i) + itemWidth / 2);
-
-  const minX = getTargetX(Math.max(0, extended.length - 1)); //
+  const minX = getTargetX(Math.max(0, extended.length - 1));
   const maxX = getTargetX(0);
 
   const findClosestToCenter = (currentX: number) => {
-    let closest = 0;
-    let minDist = Infinity;
+    let closest = 0,
+      minDist = Infinity;
     for (let i = 0; i < extended.length; i++) {
       const cardCenter = currentX + baseLeft(i) + itemWidth / 2;
       const dist = Math.abs(cardCenter - centerX);
@@ -224,11 +209,7 @@ export function CenterFocusCarousel({
     return idx;
   };
 
-  const snapToClosest = (
-    currentX: number,
-    velocity = 0,
-    onSettled?: (origIdx: number) => void,
-  ) => {
+  const snapToClosest = (currentX: number, velocity = 0) => {
     let targetIndex = findClosestToCenter(currentX);
     if (Math.abs(velocity) > 500) {
       const dir = velocity > 0 ? -1 : 1;
@@ -238,8 +219,6 @@ export function CenterFocusCarousel({
       );
     }
     const targetX = Math.max(minX, Math.min(maxX, getTargetX(targetIndex)));
-    const origIdx = toOriginal(targetIndex);
-
     animate(x, targetX, {
       type: 'spring',
       stiffness: 420,
@@ -248,24 +227,45 @@ export function CenterFocusCarousel({
       onComplete: () => {
         const wrapped = wrapIfNeeded(targetIndex);
         setCenterIdx(wrapped);
-        onSettled?.(origIdx);
       },
     });
   };
 
-  const setUrlSearchParams = (id: string) => {
-    router.replace(`/emoticon/${images[0].set_id}?imageId=${id}`, {
-      scroll: false,
-    });
-  };
+  useEffect(() => {
+    if (!didInitRef.current) {
+      const midIdx = fromOriginalMiddle(initialOrigIdxRef.current);
+      x.set(getTargetX(midIdx));
+      setCenterIdx(midIdx);
+      didInitRef.current = true;
+      return;
+    }
+    x.set(getTargetX(centerIdx));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [containerWidth, visibleSlots, N]);
+
+  useEffect(() => {
+    if (suppressPublish) return;
+    const img = images[toOriginal(centerIdx)];
+    if (!img) return;
+
+    if (lastPublishedIdRef.current === img.id) return;
+    lastPublishedIdRef.current = img.id;
+
+    setImageId(img.id);
+
+    const currentQueryId = searchParams?.get('imageId');
+    if (currentQueryId !== img.id) {
+      router.replace(`/emoticon/${img.set_id}?imageId=${img.id}`, {
+        scroll: false,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [centerIdx, images, suppressPublish]);
 
   const handleDragEnd = (_: unknown, info: PanInfo) => {
     setIsDragging(false);
     setIsDraggingToParent(false);
-    snapToClosest(x.get(), info.velocity.x, (origIdx) => {
-      setUrlSearchParams(images[origIdx].id);
-    });
-    setImageId(images[toOriginal(centerIdx)].id);
+    snapToClosest(x.get(), info.velocity.x);
   };
 
   const goToOriginal = (origIdx: number) => {
@@ -277,47 +277,27 @@ export function CenterFocusCarousel({
       stiffness: 420,
       damping: 42,
       mass: 0.8,
-      onComplete: () => {
-        setCenterIdx(targetIdx);
-        setUrlSearchParams(images[origIdx].id);
-      },
+      onComplete: () => setCenterIdx(targetIdx),
     });
   };
 
-  // 카드 클릭 시: 해당 확장 인덱스로 이동
   const goToExtended = (extIdx: number) => {
     if (isDragging) return;
     const targetX = Math.max(minX, Math.min(maxX, getTargetX(extIdx)));
-    const origIdx = toOriginal(extIdx);
     animate(x, targetX, {
       type: 'spring',
       stiffness: 420,
       damping: 42,
       mass: 0.8,
-      onComplete: () => {
-        const wrapped = wrapIfNeeded(extIdx);
-        setCenterIdx(wrapped);
-        setUrlSearchParams(images[origIdx].id);
-      },
+      onComplete: () => setCenterIdx(wrapIfNeeded(extIdx)),
     });
   };
 
-  // ✅ 초기 정렬: 현재 카드 중앙
-  useEffect(() => {
-    const midIdx = fromOriginalMiddle(currentIdx0);
-    x.set(getTargetX(midIdx));
-    setCenterIdx(midIdx);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [containerWidth, visibleSlots, N, currentIdx0]);
-
-  const activeOriginalIndex = toOriginal(centerIdx); // 0-based
-
-  if (noImages) return null;
+  const activeOriginalIndex = toOriginal(centerIdx);
 
   return (
-    <div className='w/full mx-auto'>
+    <div className='mx-auto w-full'>
       <div className='flex flex-col overflow-hidden rounded-3xl'>
-        {/* 캐러셀 */}
         <div
           className='relative mx-auto w-full touch-pan-y overflow-hidden'
           style={{
@@ -348,7 +328,7 @@ export function CenterFocusCarousel({
                 gap={gap}
                 centerScale={centerScale}
                 x={x}
-                baseLeft={baseLeft}
+                baseLeft={(i) => i * (itemWidth + gap)}
                 centerX={centerX}
                 N={N}
                 goToExtended={goToExtended}

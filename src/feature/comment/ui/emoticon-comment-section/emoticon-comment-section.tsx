@@ -1,6 +1,6 @@
 'use client';
 
-import { ComponentPropsWithRef, useEffect } from 'react';
+import { ComponentPropsWithRef, useEffect, useMemo } from 'react';
 import { cn } from '@/shared/lib';
 import { usePagination } from '@/shared/lib/use-pagination';
 import { Icon } from '@/shared/ui/display';
@@ -10,6 +10,7 @@ import { useCommentQuery } from '@/entity/comment/query/comment-infinity-query';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { Comment, DefaultCommentForm } from '@/feature/comment/ui';
 import { Session } from '@supabase/supabase-js';
+import { keepPreviousData } from '@tanstack/react-query';
 import EmoticonCommentSectionSkeleton from './emoticon-comment-section.skeleton';
 import { CommentSectionUiProvider } from './provider/use-comment-section-ui';
 
@@ -30,17 +31,16 @@ export default function EmoticonCommentSection({
   headerAction,
   ...props
 }: EmoticonCommentSectionProps) {
-  const queryKey = targetType === 'emoticon_set' ? 'set_id' : 'image_id';
+  const queryKeyField = targetType === 'emoticon_set' ? 'set_id' : 'image_id';
 
-  const { data, isLoading, isSuccess } = useCommentQuery({
-    [queryKey]: targetId,
+  const { data, isLoading } = useCommentQuery({
+    [queryKeyField]: targetId || null,
     limit: COUNT_PER_PAGE,
+    offset: 0,
   });
 
-  const hasData = !!(data && data.success);
-  const comments: CommentDetail[] = hasData ? data!.data.data : [];
-
-  const showSkeleton = isLoading && !isSuccess;
+  const isInitialLoading = isLoading && !data;
+  const comments: CommentDetail[] = data?.success ? data.data.data : [];
 
   const { currentPage, handlePageChange, totalPages } =
     usePagination(COUNT_PER_PAGE);
@@ -51,72 +51,66 @@ export default function EmoticonCommentSection({
     comments?.filter((comment: CommentDetail) => !comment.parent_comment_id) ||
     [];
 
-  useEffect(() => {
-    console.log('showSkeleton', showSkeleton);
-  }, [showSkeleton]);
-
-  // 스켈레톤 표시
-  if (showSkeleton) return <EmoticonCommentSectionSkeleton />;
-
-  // 데이터가 아직 없고 로딩도 끝난 경우 null 반환
-  if (!comments && !isLoading) return null;
-
   return (
     <CommentSectionUiProvider>
-      <section
-        className={cn(
-          'tablet:gap-24 flex h-full w-full flex-col gap-16',
-          className,
-        )}
-        {...props}
-      >
-        <div className='flex flex-col gap-8'>
-          <div className='border-ghost flex items-center justify-between'>
-            <div className='padding-8 flex items-center gap-4'>
-              <h1 className='font-semibold'>댓글</h1>
-              <p>({comments?.length || 0}개)</p>
-            </div>
-            {headerAction}
-          </div>
-          <div className='border-ghost border-b' />
-        </div>
-
-        <div className='flex w-full flex-1 flex-col gap-24'>
-          {parentComments.length > 0 &&
-            parentComments.map((comment: CommentDetail) =>
-              renderComment({
-                comment,
-                parentNickname: comment.profile.nickname,
-                comments,
-                authorId,
-                targetId,
-                targetType,
-                session,
-              }),
-            )}
-
-          {parentComments.length === 0 && !isLoading && (
-            <div className='padding- flex w-full items-center justify-center gap-8'>
-              <p className='text-tertiary'>첫 피드백을 남겨주세요!</p>
-              <Icon
-                name='message-loading'
-                size={20}
-                className='text-gray-300'
-              />
-            </div>
+      {isInitialLoading ? (
+        <EmoticonCommentSectionSkeleton />
+      ) : (
+        <section
+          className={cn(
+            'tablet:gap-24 flex h-full w-full flex-col gap-16',
+            className,
           )}
-        </div>
+          {...props}
+        >
+          <div className='flex flex-col gap-8'>
+            <div className='border-ghost flex items-center justify-between'>
+              <div className='padding-8 flex items-center gap-4'>
+                <h1 className='font-semibold'>댓글</h1>
+                <p>({comments?.length || 0}개)</p>
+              </div>
+              {headerAction}
+            </div>
+            <div className='border-ghost border-b' />
+          </div>
 
-        <div>
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages || 1}
-            onPageChange={handlePageChange}
-            className='mt-6'
-          />
-          <DefaultCommentForm targetId={targetId} targetType={targetType} />
-        </div>
-      </section>
+          <div className='flex w-full flex-1 flex-col gap-24'>
+            {parentComments.length > 0 &&
+              parentComments.map((comment: CommentDetail) =>
+                renderComment({
+                  comment,
+                  parentNickname: comment.profile.nickname,
+                  comments,
+                  authorId,
+                  targetId,
+                  targetType,
+                  session,
+                }),
+              )}
+
+            {parentComments.length === 0 && !isLoading && (
+              <div className='padding- flex w-full items-center justify-center gap-8'>
+                <p className='text-tertiary'>첫 피드백을 남겨주세요!</p>
+                <Icon
+                  name='message-loading'
+                  size={20}
+                  className='text-gray-300'
+                />
+              </div>
+            )}
+          </div>
+
+          <div>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages || 1}
+              onPageChange={handlePageChange}
+              className='mt-6'
+            />
+            <DefaultCommentForm targetId={targetId} targetType={targetType} />
+          </div>
+        </section>
+      )}
     </CommentSectionUiProvider>
   );
 }
