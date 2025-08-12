@@ -25,7 +25,6 @@ export default async function ImageFullPage({
       {imageId ? (
         <ViewEmoticonImageModal
           allImages={allImages ?? []}
-          imageId={imageId}
           authorId={authorId}
         />
       ) : (

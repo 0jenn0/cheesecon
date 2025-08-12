@@ -63,3 +63,21 @@ export async function getLikeStatus(
     return false;
   }
 }
+
+export async function getLikeCount(
+  targetType: 'emoticon_set' | 'emoticon_image',
+  targetId: string,
+): Promise<number | null> {
+  const supabase = createBrowserSupabaseClient();
+  const { data, error } = await supabase
+    .from('likes')
+    .select('count')
+    .eq(targetType === 'emoticon_set' ? 'set_id' : 'image_id', targetId);
+
+  if (error) {
+    console.error('좋아요 개수 조회 실패:', error);
+    return 0;
+  }
+
+  return data?.[0]?.count ?? null;
+}

@@ -1,9 +1,21 @@
-import { useQuery } from '@tanstack/react-query';
+import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import { getComments } from '../api';
+import { GetCommentsResult } from '../api/types';
 import { COMMENT_QUERY_KEY } from './query-key';
 import { CommentInfiniteQueryParams } from './types';
 
-export const useCommentQuery = (params: CommentInfiniteQueryParams) => {
+export const useCommentQuery = (
+  params: CommentInfiniteQueryParams,
+  options?: Omit<
+    UseQueryOptions<
+      GetCommentsResult,
+      Error,
+      GetCommentsResult,
+      readonly unknown[]
+    >,
+    'queryKey' | 'queryFn'
+  >,
+) => {
   const key = Object.entries(params).reduce(
     (acc, [key, value]) => {
       if (value) {
@@ -21,5 +33,6 @@ export const useCommentQuery = (params: CommentInfiniteQueryParams) => {
         limit: params.limit || 100,
         offset: params.offset || 0,
       }),
+    ...options,
   });
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import { ComponentPropsWithRef } from 'react';
+import { ComponentPropsWithRef, useEffect } from 'react';
 import { cn } from '@/shared/lib';
 import { usePagination } from '@/shared/lib/use-pagination';
 import { Icon } from '@/shared/ui/display';
@@ -10,6 +10,7 @@ import { useCommentQuery } from '@/entity/comment/query/comment-infinity-query';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { Comment, DefaultCommentForm } from '@/feature/comment/ui';
 import { Session } from '@supabase/supabase-js';
+import EmoticonCommentSectionSkeleton from './emoticon-comment-section.skeleton';
 import { CommentSectionUiProvider } from './provider/use-comment-section-ui';
 
 const COUNT_PER_PAGE = 100;
@@ -31,12 +32,15 @@ export default function EmoticonCommentSection({
 }: EmoticonCommentSectionProps) {
   const queryKey = targetType === 'emoticon_set' ? 'set_id' : 'image_id';
 
-  const { data } = useCommentQuery({
+  const { data, isLoading, isSuccess } = useCommentQuery({
     [queryKey]: targetId,
     limit: COUNT_PER_PAGE,
   });
 
-  const comments = data?.success ? data.data.data : [];
+  const hasData = !!(data && data.success);
+  const comments: CommentDetail[] = hasData ? data!.data.data : [];
+
+  const showSkeleton = isLoading && !isSuccess;
 
   const { currentPage, handlePageChange, totalPages } =
     usePagination(COUNT_PER_PAGE);
@@ -46,6 +50,16 @@ export default function EmoticonCommentSection({
   const parentComments =
     comments?.filter((comment: CommentDetail) => !comment.parent_comment_id) ||
     [];
+
+  useEffect(() => {
+    console.log('showSkeleton', showSkeleton);
+  }, [showSkeleton]);
+
+  // 스켈레톤 표시
+  if (showSkeleton) return <EmoticonCommentSectionSkeleton />;
+
+  // 데이터가 아직 없고 로딩도 끝난 경우 null 반환
+  if (!comments && !isLoading) return null;
 
   return (
     <CommentSectionUiProvider>
@@ -80,7 +94,8 @@ export default function EmoticonCommentSection({
                 session,
               }),
             )}
-          {parentComments.length === 0 && (
+
+          {parentComments.length === 0 && !isLoading && (
             <div className='padding- flex w-full items-center justify-center gap-8'>
               <p className='text-tertiary'>첫 피드백을 남겨주세요!</p>
               <Icon
