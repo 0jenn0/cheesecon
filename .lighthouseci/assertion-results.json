@@ -41,11 +41,43 @@
     ],
     "operator": ">=",
     "passed": false,
+    "auditId": "cls-culprits-insight",
+    "level": "error",
+    "url": "http://localhost:3000/emoticon/f273ca4d-ab91-456f-b877-ef5659fec32a?imageId=cf7b39e7-f85c-4b18-8747-7899d7e15b62",
+    "auditTitle": "Layout shift culprits",
+    "auditDocumentationLink": "https://web.dev/articles/optimize-cls"
+  },
+  {
+    "name": "minScore",
+    "expected": 0.9,
+    "actual": 0,
+    "values": [
+      0,
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
     "auditId": "color-contrast",
     "level": "error",
     "url": "http://localhost:3000/emoticon/f273ca4d-ab91-456f-b877-ef5659fec32a?imageId=cf7b39e7-f85c-4b18-8747-7899d7e15b62",
     "auditTitle": "Background and foreground colors do not have a sufficient contrast ratio.",
     "auditDocumentationLink": "https://dequeuniversity.com/rules/axe/4.10/color-contrast"
+  },
+  {
+    "name": "minScore",
+    "expected": 0.9,
+    "actual": 0.88,
+    "values": [
+      0.88,
+      0.88
+    ],
+    "operator": ">=",
+    "passed": false,
+    "auditId": "cumulative-layout-shift",
+    "level": "warn",
+    "url": "http://localhost:3000/emoticon/f273ca4d-ab91-456f-b877-ef5659fec32a?imageId=cf7b39e7-f85c-4b18-8747-7899d7e15b62",
+    "auditTitle": "Cumulative Layout Shift",
+    "auditDocumentationLink": "https://web.dev/articles/cls"
   },
   {
     "name": "minScore",
@@ -66,10 +98,10 @@
   {
     "name": "minScore",
     "expected": 0.9,
-    "actual": 0.52,
+    "actual": 0.38,
     "values": [
-      0.5,
-      0.52
+      0.38,
+      0.31
     ],
     "operator": ">=",
     "passed": false,
@@ -82,10 +114,26 @@
   {
     "name": "minScore",
     "expected": 0.9,
-    "actual": 0.5,
+    "actual": 0,
     "values": [
       0,
-      0.5
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
+    "auditId": "lcp-discovery-insight",
+    "level": "error",
+    "url": "http://localhost:3000/emoticon/f273ca4d-ab91-456f-b877-ef5659fec32a?imageId=cf7b39e7-f85c-4b18-8747-7899d7e15b62",
+    "auditTitle": "LCP request discovery",
+    "auditDocumentationLink": "https://web.dev/articles/optimize-lcp#1_eliminate_resource_load_delay"
+  },
+  {
+    "name": "minScore",
+    "expected": 0.9,
+    "actual": 0,
+    "values": [
+      0,
+      0
     ],
     "operator": ">=",
     "passed": false,
@@ -112,20 +160,20 @@
     "auditDocumentationLink": "https://web.dev/baseline"
   },
   {
-    "name": "minScore",
-    "expected": 0.9,
-    "actual": 0,
+    "name": "maxLength",
+    "expected": 0,
+    "actual": 11,
     "values": [
-      0,
-      0
+      11,
+      12
     ],
-    "operator": ">=",
+    "operator": "<=",
     "passed": false,
-    "auditId": "link-name",
+    "auditId": "offscreen-images",
     "level": "error",
     "url": "http://localhost:3000/emoticon/f273ca4d-ab91-456f-b877-ef5659fec32a?imageId=cf7b39e7-f85c-4b18-8747-7899d7e15b62",
-    "auditTitle": "Links do not have a discernible name",
-    "auditDocumentationLink": "https://dequeuniversity.com/rules/axe/4.10/link-name"
+    "auditTitle": "Defer offscreen images",
+    "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/performance/offscreen-images/"
   },
   {
     "name": "maxLength",
@@ -176,6 +224,22 @@
     "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/seo/invalid-robots-txt/"
   },
   {
+    "name": "minScore",
+    "expected": 0.9,
+    "actual": 0,
+    "values": [
+      0,
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
+    "auditId": "target-size",
+    "level": "error",
+    "url": "http://localhost:3000/emoticon/f273ca4d-ab91-456f-b877-ef5659fec32a?imageId=cf7b39e7-f85c-4b18-8747-7899d7e15b62",
+    "auditTitle": "Touch targets do not have sufficient size or spacing.",
+    "auditDocumentationLink": "https://dequeuniversity.com/rules/axe/4.10/target-size"
+  },
+  {
     "name": "maxLength",
     "expected": 0,
     "actual": 4,
@@ -194,10 +258,10 @@
   {
     "name": "minScore",
     "expected": 0.9,
-    "actual": 0.88,
+    "actual": 0.82,
     "values": [
-      0.87,
-      0.88
+      0.82,
+      0.78
     ],
     "operator": ">=",
     "passed": false,
