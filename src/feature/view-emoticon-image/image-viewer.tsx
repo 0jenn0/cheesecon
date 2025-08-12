@@ -141,27 +141,8 @@ export function CenterFocusCarousel({
   const didInitRef = useRef(false);
 
   const [visibleSlots, setVisibleSlots] = useState<number>(3);
-  useEffect(() => {
-    const compute = () => {
-      const w = window.innerWidth;
-      if (w < 640) return 1.5;
-      if (w < 1024) return 2;
-      return 3;
-    };
-    const onResize = () => setVisibleSlots(compute());
-    onResize();
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
 
   const N = images.length;
-  if (N === 0) return null;
-
-  useEffect(() => {
-    didInitRef.current = false;
-    lastPublishedIdRef.current = null;
-  }, [images]);
-
   const initialOrigIdxRef = useRef<number>(
     Math.max(0, Math.min(N - 1, currentImageOrder - 1)),
   );
@@ -178,6 +159,57 @@ export function CenterFocusCarousel({
   const getTargetX = (i: number) => centerX - (baseLeft(i) + itemWidth / 2);
   const minX = getTargetX(Math.max(0, extended.length - 1));
   const maxX = getTargetX(0);
+
+  useEffect(() => {
+    const compute = () => {
+      const w = window.innerWidth;
+      if (w < 640) return 1.5;
+      if (w < 1024) return 2;
+      return 3;
+    };
+    const onResize = () => setVisibleSlots(compute());
+    onResize();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  useEffect(() => {
+    didInitRef.current = false;
+    lastPublishedIdRef.current = null;
+  }, [images]);
+
+  useEffect(() => {
+    if (!didInitRef.current) {
+      const midIdx = fromOriginalMiddle(initialOrigIdxRef.current);
+      x.set(getTargetX(midIdx));
+      setCenterIdx(midIdx);
+      didInitRef.current = true;
+      return;
+    }
+    x.set(getTargetX(centerIdx));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [containerWidth, visibleSlots, N]);
+
+  useEffect(() => {
+    if (suppressPublish) return;
+    const img = images[toOriginal(centerIdx)];
+    if (!img) return;
+
+    if (lastPublishedIdRef.current === img.id) return;
+    lastPublishedIdRef.current = img.id;
+
+    setImageId(img.id);
+
+    const currentQueryId = searchParams?.get('imageId');
+    if (currentQueryId !== img.id) {
+      router.replace(`/emoticon/${img.set_id}?imageId=${img.id}`, {
+        scroll: false,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [centerIdx, images, suppressPublish]);
+
+  if (N === 0) return null;
 
   const findClosestToCenter = (currentX: number) => {
     let closest = 0,
@@ -230,37 +262,6 @@ export function CenterFocusCarousel({
       },
     });
   };
-
-  useEffect(() => {
-    if (!didInitRef.current) {
-      const midIdx = fromOriginalMiddle(initialOrigIdxRef.current);
-      x.set(getTargetX(midIdx));
-      setCenterIdx(midIdx);
-      didInitRef.current = true;
-      return;
-    }
-    x.set(getTargetX(centerIdx));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [containerWidth, visibleSlots, N]);
-
-  useEffect(() => {
-    if (suppressPublish) return;
-    const img = images[toOriginal(centerIdx)];
-    if (!img) return;
-
-    if (lastPublishedIdRef.current === img.id) return;
-    lastPublishedIdRef.current = img.id;
-
-    setImageId(img.id);
-
-    const currentQueryId = searchParams?.get('imageId');
-    if (currentQueryId !== img.id) {
-      router.replace(`/emoticon/${img.set_id}?imageId=${img.id}`, {
-        scroll: false,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [centerIdx, images, suppressPublish]);
 
   const handleDragEnd = (_: unknown, info: PanInfo) => {
     setIsDragging(false);

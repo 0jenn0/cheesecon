@@ -1,6 +1,6 @@
 'use client';
 
-import { ComponentPropsWithRef, useEffect, useMemo } from 'react';
+import { ComponentPropsWithRef } from 'react';
 import { cn } from '@/shared/lib';
 import { usePagination } from '@/shared/lib/use-pagination';
 import { Icon } from '@/shared/ui/display';
@@ -10,7 +10,6 @@ import { useCommentQuery } from '@/entity/comment/query/comment-infinity-query';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { Comment, DefaultCommentForm } from '@/feature/comment/ui';
 import { Session } from '@supabase/supabase-js';
-import { keepPreviousData } from '@tanstack/react-query';
 import EmoticonCommentSectionSkeleton from './emoticon-comment-section.skeleton';
 import { CommentSectionUiProvider } from './provider/use-comment-section-ui';
 
