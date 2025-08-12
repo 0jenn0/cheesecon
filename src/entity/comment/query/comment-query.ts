@@ -1,33 +1,47 @@
+// useCommentListQuery.ts
 import { useQuery } from '@tanstack/react-query';
-import { getComments } from '../api';
 import { COMMENT_QUERY_KEY } from './query-key';
 import { CommentInfiniteQueryParams } from './types';
 
-export const useCommentQuery = (params: CommentInfiniteQueryParams) => {
+export const useCommentListQuery = (params: CommentInfiniteQueryParams) => {
+  const scope = params.image_id ? 'image' : 'set';
+
+  const id = (params.image_id ?? params.set_id ?? '').trim();
+  const limit = params.limit ?? 100;
+  const offset = params.offset ?? 0;
+
+  const enabled = id.length > 0;
+  const key = COMMENT_QUERY_KEY.list({
+    scope,
+    id: enabled ? id : null,
+    limit,
+    offset,
+  });
+
   return useQuery({
-    queryKey: COMMENT_QUERY_KEY.list(
-      params.image_id ? 'image' : 'set',
-      params.image_id ?? params.set_id ?? null,
-      params.limit ?? 100,
-      params.offset ?? 0,
-    ),
+    queryKey: key,
     queryFn: async ({ signal }) => {
-      const data = await getComments(
-        {
-          ...params,
-          limit: params.limit,
-          offset: params.offset,
-        },
+      const qs = new URLSearchParams({
+        scope,
+        id,
+        limit: String(limit),
+        offset: String(offset),
+        sortOrder: 'asc',
+      });
+      const res = await fetch(`/api/comments?${qs.toString()}`, {
         signal,
-      );
+        cache: 'no-store',
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      if (!json?.success)
+        throw new Error(json?.error?.message ?? 'Unknown error');
 
-      if (data.success) {
-        return data.data;
-      }
-
-      if (data.error) {
-        throw new Error(data.error.message);
-      }
+      return json.data;
     },
+    enabled,
+    staleTime: 30_000,
+    refetchOnWindowFocus: false,
+    retry: 0,
   });
 };
