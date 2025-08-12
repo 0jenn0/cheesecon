@@ -99,7 +99,6 @@ export default function useCommentForm({
             content: '',
             [key]: targetId,
             parent_comment_id: parentCommentId ?? null,
-            image_id: null,
             images: null,
           });
           setUploadedImages([]);
@@ -126,11 +125,11 @@ export default function useCommentForm({
       },
       {
         onSuccess: () => {
+          console.log('handleCreateSubmit success', comment);
           setComment({
             content: '',
             [key]: targetId,
             parent_comment_id: null,
-            image_id: null,
             images: null,
           });
           setUploadedImages([]);
