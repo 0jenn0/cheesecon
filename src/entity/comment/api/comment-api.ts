@@ -3,6 +3,7 @@
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
 import { DeleteCommentParams, UpdateCommentParams } from '../type';
 import {
+  CommentDetail,
   CreateCommentRequest,
   CreateCommentResponse,
   GetCommentsRequest,
@@ -15,128 +16,72 @@ export async function getComments(
   try {
     const supabase = await createServerSupabaseClient();
 
-    let query = supabase.from('comments').select(
-      `
-        *,
-        profile:profiles!comments_user_id_fkey(*),
-        comment_reactions!comment_reactions_comment_id_fkey(*)
-        `,
-    );
+    const {
+      set_id = null,
+      image_id = null,
+      user_id = null,
+      parent_comment_id,
+      sortOrder = 'asc',
+      limit = 30,
+      offset = 0,
+    } = request ?? {};
 
-    if (request?.set_id) {
-      query = query.eq('set_id', request?.set_id);
-    }
+    const p_parent_is_null =
+      request?.parent_comment_id === null
+        ? true
+        : request?.parent_comment_id === undefined
+          ? null
+          : false;
 
-    if (request?.image_id) {
-      query = query.eq('image_id', request?.image_id);
-    }
-
-    if (request?.user_id) {
-      query = query.eq('user_id', request.user_id);
-    }
-
-    if (request?.parent_comment_id !== undefined) {
-      if (request.parent_comment_id === null) {
-        query = query.is('parent_comment_id', null);
-      } else {
-        query = query.eq('parent_comment_id', request.parent_comment_id);
-      }
-    }
-
-    if (request.sortBy) {
-      query = query.order(request.sortBy, {
-        ascending: request.sortOrder === 'asc',
-      });
-    } else {
-      query = query.order('created_at', { ascending: true });
-    }
-
-    const limit = request?.limit || 100;
-    const offset = request?.offset || 0;
-
-    const [countResult, dataResult] = await Promise.all([
-      (() => {
-        let countQuery = supabase
-          .from('comments')
-          .select('*', { count: 'exact', head: true });
-
-        if (request.set_id) {
-          countQuery = countQuery.eq('set_id', request.set_id);
-        }
-        if (request.user_id) {
-          countQuery = countQuery.eq('user_id', request.user_id);
-        }
-        if (request.parent_comment_id !== undefined) {
-          if (request.parent_comment_id === null) {
-            countQuery = countQuery.is('parent_comment_id', null);
-          } else {
-            countQuery = countQuery.eq(
-              'parent_comment_id',
-              request.parent_comment_id,
-            );
-          }
-        }
-
-        return countQuery;
-      })(),
-
-      query.range(offset, offset + limit - 1),
-    ]);
-
-    if (dataResult.error) {
-      return {
-        success: false,
-        error: {
-          message: dataResult.error.message,
-          code: dataResult.error.code,
-        },
-      };
-    }
-
-    if (countResult.error) {
-      return {
-        success: false,
-        error: {
-          message: countResult.error.message,
-          code: countResult.error.code,
-        },
-      };
-    }
-
-    const validComments = dataResult.data;
-
-    const formatedComments = validComments?.map((item) => {
-      const reactionCounts = item.comment_reactions.reduce(
-        (acc, reaction) => {
-          acc[reaction.emoji] = (acc[reaction.emoji] || 0) + 1;
-          return acc;
-        },
-        {} as Record<string, number>,
-      );
-
-      return {
-        ...item,
-        reaction_summary: Object.entries(reactionCounts).map(
-          ([emoji, count]) => ({
-            emoji,
-            count,
-          }),
-        ),
-        reactions: item.comment_reactions,
-      };
+    const { data, error } = await supabase.rpc('get_comments_v2', {
+      p_set_id: set_id ?? undefined,
+      p_image_id: image_id ?? undefined,
+      p_user_id: user_id ?? undefined,
+      p_parent_comment_id: parent_comment_id ?? undefined,
+      p_parent_is_null: p_parent_is_null ?? undefined,
+      p_sort_order: sortOrder ?? 'asc',
+      p_limit: limit,
+      p_offset: offset,
     });
 
-    const total = countResult.count || 0;
+    if (error) {
+      return {
+        success: false,
+        error: { message: error.message, code: error.code },
+      };
+    }
+
+    const rows = (data ?? []) as Array<{
+      id: string;
+      content: string;
+      set_id: string | null;
+      image_id: string | null;
+      parent_comment_id: string | null;
+      user_id: string;
+      created_at: string;
+      updated_at: string;
+      profile: {
+        id: string;
+        nickname: string | null;
+        avatar_url: string | null;
+        description: string | null;
+      };
+      reaction_summary: Array<{ emoji: string; count: number }>;
+      total_count: number;
+    }>;
+
+    const total = rows[0]?.total_count ?? 0;
     const currentPage = Math.floor(offset / limit) + 1;
-    const totalPages = Math.ceil(total / limit);
+    const totalPages = Math.max(1, Math.ceil(total / limit));
     const hasMore = offset + limit < total;
 
     return {
       success: true,
       data: {
-        data: formatedComments?.map((item) => ({
-          ...item,
-          profile: item.profile!,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        data: rows.map(({ total_count, ...rest }) => ({
+          ...rest,
+          images: null,
         })),
         total,
         currentPage,
@@ -144,54 +89,40 @@ export async function getComments(
         hasMore,
       },
     };
-  } catch (error) {
+  } catch (err) {
     return {
       success: false,
-      error: {
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
+      error: { message: err instanceof Error ? err.message : 'Unknown error' },
     };
   }
 }
 
 export async function createComment(
-  request: CreateCommentRequest,
+  req: CreateCommentRequest,
 ): Promise<CreateCommentResponse> {
   const supabase = await createServerSupabaseClient();
-
   const {
     data: { user },
-    error: authError,
   } = await supabase.auth.getUser();
-
-  if (authError || !user) {
-    throw new Error('인증되지 않은 사용자입니다.');
-  }
-
-  const commentData = {
-    content: request.comment.content,
-    set_id: request.comment.set_id || null,
-    parent_comment_id: request.comment.parent_comment_id || null,
-    image_id: request.comment.image_id,
-    images: request.comment.images,
-    user_id: user.id,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  };
+  if (!user) throw new Error('인증되지 않은 사용자입니다.');
 
   const { data, error } = await supabase
     .from('comments')
-    .insert(commentData)
+    .insert({
+      content: req.comment.content,
+      set_id: req.comment.set_id ?? null,
+      parent_comment_id: req.comment.parent_comment_id ?? null,
+      image_id: req.comment.image_id,
+      images: req.comment.images,
+      user_id: user.id,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
     .select()
     .single();
 
-  if (error) {
-    throw error;
-  }
-
-  return {
-    comment: data,
-  };
+  if (error) throw error;
+  return { comment: data as CommentDetail };
 }
 
 export async function updateComment(
@@ -203,30 +134,20 @@ export async function updateComment(
     .update({
       content: params.content,
       images: params.images,
-      updated_at: params.updated_at || new Date().toISOString(),
+      updated_at: params.updated_at ?? new Date().toISOString(),
     })
     .eq('id', params.commentId);
-
-  if (error) {
-    throw error;
-  }
+  if (error) throw error;
 }
 
 export async function deleteComment(
   params: DeleteCommentParams,
 ): Promise<void> {
   const supabase = await createServerSupabaseClient();
-
-  if (!params.commentId) {
-    throw new Error('commentId가 없습니다.');
-  }
-
+  if (!params.commentId) throw new Error('commentId가 없습니다.');
   const { error } = await supabase
     .from('comments')
     .delete()
     .eq('id', params.commentId);
-
-  if (error) {
-    throw error;
-  }
+  if (error) throw error;
 }

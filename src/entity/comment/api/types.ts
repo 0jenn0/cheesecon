@@ -1,5 +1,4 @@
 import { ApiResult, BaseApiRequest, BaseApiResponse } from '@/shared/types';
-import { Profile } from '@/entity/profile';
 import {
   Comment,
   CommentReaction,
@@ -19,7 +18,12 @@ export type CommentReactionSummary = {
 export type CommentDetail = Comment & {
   reaction_summary: CommentReactionSummary[];
   reactions?: CommentReaction[];
-  profile: Profile;
+  profile: {
+    id: string;
+    nickname: string | null;
+    avatar_url: string | null;
+    description: string | null;
+  };
 };
 
 export type GetCommentsRequest = BaseApiRequest &

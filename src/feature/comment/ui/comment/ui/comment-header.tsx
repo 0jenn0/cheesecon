@@ -58,7 +58,7 @@ export default function CommentHeader({
             </div>
           )}
           <span className='text-body-sm text-tertiary font-regular'>
-            {comment.profile.description}
+            {comment.profile.description ?? ''}
           </span>
         </div>
       </div>

@@ -47,7 +47,7 @@ export default function Comment({
         </>
         <div className='flex flex-1 gap-8'>
           <Avatar
-            name={comment.profile.nickname}
+            name={comment.profile.nickname ?? ''}
             profileType='image'
             size='sm'
             imageUrl={comment.profile.avatar_url ?? undefined}

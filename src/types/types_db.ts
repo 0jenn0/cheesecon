@@ -500,6 +500,56 @@ export type Database = {
       }
     }
     Functions: {
+      get_comments_v1: {
+        Args: {
+          p_set_id?: string
+          p_image_id?: string
+          p_user_id?: string
+          p_parent_comment_id?: string
+          p_parent_is_null?: boolean
+          p_sort_order?: string
+          p_limit?: number
+          p_offset?: number
+        }
+        Returns: {
+          id: string
+          content: string
+          set_id: string
+          image_id: string
+          parent_comment_id: string
+          user_id: string
+          created_at: string
+          updated_at: string
+          profile: Json
+          reaction_summary: Json
+          total_count: number
+        }[]
+      }
+      get_comments_v2: {
+        Args: {
+          p_set_id?: string
+          p_image_id?: string
+          p_user_id?: string
+          p_parent_comment_id?: string
+          p_parent_is_null?: boolean
+          p_sort_order?: string
+          p_limit?: number
+          p_offset?: number
+        }
+        Returns: {
+          id: string
+          content: string
+          set_id: string
+          image_id: string
+          parent_comment_id: string
+          user_id: string
+          created_at: string
+          updated_at: string
+          profile: Json
+          reaction_summary: Json
+          total_count: number
+        }[]
+      }
       get_emoticon_sets_with_like_status: {
         Args:
           | {

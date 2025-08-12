@@ -79,31 +79,6 @@ export default function ViewEmoticonImageModal({
             </div>
           )}
         </div>
-        {/* <div className='laptop:w-1/2 w-full min-w-0 flex-1 flex-shrink-0'>
-          {!isDragging && (
-            <AnimatePresence>
-              <motion.div
-                initial={{ opacity: 0, y: 100 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 100 }}
-                transition={{ duration: 0.2, ease: 'easeInOut' }}
-              >
-                <EmoticonCommentSection
-                  className='padding-0 h-full'
-                  authorId={authorId}
-                  targetType='emoticon_image'
-                  targetId={emoticonImage?.id || ''}
-                  headerAction={
-                    <LikeButton
-                      targetType='emoticon_image'
-                      targetId={imageId ?? ''}
-                    />
-                  }
-                />
-              </motion.div>
-            </AnimatePresence>
-          )}
-        </div> */}
         <div className='laptop:w-1/2 w-full min-w-0 flex-1 flex-shrink-0'>
           <div
             className={cn(
@@ -112,12 +87,12 @@ export default function ViewEmoticonImageModal({
             )}
           >
             <AnimatePresence>
-              <motion.div /* ... */>
+              <motion.div>
                 <EmoticonCommentSection
                   className='padding-0 h-full'
                   authorId={authorId}
                   targetType='emoticon_image'
-                  targetId={emoticonImage?.id ?? ''} // enabled: !!targetId 덕분에 안전
+                  targetId={emoticonImage?.id ?? ''}
                   headerAction={
                     <LikeButton
                       targetType='emoticon_image'

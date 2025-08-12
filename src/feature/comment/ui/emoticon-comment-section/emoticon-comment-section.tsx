@@ -78,7 +78,7 @@ export default function EmoticonCommentSection({
               parentComments.map((comment: CommentDetail) =>
                 renderComment({
                   comment,
-                  parentNickname: comment.profile.nickname,
+                  parentNickname: comment.profile.nickname ?? '',
                   comments,
                   authorId,
                   targetId,
