@@ -2,10 +2,8 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/shared/lib';
 import { Modal, Spinner } from '@/shared/ui/feedback';
-import { getComments } from '@/entity/comment/api';
 import { COMMENT_QUERY_KEY } from '@/entity/comment/query/query-key';
 import { EmoticonImage } from '@/entity/emoticon-set';
 import { useQueryClient } from '@tanstack/react-query';
@@ -60,15 +58,25 @@ export default function ViewEmoticonImageModal({
   useEffect(() => {
     imagesToPrefetch.forEach((image) => {
       if (image?.id) {
-        const queryKey = COMMENT_QUERY_KEY.list('image', image.id, 100, 0);
+        const queryKey = COMMENT_QUERY_KEY.list({
+          scope: 'image',
+          id: image.id,
+          limit: 100,
+          offset: 0,
+        });
         queryClient.prefetchQuery({
           queryKey,
-          queryFn: () =>
-            getComments({
-              image_id: image.id,
-              limit: 100,
-              offset: 0,
-            }),
+          queryFn: async ({ signal }) => {
+            const { getComments } = await import('@/entity/comment/api');
+            return getComments(
+              {
+                image_id: image.id,
+                limit: 100,
+                offset: 0,
+              },
+              signal,
+            );
+          },
           staleTime: 30_000,
         });
       }
@@ -129,26 +137,24 @@ export default function ViewEmoticonImageModal({
         <div className='laptop:w-1/2 w-full min-w-0 flex-1 flex-shrink-0'>
           <div
             className={cn(
-              'transition-opacity duration-200',
-              isDragging ? 'pointer-events-none opacity-0' : 'opacity-100',
+              'transition-all duration-200',
+              isDragging
+                ? 'pointer-events-none translate-y-10 opacity-0'
+                : 'translate-y-0 opacity-100',
             )}
           >
-            <AnimatePresence>
-              <motion.div>
-                <EmoticonCommentSection
-                  className='padding-0 h-full'
-                  authorId={authorId}
+            <EmoticonCommentSection
+              className='padding-0 h-full'
+              authorId={authorId}
+              targetType='emoticon_image'
+              targetId={imageId ?? ''}
+              headerAction={
+                <LikeButton
                   targetType='emoticon_image'
-                  targetId={emoticonImage?.id ?? ''}
-                  headerAction={
-                    <LikeButton
-                      targetType='emoticon_image'
-                      targetId={imageId ?? ''}
-                    />
-                  }
+                  targetId={imageId ?? ''}
                 />
-              </motion.div>
-            </AnimatePresence>
+              }
+            />
           </div>
         </div>
       </Modal.Body>

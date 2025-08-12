@@ -5,8 +5,8 @@ import { cn } from '@/shared/lib';
 import { usePagination } from '@/shared/lib/use-pagination';
 import { Icon } from '@/shared/ui/display';
 import { Pagination } from '@/shared/ui/navigation';
+import { useCommentListQuery } from '@/entity/comment';
 import { CommentDetail } from '@/entity/comment/api/types';
-import { useCommentQuery } from '@/entity/comment/query/comment-infinity-query';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { Comment, DefaultCommentForm } from '@/feature/comment/ui';
 import { Session } from '@supabase/supabase-js';
@@ -32,14 +32,14 @@ export default function EmoticonCommentSection({
 }: EmoticonCommentSectionProps) {
   const queryKeyField = targetType === 'emoticon_set' ? 'set_id' : 'image_id';
 
-  const { data, isLoading } = useCommentQuery({
+  const { data, isLoading } = useCommentListQuery({
     [queryKeyField]: targetId || null,
     limit: COUNT_PER_PAGE,
     offset: 0,
   });
 
   const isInitialLoading = isLoading && !data;
-  const comments: CommentDetail[] = data?.success ? data.data.data : [];
+  const comments: CommentDetail[] = data?.data || [];
 
   const { currentPage, handlePageChange, totalPages } =
     usePagination(COUNT_PER_PAGE);
