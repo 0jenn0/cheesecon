@@ -12,6 +12,7 @@ import {
 
 export async function getComments(
   request: GetCommentsRequest,
+  signal?: AbortSignal,
 ): Promise<GetCommentsResult> {
   try {
     const supabase = await createServerSupabaseClient();
@@ -33,16 +34,18 @@ export async function getComments(
           ? null
           : false;
 
-    const { data, error } = await supabase.rpc('get_comments_v2', {
-      p_set_id: set_id ?? undefined,
-      p_image_id: image_id ?? undefined,
-      p_user_id: user_id ?? undefined,
-      p_parent_comment_id: parent_comment_id ?? undefined,
-      p_parent_is_null: p_parent_is_null ?? undefined,
-      p_sort_order: sortOrder ?? 'asc',
-      p_limit: limit,
-      p_offset: offset,
-    });
+    const { data, error } = await supabase
+      .rpc('get_comments_v2', {
+        p_set_id: set_id ?? undefined,
+        p_image_id: image_id ?? undefined,
+        p_user_id: user_id ?? undefined,
+        p_parent_comment_id: parent_comment_id ?? undefined,
+        p_parent_is_null: p_parent_is_null ?? undefined,
+        p_sort_order: sortOrder ?? 'asc',
+        p_limit: limit,
+        p_offset: offset,
+      })
+      .abortSignal(signal ?? new AbortController().signal);
 
     if (error) {
       return {

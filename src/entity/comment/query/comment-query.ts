@@ -11,12 +11,15 @@ export const useCommentQuery = (params: CommentInfiniteQueryParams) => {
       params.limit ?? 100,
       params.offset ?? 0,
     ),
-    queryFn: async () => {
-      const data = await getComments({
-        ...params,
-        limit: params.limit,
-        offset: params.offset,
-      });
+    queryFn: async ({ signal }) => {
+      const data = await getComments(
+        {
+          ...params,
+          limit: params.limit,
+          offset: params.offset,
+        },
+        signal,
+      );
 
       if (data.success) {
         return data.data;
