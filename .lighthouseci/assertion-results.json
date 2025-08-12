@@ -3,7 +3,10 @@
     "name": "minScore",
     "expected": 0.9,
     "actual": 0,
-    "values": [0, 0],
+    "values": [
+      0,
+      0
+    ],
     "operator": ">=",
     "passed": false,
     "auditId": "bf-cache",
@@ -16,7 +19,10 @@
     "name": "minScore",
     "expected": 0.9,
     "actual": 0,
-    "values": [0, 0],
+    "values": [
+      0,
+      0
+    ],
     "operator": ">=",
     "passed": false,
     "auditId": "button-name",
@@ -29,7 +35,10 @@
     "name": "minScore",
     "expected": 0.9,
     "actual": 0,
-    "values": [0, 0],
+    "values": [
+      0,
+      0
+    ],
     "operator": ">=",
     "passed": false,
     "auditId": "cls-culprits-insight",
@@ -42,7 +51,10 @@
     "name": "minScore",
     "expected": 0.9,
     "actual": 0,
-    "values": [0, 0],
+    "values": [
+      0,
+      0
+    ],
     "operator": ">=",
     "passed": false,
     "auditId": "color-contrast",
@@ -55,7 +67,10 @@
     "name": "minScore",
     "expected": 0.9,
     "actual": 0.88,
-    "values": [0.88, 0.88],
+    "values": [
+      0.88,
+      0.88
+    ],
     "operator": ">=",
     "passed": false,
     "auditId": "cumulative-layout-shift",
@@ -68,7 +83,10 @@
     "name": "minScore",
     "expected": 0.9,
     "actual": 0,
-    "values": [0, 0],
+    "values": [
+      0,
+      0
+    ],
     "operator": ">=",
     "passed": false,
     "auditId": "errors-in-console",
@@ -81,7 +99,10 @@
     "name": "minScore",
     "expected": 0.9,
     "actual": 0.38,
-    "values": [0.38, 0.31],
+    "values": [
+      0.38,
+      0.31
+    ],
     "operator": ">=",
     "passed": false,
     "auditId": "largest-contentful-paint",
@@ -94,7 +115,10 @@
     "name": "minScore",
     "expected": 0.9,
     "actual": 0,
-    "values": [0, 0],
+    "values": [
+      0,
+      0
+    ],
     "operator": ">=",
     "passed": false,
     "auditId": "lcp-discovery-insight",
@@ -107,7 +131,10 @@
     "name": "minScore",
     "expected": 0.9,
     "actual": 0,
-    "values": [0, 0],
+    "values": [
+      0,
+      0
+    ],
     "operator": ">=",
     "passed": false,
     "auditId": "legacy-javascript-insight",
@@ -120,7 +147,10 @@
     "name": "maxLength",
     "expected": 0,
     "actual": 2,
-    "values": [2, 2],
+    "values": [
+      2,
+      2
+    ],
     "operator": "<=",
     "passed": false,
     "auditId": "legacy-javascript",
@@ -133,7 +163,10 @@
     "name": "maxLength",
     "expected": 0,
     "actual": 11,
-    "values": [11, 12],
+    "values": [
+      11,
+      12
+    ],
     "operator": "<=",
     "passed": false,
     "auditId": "offscreen-images",
@@ -146,7 +179,10 @@
     "name": "maxLength",
     "expected": 0,
     "actual": 1,
-    "values": [1, 1],
+    "values": [
+      1,
+      1
+    ],
     "operator": "<=",
     "passed": false,
     "auditId": "render-blocking-insight",
@@ -159,7 +195,10 @@
     "name": "maxLength",
     "expected": 0,
     "actual": 1,
-    "values": [1, 1],
+    "values": [
+      1,
+      1
+    ],
     "operator": "<=",
     "passed": false,
     "auditId": "render-blocking-resources",
@@ -172,7 +211,10 @@
     "name": "minScore",
     "expected": 0.9,
     "actual": 0,
-    "values": [0, 0],
+    "values": [
+      0,
+      0
+    ],
     "operator": ">=",
     "passed": false,
     "auditId": "robots-txt",
@@ -185,7 +227,10 @@
     "name": "minScore",
     "expected": 0.9,
     "actual": 0,
-    "values": [0, 0],
+    "values": [
+      0,
+      0
+    ],
     "operator": ">=",
     "passed": false,
     "auditId": "target-size",
@@ -198,7 +243,10 @@
     "name": "maxLength",
     "expected": 0,
     "actual": 4,
-    "values": [4, 4],
+    "values": [
+      4,
+      4
+    ],
     "operator": "<=",
     "passed": false,
     "auditId": "unused-javascript",
@@ -211,7 +259,220 @@
     "name": "minScore",
     "expected": 0.9,
     "actual": 0.82,
-    "values": [0.82, 0.78],
+    "values": [
+      0.82,
+      0.78
+    ],
+    "operator": ">=",
+    "passed": false,
+    "auditId": "interactive",
+    "level": "warn",
+    "url": "http://localhost:3000/emoticon/f273ca4d-ab91-456f-b877-ef5659fec32a?imageId=cf7b39e7-f85c-4b18-8747-7899d7e15b62",
+    "auditTitle": "Time to Interactive",
+    "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/performance/interactive/"
+  }
+]
+[
+  {
+    "name": "minScore",
+    "expected": 0.9,
+    "actual": 0,
+    "values": [
+      0,
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
+    "auditId": "bf-cache",
+    "level": "error",
+    "url": "http://localhost:3000/emoticon/f273ca4d-ab91-456f-b877-ef5659fec32a?imageId=cf7b39e7-f85c-4b18-8747-7899d7e15b62",
+    "auditTitle": "Page prevented back/forward cache restoration",
+    "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/performance/bf-cache/"
+  },
+  {
+    "name": "minScore",
+    "expected": 0.9,
+    "actual": 0,
+    "values": [
+      0,
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
+    "auditId": "button-name",
+    "level": "error",
+    "url": "http://localhost:3000/emoticon/f273ca4d-ab91-456f-b877-ef5659fec32a?imageId=cf7b39e7-f85c-4b18-8747-7899d7e15b62",
+    "auditTitle": "Buttons do not have an accessible name",
+    "auditDocumentationLink": "https://dequeuniversity.com/rules/axe/4.10/button-name"
+  },
+  {
+    "name": "minScore",
+    "expected": 0.9,
+    "actual": 0,
+    "values": [
+      0,
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
+    "auditId": "color-contrast",
+    "level": "error",
+    "url": "http://localhost:3000/emoticon/f273ca4d-ab91-456f-b877-ef5659fec32a?imageId=cf7b39e7-f85c-4b18-8747-7899d7e15b62",
+    "auditTitle": "Background and foreground colors do not have a sufficient contrast ratio.",
+    "auditDocumentationLink": "https://dequeuniversity.com/rules/axe/4.10/color-contrast"
+  },
+  {
+    "name": "minScore",
+    "expected": 0.9,
+    "actual": 0,
+    "values": [
+      0,
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
+    "auditId": "errors-in-console",
+    "level": "error",
+    "url": "http://localhost:3000/emoticon/f273ca4d-ab91-456f-b877-ef5659fec32a?imageId=cf7b39e7-f85c-4b18-8747-7899d7e15b62",
+    "auditTitle": "Browser errors were logged to the console",
+    "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/best-practices/errors-in-console/"
+  },
+  {
+    "name": "minScore",
+    "expected": 0.9,
+    "actual": 0.52,
+    "values": [
+      0.5,
+      0.52
+    ],
+    "operator": ">=",
+    "passed": false,
+    "auditId": "largest-contentful-paint",
+    "level": "warn",
+    "url": "http://localhost:3000/emoticon/f273ca4d-ab91-456f-b877-ef5659fec32a?imageId=cf7b39e7-f85c-4b18-8747-7899d7e15b62",
+    "auditTitle": "Largest Contentful Paint",
+    "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/performance/lighthouse-largest-contentful-paint/"
+  },
+  {
+    "name": "minScore",
+    "expected": 0.9,
+    "actual": 0.5,
+    "values": [
+      0,
+      0.5
+    ],
+    "operator": ">=",
+    "passed": false,
+    "auditId": "legacy-javascript-insight",
+    "level": "error",
+    "url": "http://localhost:3000/emoticon/f273ca4d-ab91-456f-b877-ef5659fec32a?imageId=cf7b39e7-f85c-4b18-8747-7899d7e15b62",
+    "auditTitle": "Legacy JavaScript",
+    "auditDocumentationLink": "https://web.dev/articles/baseline-and-polyfills"
+  },
+  {
+    "name": "maxLength",
+    "expected": 0,
+    "actual": 2,
+    "values": [
+      2,
+      2
+    ],
+    "operator": "<=",
+    "passed": false,
+    "auditId": "legacy-javascript",
+    "level": "warn",
+    "url": "http://localhost:3000/emoticon/f273ca4d-ab91-456f-b877-ef5659fec32a?imageId=cf7b39e7-f85c-4b18-8747-7899d7e15b62",
+    "auditTitle": "Avoid serving legacy JavaScript to modern browsers",
+    "auditDocumentationLink": "https://web.dev/baseline"
+  },
+  {
+    "name": "minScore",
+    "expected": 0.9,
+    "actual": 0,
+    "values": [
+      0,
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
+    "auditId": "link-name",
+    "level": "error",
+    "url": "http://localhost:3000/emoticon/f273ca4d-ab91-456f-b877-ef5659fec32a?imageId=cf7b39e7-f85c-4b18-8747-7899d7e15b62",
+    "auditTitle": "Links do not have a discernible name",
+    "auditDocumentationLink": "https://dequeuniversity.com/rules/axe/4.10/link-name"
+  },
+  {
+    "name": "maxLength",
+    "expected": 0,
+    "actual": 1,
+    "values": [
+      1,
+      1
+    ],
+    "operator": "<=",
+    "passed": false,
+    "auditId": "render-blocking-insight",
+    "level": "warn",
+    "url": "http://localhost:3000/emoticon/f273ca4d-ab91-456f-b877-ef5659fec32a?imageId=cf7b39e7-f85c-4b18-8747-7899d7e15b62",
+    "auditTitle": "Render blocking requests",
+    "auditDocumentationLink": "https://web.dev/learn/performance/understanding-the-critical-path#render-blocking_resources"
+  },
+  {
+    "name": "maxLength",
+    "expected": 0,
+    "actual": 1,
+    "values": [
+      1,
+      1
+    ],
+    "operator": "<=",
+    "passed": false,
+    "auditId": "render-blocking-resources",
+    "level": "warn",
+    "url": "http://localhost:3000/emoticon/f273ca4d-ab91-456f-b877-ef5659fec32a?imageId=cf7b39e7-f85c-4b18-8747-7899d7e15b62",
+    "auditTitle": "Eliminate render-blocking resources",
+    "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/performance/render-blocking-resources/"
+  },
+  {
+    "name": "minScore",
+    "expected": 0.9,
+    "actual": 0,
+    "values": [
+      0,
+      0
+    ],
+    "operator": ">=",
+    "passed": false,
+    "auditId": "robots-txt",
+    "level": "error",
+    "url": "http://localhost:3000/emoticon/f273ca4d-ab91-456f-b877-ef5659fec32a?imageId=cf7b39e7-f85c-4b18-8747-7899d7e15b62",
+    "auditTitle": "robots.txt is not valid",
+    "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/seo/invalid-robots-txt/"
+  },
+  {
+    "name": "maxLength",
+    "expected": 0,
+    "actual": 4,
+    "values": [
+      4,
+      4
+    ],
+    "operator": "<=",
+    "passed": false,
+    "auditId": "unused-javascript",
+    "level": "error",
+    "url": "http://localhost:3000/emoticon/f273ca4d-ab91-456f-b877-ef5659fec32a?imageId=cf7b39e7-f85c-4b18-8747-7899d7e15b62",
+    "auditTitle": "Reduce unused JavaScript",
+    "auditDocumentationLink": "https://developer.chrome.com/docs/lighthouse/performance/unused-javascript/"
+  },
+  {
+    "name": "minScore",
+    "expected": 0.9,
+    "actual": 0.88,
+    "values": [
+      0.87,
+      0.88
+    ],
     "operator": ">=",
     "passed": false,
     "auditId": "interactive",

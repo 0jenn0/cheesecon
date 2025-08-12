@@ -45,7 +45,6 @@ export interface EmoticonContextType {
       imageUrl?: string;
       blurUrl?: string | null;
       webpUrl?: string | null;
-      webpUrl?: string | null;
     },
   ) => void;
 }
@@ -139,12 +138,10 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
       imageUrl: string,
       blurUrl?: string | null,
       webpUrl?: string | null,
-      webpUrl?: string | null,
     ) => {
       setItems((prevItems) =>
         prevItems.map((item) =>
           item.imageNumber === imageNumber
-            ? { ...item, imageUrl, blurUrl, webpUrl }
             ? { ...item, imageUrl, blurUrl, webpUrl }
             : item,
         ),
@@ -169,10 +166,8 @@ export function EmoticonProvider({ children }: { children: React.ReactNode }) {
         imageUrl?: string;
         blurUrl?: string | null;
         webpUrl?: string | null;
-        webpUrl?: string | null;
       },
     ) => {
-      const { newImageNumber, imageUrl, blurUrl, webpUrl } = params || {};
       const { newImageNumber, imageUrl, blurUrl, webpUrl } = params || {};
       switch (action) {
         case 'CHECK':
