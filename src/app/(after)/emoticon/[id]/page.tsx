@@ -22,12 +22,14 @@ export default async function ImageFullPage({
     (image) => image.is_representative !== true,
   );
 
+  const authorIdData = authorId?.success ? authorId.data : '';
+
   return (
     <>
-      {imageId && authorId && imagesRes?.success ? (
+      {imageId ? (
         <ViewEmoticonImageModal
           allImages={allImages ?? []}
-          authorId={authorId}
+          authorId={authorIdData}
         />
       ) : (
         <EmoticonScreen emoticonSetId={id} isUnlocked={true} />

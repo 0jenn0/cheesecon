@@ -1,7 +1,7 @@
 'use server';
 
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
-import { ImageUrlWithOrder } from '@/shared/types';
+import { ApiResult, ImageUrlWithOrder } from '@/shared/types';
 import {
   EmoticonImage,
   EmoticonImageRequest,
@@ -626,8 +626,17 @@ export async function getEmoticonSetForLock(
   return formattedData;
 }
 
-export async function getAuthorId(id: string): Promise<string> {
+export async function getAuthorId(id: string): Promise<ApiResult<string>> {
   const supabase = await createServerSupabaseClient();
+
+  if (!id) {
+    return {
+      success: false,
+      error: {
+        message: 'id가 없어서 이모티콘 세트를 찾을 수 없습니다.',
+      },
+    };
+  }
 
   const { data, error } = await supabase
     .from('emoticon_sets')
@@ -640,7 +649,10 @@ export async function getAuthorId(id: string): Promise<string> {
     throw new Error(`이모티콘 세트 조회에 실패했습니다: ${error.message}`);
   }
 
-  return data?.user_id ?? '';
+  return {
+    success: true,
+    data: data?.user_id ?? '',
+  };
 }
 
 export async function getEmoticonSet(id: string): Promise<EmoticonSet> {
