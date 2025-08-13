@@ -2,9 +2,7 @@
 module.exports = {
   ci: {
     collect: {
-      url: [
-        'http://localhost:3000/emoticon/255d2134-830c-48ed-aa05-cc6e019445aa',
-      ],
+      url: ['http://localhost:3000/popular'],
       numberOfRuns: 2,
       settings: {
         chromeFlags: [

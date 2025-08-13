@@ -68,6 +68,13 @@ function Thumbnail({
         height={80}
         priority={index && index < 4 ? true : false}
         loading={index && index < 4 ? 'eager' : 'lazy'}
+        placeholder='blur'
+        blurDataURL={
+          item.representative_image.blur_url ??
+          item.representative_image.webp_url ??
+          item.representative_image.image_url ??
+          ''
+        }
       />
     </div>
   );
