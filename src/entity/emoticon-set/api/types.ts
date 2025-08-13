@@ -12,7 +12,7 @@ import {
 } from '../type';
 
 export type CreateEmoticonSetRequest = {
-  emoticonSet: EmoticonSet;
+  emoticonSet: CreateEmoticonSetForm;
   imageUrls: ImageUrlWithOrder[];
 };
 
@@ -31,3 +31,18 @@ export type CreateEmoticonSetResult = ApiResult<CreateEmoticonSetResponse>;
 export type GetEmoticonSetsWithRepresentativeImageResult = ApiResult<
   BaseApiResponse<EmoticonSetWithRepresentativeImage>
 >;
+
+export type CreateEmoticonSetForm = Pick<
+  EmoticonSet,
+  'title' | 'author_name' | 'description' | 'platform' | 'type' | 'is_private'
+> & {
+  representative_image: Pick<
+    Tables<'emoticon_images'>,
+    | 'id'
+    | 'image_url'
+    | 'blur_url'
+    | 'image_order'
+    | 'is_representative'
+    | 'webp_url'
+  >;
+};

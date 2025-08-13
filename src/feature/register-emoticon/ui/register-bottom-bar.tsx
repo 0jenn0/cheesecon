@@ -4,10 +4,11 @@ import useEmoticonRegister from '../model/hook';
 
 export function RegisterBottomBar() {
   const {
-    emoticonSetWithRepresentativeImage,
+    createEmoticonSetForm,
     imageUrls,
     validateAll,
     validationErrors,
+    isValid,
   } = useEmoticonRegister();
   const registerMutation = useRegisterMutation({ imageUrls });
 
@@ -20,7 +21,7 @@ export function RegisterBottomBar() {
       return;
     }
 
-    registerMutation.mutate(emoticonSetWithRepresentativeImage);
+    registerMutation.mutate(createEmoticonSetForm);
   };
 
   return (
@@ -29,7 +30,7 @@ export function RegisterBottomBar() {
         textClassName='text-body-lg font-semibold'
         className='padding-32'
         onClick={handleRegister}
-        // disabled={registerMutation.isPending || !isValid}
+        disabled={registerMutation.isPending || !isValid}
         isLoading={registerMutation.isPending}
       >
         등록하기

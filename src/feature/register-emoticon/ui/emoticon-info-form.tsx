@@ -5,7 +5,7 @@ import useEmoticonRegister from '../model/hook';
 
 export default function EmoticonInfoForm() {
   const {
-    emoticonSetWithRepresentativeImage,
+    createEmoticonSetForm,
     setEmoticonSet,
     validateField,
     validationErrors,
@@ -14,27 +14,22 @@ export default function EmoticonInfoForm() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const updatedEmoticonSet = {
-      ...emoticonSetWithRepresentativeImage,
+      ...createEmoticonSetForm,
       [name]: value,
     };
+    console.log('updatedEmoticonSet', updatedEmoticonSet);
     setEmoticonSet(updatedEmoticonSet);
-    validateField(
-      name as keyof typeof emoticonSetWithRepresentativeImage,
-      value,
-    );
+    validateField(name as keyof typeof createEmoticonSetForm, value);
   };
 
   const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     const updatedEmoticonSet = {
-      ...emoticonSetWithRepresentativeImage,
+      ...createEmoticonSetForm,
       [name]: value,
     };
     setEmoticonSet(updatedEmoticonSet);
-    validateField(
-      name as keyof typeof emoticonSetWithRepresentativeImage,
-      value,
-    );
+    validateField(name as keyof typeof createEmoticonSetForm, value);
   };
 
   const handleSelectChange = (e: React.FormEvent<HTMLDivElement>) => {
@@ -49,14 +44,12 @@ export default function EmoticonInfoForm() {
     }
 
     const updatedEmoticonSet = {
-      ...emoticonSetWithRepresentativeImage,
+      ...createEmoticonSetForm,
       [name]: mappedValue,
     };
+    console.log('updatedEmoticonSet', updatedEmoticonSet);
     setEmoticonSet(updatedEmoticonSet);
-    validateField(
-      name as keyof typeof emoticonSetWithRepresentativeImage,
-      mappedValue,
-    );
+    validateField(name as keyof typeof createEmoticonSetForm, mappedValue);
   };
 
   const getFieldError = (fieldName: string) => {

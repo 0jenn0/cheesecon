@@ -1,13 +1,12 @@
 'use server';
 
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
-import { ApiResult, ImageUrlWithOrder } from '@/shared/types';
+import { ApiResult } from '@/shared/types';
 import {
   EmoticonImage,
   EmoticonImageRequest,
   EmoticonSet,
   EmoticonSetDetail,
-  EmoticonSetWithRepresentativeImage,
 } from '../type';
 import {
   CreateEmoticonSetRequest,
@@ -29,15 +28,13 @@ export async function createEmoticonSet({
 
   const emoticonSetId = crypto.randomUUID();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { representative_image, ...rest } = emoticonSet;
+
   const emoticonRequest = {
-    ...emoticonSet,
+    ...rest,
     id: emoticonSetId,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
     user_id: user.id,
-    comments_count: 0,
-    likes_count: 0,
-    views_count: 0,
   };
 
   const { data, error } = await supabase
@@ -53,7 +50,7 @@ export async function createEmoticonSet({
 
   const isRepresentativeInImageUrls = imageUrls.some(
     (imageUrl) =>
-      imageUrl.image_url === emoticonSet.representative_image.image_url,
+      imageUrl.imageUrl === emoticonSet.representative_image.image_url,
   );
 
   const allImageUrls = isRepresentativeInImageUrls

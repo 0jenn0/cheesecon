@@ -1,6 +1,6 @@
 import { PropsWithChildren, createContext, useContext, useState } from 'react';
 import { ImageUrlWithOrder } from '@/shared/types';
-import { EmoticonSetWithRepresentativeImage } from '@/entity/emoticon-set/type';
+import { CreateEmoticonSetForm } from '@/entity/emoticon-set';
 import { validateEmoticonSet, validateImageUrls } from '../lib/validation';
 
 interface ValidationErrors {
@@ -9,37 +9,29 @@ interface ValidationErrors {
 }
 
 interface EmoticonRegisterContextType {
-  emoticonSetWithRepresentativeImage: EmoticonSetWithRepresentativeImage;
+  createEmoticonSetForm: CreateEmoticonSetForm;
   imageUrls: ImageUrlWithOrder[];
-  setEmoticonSet: (emoticonSet: EmoticonSetWithRepresentativeImage) => void;
+  setEmoticonSet: (emoticonSet: CreateEmoticonSetForm) => void;
   handleSetImageUrl: (newImageUrls: ImageUrlWithOrder[]) => void;
   validationErrors: ValidationErrors;
   isValid: boolean;
   validateField: (
-    field: keyof EmoticonSetWithRepresentativeImage,
-    value: EmoticonSetWithRepresentativeImage[keyof EmoticonSetWithRepresentativeImage],
+    field: keyof CreateEmoticonSetForm,
+    value: CreateEmoticonSetForm[keyof CreateEmoticonSetForm],
   ) => void;
   validateAll: () => boolean;
   clearValidationErrors: () => void;
 }
 
 const EmoticonRegisterContext = createContext<EmoticonRegisterContextType>({
-  emoticonSetWithRepresentativeImage: {
-    id: '',
+  createEmoticonSetForm: {
     author_name: '',
-    description: '',
     is_private: null,
-    comments_count: null,
-    likes_count: null,
-    views_count: null,
-    created_at: null,
-    updated_at: null,
-    platform: '',
     title: '',
+    description: '',
+    platform: '',
     type: '',
-    user_id: '',
     representative_image: {
-      id: '',
       image_url: '',
       blur_url: null,
       image_order: 0,
@@ -69,22 +61,14 @@ const EmoticonRegisterContext = createContext<EmoticonRegisterContextType>({
 
 export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
   const [emoticonSetWithRepresentativeImage, setEmoticonSetState] =
-    useState<EmoticonSetWithRepresentativeImage>({
-      id: '',
+    useState<CreateEmoticonSetForm>({
       author_name: '',
-      description: '',
-      is_private: null,
-      comments_count: null,
-      likes_count: null,
-      views_count: null,
-      created_at: null,
-      updated_at: null,
-      platform: '',
       title: '',
+      description: '',
+      platform: '',
       type: '',
-      user_id: '',
+      is_private: false,
       representative_image: {
-        id: '',
         image_url: '',
         blur_url: null,
         image_order: 0,
@@ -98,9 +82,7 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
   );
   const [isValid, setIsValid] = useState(false);
 
-  const setEmoticonSet = (
-    newEmoticonSet: EmoticonSetWithRepresentativeImage,
-  ) => {
+  const setEmoticonSet = (newEmoticonSet: CreateEmoticonSetForm) => {
     setEmoticonSetState(newEmoticonSet);
 
     const emoticonSetResult = validateEmoticonSet(newEmoticonSet);
@@ -110,7 +92,6 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
   };
 
   const handleSetImageUrl = (newImageUrls: ImageUrlWithOrder[]) => {
-    // console.log('handleSetImageUrl 호출됨, newImageUrls:', newImageUrls);
     setImageUrls((prev) => [...prev, ...newImageUrls]);
 
     const emoticonSetResult = validateEmoticonSet(
@@ -122,8 +103,8 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
   };
 
   const validateField = (
-    field: keyof EmoticonSetWithRepresentativeImage,
-    value: EmoticonSetWithRepresentativeImage[keyof EmoticonSetWithRepresentativeImage],
+    field: keyof CreateEmoticonSetForm,
+    value: CreateEmoticonSetForm[keyof CreateEmoticonSetForm],
   ) => {
     const updatedEmoticonSet = {
       ...emoticonSetWithRepresentativeImage,
@@ -218,7 +199,7 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
   return (
     <EmoticonRegisterContext.Provider
       value={{
-        emoticonSetWithRepresentativeImage,
+        createEmoticonSetForm: emoticonSetWithRepresentativeImage,
         setEmoticonSet,
         imageUrls,
         handleSetImageUrl,

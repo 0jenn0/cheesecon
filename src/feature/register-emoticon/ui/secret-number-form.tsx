@@ -3,8 +3,10 @@ import { Checkbox } from '@/shared/ui/input';
 import useEmoticonRegister from '../model/hook';
 
 export default function SecretCheckForm() {
-  const { emoticonSetWithRepresentativeImage, setEmoticonSet } =
-    useEmoticonRegister();
+  const {
+    createEmoticonSetForm: emoticonSetWithRepresentativeImage,
+    setEmoticonSet,
+  } = useEmoticonRegister();
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmoticonSet({

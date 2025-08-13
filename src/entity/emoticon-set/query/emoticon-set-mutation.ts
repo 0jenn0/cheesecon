@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { ImageUrlWithOrder } from '@/shared/types';
 import { useMutation } from '@tanstack/react-query';
 import { createEmoticonSet } from '../api/emoticon-set-api';
+import { CreateEmoticonSetForm } from '../api/types';
 import { EmoticonSetWithRepresentativeImage } from '../type';
 
 export interface RegisterMutationProps {
@@ -13,8 +14,8 @@ export interface RegisterMutationProps {
 export function useRegisterMutation({ imageUrls }: RegisterMutationProps) {
   const router = useRouter();
   return useMutation({
-    mutationFn: (emoticonSet: EmoticonSetWithRepresentativeImage) =>
-      createEmoticonSet(emoticonSet, imageUrls),
+    mutationFn: (emoticonSet: CreateEmoticonSetForm) =>
+      createEmoticonSet({ emoticonSet, imageUrls }),
     onSuccess: (data) => {
       router.push(`/new`);
       console.log('이모티콘 등록 성공:', data);
