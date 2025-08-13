@@ -31,7 +31,7 @@ export default function ViewEmoticonImageModal({
     <Modal.Container className='tablet:w-[72dvw] tablet:h-[80dvh] h-[90dvh] max-w-[1024px] select-none'>
       <Modal.Header
         onClose={() => {
-          router.push(`/emoticon/${emoticonImage?.set_id}`, {
+          router.replace(`/emoticon/${emoticonImage?.set_id}`, {
             scroll: false,
           });
         }}

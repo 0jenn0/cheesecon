@@ -3,7 +3,7 @@ module.exports = {
   ci: {
     collect: {
       url: [
-        'http://localhost:3000/emoticon/f273ca4d-ab91-456f-b877-ef5659fec32a?imageId=cf7b39e7-f85c-4b18-8747-7899d7e15b62',
+        'http://localhost:3000/emoticon/255d2134-830c-48ed-aa05-cc6e019445aa',
       ],
       numberOfRuns: 2,
       settings: {

@@ -1,7 +1,10 @@
 'use server';
 
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
-import { GetEmoticonImageResult } from './type';
+import {
+  GetEmoticonImageResult,
+  GetRepresentativeImageBySetIdResult,
+} from './type';
 
 export interface CreateEmoticonImageProps {
   setId: string;
@@ -66,7 +69,7 @@ export async function getEmoticonImages(setId: string) {
   }
 }
 
-export async function getEmoticonImageDetail(
+export async function getEmoticonImage(
   setId: string,
   imageId: string,
 ): Promise<GetEmoticonImageResult> {
@@ -115,4 +118,30 @@ export async function getEmoticonImageDetail(
       },
     };
   }
+}
+
+export async function getRepresentativeImageBySetId(
+  setId: string,
+): Promise<GetRepresentativeImageBySetIdResult> {
+  const supabase = await createServerSupabaseClient();
+
+  const { data, error } = await supabase
+    .from('emoticon_images')
+    .select('id, image_url, blur_url, webp_url')
+    .eq('set_id', setId)
+    .eq('is_representative', true)
+    .single();
+
+  if (error) {
+    throw new Error(`대표 이모티콘 이미지 조회 에러: ${error.message}`);
+  }
+
+  if (!data) {
+    throw new Error('대표 이모티콘 이미지를 찾을 수 없습니다.');
+  }
+
+  return {
+    success: true,
+    data,
+  };
 }

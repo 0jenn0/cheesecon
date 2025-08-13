@@ -1,9 +1,8 @@
 'use server';
 
-import {
-  getEmoticonSetDetail,
-  getEmoticonSetForLock,
-} from '@/entity/emoticon-set';
+import { getRepresentativeImageBySetId } from '@/entity/emoticon-images/api';
+import { EmoticonImageSimple } from '@/entity/emoticon-images/type/emoticon-image.type';
+import { getEmoticonSet } from '@/entity/emoticon-set';
 import { trackEmoticonView } from '@/entity/view/api';
 import { EmoticonCommentSection, EmoticonInfoSection } from './ui';
 import EmoticonImageSection from './ui/emoticon-image-section';
@@ -15,24 +14,38 @@ export default async function EmoticonScreen({
   emoticonSetId: string;
   isUnlocked: boolean;
 }) {
-  let emoticonData;
+  console.log('isUnlocked', isUnlocked);
 
-  if (isUnlocked) {
-    emoticonData = await getEmoticonSetDetail(emoticonSetId);
-  } else {
-    emoticonData = await getEmoticonSetForLock(emoticonSetId);
-  }
   await trackEmoticonView(emoticonSetId);
 
-  if (!emoticonData) return <div>데이터를 찾을 수 없습니다.</div>;
+  const emoticonInfo = await getEmoticonSet(emoticonSetId);
+  const representativeImageResult =
+    await getRepresentativeImageBySetId(emoticonSetId);
+
+  const representativeImageData = representativeImageResult?.success
+    ? representativeImageResult.data
+    : null;
+
+  const representativeImage = isUnlocked
+    ? representativeImageData
+    : {
+        ...representativeImageData,
+        image_url: representativeImageData?.blur_url,
+      };
 
   return (
     <div className='padding-y-16 tablet:padding-y-24 tablet:gap-24 flex flex-col gap-16'>
-      <EmoticonInfoSection emoticonSetDetail={emoticonData} />
-      <EmoticonImageSection emoticonImages={emoticonData.emoticon_images} />
+      <EmoticonInfoSection
+        emoticonSet={emoticonInfo}
+        representativeImage={representativeImage as EmoticonImageSimple}
+      />
+      <EmoticonImageSection
+        emoticonSetId={emoticonSetId}
+        isUnlocked={isUnlocked}
+      />
       <div className='padding-16 tablet:padding-y-24 bg-primary border-radius-2xl'>
         <EmoticonCommentSection
-          authorId={emoticonData.user_id ?? ''}
+          authorId={emoticonInfo.user_id ?? ''}
           targetType='emoticon_set'
           targetId={emoticonSetId}
         />
