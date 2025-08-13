@@ -66,6 +66,8 @@ function Thumbnail({
         className='border-radius-lg border-ghost tablet:w-[96px] tablet:h-[96px] h-[80px] w-[80px] border object-cover transition-all duration-200'
         width={80}
         height={80}
+        priority={index && index < 4 ? true : false}
+        loading={index && index < 4 ? 'eager' : 'lazy'}
       />
     </div>
   );
