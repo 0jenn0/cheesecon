@@ -3,8 +3,13 @@ import { useRegisterMutation } from '@/entity/emoticon-set/query/emoticon-set-mu
 import useEmoticonRegister from '../model/hook';
 
 export function RegisterBottomBar() {
-  const { createEmoticonSetForm, imageUrls, validateAll, validationErrors } =
-    useEmoticonRegister();
+  const {
+    createEmoticonSetForm,
+    imageUrls,
+    validateAll,
+    validationErrors,
+    isValid,
+  } = useEmoticonRegister();
 
   const registerMutation = useRegisterMutation({ imageUrls });
 

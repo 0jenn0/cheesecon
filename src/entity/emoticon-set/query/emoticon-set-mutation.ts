@@ -5,7 +5,6 @@ import { ImageUrlWithOrder } from '@/shared/types';
 import { useMutation } from '@tanstack/react-query';
 import { createEmoticonSet } from '../api/emoticon-set-api';
 import { CreateEmoticonSetForm } from '../api/types';
-import { EmoticonSetWithRepresentativeImage } from '../type';
 
 export interface RegisterMutationProps {
   imageUrls: ImageUrlWithOrder[];
