@@ -22,6 +22,7 @@ export default function TextArea({
       placeholder={placeholder}
       className={cn(
         'text-body-sm',
+        'text-base',
         textAreaVariants({
           variant: isError ? 'error' : 'default',
         }),

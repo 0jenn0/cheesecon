@@ -11,7 +11,8 @@ export type SelectVariant = (typeof SELECT_VARIANT)[number];
 export const SELECT_DIRECTION = ['row', 'column'] as const;
 export type SelectDirection = (typeof SELECT_DIRECTION)[number];
 
-export interface TextFieldProps extends ComponentPropsWithRef<'div'> {
+export interface TextFieldProps
+  extends Omit<ComponentPropsWithRef<'div'>, 'onChange'> {
   label: string;
   placeholder: string;
   placeholderIcon?: IconProps['name'];
@@ -29,6 +30,7 @@ export interface TextFieldProps extends ComponentPropsWithRef<'div'> {
   labelClassName?: string;
   selectClassName?: string;
   name?: string;
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
 export default function SelectField({

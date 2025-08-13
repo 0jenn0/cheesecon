@@ -3,13 +3,15 @@ import { cn } from '@/shared/lib/utils';
 import SelectProvider from './provider/select-provider';
 import { SelectList, SelectPlaceholder } from './ui';
 
-export interface SelectProps extends ComponentPropsWithRef<'div'> {
+export interface SelectProps
+  extends Omit<ComponentPropsWithRef<'div'>, 'onChange'> {
   label: string;
   options: string[];
   isError?: boolean;
   disabled?: boolean;
   placeholderClassName?: string;
   name?: string;
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
 export default function Select({
@@ -28,9 +30,12 @@ export default function Select({
       <div className={cn('relative', className)} {...props}>
         <SelectPlaceholder
           label={label}
+          placeholder={label}
           isError={isError}
           disabled={disabled}
           className={placeholderClassName}
+          selectClassName={placeholderClassName || ''}
+          trailingIcon='chevron-down'
           onChange={onChange}
           name={name}
         />
