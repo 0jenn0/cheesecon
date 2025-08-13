@@ -190,7 +190,6 @@ export async function getEmoticonSetsWithRepresentativeImage({
       const formattedSets = sets
         .map((set) => {
           if (!set.emoticon_images || set.emoticon_images.length === 0) {
-            console.warn(`이모티콘 세트 ${set.id}에 이미지가 없습니다.`);
             return null;
           }
 
@@ -343,7 +342,6 @@ export async function getLikedEmoticonSets({
       const formattedSets = sets
         .map((set) => {
           if (!set.emoticon_images || set.emoticon_images.length === 0) {
-            console.warn(`이모티콘 세트 ${set.id}에 이미지가 없습니다.`);
             return null;
           }
 
