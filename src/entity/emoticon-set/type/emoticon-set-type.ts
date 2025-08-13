@@ -82,3 +82,10 @@ export type EmoticonSetSortParams = BaseSortParams & {
   userId?: string;
   title?: string;
 };
+
+export type EmoticonSetInfinityParams = {
+  limit: number;
+  offset: number;
+  orderBy: 'likes_count' | 'views_count' | 'created_at';
+  order: 'asc' | 'desc';
+};

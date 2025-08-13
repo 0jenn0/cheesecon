@@ -9,6 +9,8 @@ import {
 export default function PopularScreen() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useEmoticonSetInfinityQuery({
+      limit: 8,
+      offset: 0,
       orderBy: 'created_at',
       order: 'desc',
     });
