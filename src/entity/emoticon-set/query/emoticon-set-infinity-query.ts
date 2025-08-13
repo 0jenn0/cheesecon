@@ -3,7 +3,7 @@ import {
   GetEmoticonSetsWithRepresentativeImageResult,
   getEmoticonSetsWithRepresentativeImage,
 } from '../api';
-import { EmoticonSetInfinityParams, EmoticonSetOrderBy } from '../type';
+import { EmoticonSetInfinityParams } from '../type';
 import { EMOTICON_SET_QUERY_KEY } from './query-key';
 
 const LIMIT = 8;
