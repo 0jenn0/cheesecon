@@ -54,7 +54,7 @@ export default function SelectPlaceholder({
         },
       } as React.ChangeEvent<HTMLSelectElement>);
     }
-  }, [currentValue, name, label, stableOnChange]);
+  }, [currentValue, name, label, stableOnChange, onChange]);
 
   const finalVariant = getFinalVariant({
     isError,

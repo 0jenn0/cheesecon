@@ -7,7 +7,6 @@ import useEmoticonRegister from '../model/hook';
 export default function EmoticonInfoForm() {
   const { setEmoticonSet, validationErrors } = useEmoticonRegister();
 
-  // EmoticonInfoForm.tsx
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
@@ -17,7 +16,7 @@ export default function EmoticonInfoForm() {
         is_private: prev.is_private || false,
       }));
     },
-    [],
+    [setEmoticonSet],
   );
 
   const handleTextAreaChange = useCallback(
@@ -29,7 +28,7 @@ export default function EmoticonInfoForm() {
         is_private: prev.is_private || false,
       }));
     },
-    [],
+    [setEmoticonSet],
   );
 
   const handleSelectChange = useCallback(
@@ -53,7 +52,7 @@ export default function EmoticonInfoForm() {
         is_private: prev.is_private || false,
       }));
     },
-    [],
+    [setEmoticonSet],
   );
 
   const getFieldError = (fieldName: string) => {

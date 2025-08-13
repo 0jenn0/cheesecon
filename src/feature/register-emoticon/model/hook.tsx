@@ -1,4 +1,10 @@
-import { PropsWithChildren, createContext, useContext, useState } from 'react';
+import {
+  PropsWithChildren,
+  createContext,
+  useCallback,
+  useContext,
+  useState,
+} from 'react';
 import { ImageUrlWithOrder } from '@/shared/types';
 import { CreateEmoticonSetForm } from '@/entity/emoticon-set';
 import { validateEmoticonSet, validateImageUrls } from '../lib/validation';
@@ -86,19 +92,16 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
   );
   const [isValid, setIsValid] = useState(false);
 
-  const setEmoticonSet = (
-    next:
-      | CreateEmoticonSetForm
-      | ((prev: CreateEmoticonSetForm) => CreateEmoticonSetForm),
-  ) => {
-    setEmoticonSetState((prev) => {
-      const newState: CreateEmoticonSetForm =
-        typeof next === 'function' ? next(prev) : next;
-
-      // 개별 필드 검증을 제거하고 전체 검증만 수행
-      return newState;
-    });
-  };
+  const setEmoticonSet = useCallback(
+    (
+      next:
+        | CreateEmoticonSetForm
+        | ((prev: CreateEmoticonSetForm) => CreateEmoticonSetForm),
+    ) => {
+      setEmoticonSetState(next);
+    },
+    [],
+  );
 
   const handleSetImageUrl = (newImageUrls: ImageUrlWithOrder[]) => {
     setImageUrls((prev) => {
