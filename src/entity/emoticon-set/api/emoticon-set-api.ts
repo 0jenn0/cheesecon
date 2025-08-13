@@ -10,15 +10,16 @@ import {
   EmoticonSetWithRepresentativeImage,
 } from '../type';
 import {
+  CreateEmoticonSetRequest,
   CreateEmoticonSetResult,
   GetEmoticonSetsRequest,
   GetEmoticonSetsWithRepresentativeImageResult,
 } from './types';
 
-export async function createEmoticonSet(
-  emoticonSet: EmoticonSetWithRepresentativeImage,
-  imageUrls: ImageUrlWithOrder[],
-): Promise<CreateEmoticonSetResult> {
+export async function createEmoticonSet({
+  emoticonSet,
+  imageUrls,
+}: CreateEmoticonSetRequest): Promise<CreateEmoticonSetResult> {
   const supabase = await createServerSupabaseClient();
   const user = (await supabase.auth.getUser()).data.user;
 
@@ -28,11 +29,8 @@ export async function createEmoticonSet(
 
   const emoticonSetId = crypto.randomUUID();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { representative_image, ...emoticonSetFields } = emoticonSet;
-
   const emoticonRequest = {
-    ...emoticonSetFields,
+    ...emoticonSet,
     id: emoticonSetId,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -55,7 +53,7 @@ export async function createEmoticonSet(
 
   const isRepresentativeInImageUrls = imageUrls.some(
     (imageUrl) =>
-      imageUrl.imageUrl === emoticonSet.representative_image.image_url,
+      imageUrl.image_url === emoticonSet.representative_image.image_url,
   );
 
   const allImageUrls = isRepresentativeInImageUrls
@@ -94,13 +92,8 @@ export async function createEmoticonSet(
     );
   }
 
-  const representativeImage = emoticonImages.find(
-    (img) => img.is_representative,
-  );
-
-  if (!representativeImage) {
-    throw new Error('대표 이미지를 찾을 수 없습니다.');
-  }
+  const representativeImage =
+    emoticonImages.find((img) => img.is_representative) ?? emoticonImages[0];
 
   return {
     success: true,
@@ -133,15 +126,23 @@ export async function getEmoticonSetsWithRepresentativeImage({
     const currentUserId = user?.id;
 
     let query = supabase.from('emoticon_sets').select(
-      `
-        *,
-        emoticon_images!inner (*),
-        likes!left(count)
+      `id,
+   title,
+   author_name,
+   likes_count,
+   comments_count,
+   emoticon_images(
+    id,
+    image_url,
+    blur_url,
+    image_order,
+    is_representative,
+    webp_url
+   )
       `,
       { count: 'exact' },
     );
 
-    // 필터 적용
     if (param.userId) {
       query = query.eq('user_id', param.userId);
     }
@@ -149,7 +150,6 @@ export async function getEmoticonSetsWithRepresentativeImage({
       query = query.ilike('title', `%${param.title}%`);
     }
 
-    // 정렬 적용
     const orderColumn =
       param.orderBy === 'created_at'
         ? 'created_at'
@@ -163,7 +163,6 @@ export async function getEmoticonSetsWithRepresentativeImage({
       ascending: param.order === 'asc',
     });
 
-    // 페이지네이션
     query = query.range(offset, offset + limit - 1);
 
     const { data: sets, error, count } = await query;
@@ -190,20 +189,38 @@ export async function getEmoticonSetsWithRepresentativeImage({
             .filter((id): id is string => id !== null) || [];
       }
 
-      const formattedSets = sets.map((set) => {
-        const representativeImage =
-          set.emoticon_images?.find((img) => img.is_representative === true) ||
-          set.emoticon_images?.[0];
+      const formattedSets = sets
+        .map((set) => {
+          if (!set.emoticon_images || set.emoticon_images.length === 0) {
+            console.warn(`이모티콘 세트 ${set.id}에 이미지가 없습니다.`);
+            return null;
+          }
 
-        const { ...setWithoutImages } = set;
+          const representativeImage =
+            set.emoticon_images.find((img) => img.is_representative === true) ||
+            set.emoticon_images.filter(
+              (img) => img.is_representative === false,
+            )?.[0] ||
+            set.emoticon_images[set.emoticon_images.length - 1];
 
-        return {
-          ...setWithoutImages,
-          representative_image: representativeImage,
-          is_liked: likedSets.includes(set.id),
-          likes_count: set.likes?.[0]?.count || 0,
-        };
-      });
+          if (!representativeImage) {
+            console.warn(
+              `이모티콘 세트 ${set.id}에서 대표 이미지를 찾을 수 없습니다.`,
+            );
+            return null;
+          }
+
+          return {
+            id: set.id,
+            title: set.title,
+            author_name: set.author_name,
+            likes_count: set.likes_count || 0,
+            comments_count: set.comments_count || 0,
+            representative_image: representativeImage,
+            is_liked: likedSets.includes(set.id),
+          };
+        })
+        .filter((set): set is NonNullable<typeof set> => set !== null);
 
       return {
         success: true,
@@ -283,9 +300,19 @@ export async function getLikedEmoticonSets({
       .from('emoticon_sets')
       .select(
         `
-        *,
-        emoticon_images!inner (*),
-        likes!left(count)
+        id,
+        title,
+        author_name,
+        likes_count,
+        comments_count,
+        emoticon_images(
+          id,
+          image_url,
+          blur_url,
+          image_order,
+          is_representative,
+          webp_url
+        )
       `,
         { count: 'exact' },
       )
@@ -311,25 +338,43 @@ export async function getLikedEmoticonSets({
     }
 
     if (sets && sets.length > 0) {
-      const formattedSets = sets.map((set) => {
-        const representativeImage =
-          set.emoticon_images?.find((img) => img.is_representative === true) ||
-          set.emoticon_images?.[0];
+      const formattedSets = sets
+        .map((set) => {
+          if (!set.emoticon_images || set.emoticon_images.length === 0) {
+            console.warn(`이모티콘 세트 ${set.id}에 이미지가 없습니다.`);
+            return null;
+          }
 
-        const { ...setWithoutImages } = set;
+          const representativeImage =
+            set.emoticon_images.find((img) => img.is_representative === true) ||
+            set.emoticon_images.filter(
+              (img) => img.is_representative === false,
+            )?.[0] ||
+            set.emoticon_images[set.emoticon_images.length - 1];
 
-        return {
-          ...setWithoutImages,
-          representative_image: representativeImage,
-          is_liked: true,
-          likes_count: set.likes?.[0]?.count || 0,
-        };
-      });
+          if (!representativeImage) {
+            console.warn(
+              `이모티콘 세트 ${set.id}에서 대표 이미지를 찾을 수 없습니다.`,
+            );
+            return null;
+          }
+
+          return {
+            id: set.id,
+            title: set.title,
+            author_name: set.author_name,
+            likes_count: set.likes_count || 0,
+            comments_count: set.comments_count || 0,
+            representative_image: representativeImage,
+            is_liked: true,
+          };
+        })
+        .filter((set): set is NonNullable<typeof set> => set !== null);
 
       return {
         success: true,
         data: {
-          data: formattedSets as unknown as EmoticonSetWithRepresentativeImage[],
+          data: formattedSets,
           hasMore: offset + limit < (count || 0),
           total: count || 0,
           currentPage: Math.floor(offset / limit) + 1,
@@ -547,7 +592,6 @@ export async function getEmoticonSetForLock(
     isLiked = !!likeData;
   }
 
-  // 대표 이미지 찾기
   const representativeImage =
     (data.emoticon_images || []).find(
       (img: EmoticonImage) => img.is_representative,

@@ -5,7 +5,10 @@ export type EmoticonSet = Tables<'emoticon_sets'> & {
   is_liked?: boolean;
 };
 
-export type EmoticonSetWithRepresentativeImage = EmoticonSet & {
+export type EmoticonSetWithRepresentativeImage = Pick<
+  EmoticonSet,
+  'id' | 'title' | 'author_name' | 'likes_count' | 'comments_count'
+> & {
   representative_image: Pick<
     Tables<'emoticon_images'>,
     | 'id'
