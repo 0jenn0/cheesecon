@@ -71,11 +71,7 @@ function Thumbnail({
   );
 }
 
-function EmoticonType({
-  type,
-}: {
-  type: EmoticonSetWithRepresentativeImage['type'];
-}) {
+function EmoticonType({ type }: { type: EmoticonSetDetail['type'] }) {
   return (
     <div
       className={cn(

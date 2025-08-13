@@ -19,7 +19,7 @@ export default function SecretCheckForm() {
     <div className='flex w-full flex-col gap-12'>
       <div className='flex w-full items-center gap-12'>
         <Checkbox
-          checked={emoticonSetWithRepresentativeImage.is_private ?? false}
+          checked={emoticonSetWithRepresentativeImage.is_private || false}
           onChange={handleCheckboxChange}
           status={
             emoticonSetWithRepresentativeImage.is_private

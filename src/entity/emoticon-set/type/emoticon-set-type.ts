@@ -7,7 +7,14 @@ export type EmoticonSet = Tables<'emoticon_sets'> & {
 
 export type EmoticonSetWithRepresentativeImage = Pick<
   EmoticonSet,
-  'id' | 'title' | 'author_name' | 'likes_count' | 'comments_count'
+  | 'id'
+  | 'title'
+  | 'author_name'
+  | 'likes_count'
+  | 'comments_count'
+  | 'type'
+  | 'platform'
+  | 'is_liked'
 > & {
   representative_image: Pick<
     Tables<'emoticon_images'>,

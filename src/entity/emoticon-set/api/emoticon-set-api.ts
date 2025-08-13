@@ -128,6 +128,8 @@ export async function getEmoticonSetsWithRepresentativeImage({
    author_name,
    likes_count,
    comments_count,
+   type,
+   platform,
    emoticon_images(
     id,
     image_url,
@@ -135,8 +137,7 @@ export async function getEmoticonSetsWithRepresentativeImage({
     image_order,
     is_representative,
     webp_url
-   )
-      `,
+   )`,
       { count: 'exact' },
     );
 
@@ -215,6 +216,8 @@ export async function getEmoticonSetsWithRepresentativeImage({
             comments_count: set.comments_count || 0,
             representative_image: representativeImage,
             is_liked: likedSets.includes(set.id),
+            type: set.type,
+            platform: set.platform,
           };
         })
         .filter((set): set is NonNullable<typeof set> => set !== null);
@@ -302,6 +305,8 @@ export async function getLikedEmoticonSets({
         author_name,
         likes_count,
         comments_count,
+        type,
+        platform,
         emoticon_images(
           id,
           image_url,
@@ -362,6 +367,8 @@ export async function getLikedEmoticonSets({
             author_name: set.author_name,
             likes_count: set.likes_count || 0,
             comments_count: set.comments_count || 0,
+            type: set.type,
+            platform: set.platform,
             representative_image: representativeImage,
             is_liked: true,
           };

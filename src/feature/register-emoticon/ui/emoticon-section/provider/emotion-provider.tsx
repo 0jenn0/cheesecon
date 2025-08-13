@@ -18,7 +18,7 @@ export type EmoticonItemAction =
 // FIX: 개발할때만 2개 업로드로
 const INITIAL_ITEMS = Array.from(
   // { length: EMOTICON_CONFIG.kakaotalk.static.count },
-  { length: 24 },
+  { length: 2 },
   (_, i) => ({
     imageNumber: i + 1,
     imageUrl: '',

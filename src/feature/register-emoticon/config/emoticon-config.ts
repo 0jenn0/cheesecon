@@ -1,4 +1,4 @@
-export const EMOTICON_TYPE = ['static', 'emotion'] as const;
+export const EMOTICON_TYPE = ['static', 'animated'] as const;
 export const EMOTICON_PLATFORM = ['kakaotalk', 'line'] as const;
 
 export type EmoticonPlatform = (typeof EMOTICON_PLATFORM)[number];
@@ -10,7 +10,7 @@ export const EMOTICON_CONFIG = {
       count: 32,
       size: 320,
     },
-    emotion: {
+    animated: {
       count: 24,
       size: 320,
     },
@@ -20,7 +20,7 @@ export const EMOTICON_CONFIG = {
       count: 32,
       size: 320,
     },
-    emotion: {
+    animated: {
       count: 24,
       size: 320,
     },

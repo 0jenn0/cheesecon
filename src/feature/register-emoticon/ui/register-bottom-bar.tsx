@@ -3,18 +3,13 @@ import { useRegisterMutation } from '@/entity/emoticon-set/query/emoticon-set-mu
 import useEmoticonRegister from '../model/hook';
 
 export function RegisterBottomBar() {
-  const {
-    createEmoticonSetForm,
-    imageUrls,
-    validateAll,
-    validationErrors,
-    isValid,
-  } = useEmoticonRegister();
+  const { createEmoticonSetForm, imageUrls, validateAll, validationErrors } =
+    useEmoticonRegister();
+
   const registerMutation = useRegisterMutation({ imageUrls });
 
   const handleRegister = () => {
     const isFormValid = validateAll();
-
     if (!isFormValid) {
       console.log('검증 오류:', validationErrors);
       alert('입력 정보를 확인해주세요.');

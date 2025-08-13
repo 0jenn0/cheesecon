@@ -38,11 +38,6 @@ export type CreateEmoticonSetForm = Pick<
 > & {
   representative_image: Pick<
     Tables<'emoticon_images'>,
-    | 'id'
-    | 'image_url'
-    | 'blur_url'
-    | 'image_order'
-    | 'is_representative'
-    | 'webp_url'
+    'image_url' | 'blur_url' | 'image_order' | 'is_representative' | 'webp_url'
   >;
 };
