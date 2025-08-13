@@ -66,16 +66,21 @@ function Thumbnail({
         className='border-radius-lg border-ghost tablet:w-[96px] tablet:h-[96px] h-[80px] w-[80px] border object-cover transition-all duration-200'
         width={80}
         height={80}
+        priority={index && index < 4 ? true : false}
+        loading={index && index < 4 ? 'eager' : 'lazy'}
+        placeholder='blur'
+        blurDataURL={
+          item.representative_image.blur_url ??
+          item.representative_image.webp_url ??
+          item.representative_image.image_url ??
+          ''
+        }
       />
     </div>
   );
 }
 
-function EmoticonType({
-  type,
-}: {
-  type: EmoticonSetWithRepresentativeImage['type'];
-}) {
+function EmoticonType({ type }: { type: EmoticonSetDetail['type'] }) {
   return (
     <div
       className={cn(

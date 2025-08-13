@@ -55,3 +55,8 @@ export type MyStatsQueryResult = ProfileQueryResult<{
   likes_given: number;
   recent_emoticons: EmoticonSet[];
 }>;
+
+export interface ActiveUsersInfinityQueryParams {
+  offset?: number;
+  limit?: number;
+}

@@ -1,16 +1,18 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { getActiveUsers } from '../api';
+import { GetActiveUsersInfinityResult, getActiveUsers } from '../api';
 import { PROFILE_QUERY_KEYS } from './query-key';
+import { ActiveUsersInfinityQueryParams } from './types';
 
 const LIMIT = 8;
 
-export interface ActiveUsersInfinityQueryParams {
-  offset?: number;
-  limit?: number;
-}
-
 export const useActiveUsersInfinityQuery = (
   params?: ActiveUsersInfinityQueryParams,
+  options?: {
+    initialData?: {
+      pages: GetActiveUsersInfinityResult[];
+      pageParams: number[];
+    };
+  },
 ) => {
   return useInfiniteQuery({
     queryKey: PROFILE_QUERY_KEYS.activeUsers(),
@@ -22,5 +24,6 @@ export const useActiveUsersInfinityQuery = (
         : undefined;
     },
     initialPageParam: 0,
+    ...options,
   });
 };

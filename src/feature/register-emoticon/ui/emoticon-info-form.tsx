@@ -1,63 +1,59 @@
 'use client';
 
+import { useCallback } from 'react';
 import { SelectField, TextAreaField, TextField } from '@/shared/ui/input';
 import useEmoticonRegister from '../model/hook';
 
 export default function EmoticonInfoForm() {
-  const {
-    emoticonSetWithRepresentativeImage,
-    setEmoticonSet,
-    validateField,
-    validationErrors,
-  } = useEmoticonRegister();
+  const { setEmoticonSet, validationErrors } = useEmoticonRegister();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    const updatedEmoticonSet = {
-      ...emoticonSetWithRepresentativeImage,
-      [name]: value,
-    };
-    setEmoticonSet(updatedEmoticonSet);
-    validateField(
-      name as keyof typeof emoticonSetWithRepresentativeImage,
-      value,
-    );
-  };
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      setEmoticonSet((prev) => ({
+        ...prev,
+        [name]: value,
+        is_private: prev.is_private || false,
+      }));
+    },
+    [setEmoticonSet],
+  );
 
-  const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    const updatedEmoticonSet = {
-      ...emoticonSetWithRepresentativeImage,
-      [name]: value,
-    };
-    setEmoticonSet(updatedEmoticonSet);
-    validateField(
-      name as keyof typeof emoticonSetWithRepresentativeImage,
-      value,
-    );
-  };
+  const handleTextAreaChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const { name, value } = e.target;
+      setEmoticonSet((prev) => ({
+        ...prev,
+        [name]: value,
+        is_private: prev.is_private || false,
+      }));
+    },
+    [setEmoticonSet],
+  );
 
-  const handleSelectChange = (e: React.FormEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLSelectElement;
-    const { name, value } = target;
+  const handleSelectChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const { name, value } = e.target;
 
-    let mappedValue = value;
-    if (name === 'platform') {
-      mappedValue = value === '카카오톡' ? 'kakaotalk' : 'line';
-    } else if (name === 'type') {
-      mappedValue = value === '움직이는 이모티콘' ? 'emotion' : 'static';
-    }
+      const mapped =
+        name === 'platform'
+          ? value === '카카오톡'
+            ? 'kakaotalk'
+            : 'line'
+          : name === 'type'
+            ? value === '움직이는 이모티콘'
+              ? 'animated'
+              : 'static'
+            : value;
 
-    const updatedEmoticonSet = {
-      ...emoticonSetWithRepresentativeImage,
-      [name]: mappedValue,
-    };
-    setEmoticonSet(updatedEmoticonSet);
-    validateField(
-      name as keyof typeof emoticonSetWithRepresentativeImage,
-      mappedValue,
-    );
-  };
+      setEmoticonSet((prev) => ({
+        ...prev,
+        [name]: mapped,
+        is_private: prev.is_private || false,
+      }));
+    },
+    [setEmoticonSet],
+  );
 
   const getFieldError = (fieldName: string) => {
     return validationErrors.emoticonSet?.[fieldName]?.[0];

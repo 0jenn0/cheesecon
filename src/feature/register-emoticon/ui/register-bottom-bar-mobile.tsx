@@ -14,7 +14,7 @@ export function RegisterBottomBarMobile({
   handleStepChange: (step: number) => void;
 }) {
   const {
-    emoticonSetWithRepresentativeImage,
+    createEmoticonSetForm: emoticonSetWithRepresentativeImage,
     imageUrls,
     validateAll,
     isValid,

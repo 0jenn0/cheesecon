@@ -48,3 +48,7 @@ export type ProfileUpdateResponse = Profile;
 export type ProfileUpdateResult = ApiResult<ProfileUpdateResponse>;
 
 export type GetProfileResult = ApiResult<Profile>;
+
+export type GetActiveUsersInfinityResult = ApiResult<
+  BaseApiResponse<ProfileActivity>
+>;

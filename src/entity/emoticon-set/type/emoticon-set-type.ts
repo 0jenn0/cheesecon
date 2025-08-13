@@ -5,7 +5,17 @@ export type EmoticonSet = Tables<'emoticon_sets'> & {
   is_liked?: boolean;
 };
 
-export type EmoticonSetWithRepresentativeImage = EmoticonSet & {
+export type EmoticonSetWithRepresentativeImage = Pick<
+  EmoticonSet,
+  | 'id'
+  | 'title'
+  | 'author_name'
+  | 'likes_count'
+  | 'comments_count'
+  | 'type'
+  | 'platform'
+  | 'is_liked'
+> & {
   representative_image: Pick<
     Tables<'emoticon_images'>,
     | 'id'
@@ -71,4 +81,11 @@ export type EmoticonSetSortParams = BaseSortParams & {
   orderBy: EmoticonSetOrderBy;
   userId?: string;
   title?: string;
+};
+
+export type EmoticonSetInfinityParams = {
+  limit: number;
+  offset: number;
+  orderBy: 'likes_count' | 'views_count' | 'created_at';
+  order: 'asc' | 'desc';
 };

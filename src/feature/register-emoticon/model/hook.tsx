@@ -1,6 +1,12 @@
-import { PropsWithChildren, createContext, useContext, useState } from 'react';
+import {
+  PropsWithChildren,
+  createContext,
+  useCallback,
+  useContext,
+  useState,
+} from 'react';
 import { ImageUrlWithOrder } from '@/shared/types';
-import { EmoticonSetWithRepresentativeImage } from '@/entity/emoticon-set/type';
+import { CreateEmoticonSetForm } from '@/entity/emoticon-set';
 import { validateEmoticonSet, validateImageUrls } from '../lib/validation';
 
 interface ValidationErrors {
@@ -9,41 +15,37 @@ interface ValidationErrors {
 }
 
 interface EmoticonRegisterContextType {
-  emoticonSetWithRepresentativeImage: EmoticonSetWithRepresentativeImage;
+  createEmoticonSetForm: CreateEmoticonSetForm;
   imageUrls: ImageUrlWithOrder[];
-  setEmoticonSet: (emoticonSet: EmoticonSetWithRepresentativeImage) => void;
+  setEmoticonSet: (
+    next:
+      | CreateEmoticonSetForm
+      | ((prev: CreateEmoticonSetForm) => CreateEmoticonSetForm),
+  ) => void;
   handleSetImageUrl: (newImageUrls: ImageUrlWithOrder[]) => void;
   validationErrors: ValidationErrors;
   isValid: boolean;
   validateField: (
-    field: keyof EmoticonSetWithRepresentativeImage,
-    value: EmoticonSetWithRepresentativeImage[keyof EmoticonSetWithRepresentativeImage],
+    field: keyof CreateEmoticonSetForm,
+    value: CreateEmoticonSetForm[keyof CreateEmoticonSetForm],
   ) => void;
   validateAll: () => boolean;
   clearValidationErrors: () => void;
 }
 
 const EmoticonRegisterContext = createContext<EmoticonRegisterContextType>({
-  emoticonSetWithRepresentativeImage: {
-    id: '',
+  createEmoticonSetForm: {
     author_name: '',
-    description: '',
-    is_private: null,
-    comments_count: null,
-    likes_count: null,
-    views_count: null,
-    created_at: null,
-    updated_at: null,
-    platform: '',
+    is_private: false,
     title: '',
+    description: '',
+    platform: '',
     type: '',
-    user_id: '',
     representative_image: {
-      id: '',
       image_url: '',
       blur_url: null,
       image_order: 0,
-      is_representative: false,
+      is_representative: true,
       webp_url: null,
     },
   },
@@ -69,22 +71,14 @@ const EmoticonRegisterContext = createContext<EmoticonRegisterContextType>({
 
 export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
   const [emoticonSetWithRepresentativeImage, setEmoticonSetState] =
-    useState<EmoticonSetWithRepresentativeImage>({
-      id: '',
+    useState<CreateEmoticonSetForm>({
       author_name: '',
-      description: '',
-      is_private: null,
-      comments_count: null,
-      likes_count: null,
-      views_count: null,
-      created_at: null,
-      updated_at: null,
-      platform: '',
       title: '',
+      description: '',
+      platform: '',
       type: '',
-      user_id: '',
+      is_private: false,
       representative_image: {
-        id: '',
         image_url: '',
         blur_url: null,
         image_order: 0,
@@ -98,32 +92,37 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
   );
   const [isValid, setIsValid] = useState(false);
 
-  const setEmoticonSet = (
-    newEmoticonSet: EmoticonSetWithRepresentativeImage,
-  ) => {
-    setEmoticonSetState(newEmoticonSet);
-
-    const emoticonSetResult = validateEmoticonSet(newEmoticonSet);
-    const imageUrlsResult = validateImageUrls(imageUrls);
-    const isValidResult = emoticonSetResult.success && imageUrlsResult.success;
-    setIsValid(isValidResult);
-  };
+  const setEmoticonSet = useCallback(
+    (
+      next:
+        | CreateEmoticonSetForm
+        | ((prev: CreateEmoticonSetForm) => CreateEmoticonSetForm),
+    ) => {
+      setEmoticonSetState(next);
+    },
+    [],
+  );
 
   const handleSetImageUrl = (newImageUrls: ImageUrlWithOrder[]) => {
-    // console.log('handleSetImageUrl 호출됨, newImageUrls:', newImageUrls);
-    setImageUrls((prev) => [...prev, ...newImageUrls]);
+    setImageUrls((prev) => {
+      const updatedImageUrls = [...prev, ...newImageUrls];
 
-    const emoticonSetResult = validateEmoticonSet(
-      emoticonSetWithRepresentativeImage,
-    );
-    const imageUrlsResult = validateImageUrls([...imageUrls, ...newImageUrls]);
-    const isValidResult = emoticonSetResult.success && imageUrlsResult.success;
-    setIsValid(isValidResult);
+      // 상태 업데이트 후 검증을 수행
+      const emoticonSetResult = validateEmoticonSet(
+        emoticonSetWithRepresentativeImage,
+      );
+      const imageUrlsResult = validateImageUrls(updatedImageUrls);
+      const isValidResult =
+        emoticonSetResult.success && imageUrlsResult.success;
+      setIsValid(isValidResult);
+
+      return updatedImageUrls;
+    });
   };
 
   const validateField = (
-    field: keyof EmoticonSetWithRepresentativeImage,
-    value: EmoticonSetWithRepresentativeImage[keyof EmoticonSetWithRepresentativeImage],
+    field: keyof CreateEmoticonSetForm,
+    value: CreateEmoticonSetForm[keyof CreateEmoticonSetForm],
   ) => {
     const updatedEmoticonSet = {
       ...emoticonSetWithRepresentativeImage,
@@ -131,41 +130,44 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
     };
     const result = validateEmoticonSet(updatedEmoticonSet);
 
+    // 디버깅을 위한 로깅 추가
     if (!result.success) {
-      const errors: Record<string, string[]> = {};
-      result.error.issues.forEach((issue) => {
-        if (issue.path[0] === field) {
-          const fieldName = issue.path[0] as string;
-          if (!errors[fieldName]) {
-            errors[fieldName] = [];
-          }
-          errors[fieldName].push(issue.message);
-        }
-      });
-
-      setValidationErrors((prev) => ({
-        ...prev,
-        emoticonSet: errors,
-      }));
-    } else {
-      setValidationErrors((prev) => ({
-        ...prev,
-        emoticonSet: prev.emoticonSet
-          ? {
-              ...prev.emoticonSet,
-              [field]: undefined,
-            }
-          : {},
-      }));
+      console.log(`검증 실패 - 필드: ${field}, 값:`, value);
+      console.log('검증 오류:', result.error.issues);
     }
 
-    const updatedEmoticonSetForValidation = {
-      ...emoticonSetWithRepresentativeImage,
-      [field]: value,
-    };
-    const emoticonSetResult = validateEmoticonSet(
-      updatedEmoticonSetForValidation,
-    );
+    setValidationErrors((prev) => {
+      if (!result.success) {
+        const errors: Record<string, string[]> = {};
+        result.error.issues.forEach((issue) => {
+          if (issue.path[0] === field) {
+            const fieldName = issue.path[0] as string;
+            if (!errors[fieldName]) {
+              errors[fieldName] = [];
+            }
+            errors[fieldName].push(issue.message);
+          }
+        });
+
+        return {
+          ...prev,
+          emoticonSet: errors,
+        };
+      } else {
+        return {
+          ...prev,
+          emoticonSet: prev.emoticonSet
+            ? {
+                ...prev.emoticonSet,
+                [field]: undefined,
+              }
+            : {},
+        };
+      }
+    });
+
+    // 전체 유효성 검사
+    const emoticonSetResult = validateEmoticonSet(updatedEmoticonSet);
     const imageUrlsResult = validateImageUrls(imageUrls);
     const isValidResult = emoticonSetResult.success && imageUrlsResult.success;
     setIsValid(isValidResult);
@@ -176,6 +178,19 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
       emoticonSetWithRepresentativeImage,
     );
     const imageUrlsResult = validateImageUrls(imageUrls);
+
+    // 디버깅을 위한 로깅 추가
+    if (!emoticonSetResult.success) {
+      console.log(
+        '전체 검증 실패 - 이모티콘 세트:',
+        emoticonSetWithRepresentativeImage,
+      );
+      console.log('이모티콘 세트 검증 오류:', emoticonSetResult.error.issues);
+    }
+    if (!imageUrlsResult.success) {
+      console.log('전체 검증 실패 - 이미지 URLs:', imageUrls);
+      console.log('이미지 URLs 검증 오류:', imageUrlsResult.error.issues);
+    }
 
     const errors: ValidationErrors = {};
 
@@ -218,7 +233,7 @@ export function EmoticonRegisterProvider({ children }: PropsWithChildren) {
   return (
     <EmoticonRegisterContext.Provider
       value={{
-        emoticonSetWithRepresentativeImage,
+        createEmoticonSetForm: emoticonSetWithRepresentativeImage,
         setEmoticonSet,
         imageUrls,
         handleSetImageUrl,

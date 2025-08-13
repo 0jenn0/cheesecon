@@ -21,8 +21,10 @@ export default function ImageDropzone({
   className,
   ...props
 }: ImageDropzoneProps) {
-  const { emoticonSetWithRepresentativeImage, setEmoticonSet } =
-    useEmoticonRegister();
+  const {
+    createEmoticonSetForm: emoticonSetWithRepresentativeImage,
+    setEmoticonSet,
+  } = useEmoticonRegister();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const uploadImageMutation = useUploadImageToBucketMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
