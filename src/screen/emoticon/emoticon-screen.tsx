@@ -14,8 +14,6 @@ export default async function EmoticonScreen({
   emoticonSetId: string;
   isUnlocked: boolean;
 }) {
-  console.log('isUnlocked', isUnlocked);
-
   await trackEmoticonView(emoticonSetId);
 
   const emoticonInfo = await getEmoticonSet(emoticonSetId);

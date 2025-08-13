@@ -27,6 +27,8 @@ export async function fetchEmoticonSets({
 }: EmoticonSetInfinityParams): Promise<GetEmoticonSetsWithRepresentativeImageResult> {
   const supabase = createAnonServerClient();
 
+  const fetchLimit = Math.max(limit * 2, 16);
+
   const {
     data: sets,
     error,
@@ -41,8 +43,9 @@ export async function fetchEmoticonSets({
       { count: 'exact' },
     )
     .eq('is_private', false)
+    .or('is_private.is.null')
     .order(orderBy, { ascending: order === 'asc' })
-    .range(offset, offset + limit - 1);
+    .range(offset, offset + fetchLimit - 1);
 
   if (error) throw error;
 
@@ -70,11 +73,14 @@ export async function fetchEmoticonSets({
     })
     .filter(Boolean) as EmoticonSetWithRepresentativeImage[];
 
+  // 원하는 limit만큼만 반환
+  const limitedFormatted = formatted.slice(0, limit);
+
   const total = count ?? 0;
   return {
     success: true,
     data: {
-      data: formatted,
+      data: limitedFormatted,
       hasMore: offset + limit < total,
       total,
       currentPage: Math.floor(offset / limit) + 1,
