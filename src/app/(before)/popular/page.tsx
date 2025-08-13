@@ -1,9 +1,9 @@
-import { getPopularSetsCached } from '@/entity/emoticon-set/model/popular-cache';
+import { getPopularEmoticonSetsCached } from '@/entity/emoticon-set/model/main-cache';
 import { PopularScreen } from '@/screen';
 import { HelloSection } from '@/screen/main/ui';
 
 export default async function PopularPage() {
-  const initial = await getPopularSetsCached({
+  const initial = await getPopularEmoticonSetsCached({
     limit: 8,
     offset: 0,
     orderBy: 'likes_count',

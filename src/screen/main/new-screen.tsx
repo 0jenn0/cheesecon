@@ -1,19 +1,31 @@
 'use client';
 
+import { GetEmoticonSetsWithRepresentativeImageResult } from '@/entity/emoticon-set/api';
 import { useEmoticonSetInfinityQuery } from '@/entity/emoticon-set/query/emoticon-set-infinity-query';
 import {
   EmoticonViewSection,
   EmoticonViewSkeleton,
 } from '@/feature/view-emotion/emoticon-view-section';
 
-export default function PopularScreen() {
+export default function NewScreen({
+  initial,
+}: {
+  initial?: GetEmoticonSetsWithRepresentativeImageResult;
+}) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useEmoticonSetInfinityQuery({
-      limit: 8,
-      offset: 0,
-      orderBy: 'created_at',
-      order: 'desc',
-    });
+    useEmoticonSetInfinityQuery(
+      {
+        limit: 8,
+        offset: 0,
+        orderBy: 'created_at',
+        order: 'desc',
+      },
+      {
+        initialData: initial
+          ? { pages: [initial], pageParams: [0] }
+          : undefined,
+      },
+    );
 
   if (isLoading) return <EmoticonViewSkeleton />;
 
