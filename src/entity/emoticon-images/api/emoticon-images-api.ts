@@ -40,6 +40,7 @@ export async function getEmoticonImages(setId: string) {
       .from('emoticon_images')
       .select(`*, likes(count)`)
       .eq('set_id', setId)
+      .eq('is_representative', false)
       .order('image_order');
 
     if (error) {
