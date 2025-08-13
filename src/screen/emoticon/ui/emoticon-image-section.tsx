@@ -4,18 +4,25 @@ import Link from 'next/link';
 import { ComponentProps } from 'react';
 import { cn } from '@/shared/lib';
 import EmoticonItem from '@/shared/ui/display/emoticon-item/emoticon-item';
-import { EmoticonImage, EmoticonSetDetail } from '@/entity/emoticon-set/type';
+import { Skeleton } from '@/shared/ui/feedback';
+import { useEmoticonImagesQuery } from '@/entity/emoticon-images/query';
+import { EmoticonImage } from '@/entity/emoticon-set/type';
 import { EmoticonProvider } from '@/feature/register-emoticon/ui/emoticon-section/provider';
 
 interface EmoticonImageSectionProps extends ComponentProps<'section'> {
-  emoticonImages: EmoticonSetDetail['emoticon_images'];
+  emoticonSetId: string;
+  isUnlocked: boolean;
 }
 
 export default function EmoticonImageSection({
-  emoticonImages,
+  emoticonSetId,
+  isUnlocked,
   className,
   ...props
 }: EmoticonImageSectionProps) {
+  const { data, isLoading } = useEmoticonImagesQuery(emoticonSetId);
+  const emoticonImages = data?.data;
+
   return (
     <EmoticonProvider>
       <section
@@ -30,28 +37,42 @@ export default function EmoticonImageSection({
             className,
           )}
         >
-          {emoticonImages
-            .toSorted((a, b) => a.image_order - b.image_order)
-            .map((image: EmoticonImage) => (
-              <li key={image.id}>
-                <EmoticonImageItem image={image} />
+          {isLoading &&
+            Array.from({ length: 24 }).map((_, index) => (
+              <li key={index}>
+                <EmoticonImageItemSkeleton />
               </li>
             ))}
+
+          {emoticonImages &&
+            emoticonImages
+              .toSorted((a, b) => a.image_order - b.image_order)
+              .map((image: EmoticonImage) => (
+                <li key={image.id}>
+                  <EmoticonImageItem image={image} isUnlocked={isUnlocked} />
+                </li>
+              ))}
         </ul>
       </section>
     </EmoticonProvider>
   );
 }
 
-function EmoticonImageItem({ image }: { image: EmoticonImage }) {
+function EmoticonImageItem({
+  image,
+  isUnlocked,
+}: {
+  image: EmoticonImage;
+  isUnlocked: boolean;
+}) {
   const { image_order, image_url, blur_url, comments_count, likes_count } =
     image;
 
   return (
     <EmoticonItem.Root
       imageNumber={image_order}
-      imageUrl={image_url}
-      blurUrl={blur_url}
+      imageUrl={isUnlocked ? image_url : (blur_url ?? '')}
+      blurUrl={blur_url ?? image_url ?? ''}
       commentsCount={comments_count ?? 0}
       likesCount={likes_count ?? 0}
       className='cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95'
@@ -70,5 +91,17 @@ function EmoticonImageItem({ image }: { image: EmoticonImage }) {
       </Link>
       <EmoticonItem.BottomBar />
     </EmoticonItem.Root>
+  );
+}
+
+function EmoticonImageItemSkeleton() {
+  return (
+    <div className='flex flex-col gap-4'>
+      <Skeleton className='aspect-square h-full min-h-[100px] w-full min-w-[100px]' />
+      <div className='tablet:justify-end flex w-full justify-between gap-4'>
+        <Skeleton className='height-16 width-24' />
+        <Skeleton className='height-16 width-24' />
+      </div>
+    </div>
   );
 }

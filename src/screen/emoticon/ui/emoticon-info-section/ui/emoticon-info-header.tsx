@@ -5,33 +5,30 @@ import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
 import { useModal } from '@/shared/ui/feedback';
 import { IconButton } from '@/shared/ui/input';
-import { EmoticonSetDetail } from '@/entity/emoticon-set/type';
+import { EmoticonImageSimple } from '@/entity/emoticon-images/type/emoticon-image.type';
+import { EmoticonSet } from '@/entity/emoticon-set/type';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
 import LikeButton from '@/feature/like/ui/like-button/like-button';
 import { SecretIcon } from '.';
 
 export default function EmoticonInfoHeader({
-  emoticonSetDetail,
+  emoticonSet,
+  representativeImage,
 }: {
-  emoticonSetDetail: EmoticonSetDetail;
+  emoticonSet: EmoticonSet;
+  representativeImage: EmoticonImageSimple;
 }) {
   const { session } = useAuth();
-  const {
-    author_name,
-    representative_image,
-    title,
-    is_private,
-    views_count,
-    comments_count,
-  } = emoticonSetDetail;
+  const { author_name, title, is_private, views_count, comments_count } =
+    emoticonSet;
   const { openModal } = useModal();
 
-  const isAuthor = emoticonSetDetail.user_id === session?.user.id;
+  const isAuthor = emoticonSet.user_id === session?.user.id;
   const canShare = (is_private && isAuthor) || !is_private;
 
   const handleShareLink = () => {
     openModal('shareLink', {
-      emoticonSetId: emoticonSetDetail.id,
+      emoticonSetId: emoticonSet.id,
       isPrivate: is_private ?? false,
     });
   };
@@ -40,11 +37,19 @@ export default function EmoticonInfoHeader({
     <div className={cn('bg-primary flex w-full items-center gap-16')}>
       <div className='border-ghost tablet:w-[160px] tablet:h-[160px] border-radius-lg aspect-square h-[100px] w-[100px] overflow-hidden border'>
         <Image
-          src={representative_image.webp_url ?? representative_image.image_url}
+          src={representativeImage.webp_url ?? representativeImage.image_url}
           alt={author_name}
           width={160}
           height={160}
           className='h-full w-full object-cover'
+          priority
+          placeholder='blur'
+          blurDataURL={
+            representativeImage.blur_url ??
+            representativeImage.webp_url ??
+            representativeImage.image_url ??
+            ''
+          }
         />
       </div>
 
@@ -59,8 +64,8 @@ export default function EmoticonInfoHeader({
           </div>
           <LikeButton
             targetType='emoticon_set'
-            targetId={emoticonSetDetail.id}
-            initialLikesCount={emoticonSetDetail.likes_count ?? 0}
+            targetId={emoticonSet.id}
+            initialLikesCount={emoticonSet.likes_count ?? 0}
           />
         </div>
 

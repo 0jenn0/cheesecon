@@ -5,6 +5,7 @@ import { ImageUrlWithOrder } from '@/shared/types';
 import {
   EmoticonImage,
   EmoticonImageRequest,
+  EmoticonSet,
   EmoticonSetDetail,
   EmoticonSetWithRepresentativeImage,
 } from '../type';
@@ -640,4 +641,25 @@ export async function getAuthorId(id: string): Promise<string> {
   }
 
   return data?.user_id ?? '';
+}
+
+export async function getEmoticonSet(id: string): Promise<EmoticonSet> {
+  const supabase = await createServerSupabaseClient();
+
+  const { data, error } = await supabase
+    .from('emoticon_sets')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error('Emoticon set 조회 에러:', error);
+    throw new Error(`이모티콘 세트 조회에 실패했습니다: ${error.message}`);
+  }
+
+  if (!data) {
+    throw new Error('이모티콘 세트를 찾을 수 없습니다.');
+  }
+
+  return data;
 }

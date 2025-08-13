@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { ComponentPropsWithRef } from 'react';
 import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
@@ -22,17 +22,14 @@ function EmoticonViewItem({
   index,
   hideLikes = false,
 }: EmoticonViewItemProps) {
-  const router = useRouter();
-
-  const handleClick = () => {
-    router.push(`/emoticon/${item.id}`);
-  };
-
   return (
-    <section className='group flex cursor-pointer gap-24' onClick={handleClick}>
+    <Link
+      href={`/emoticon/${item.id}`}
+      className='group flex cursor-pointer gap-24'
+    >
       <Thumbnail index={index} item={item} />
       <Content item={item} hideLikes={hideLikes} />
-    </section>
+    </Link>
   );
 }
 
