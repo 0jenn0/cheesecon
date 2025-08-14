@@ -5,11 +5,12 @@ import Link from 'next/link';
 import { ComponentPropsWithRef } from 'react';
 import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
-import { ICON_NAMES } from '@/shared/ui/icon/config';
 import {
   EmoticonSetDetail,
   EmoticonSetWithRepresentativeImage,
 } from '@/entity/emoticon-set/type';
+import { IconLabel } from './icon-label';
+import LikeLabel from './like-label';
 
 interface EmoticonViewItemProps extends ComponentPropsWithRef<'section'> {
   item: EmoticonSetDetail | EmoticonSetWithRepresentativeImage;
@@ -128,31 +129,10 @@ function Content({
         <div className='flex gap-12'>
           <IconLabel icon='message-circle' label={item.comments_count} />
           {!hideLikes && (
-            <IconLabel
-              icon={item.is_liked ? 'heart-filled' : 'heart'}
-              iconClassName={item.is_liked ? 'text-rose-400' : 'text-gray-500'}
-              label={item.likes_count}
-            />
+            <LikeLabel itemId={item.id} likesCount={item.likes_count ?? 0} />
           )}
         </div>
       </div>
-    </div>
-  );
-}
-
-function IconLabel({
-  icon,
-  label,
-  iconClassName,
-}: {
-  icon: (typeof ICON_NAMES)[number];
-  label: number | null;
-  iconClassName?: string;
-}) {
-  return (
-    <div className='flex gap-2'>
-      <Icon name={icon} className={cn('text-gray-500', iconClassName)} />
-      <p className='text-body-sm text-secondary'>{label}</p>
     </div>
   );
 }

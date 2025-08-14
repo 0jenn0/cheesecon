@@ -722,3 +722,30 @@ export async function getEmoticonSet(id: string): Promise<EmoticonSet> {
 
   return data;
 }
+
+export async function getEmoticonSetIsLiked(id: string): Promise<boolean> {
+  const supabase = await createServerSupabaseClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const currentUserId = user?.id;
+
+  if (!currentUserId) {
+    return false;
+  }
+
+  const { data, error } = await supabase
+    .from('likes')
+    .select('id')
+    .eq('user_id', currentUserId)
+    .eq('set_id', id)
+    .single();
+
+  if (error) {
+    console.error('Emoticon set 조회 에러:', error);
+    throw new Error(`이모티콘 세트 조회에 실패했습니다: ${error.message}`);
+  }
+
+  return !!data;
+}
