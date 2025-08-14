@@ -115,7 +115,6 @@ export async function getEmoticonSetsWithRepresentativeImage({
   },
 }: GetEmoticonSetsRequest): Promise<GetEmoticonSetsWithRepresentativeImageResult> {
   const supabase = await createServerSupabaseClient();
-
   try {
     const {
       data: { user },
@@ -160,6 +159,8 @@ export async function getEmoticonSetsWithRepresentativeImage({
     query = query.order(orderColumn, {
       ascending: param.order === 'asc',
     });
+
+    query = query.order('id', { ascending: param.order === 'asc' });
 
     query = query.range(offset, offset + limit - 1);
 

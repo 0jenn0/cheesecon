@@ -42,9 +42,9 @@ export async function fetchEmoticonSets({
     `,
       { count: 'exact' },
     )
-    .eq('is_private', false)
-    .or('is_private.is.null')
+    .or('is_private.eq.false,is_private.is.null')
     .order(orderBy, { ascending: order === 'asc' })
+    .order('id', { ascending: order === 'asc' })
     .range(offset, offset + fetchLimit - 1);
 
   if (error) throw error;
@@ -73,7 +73,6 @@ export async function fetchEmoticonSets({
     })
     .filter(Boolean) as EmoticonSetWithRepresentativeImage[];
 
-  // 원하는 limit만큼만 반환
   const limitedFormatted = formatted.slice(0, limit);
 
   const total = count ?? 0;
