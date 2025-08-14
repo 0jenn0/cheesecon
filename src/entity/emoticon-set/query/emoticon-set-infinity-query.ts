@@ -6,7 +6,7 @@ import {
 import { EmoticonSetInfinityParams } from '../type';
 import { EMOTICON_SET_QUERY_KEY } from './query-key';
 
-const LIMIT = 8;
+const LIMIT = 12;
 
 export const useEmoticonSetInfinityQuery = (
   params?: EmoticonSetInfinityParams,
@@ -24,9 +24,9 @@ export const useEmoticonSetInfinityQuery = (
       offset: params?.offset || 0,
       limit: params?.limit || LIMIT,
     }),
-    queryFn: () =>
+    queryFn: ({ pageParam }) =>
       getEmoticonSetsWithRepresentativeImage({
-        offset: params?.offset || 0,
+        offset: pageParam,
         limit: params?.limit || LIMIT,
         param: {
           orderBy: params?.orderBy || 'created_at',
@@ -34,9 +34,13 @@ export const useEmoticonSetInfinityQuery = (
         },
       }),
     getNextPageParam: (lastPage, pages) => {
-      return lastPage.success && lastPage.data.hasMore
-        ? pages.length * (params?.limit || LIMIT)
-        : undefined;
+      if (!lastPage.success || !lastPage.data.hasMore) {
+        return undefined;
+      }
+
+      const currentOffset =
+        (params?.offset || 0) + pages.length * (params?.limit || LIMIT);
+      return currentOffset;
     },
     initialData: options?.initialData,
     initialPageParam: 0,

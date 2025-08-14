@@ -7,8 +7,10 @@ import { EmoticonViewSkeleton } from '@/feature/view-emotion/emoticon-view-secti
 import { EmoticonViewItemClient } from './ui';
 
 export default function EmoticonViewSectionClient({
+  limit,
   offset,
 }: {
+  limit: number;
   offset: number;
 }) {
   const { ref, isIntersecting } = useIntersectionObserver({
@@ -18,7 +20,7 @@ export default function EmoticonViewSectionClient({
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useEmoticonSetInfinityQuery({
-      limit: 8,
+      limit,
       offset,
       orderBy: 'likes_count',
       order: 'desc',
@@ -28,7 +30,7 @@ export default function EmoticonViewSectionClient({
     if (isIntersecting && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
-  }, [fetchNextPage, hasNextPage, isIntersecting, isFetchingNextPage, offset]);
+  }, [fetchNextPage, hasNextPage, isIntersecting, isFetchingNextPage]);
 
   const flattenedData = data?.pages.flatMap((page) =>
     page.success ? page.data.data : [],

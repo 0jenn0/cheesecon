@@ -7,7 +7,7 @@ import { HelloSection } from '@/screen/main/ui';
 
 export const revalidate = 3600;
 
-const LIMIT = 8;
+const LIMIT = 12;
 
 export default async function PopularPage() {
   const initial = await getPopularEmoticonSetsCached({
@@ -28,7 +28,7 @@ export default async function PopularPage() {
         </div>
         <div className='border-ghost w-full border-b' />
         <EmoticonViewSectionServer initial={flattenedData} />
-        <EmoticonViewSectionClient offset={LIMIT} />
+        <EmoticonViewSectionClient limit={LIMIT} offset={LIMIT} />
       </section>
     </div>
   );

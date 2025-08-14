@@ -743,8 +743,7 @@ export async function getEmoticonSetIsLiked(id: string): Promise<boolean> {
     .single();
 
   if (error) {
-    console.error('Emoticon set 조회 에러:', error);
-    throw new Error(`이모티콘 세트 조회에 실패했습니다: ${error.message}`);
+    return false;
   }
 
   return !!data;
