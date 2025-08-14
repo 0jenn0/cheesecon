@@ -16,8 +16,11 @@ export const useActiveUsersInfinityQuery = (
 ) => {
   return useInfiniteQuery({
     queryKey: PROFILE_QUERY_KEYS.activeUsers(),
-    queryFn: ({ pageParam = 0 }) =>
-      getActiveUsers(params?.limit || LIMIT, pageParam),
+    queryFn: () =>
+      getActiveUsers({
+        limit: params?.limit || LIMIT,
+        offset: params?.offset || 0,
+      }),
     getNextPageParam: (lastPage, pages) => {
       return lastPage.success && lastPage.data.hasMore
         ? pages.length * (params?.limit || LIMIT)
