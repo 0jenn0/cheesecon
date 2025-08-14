@@ -1,6 +1,6 @@
 'use client';
 
-import { ComponentPropsWithRef, useEffect } from 'react';
+import { ComponentPropsWithRef } from 'react';
 import { cn } from '@/shared/lib';
 import { usePagination } from '@/shared/lib/use-pagination';
 import { Icon } from '@/shared/ui/display';

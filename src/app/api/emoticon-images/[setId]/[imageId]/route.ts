@@ -3,10 +3,10 @@ import { getEmoticonImage } from '@/entity/emoticon-images/api';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { setId: string; imageId: string } },
+  { params }: { params: Promise<{ setId: string; imageId: string }> },
 ) {
   try {
-    const { setId, imageId } = params;
+    const { setId, imageId } = await params;
 
     if (!setId || !imageId) {
       return NextResponse.json(

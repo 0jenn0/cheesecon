@@ -3,9 +3,10 @@ import { createAnonServerClient } from '@/shared/lib/supabase/anon';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { setId: string } },
+  { params }: { params: Promise<{ setId: string }> },
 ) {
   try {
+    const { setId } = await params;
     const { searchParams } = new URL(request.url);
     const ids = searchParams.get('ids');
 
@@ -30,7 +31,7 @@ export async function GET(
     const { data, error } = await supabase
       .from('emoticon_images')
       .select('*, likes(count)')
-      .eq('set_id', params.setId)
+      .eq('set_id', setId)
       .in('id', imageIds)
       .order('image_order');
 
