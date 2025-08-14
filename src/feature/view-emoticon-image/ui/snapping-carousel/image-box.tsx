@@ -7,32 +7,33 @@ interface ImageBoxProps {
   imageSize: number;
   isCenter?: boolean;
   imageData: EmoticonImage | undefined;
-  setId: string;
 }
 
 export default function ImageBox({
   color,
   imageSize,
-  isCenter,
   imageData,
-  setId,
+  isCenter = false,
 }: ImageBoxProps) {
   return (
-    <div className='border-radius-xl flex aspect-square h-full w-full flex-shrink-0 cursor-grab items-center justify-center overflow-hidden'>
+    <div className='border-radius-xl flex aspect-square flex-shrink-0 cursor-grab items-center justify-center overflow-hidden'>
       {imageData ? (
         <Image
           src={imageData?.webp_url ?? imageData?.image_url}
           alt={`image-${imageData.id}`}
-          width={imageSize}
-          height={imageSize}
+          width={isCenter ? imageSize : imageSize * 0.8}
+          height={isCenter ? imageSize : imageSize * 0.8}
           placeholder='blur'
           blurDataURL={imageData?.blur_url ?? imageData?.image_url}
           className='object-contain transition-transform duration-300 group-hover:scale-110 active:cursor-grabbing'
           draggable={false}
+          priority={isCenter}
+          loading={isCenter ? 'eager' : 'lazy'}
           style={{
             backgroundColor: COLOR_MAP[color],
-            width: imageSize,
-            height: imageSize,
+            width: isCenter ? imageSize : imageSize * 0.8,
+            height: isCenter ? imageSize : imageSize * 0.8,
+            opacity: isCenter ? 1 : 0.5,
           }}
         />
       ) : (

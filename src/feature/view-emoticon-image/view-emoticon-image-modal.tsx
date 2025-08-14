@@ -8,8 +8,8 @@ import { EmoticonImage } from '@/entity/emoticon-set';
 import { EmoticonCommentSection } from '../comment/ui/emoticon-comment-section';
 import LikeButton from '../like/ui/like-button/like-button';
 import ColorPicker, { ColorMap } from './color-picker';
+import { SnapCarousel } from './ui';
 import ImageBox from './ui/snapping-carousel/image-box';
-import { SnapCarousel } from './ui/snapping-carousel/snapping-carousel';
 
 interface ViewEmoticonImageModalProps {
   setId: string;
@@ -44,6 +44,7 @@ export default function ViewEmoticonImageModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchImageId, currentImageId]);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isDragging, setIsDragging] = useState(false);
   const [color, setColor] = useState<ColorMap>('blue');
 
@@ -99,7 +100,6 @@ export default function ViewEmoticonImageModal({
                         imageData={image}
                         color={color}
                         imageSize={280}
-                        setId={setId}
                       />
                     );
                   }}

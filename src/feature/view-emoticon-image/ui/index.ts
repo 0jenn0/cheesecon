@@ -1,1 +1,1 @@
-export { default as SnappingCarousel } from './snapping-carousel/snapping-carousel';
+export { default as SnapCarousel } from './snapping-carousel/snapping-carousel';
