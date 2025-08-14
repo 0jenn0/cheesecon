@@ -7,7 +7,7 @@ import { Pagination } from '@/shared/ui/navigation';
 import { useEmoticonSetPaginationQuery } from '@/entity/emoticon-set';
 import { useAuth } from '../auth/provider/auth-provider';
 import {
-  EmoticonViewItem,
+  EmoticonViewItemClient,
   EmoticonViewItemSkeleton,
 } from '../view-emotion/emoticon-view-section/ui';
 
@@ -74,7 +74,7 @@ export default function ViewEmoticon({ emoticonType }: ViewEmoticonProps) {
       </div>
       <ul className='tablet:grid-cols-2 grid w-full grid-cols-1 gap-x-32 gap-y-16'>
         {emoticons.map((emoticon) => (
-          <EmoticonViewItem
+          <EmoticonViewItemClient
             key={emoticon.id}
             item={emoticon}
             hideLikes={true}

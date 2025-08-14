@@ -24,9 +24,9 @@ export const useEmoticonSetInfinityQuery = (
       offset: params?.offset || 0,
       limit: params?.limit || LIMIT,
     }),
-    queryFn: ({ pageParam = 0 }) =>
+    queryFn: () =>
       getEmoticonSetsWithRepresentativeImage({
-        offset: pageParam,
+        offset: params?.offset || 0,
         limit: params?.limit || LIMIT,
         param: {
           orderBy: params?.orderBy || 'created_at',
