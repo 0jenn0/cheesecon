@@ -1,6 +1,7 @@
 'use server';
 
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
+import { ApiResult } from '@/shared/types';
 import {
   GetEmoticonImageResult,
   GetRepresentativeImageBySetIdResult,
@@ -40,7 +41,7 @@ export async function getEmoticonImages(setId: string) {
       .from('emoticon_images')
       .select(`*, likes(count)`)
       .eq('set_id', setId)
-      .eq('is_representative', false)
+      .or('is_representative.eq.false,is_representative.is.null')
       .order('image_order');
 
     if (error) {
@@ -70,10 +71,13 @@ export async function getEmoticonImages(setId: string) {
   }
 }
 
-export async function getEmoticonImage(
-  setId: string,
-  imageId: string,
-): Promise<GetEmoticonImageResult> {
+export async function getEmoticonImage({
+  setId,
+  imageId,
+}: {
+  setId: string;
+  imageId: string;
+}): Promise<GetEmoticonImageResult> {
   try {
     const supabase = await createServerSupabaseClient();
 
@@ -144,5 +148,77 @@ export async function getRepresentativeImageBySetId(
   return {
     success: true,
     data,
+  };
+}
+
+const RADIUS = 3;
+
+export async function getEmoticonImageNeighborIds({
+  setId,
+  imageId,
+}: {
+  setId: string;
+  imageId: string;
+}) {
+  const supabase = await createServerSupabaseClient();
+
+  const { data: center, error: error1 } = await supabase
+    .from('emoticon_images')
+    .select('id, image_order')
+    .eq('set_id', setId)
+    .eq('id', imageId)
+    .single();
+
+  if (error1 || !center) {
+    return {
+      success: false,
+      error: { message: error1?.message ?? 'CENTER_NOT_FOUND' },
+    };
+  }
+
+  const minOrder = center.image_order - RADIUS;
+  const maxOrder = center.image_order + RADIUS;
+
+  const { data: neighbors, error: error2 } = await supabase
+    .from('emoticon_images')
+    .select('id, image_order')
+    .eq('set_id', setId)
+    .gte('image_order', minOrder)
+    .lte('image_order', maxOrder)
+    .or('is_representative.eq.false,is_representative.is.null')
+    .order('image_order', { ascending: true });
+
+  if (error2 || !neighbors) {
+    return {
+      success: false,
+      error: { message: error2?.message ?? 'NO_NEIGHBORS' },
+    };
+  }
+
+  return {
+    success: true,
+    data: neighbors.map((n) => n.id),
+  };
+}
+
+export async function getEmoticonImageIdsAndOrder(
+  setId: string,
+): Promise<ApiResult<{ id: string; image_order: number }[]>> {
+  const supabase = await createServerSupabaseClient();
+
+  const { data, error } = await supabase
+    .from('emoticon_images')
+    .select('id, image_order')
+    .eq('set_id', setId)
+    .or('is_representative.eq.false,is_representative.is.null')
+    .order('image_order', { ascending: true });
+
+  if (error) {
+    throw new Error(`이모티콘 이미지 조회 에러: ${error.message}`);
+  }
+
+  return {
+    success: true,
+    data: data.map((d) => ({ id: d.id, image_order: d.image_order })),
   };
 }

@@ -21,6 +21,14 @@ export const useCommentListQuery = (params: CommentInfiniteQueryParams) => {
   return useQuery({
     queryKey: key,
     queryFn: async ({ signal }) => {
+      const controller = new AbortController();
+
+      if (signal) {
+        signal.addEventListener('abort', () => {
+          controller.abort();
+        });
+      }
+
       const qs = new URLSearchParams({
         scope,
         id,
@@ -28,16 +36,26 @@ export const useCommentListQuery = (params: CommentInfiniteQueryParams) => {
         offset: String(offset),
         sortOrder: 'asc',
       });
-      const res = await fetch(`/api/comments?${qs.toString()}`, {
-        signal,
-        cache: 'no-store',
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json = await res.json();
-      if (!json?.success)
-        throw new Error(json?.error?.message ?? 'Unknown error');
 
-      return json.data;
+      try {
+        const res = await fetch(`/api/comments?${qs.toString()}`, {
+          signal: controller.signal,
+          cache: 'no-store',
+        });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        if (!json?.success)
+          throw new Error(json?.error?.message ?? 'Unknown error');
+
+        return json.data;
+      } catch (error) {
+        // AbortError인 경우 명시적으로 처리
+        if (error instanceof Error && error.name === 'AbortError') {
+          throw new Error('Request was aborted');
+        }
+        throw error;
+      }
     },
     enabled,
     staleTime: 30_000,

@@ -102,7 +102,7 @@ function EmoticonItemContent({
                   placeholder='blur'
                   blurDataURL={blurUrl ?? ''}
                   alt='emoticon'
-                  priority={imageNumber <= 8}
+                  loading='lazy'
                   className={cn(
                     contentVariants({ isDragging }),
                     'absolute inset-0',

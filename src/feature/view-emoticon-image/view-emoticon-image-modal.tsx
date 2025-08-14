@@ -1,39 +1,59 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { cn } from '@/shared/lib';
 import { Modal, Spinner } from '@/shared/ui/feedback';
 import { EmoticonImage } from '@/entity/emoticon-set';
 import { EmoticonCommentSection } from '../comment/ui/emoticon-comment-section';
 import LikeButton from '../like/ui/like-button/like-button';
 import ColorPicker, { ColorMap } from './color-picker';
-import { CenterFocusCarousel } from './image-viewer';
+import ImageBox from './ui/snapping-carousel/image-box';
+import { SnapCarousel } from './ui/snapping-carousel/snapping-carousel';
 
 interface ViewEmoticonImageModalProps {
-  allImages: EmoticonImage[];
+  setId: string;
+  currentImageId: string;
   authorId: string;
+  allImages: EmoticonImage[];
 }
 
 export default function ViewEmoticonImageModal({
-  allImages,
+  setId,
+  currentImageId,
   authorId,
+  allImages,
 }: ViewEmoticonImageModalProps) {
-  const searchParams = useSearchParams();
-  const imageIdSearchParam = searchParams.get('imageId');
-  const [imageId, setImageId] = useState<string | null>(imageIdSearchParam);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const searchImageId = searchParams.get('imageId');
+  const [currentId, setCurrentId] = useState<string>(
+    searchImageId ?? currentImageId,
+  );
+
+  const handleSetCurrentId = (image: { id: string; image_order: number }) => {
+    setCurrentId(image.id);
+    router.replace(`/emoticon/${setId}?imageId=${image.id}`, { scroll: false });
+  };
+
+  useEffect(() => {
+    const next = searchImageId ?? currentImageId;
+    if (!next || next === currentId) return;
+    setCurrentId(next);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchImageId, currentImageId]);
+
   const [isDragging, setIsDragging] = useState(false);
-  const emoticonImage = allImages.find((image) => image.id === imageId);
   const [color, setColor] = useState<ColorMap>('blue');
+
+  const current = allImages.find((img) => img.id === currentId);
 
   return (
     <Modal.Container className='tablet:w-[72dvw] tablet:h-[80dvh] h-[90dvh] max-w-[1024px] select-none'>
       <Modal.Header
         onClose={() => {
-          router.replace(`/emoticon/${emoticonImage?.set_id}`, {
-            scroll: false,
-          });
+          router.replace(`/emoticon/${setId}`, { scroll: false });
         }}
       >
         <h1 className='text-heading-sm flex items-center gap-12'>
@@ -42,13 +62,14 @@ export default function ViewEmoticonImageModal({
               <Spinner variant='secondary' size='md' />
             ) : (
               <div className='flex h-[16px] w-[16px] items-center justify-center'>
-                {emoticonImage?.image_order}
+                {current?.image_order ?? 0}
               </div>
             )}
           </div>
           <div className='text-heading-sm'>번 이모티콘</div>
         </h1>
       </Modal.Header>
+
       <Modal.Body
         className={cn(
           'laptop:flex-row flex h-full w-full flex-col items-stretch gap-24',
@@ -56,7 +77,7 @@ export default function ViewEmoticonImageModal({
         )}
       >
         <div className='laptop:w-1/2 w-full min-w-0 flex-shrink-0'>
-          {emoticonImage && (
+          {allImages && (
             <div className='flex h-full w-full items-center justify-center overflow-hidden'>
               <div className='relative flex'>
                 <ColorPicker
@@ -64,20 +85,30 @@ export default function ViewEmoticonImageModal({
                   handleChangeColor={setColor}
                   className='absolute top-0 right-0'
                 />
-                <CenterFocusCarousel
-                  color={color}
-                  images={allImages}
-                  itemWidth={240}
+                <SnapCarousel
+                  items={allImages}
+                  itemWidth={220}
                   gap={20}
-                  centerScale={1.2}
-                  setIsDragging={setIsDragging}
-                  setImageId={setImageId}
-                  currentImageOrder={emoticonImage.image_order}
+                  initialImageOrder={current ? current.image_order : 1}
+                  onIndexChange={handleSetCurrentId}
+                  renderItem={(image: EmoticonImage) => {
+                    return (
+                      <ImageBox
+                        key={image.id}
+                        isCenter={image.id === currentId}
+                        imageData={image}
+                        color={color}
+                        imageSize={280}
+                        setId={setId}
+                      />
+                    );
+                  }}
                 />
               </div>
             </div>
           )}
         </div>
+
         <div className='laptop:w-1/2 w-full min-w-0 flex-1 flex-shrink-0'>
           <div
             className={cn(
@@ -91,12 +122,9 @@ export default function ViewEmoticonImageModal({
               className='padding-0 h-full'
               authorId={authorId}
               targetType='emoticon_image'
-              targetId={imageId ?? ''}
+              targetId={currentId}
               headerAction={
-                <LikeButton
-                  targetType='emoticon_image'
-                  targetId={imageId ?? ''}
-                />
+                <LikeButton targetType='emoticon_image' targetId={currentId} />
               }
             />
           </div>

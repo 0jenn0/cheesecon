@@ -5,6 +5,7 @@ export type EmoticonSet = Tables<'emoticon_sets'> & {
   is_liked?: boolean;
 };
 
+// FIXME: 추후 사용하는곳 삭제
 export type EmoticonSetWithRepresentativeImage = Pick<
   EmoticonSet,
   | 'id'
@@ -88,4 +89,29 @@ export type EmoticonSetInfinityParams = {
   offset: number;
   orderBy: 'likes_count' | 'views_count' | 'created_at';
   order: 'asc' | 'desc';
+};
+
+export type EmoticonSetInfo = Pick<
+  EmoticonSet,
+  | 'id'
+  | 'title'
+  | 'user_id'
+  | 'author_name'
+  | 'likes_count'
+  | 'comments_count'
+  | 'type'
+  | 'platform'
+  | 'is_private'
+  | 'views_count'
+  | 'description'
+> & {
+  representative_image: Pick<
+    Tables<'emoticon_images'>,
+    | 'id'
+    | 'image_url'
+    | 'blur_url'
+    | 'image_order'
+    | 'is_representative'
+    | 'webp_url'
+  >;
 };

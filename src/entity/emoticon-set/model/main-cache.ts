@@ -4,6 +4,7 @@ import { createAnonServerClient } from '@/shared/lib/supabase/anon';
 import { GetEmoticonSetsWithRepresentativeImageResult } from '../api/types';
 import {
   EmoticonSetInfinityParams,
+  EmoticonSetInfo,
   EmoticonSetWithRepresentativeImage,
 } from '../type';
 
@@ -86,4 +87,45 @@ export async function fetchEmoticonSets({
       totalPages: Math.ceil(total / limit),
     },
   };
+}
+
+export const getEmoticonSetCached = unstable_cache(
+  fetchEmoticonSet,
+  [CACHE_TAGS.emoticonSet],
+  { revalidate: 60, tags: [CACHE_TAGS.emoticonSet] },
+);
+
+async function fetchEmoticonSet(id: string): Promise<EmoticonSetInfo> {
+  const supabase = createAnonServerClient();
+
+  const { data, error } = await supabase
+    .from('emoticon_sets')
+    .select(
+      `id, title, user_id, author_name, likes_count, comments_count, type, platform, is_private,views_count,description,
+      emoticon_images ( id, image_url, blur_url, image_order, is_representative, webp_url )`,
+    )
+    .eq('id', id)
+    .single();
+
+  if (error) throw error;
+  if (!data) throw new Error('No data returned');
+
+  const formatted = {
+    id: data.id,
+    title: data.title,
+    user_id: data.user_id,
+    author_name: data.author_name,
+    likes_count: data.likes_count ?? 0,
+    comments_count: data.comments_count ?? 0,
+    type: data.type,
+    platform: data.platform,
+    is_private: data.is_private,
+    views_count: data.views_count ?? 0,
+    description: data.description,
+    representative_image:
+      data.emoticon_images.find((i) => i.is_representative) ??
+      data.emoticon_images[0],
+  };
+
+  return formatted;
 }
