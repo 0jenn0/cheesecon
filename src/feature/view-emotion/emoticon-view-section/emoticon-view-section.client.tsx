@@ -12,8 +12,8 @@ export default function EmoticonViewSectionClient({
   offset: number;
 }) {
   const { ref, isIntersecting } = useIntersectionObserver({
-    threshold: 0.01,
-    rootMargin: '50px',
+    threshold: 0.1,
+    rootMargin: '200px',
   });
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
