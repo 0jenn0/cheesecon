@@ -1,7 +1,9 @@
+'use server';
+
 import { EmoticonSetWithRepresentativeImage } from '@/entity/emoticon-set';
 import { EmoticonViewItemServer } from '@/feature/view-emotion/emoticon-view-section/ui';
 
-export default function EmoticonViewSectionServer({
+export default async function EmoticonViewSectionServer({
   initial,
 }: {
   initial?: EmoticonSetWithRepresentativeImage[];
