@@ -16,10 +16,13 @@ import {
  * @param offset 시작 인덱스 (기본값: 0)
  * @returns 정렬된 활성 사용자 목록과 에러 정보
  */
-export async function getActiveUsers(
-  limit = 20,
+export async function getActiveUsers({
+  limit = 8,
   offset = 0,
-): Promise<ApiResult<BaseApiResponse<ProfileActivity>>> {
+}: {
+  limit?: number;
+  offset?: number;
+}): Promise<ApiResult<BaseApiResponse<ProfileActivity>>> {
   try {
     const supabase = await createServerSupabaseClient();
 
@@ -27,7 +30,6 @@ export async function getActiveUsers(
       .from('profiles')
       .select('*', { count: 'exact', head: true });
 
-    // 사용자별 통계를 한 번에 가져오기 위한 쿼리들
     const { data: emoticonStats } = await supabase
       .from('emoticon_sets')
       .select('user_id, likes_count, is_private')
@@ -37,12 +39,10 @@ export async function getActiveUsers(
       .from('comments')
       .select('user_id');
 
-    // 통계 데이터를 사용자별로 그룹화
     const emoticonCountByUser = new Map<string, number>();
     const likesReceivedByUser = new Map<string, number>();
     const commentCountByUser = new Map<string, number>();
 
-    // 이모티콘 set 수와 받은 좋아요 수 계산
     console.log('Emoticon stats:', emoticonStats);
     emoticonStats?.forEach((stat) => {
       const userId = stat.user_id;
@@ -58,7 +58,6 @@ export async function getActiveUsers(
       }
     });
 
-    // 댓글 수 계산
     commentStats?.forEach((stat) => {
       const userId = stat.user_id;
       if (userId) {
@@ -72,6 +71,7 @@ export async function getActiveUsers(
     const { data: profiles, error: profileError } = await supabase
       .from('profiles')
       .select('*')
+      .order('id', { ascending: false })
       .range(offset, offset + limit - 1);
 
     if (profileError) throw profileError;
