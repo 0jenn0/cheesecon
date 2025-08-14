@@ -28,9 +28,6 @@ export default function EmoticonViewSectionClient({
     if (isIntersecting && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
-    console.log('Intersection 상태:', {
-      isIntersecting,
-    });
   }, [fetchNextPage, hasNextPage, isIntersecting, isFetchingNextPage, offset]);
 
   const flattenedData = data?.pages.flatMap((page) =>
