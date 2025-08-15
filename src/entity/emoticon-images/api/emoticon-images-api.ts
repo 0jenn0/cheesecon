@@ -35,8 +35,8 @@ export async function createEmoticonImage({
 
 export async function getEmoticonImages(
   setId: string,
-  limit: number = 6,
-  offset: number = 0,
+  limit?: number,
+  offset?: number,
 ) {
   try {
     const supabase = await createServerSupabaseClient();
