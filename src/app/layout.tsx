@@ -1,5 +1,9 @@
 import type { Metadata } from 'next';
-import { ModalProvider } from '@/shared/ui/feedback/modal/modal-provider';
+import {
+  ModalProvider,
+  ToastContainer,
+  ToastProvider,
+} from '@/shared/ui/feedback';
 import GlobalNavigationBar from '@/shared/ui/navigation/global-navigation-bar/global-navigation-bar';
 import AuthProvider from '@/feature/auth/provider/auth-provider';
 import ReactQueryClientProvider from '@/provider/QueryProvider';
@@ -19,21 +23,24 @@ export default async function RootLayout({
     <ReactQueryClientProvider>
       <AuthProvider>
         <ModalProvider>
-          <link
-            rel='preconnect'
-            href='https://vbdbvqzfphlwkizvsjkx.supabase.co'
-            crossOrigin=''
-          />
-          <html lang='ko'>
-            {/* <ReactScan /> */}
-            <body className='bg-secondary flex h-dvh flex-col antialiased'>
-              <div id='modal' />
-              <GlobalNavigationBar />
-              <main className='m-auto h-full w-full max-w-[1024px] flex-1'>
-                {children}
-              </main>
-            </body>
-          </html>
+          <ToastProvider>
+            <link
+              rel='preconnect'
+              href='https://vbdbvqzfphlwkizvsjkx.supabase.co'
+              crossOrigin=''
+            />
+            <html lang='ko'>
+              {/* <ReactScan /> */}
+              <body className='bg-secondary relative flex h-dvh flex-col antialiased'>
+                <div id='modal' />
+                <GlobalNavigationBar />
+                <main className='m-auto h-full w-full max-w-[1024px] flex-1'>
+                  {children}
+                </main>
+                <ToastContainer />
+              </body>
+            </html>
+          </ToastProvider>
         </ModalProvider>
       </AuthProvider>
     </ReactQueryClientProvider>
