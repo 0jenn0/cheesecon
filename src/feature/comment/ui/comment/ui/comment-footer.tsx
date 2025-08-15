@@ -8,8 +8,8 @@ import { useCommentSectionUi } from '@/feature/comment/ui/emoticon-comment-secti
 import { EmoticonReaction } from '../..';
 
 export default function CommentFooter({ comment }: { comment: CommentDetail }) {
-  const { isShowingForm, toggleForm } = useCommentSectionUi(comment.id);
-  const { isShowingReaction, toggleReaction } = useCommentSectionUi(comment.id);
+  const { isShowingReaction, toggleReaction, isShowingForm, toggleForm } =
+    useCommentSectionUi(comment.id);
   const reactionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
