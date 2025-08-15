@@ -9,7 +9,7 @@ export default function ToastContainer() {
   if (toasts.length === 0) return null;
 
   return (
-    <div className='z-index-popover fixed top-4 right-4 flex flex-col'>
+    <div className='z-index-popover fixed right-24 bottom-24 flex flex-col'>
       {toasts.map((toast) => (
         <Toast key={toast.id} {...toast} />
       ))}
