@@ -46,7 +46,7 @@ export default function Toast({
   id,
   type,
   message,
-  duration = 5000,
+  duration = 3000,
   onClose,
 }: ToastProps) {
   const { removeToast } = useToast();
