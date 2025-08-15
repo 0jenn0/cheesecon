@@ -33,16 +33,26 @@ export async function createEmoticonImage({
   return data;
 }
 
-export async function getEmoticonImages(setId: string) {
+export async function getEmoticonImages(
+  setId: string,
+  limit: number = 6,
+  offset: number = 0,
+) {
   try {
     const supabase = await createServerSupabaseClient();
 
-    const { data, error } = await supabase
+    let query = supabase
       .from('emoticon_images')
       .select(`*, likes(count)`)
       .eq('set_id', setId)
       .or('is_representative.eq.false,is_representative.is.null')
-      .order('image_order');
+      .order('image_order', { ascending: true });
+
+    if (limit && offset !== undefined) {
+      query = query.range(offset, offset + limit - 1);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error('Query error:', error);
