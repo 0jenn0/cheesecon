@@ -1,7 +1,10 @@
 import { useOptimistic, useTransition } from 'react';
+import { useToast } from '@/shared/ui/feedback';
 import { CommentReactionSummary } from '@/entity/comment/api';
 import { COMMENT_QUERY_KEY } from '@/entity/comment/query/query-key';
 import { CommentReaction } from '@/entity/comment/type';
+import { useAuth } from '@/feature/auth/provider/auth-provider';
+import { useCommentSectionUi } from '@/feature/comment/ui/emoticon-comment-section/provider/use-comment-section-ui';
 import { queryClient } from '@/provider/QueryProvider';
 import { useMutation } from '@tanstack/react-query';
 import {
@@ -13,15 +16,30 @@ import {
   DeleteCommentReactionRequest,
 } from '../api/type';
 
-export function useCreateCommentReaction() {
+export function useCreateCommentReaction(commentId: string) {
+  const { addToast } = useToast();
+  const { isShowingReaction, toggleReaction } = useCommentSectionUi(commentId);
+
   return useMutation({
     mutationFn: ({ commentId, emoji }: CreateCommentReactionRequest) =>
       createCommentReaction({ commentId, emoji }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: COMMENT_QUERY_KEY.lists() });
+    onSuccess: (data) => {
+      if (data.success) {
+        queryClient.invalidateQueries({ queryKey: COMMENT_QUERY_KEY.lists() });
+      } else {
+        addToast({
+          type: 'error',
+          message: data.error.message,
+        });
+        toggleReaction();
+        return;
+      }
     },
-    onError: (error) => {
-      console.log('코멘트 리액션 에러', error);
+    onError: () => {
+      addToast({
+        type: 'error',
+        message: '코멘트 리액션에 실패했어요. 다시 시도해주세요.',
+      });
     },
   });
 }

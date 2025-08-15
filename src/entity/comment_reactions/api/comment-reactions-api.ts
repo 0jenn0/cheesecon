@@ -1,9 +1,18 @@
 'use server';
 
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
-import { CreateCommentReactionRequest } from './type';
+import {
+  CreateCommentReactionRequest,
+  CreateCommentReactionResponse,
+  DeleteCommentReactionRequest,
+  DeleteCommentReactionResponse,
+  GetCommentReactionsRequest,
+  GetCommentReactionsResponse,
+} from './type';
 
-export async function getCommentReactions(commentId: string) {
+export async function getCommentReactions({
+  commentId,
+}: GetCommentReactionsRequest): Promise<GetCommentReactionsResponse> {
   const supabase = await createServerSupabaseClient();
 
   const { data, error } = await supabase
@@ -12,16 +21,25 @@ export async function getCommentReactions(commentId: string) {
     .eq('comment_id', commentId);
 
   if (error) {
-    throw new Error(error.message);
+    return {
+      success: false,
+      error: {
+        code: 'GET_ERROR',
+        message: '코멘트 리액션을 불러오는데 실패했어요. 다시 시도해주세요.',
+      },
+    };
   }
 
-  return data;
+  return {
+    success: true,
+    data,
+  };
 }
 
 export async function createCommentReaction({
   commentId,
   emoji,
-}: CreateCommentReactionRequest) {
+}: CreateCommentReactionRequest): Promise<CreateCommentReactionResponse> {
   const supabase = await createServerSupabaseClient();
 
   const {
@@ -30,7 +48,13 @@ export async function createCommentReaction({
   } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    throw new Error('로그인 후 이용해주세요.');
+    return {
+      success: false,
+      error: {
+        code: 'UNAUTHORIZED',
+        message: '로그인 후 이용해주세요.',
+      },
+    };
   }
 
   const { data, error } = await supabase
@@ -44,17 +68,25 @@ export async function createCommentReaction({
     .single();
 
   if (error) {
-    console.log('Insert error:', error);
-    throw new Error(error.message);
+    return {
+      success: false,
+      error: {
+        code: 'INSERT_ERROR',
+        message: '코멘트 리액션에 실패했어요. 다시 시도해주세요.',
+      },
+    };
   }
 
-  return data;
+  return {
+    success: true,
+    data,
+  };
 }
 
 export async function deleteCommentReaction({
   commentId,
   emoji,
-}: CreateCommentReactionRequest) {
+}: DeleteCommentReactionRequest): Promise<DeleteCommentReactionResponse> {
   const supabase = await createServerSupabaseClient();
 
   const {
@@ -63,7 +95,13 @@ export async function deleteCommentReaction({
   } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    throw new Error('로그인 후 이용해주세요.');
+    return {
+      success: false,
+      error: {
+        code: 'UNAUTHORIZED',
+        message: '로그인 후 이용해주세요.',
+      },
+    };
   }
 
   const { data, error } = await supabase
@@ -76,8 +114,17 @@ export async function deleteCommentReaction({
     .single();
 
   if (error) {
-    throw new Error(error.message);
+    return {
+      success: false,
+      error: {
+        code: 'DELETE_ERROR',
+        message: '코멘트 리액션에 실패했어요. 다시 시도해주세요.',
+      },
+    };
   }
 
-  return data;
+  return {
+    success: true,
+    data,
+  };
 }

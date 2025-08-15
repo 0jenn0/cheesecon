@@ -3,7 +3,6 @@
 import { ComponentPropsWithRef } from 'react';
 import { Button } from '@/shared/ui/input';
 import { useCreateCommentReaction } from '@/entity/comment_reactions/query/comment-reaciton-mutation-query';
-import { useAuth } from '@/feature/auth/provider/auth-provider';
 
 const COMMENT_EMOTICON_REACTION_LIST = ['❤️', '👍', '✅', '👀', '😢'] as const;
 
@@ -15,11 +14,9 @@ export default function EmoticonReaction({
   commentId,
   ...props
 }: EmoticonReactionProps) {
-  const { session } = useAuth();
-  const { mutate: createCommentReaction } = useCreateCommentReaction();
+  const { mutate: createCommentReaction } = useCreateCommentReaction(commentId);
 
-  const handleCreateCommentReaction = (emoji: string) => {
-    if (!session) return;
+  const handleCreateCommentReaction = async (emoji: string) => {
     createCommentReaction({ commentId, emoji });
   };
 

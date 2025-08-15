@@ -39,7 +39,7 @@ export default function EmoticonCommentSection({
   });
 
   const isInitialLoading = isLoading && !data;
-  const comments: CommentDetail[] = data?.data || [];
+  const comments: CommentDetail[] = data ?? [];
 
   const { currentPage, handlePageChange, totalPages } =
     usePagination(COUNT_PER_PAGE);
