@@ -64,7 +64,9 @@ export default function useCommentForm({
 
       try {
         const result = await uploadImageMutation.mutateAsync(formData);
-        uploadedUrls.push(result.url);
+        if (result.success && result.data) {
+          uploadedUrls.push(result.data.url);
+        }
       } catch (error) {
         console.error('Image upload error:', error);
       }

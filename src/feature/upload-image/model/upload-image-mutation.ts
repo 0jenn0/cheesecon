@@ -14,6 +14,10 @@ export const useUploadImageToBucketMutation = () => {
         queryClient.invalidateQueries({
           queryKey: IMAGE_QUERY_KEY.all,
         });
+        addToast({
+          type: 'success',
+          message: '이미지 업로드에 성공했어요.',
+        });
       }
       if (!data.success) {
         addToast({
