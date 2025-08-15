@@ -63,7 +63,7 @@ async function verifyLockTokenDetailed(token: string, expectId: string) {
   }
 }
 
-const publicPaths = ['/login', '/popular', '/new', '/activity'];
+const publicPaths = ['/login', '/popular', '/new', '/activity', '/emoticon'];
 const authPaths = ['/auth/callback'];
 
 function isPublicPath(pathname: string): boolean {
