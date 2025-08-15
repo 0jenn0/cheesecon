@@ -6,6 +6,7 @@ import { cn } from '@/shared/lib';
 import { Avatar } from '@/shared/ui/display';
 import { Button, IconButton, TextArea } from '@/shared/ui/input';
 import { useGetProfile } from '@/entity/profile/query/profile-query';
+import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { useCommentItem } from './comment/provider';
 import { useCommentForm } from './model';
 
@@ -40,7 +41,6 @@ export default function CommentForm({
     parentCommentId,
     commentId,
   });
-
   const { isEditing, toggleEditing } = useCommentItem();
 
   const { data } = useGetProfile();
@@ -91,10 +91,12 @@ export default function CommentForm({
         }}
       >
         <TextArea
-          placeholder='댓글을 입력해주세요.'
+          placeholder={
+            user ? '댓글을 입력해주세요.' : '로그인 후 댓글을 작성할 수 있어요.'
+          }
           className='flex-1'
           isError={false}
-          disabled={false}
+          disabled={!user}
           onChange={handleChange}
           defaultValue={initialValue ?? ''}
         />
@@ -146,7 +148,7 @@ export default function CommentForm({
             icon='image'
             iconSize={24}
             onClick={handleFileSelect}
-            disabled={isPending || uploadedImages.length >= 6}
+            disabled={isPending || uploadedImages.length >= 6 || !user}
           />
           <input
             ref={fileInputRef}
@@ -154,6 +156,7 @@ export default function CommentForm({
             accept='image/png,image/jpeg,image/gif,image/webp'
             multiple
             onChange={handleFileChange}
+            disabled={!user || isPending || uploadedImages.length >= 6}
             className='hidden'
           />
           <Button
@@ -161,6 +164,7 @@ export default function CommentForm({
             variant='secondary'
             type='submit'
             isLoading={isPending}
+            disabled={!user || isPending || uploadedImages.length >= 6}
           >
             <p className='text-secondary text-sm'>
               {isEditing ? '댓글 수정' : '댓글 작성'}

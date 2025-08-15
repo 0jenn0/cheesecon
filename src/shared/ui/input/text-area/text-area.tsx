@@ -16,6 +16,7 @@ export default function TextArea({
   onChange,
   ...props
 }: TextAreaProps) {
+  const variant = isError ? 'error' : disabled ? 'disabled' : 'default';
   return (
     <textarea
       onChange={onChange}
@@ -23,7 +24,7 @@ export default function TextArea({
       className={cn(
         'text-[16px]',
         textAreaVariants({
-          variant: isError ? 'error' : 'default',
+          variant,
         }),
         className,
       )}
