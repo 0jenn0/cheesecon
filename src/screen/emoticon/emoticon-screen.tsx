@@ -1,7 +1,7 @@
 import { EmoticonSetInfo } from '@/entity/emoticon-set';
 import { trackEmoticonView } from '@/entity/view/api';
 import { EmoticonCommentSection, EmoticonInfoSection } from './ui';
-import EmoticonImageSection from './ui/emoticon-image-section';
+import EmoticonImageSection from './ui/emoticon-image-section/emoticon-image-section';
 
 export default async function EmoticonScreen({
   emoticonSetId,
