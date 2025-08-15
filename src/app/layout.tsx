@@ -26,10 +26,10 @@ export default async function RootLayout({
           />
           <html lang='ko'>
             {/* <ReactScan /> */}
-            <body className='bg-secondary flex h-screen flex-col antialiased'>
+            <body className='bg-secondary flex h-dvh flex-col antialiased'>
               <div id='modal' />
               <GlobalNavigationBar />
-              <main className='m-auto w-full max-w-[1024px] flex-1'>
+              <main className='m-auto h-full w-full max-w-[1024px] flex-1'>
                 {children}
               </main>
             </body>

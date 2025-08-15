@@ -25,7 +25,7 @@ export default async function ImageBatch({
       style={{
         display: 'grid',
         gridTemplateColumns: `repeat(${columns}, 1fr)`,
-        gap: '24px',
+        gap: '16px',
       }}
     >
       {emoticonImages?.map((image) => (

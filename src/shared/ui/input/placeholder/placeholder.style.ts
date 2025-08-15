@@ -1,7 +1,7 @@
 import { cva } from 'class-variance-authority';
 
 export const placeholderVariants = cva(
-  'bg-primary padding-16 border-radius-lg flex items-center justify-center gap-8 border',
+  'bg-primary padding-x-8 padding-y-12 border-radius-lg flex items-center justify-center gap-8 border',
   {
     variants: {
       variant: {

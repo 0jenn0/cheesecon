@@ -21,8 +21,7 @@ export default function TextArea({
       onChange={onChange}
       placeholder={placeholder}
       className={cn(
-        'text-body-sm',
-        'text-base',
+        'text-[16px]',
         textAreaVariants({
           variant: isError ? 'error' : 'default',
         }),
