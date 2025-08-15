@@ -12,10 +12,8 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
-  modal,
 }: Readonly<{
   children: React.ReactNode;
-  modal: React.ReactNode;
 }>) {
   return (
     <ReactQueryClientProvider>
@@ -30,7 +28,6 @@ export default async function RootLayout({
             {/* <ReactScan /> */}
             <body className='bg-secondary flex h-screen flex-col antialiased'>
               <div id='modal' />
-              {modal}
               <GlobalNavigationBar />
               <main className='m-auto w-full max-w-[1024px] flex-1'>
                 {children}

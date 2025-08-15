@@ -34,7 +34,9 @@ export default function ViewEmoticonImageModal({
 
   const handleSetCurrentId = (image: { id: string; image_order: number }) => {
     setCurrentId(image.id);
-    router.replace(`/emoticon/${setId}?imageId=${image.id}`, { scroll: false });
+    router.replace(`/emoticon/${setId}/image?imageId=${image.id}`, {
+      scroll: false,
+    });
   };
 
   useEffect(() => {

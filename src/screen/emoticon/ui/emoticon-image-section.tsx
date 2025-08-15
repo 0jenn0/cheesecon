@@ -80,7 +80,7 @@ function EmoticonImageItem({
       isDragging={false}
     >
       <Link
-        href={`/emoticon/${image.set_id}?imageId=${image.id}`}
+        href={`/emoticon/${image.set_id}/image?imageId=${image.id}`}
         scroll={false}
       >
         <EmoticonItem.Content>
