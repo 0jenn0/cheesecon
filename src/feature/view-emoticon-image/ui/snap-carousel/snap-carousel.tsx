@@ -230,7 +230,6 @@ export default function SnapCarousel<T>({
           return (
             <div
               key={realIndex}
-              className='shrink-0'
               style={{
                 width: itemWidth,
                 marginRight: isLast ? 0 : gap,

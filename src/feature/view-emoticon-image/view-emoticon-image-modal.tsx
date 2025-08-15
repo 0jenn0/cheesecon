@@ -9,7 +9,7 @@ import { EmoticonCommentSection } from '../comment/ui/emoticon-comment-section';
 import LikeButton from '../like/ui/like-button/like-button';
 import ColorPicker, { ColorMap } from './color-picker';
 import { SnapCarousel } from './ui';
-import ImageBox from './ui/snapping-carousel/image-box';
+import ImageBox from './ui/snap-carousel/image-box';
 
 interface ViewEmoticonImageModalProps {
   setId: string;
@@ -91,7 +91,7 @@ export default function ViewEmoticonImageModal({
                 <SnapCarousel
                   items={allImages}
                   itemWidth={220}
-                  gap={20}
+                  gap={40}
                   initialImageOrder={current ? current.image_order : 1}
                   onIndexChange={handleSetCurrentId}
                   renderItem={(image: EmoticonImage) => {
