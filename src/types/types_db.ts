@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.12 (cd3cf9e)"
@@ -502,73 +502,97 @@ export type Database = {
     Functions: {
       get_comments_v1: {
         Args: {
-          p_set_id?: string
           p_image_id?: string
-          p_user_id?: string
-          p_parent_comment_id?: string
-          p_parent_is_null?: boolean
-          p_sort_order?: string
           p_limit?: number
           p_offset?: number
+          p_parent_comment_id?: string
+          p_parent_is_null?: boolean
+          p_set_id?: string
+          p_sort_order?: string
+          p_user_id?: string
         }
         Returns: {
-          id: string
           content: string
-          set_id: string
+          created_at: string
+          id: string
           image_id: string
           parent_comment_id: string
-          user_id: string
-          created_at: string
-          updated_at: string
           profile: Json
           reaction_summary: Json
+          set_id: string
           total_count: number
+          updated_at: string
+          user_id: string
         }[]
       }
       get_comments_v2: {
         Args: {
-          p_set_id?: string
           p_image_id?: string
-          p_user_id?: string
-          p_parent_comment_id?: string
-          p_parent_is_null?: boolean
-          p_sort_order?: string
           p_limit?: number
           p_offset?: number
+          p_parent_comment_id?: string
+          p_parent_is_null?: boolean
+          p_set_id?: string
+          p_sort_order?: string
+          p_user_id?: string
         }
         Returns: {
-          id: string
           content: string
-          set_id: string
+          created_at: string
+          id: string
           image_id: string
           parent_comment_id: string
-          user_id: string
-          created_at: string
-          updated_at: string
           profile: Json
           reaction_summary: Json
+          set_id: string
           total_count: number
+          updated_at: string
+          user_id: string
+        }[]
+      }
+      get_comments_v3: {
+        Args: {
+          p_image_id?: string
+          p_limit?: number
+          p_offset?: number
+          p_parent_comment_id?: string
+          p_parent_is_null?: boolean
+          p_set_id?: string
+          p_sort_order?: string
+        }
+        Returns: {
+          content: string
+          created_at: string
+          id: string
+          image_id: string
+          parent_comment_id: string
+          profile: Json
+          reaction_summary: Json
+          set_id: string
+          total_count: number
+          updated_at: string
+          user_id: string
         }[]
       }
       get_emoticon_sets_with_like_status: {
         Args:
           | {
+              p_current_user_id?: string
               p_limit?: number
               p_offset?: number
               p_order_by?: string
               p_order_direction?: string
-              p_user_id_filter?: string
               p_title_filter?: string
-              p_current_user_id?: string
+              p_user_id_filter?: string
             }
           | {
+              p_current_user_id?: string
               p_limit?: number
               p_offset?: number
               p_order_by?: string
               p_order_direction?: string
-              p_user_id_filter?: string
               p_title_filter?: string
-              p_current_user_id?: string
+              p_user_id_filter?: string
             }
         Returns: {
           sets: Json
@@ -578,20 +602,20 @@ export type Database = {
       get_liked_emoticon_sets_optimized: {
         Args:
           | {
-              p_user_id: string
               p_limit?: number
               p_offset?: number
               p_order_by?: string
               p_order_direction?: string
               p_title_filter?: string
+              p_user_id: string
             }
           | {
-              p_user_id: string
               p_limit?: number
               p_offset?: number
               p_order_by?: string
               p_order_direction?: string
               p_title_filter?: string
+              p_user_id: string
             }
         Returns: {
           sets: Json
@@ -601,12 +625,12 @@ export type Database = {
       get_weekly_top_users: {
         Args: { limit_count?: number }
         Returns: {
-          user_id: string
           nickname: string
           profile_image_url: string
-          weekly_emoticon_count: number
-          weekly_comment_count: number
+          user_id: string
           weekly_activity_score: number
+          weekly_comment_count: number
+          weekly_emoticon_count: number
         }[]
       }
       increment_view_count: {
@@ -626,7 +650,7 @@ export type Database = {
         Returns: undefined
       }
       toggle_like: {
-        Args: { p_user_id: string; p_set_id?: string; p_image_id?: string }
+        Args: { p_image_id?: string; p_set_id?: string; p_user_id: string }
         Returns: Json
       }
     }
