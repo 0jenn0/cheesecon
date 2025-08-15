@@ -5,30 +5,28 @@ import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
 import { useModal } from '@/shared/ui/feedback';
 import { IconButton } from '@/shared/ui/input';
-import { EmoticonImageSimple } from '@/entity/emoticon-images/type/emoticon-image.type';
-import { EmoticonSet } from '@/entity/emoticon-set/type';
+import { EmoticonSetInfo } from '@/entity/emoticon-set/type';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
 import LikeButton from '@/feature/like/ui/like-button/like-button';
 import { SecretIcon } from '.';
 
 export default function EmoticonInfoHeader({
-  emoticonSet,
-  representativeImage,
+  emoticonInfo,
 }: {
-  emoticonSet: EmoticonSet;
-  representativeImage: EmoticonImageSimple;
+  emoticonInfo: EmoticonSetInfo;
 }) {
   const { session } = useAuth();
   const { author_name, title, is_private, views_count, comments_count } =
-    emoticonSet;
+    emoticonInfo;
   const { openModal } = useModal();
 
-  const isAuthor = emoticonSet.user_id === session?.user.id;
+  const isAuthor = emoticonInfo.user_id === session?.user.id;
   const canShare = (is_private && isAuthor) || !is_private;
+  const representativeImage = emoticonInfo.representative_image;
 
   const handleShareLink = () => {
     openModal('shareLink', {
-      emoticonSetId: emoticonSet.id,
+      emoticonSetId: emoticonInfo.id,
       isPrivate: is_private ?? false,
     });
   };
@@ -43,6 +41,7 @@ export default function EmoticonInfoHeader({
           height={160}
           className='h-full w-full object-cover'
           priority
+          loading='eager'
           placeholder='blur'
           blurDataURL={
             representativeImage.blur_url ??
@@ -64,8 +63,8 @@ export default function EmoticonInfoHeader({
           </div>
           <LikeButton
             targetType='emoticon_set'
-            targetId={emoticonSet.id}
-            initialLikesCount={emoticonSet.likes_count ?? 0}
+            targetId={emoticonInfo.id}
+            initialLikesCount={emoticonInfo.likes_count ?? 0}
           />
         </div>
 

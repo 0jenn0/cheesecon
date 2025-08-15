@@ -80,6 +80,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/popular', request.url));
   }
 
+  if (isPublicPath(pathname)) return NextResponse.next();
+
   if (pathname.startsWith('/emoticon/access/')) {
     return NextResponse.next();
   }

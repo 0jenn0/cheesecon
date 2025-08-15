@@ -1,39 +1,63 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/shared/lib';
 import { Modal, Spinner } from '@/shared/ui/feedback';
 import { EmoticonImage } from '@/entity/emoticon-set';
 import { EmoticonCommentSection } from '../comment/ui/emoticon-comment-section';
 import LikeButton from '../like/ui/like-button/like-button';
 import ColorPicker, { ColorMap } from './color-picker';
-import { CenterFocusCarousel } from './image-viewer';
+import { SnapCarousel } from './ui';
+import ImageBox from './ui/snap-carousel/image-box';
 
 interface ViewEmoticonImageModalProps {
-  allImages: EmoticonImage[];
+  setId: string;
+  currentImageId: string;
   authorId: string;
+  allImages: EmoticonImage[];
 }
 
 export default function ViewEmoticonImageModal({
-  allImages,
+  setId,
+  currentImageId,
   authorId,
+  allImages,
 }: ViewEmoticonImageModalProps) {
-  const searchParams = useSearchParams();
-  const imageIdSearchParam = searchParams.get('imageId');
-  const [imageId, setImageId] = useState<string | null>(imageIdSearchParam);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const searchImageId = searchParams.get('imageId');
+  const [currentId, setCurrentId] = useState<string>(
+    searchImageId ?? currentImageId,
+  );
+
+  const handleSetCurrentId = (image: { id: string; image_order: number }) => {
+    setCurrentId(image.id);
+    router.replace(`/emoticon/${setId}/image?imageId=${image.id}`, {
+      scroll: false,
+    });
+  };
+
+  useEffect(() => {
+    const next = searchImageId ?? currentImageId;
+    if (!next || next === currentId) return;
+    setCurrentId(next);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchImageId, currentImageId]);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isDragging, setIsDragging] = useState(false);
-  const emoticonImage = allImages.find((image) => image.id === imageId);
   const [color, setColor] = useState<ColorMap>('blue');
+
+  const current = allImages.find((img) => img.id === currentId);
 
   return (
     <Modal.Container className='tablet:w-[72dvw] tablet:h-[80dvh] h-[90dvh] max-w-[1024px] select-none'>
       <Modal.Header
         onClose={() => {
-          router.replace(`/emoticon/${emoticonImage?.set_id}`, {
-            scroll: false,
-          });
+          router.replace(`/emoticon/${setId}`, { scroll: false });
         }}
       >
         <h1 className='text-heading-sm flex items-center gap-12'>
@@ -42,13 +66,14 @@ export default function ViewEmoticonImageModal({
               <Spinner variant='secondary' size='md' />
             ) : (
               <div className='flex h-[16px] w-[16px] items-center justify-center'>
-                {emoticonImage?.image_order}
+                {current?.image_order ?? 0}
               </div>
             )}
           </div>
           <div className='text-heading-sm'>번 이모티콘</div>
         </h1>
       </Modal.Header>
+
       <Modal.Body
         className={cn(
           'laptop:flex-row flex h-full w-full flex-col items-stretch gap-24',
@@ -56,7 +81,7 @@ export default function ViewEmoticonImageModal({
         )}
       >
         <div className='laptop:w-1/2 w-full min-w-0 flex-shrink-0'>
-          {emoticonImage && (
+          {allImages && (
             <div className='flex h-full w-full items-center justify-center overflow-hidden'>
               <div className='relative flex'>
                 <ColorPicker
@@ -64,42 +89,60 @@ export default function ViewEmoticonImageModal({
                   handleChangeColor={setColor}
                   className='absolute top-0 right-0'
                 />
-                <CenterFocusCarousel
-                  color={color}
-                  images={allImages}
-                  itemWidth={240}
-                  gap={20}
-                  centerScale={1.2}
+                <SnapCarousel
+                  items={allImages}
+                  itemWidth={220}
+                  gap={40}
+                  initialImageOrder={current ? current.image_order : 1}
                   setIsDragging={setIsDragging}
-                  setImageId={setImageId}
-                  currentImageOrder={emoticonImage.image_order}
+                  onIndexChange={handleSetCurrentId}
+                  renderItem={(image: EmoticonImage) => {
+                    return (
+                      <ImageBox
+                        key={image.id}
+                        isCenter={image.id === currentId}
+                        imageData={image}
+                        color={color}
+                        imageSize={280}
+                      />
+                    );
+                  }}
                 />
               </div>
             </div>
           )}
         </div>
+
         <div className='laptop:w-1/2 w-full min-w-0 flex-1 flex-shrink-0'>
-          <div
-            className={cn(
-              'transition-all duration-200',
-              isDragging
-                ? 'pointer-events-none translate-y-10 opacity-0'
-                : 'translate-y-0 opacity-100',
-            )}
-          >
-            <EmoticonCommentSection
-              className='padding-0 h-full'
-              authorId={authorId}
-              targetType='emoticon_image'
-              targetId={imageId ?? ''}
-              headerAction={
-                <LikeButton
+          {!isDragging && (
+            <AnimatePresence mode='wait'>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{
+                  duration: 0.2,
+                  type: 'spring',
+                  stiffness: 300,
+                  damping: 20,
+                }}
+                className='h-full'
+              >
+                <EmoticonCommentSection
+                  className='padding-0 h-full'
+                  authorId={authorId}
                   targetType='emoticon_image'
-                  targetId={imageId ?? ''}
+                  targetId={currentId}
+                  headerAction={
+                    <LikeButton
+                      targetType='emoticon_image'
+                      targetId={currentId}
+                    />
+                  }
                 />
-              }
-            />
-          </div>
+              </motion.div>
+            </AnimatePresence>
+          )}
         </div>
       </Modal.Body>
     </Modal.Container>

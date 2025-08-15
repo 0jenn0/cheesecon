@@ -1,10 +1,14 @@
-import { getEmoticonSetDetail } from '@/entity/emoticon-set';
+import { getEmoticonSetCached } from '@/entity/emoticon-set/model/main-cache';
 import { EmoticonScreen } from '@/screen';
 
 export default async function PostEmoticonScreen({ setId }: { setId: string }) {
-  const emoticonData = await getEmoticonSetDetail(setId);
+  const emoticonData = await getEmoticonSetCached(setId);
 
-  if (!emoticonData) return <div>이모티콘 세트를 찾을 수 없습니다.</div>;
-
-  return <EmoticonScreen emoticonSetId={setId} isUnlocked={true} />;
+  return (
+    <EmoticonScreen
+      emoticonSetId={setId}
+      isUnlocked={true}
+      emoticonInfo={emoticonData}
+    />
+  );
 }

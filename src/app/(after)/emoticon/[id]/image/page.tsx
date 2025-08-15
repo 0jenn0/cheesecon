@@ -2,19 +2,20 @@ import { getEmoticonSetCached } from '@/entity/emoticon-set/model/main-cache';
 import { EmoticonScreen } from '@/screen';
 
 export const revalidate = 3600;
+
 export const dynamic = 'force-static';
 
-export default async function EmoticonPage({
+export default async function EmoticonImagePage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const id = (await params).id;
-  const emoticonInfo = await getEmoticonSetCached(id);
+  const setId = (await params).id;
+  const emoticonInfo = await getEmoticonSetCached(setId);
 
   return (
     <EmoticonScreen
-      emoticonSetId={id}
+      emoticonSetId={setId}
       isUnlocked={true}
       emoticonInfo={emoticonInfo}
     />
