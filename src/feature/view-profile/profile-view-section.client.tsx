@@ -2,6 +2,7 @@
 
 import { Ref, useEffect } from 'react';
 import { useIntersectionObserver } from '@/shared/lib';
+import { useToast } from '@/shared/ui/feedback';
 import { useActiveUsersInfinityQuery } from '@/entity/profile/query';
 import { ProfileViewItem, ProfileViewSkeleton } from '.';
 
@@ -10,16 +11,30 @@ export default function ProfileViewSectionClient({
 }: {
   offset: number;
 }) {
+  const { addToast } = useToast();
   const { ref, isIntersecting } = useIntersectionObserver({
     threshold: 0.1,
     rootMargin: '200px',
   });
 
-  const { data, isFetchingNextPage, isLoading, fetchNextPage, hasNextPage } =
-    useActiveUsersInfinityQuery({
-      limit: 8,
-      offset,
+  const {
+    data,
+    isFetchingNextPage,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    error,
+  } = useActiveUsersInfinityQuery({
+    limit: 8,
+    offset,
+  });
+
+  if (error) {
+    addToast({
+      type: 'error',
+      message: '작가 목록을 불러오는데 실패했어요.',
     });
+  }
 
   useEffect(() => {
     if (isIntersecting && hasNextPage) {

@@ -2,6 +2,7 @@
 
 import { Ref, useEffect } from 'react';
 import useIntersectionObserver from '@/shared/lib/use-intersection-observer';
+import { useToast } from '@/shared/ui/feedback';
 import { useEmoticonSetInfinityQuery } from '@/entity/emoticon-set';
 import { EmoticonViewSkeleton } from '@/feature/view-emotion/emoticon-view-section';
 import { EmoticonViewItemClient } from './ui';
@@ -13,18 +14,32 @@ export default function EmoticonViewSectionClient({
   limit: number;
   offset: number;
 }) {
+  const { addToast } = useToast();
   const { ref, isIntersecting } = useIntersectionObserver({
     threshold: 0.1,
     rootMargin: '200px',
   });
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useEmoticonSetInfinityQuery({
-      limit,
-      offset,
-      orderBy: 'likes_count',
-      order: 'desc',
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    error,
+  } = useEmoticonSetInfinityQuery({
+    limit,
+    offset,
+    orderBy: 'likes_count',
+    order: 'desc',
+  });
+
+  if (error) {
+    addToast({
+      type: 'error',
+      message: '이모티콘 목록을 불러오는데 실패했어요.',
     });
+  }
 
   useEffect(() => {
     if (isIntersecting && hasNextPage && !isFetchingNextPage) {
