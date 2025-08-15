@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { EmoticonImage } from '@/entity/emoticon-set';
@@ -22,21 +24,23 @@ export default function ImageBox({
     <div className='flex h-full w-full items-center justify-center'>
       <motion.div
         initial={{
-          scale: 0.8,
-          opacity: 0.2,
+          scale: 0.7,
+          opacity: 0.1,
         }}
         whileHover={{
-          scale: isCenter ? 1.02 : 0.92,
-          opacity: isCenter ? 1 : 0.6,
+          scale: isCenter ? 1.05 : 0.95,
+          opacity: isCenter ? 1 : 0.8,
         }}
         className='border-radius-xl flex aspect-square flex-shrink-0 cursor-grab items-center justify-center overflow-hidden'
         animate={{
-          scale: isCenter ? 1 : 0.9,
-          opacity: isCenter ? 1 : 0.5,
+          scale: isCenter ? 1 : 0.85,
+          opacity: isCenter ? 1 : 0.4,
         }}
         transition={{
-          duration: 0.2,
-          ease: 'easeInOut',
+          type: 'spring',
+          stiffness: 300,
+          damping: 20,
+          duration: 0.15,
         }}
       >
         <Image

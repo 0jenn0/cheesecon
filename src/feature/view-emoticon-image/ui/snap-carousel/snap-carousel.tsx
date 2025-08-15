@@ -19,6 +19,7 @@ type SnapCarouselProps<T> = {
   draggable?: boolean;
   spring?: { stiffness?: number; damping?: number; mass?: number };
   enableKeyboard?: boolean;
+  setIsDragging?: (isDragging: boolean) => void;
 };
 
 export default function SnapCarousel<T>({
@@ -31,6 +32,7 @@ export default function SnapCarousel<T>({
   draggable = true,
   spring = { stiffness: 320, damping: 32, mass: 1 },
   enableKeyboard = true,
+  setIsDragging,
 }: SnapCarouselProps<T>) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
@@ -155,8 +157,9 @@ export default function SnapCarousel<T>({
       else if (info.velocity.x >= VELOCITY_THRESHOLD) targetIndex -= 1;
 
       snapToIndex(targetIndex);
+      setIsDragging?.(false);
     },
-    [snapToIndex, x, xToIndex],
+    [snapToIndex, x, xToIndex, setIsDragging],
   );
 
   useEffect(() => {
@@ -221,6 +224,7 @@ export default function SnapCarousel<T>({
         dragMomentum={false}
         dragConstraints={dragConstraints}
         onDragEnd={handleDragEnd}
+        onDragStart={() => setIsDragging?.(true)}
       >
         <div style={{ width: leftSpacerW, height: 1 }} />
 
@@ -235,6 +239,8 @@ export default function SnapCarousel<T>({
                 marginRight: isLast ? 0 : gap,
               }}
               aria-label={`Item ${realIndex + 1} of ${count}`}
+              onClick={() => snapToIndex(realIndex)}
+              className='cursor-pointer'
             >
               {renderItem(item, realIndex)}
             </div>

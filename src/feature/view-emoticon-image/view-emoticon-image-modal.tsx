@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/shared/lib';
 import { Modal, Spinner } from '@/shared/ui/feedback';
 import { EmoticonImage } from '@/entity/emoticon-set';
@@ -93,6 +94,7 @@ export default function ViewEmoticonImageModal({
                   itemWidth={220}
                   gap={40}
                   initialImageOrder={current ? current.image_order : 1}
+                  setIsDragging={setIsDragging}
                   onIndexChange={handleSetCurrentId}
                   renderItem={(image: EmoticonImage) => {
                     return (
@@ -112,24 +114,35 @@ export default function ViewEmoticonImageModal({
         </div>
 
         <div className='laptop:w-1/2 w-full min-w-0 flex-1 flex-shrink-0'>
-          <div
-            className={cn(
-              'transition-all duration-200',
-              isDragging
-                ? 'pointer-events-none translate-y-10 opacity-0'
-                : 'translate-y-0 opacity-100',
-            )}
-          >
-            <EmoticonCommentSection
-              className='padding-0 h-full'
-              authorId={authorId}
-              targetType='emoticon_image'
-              targetId={currentId}
-              headerAction={
-                <LikeButton targetType='emoticon_image' targetId={currentId} />
-              }
-            />
-          </div>
+          {!isDragging && (
+            <AnimatePresence mode='wait'>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{
+                  duration: 0.2,
+                  type: 'spring',
+                  stiffness: 300,
+                  damping: 20,
+                }}
+                className='h-full'
+              >
+                <EmoticonCommentSection
+                  className='padding-0 h-full'
+                  authorId={authorId}
+                  targetType='emoticon_image'
+                  targetId={currentId}
+                  headerAction={
+                    <LikeButton
+                      targetType='emoticon_image'
+                      targetId={currentId}
+                    />
+                  }
+                />
+              </motion.div>
+            </AnimatePresence>
+          )}
         </div>
       </Modal.Body>
     </Modal.Container>
