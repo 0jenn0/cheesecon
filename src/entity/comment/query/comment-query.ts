@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getComments } from '../api';
+import { getComments } from '../api/comment-api.client';
 import { COMMENT_QUERY_KEY } from './query-key';
 import { CommentInfiniteQueryParams } from './types';
 
