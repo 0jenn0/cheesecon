@@ -112,6 +112,7 @@ export async function getEmoticonSetsWithRepresentativeImage({
     order: 'desc' as const,
     userId: '',
     title: '',
+    isPrivate: undefined,
   },
 }: GetEmoticonSetsRequest): Promise<GetEmoticonSetsWithRepresentativeImageResult> {
   const supabase = await createServerSupabaseClient();
@@ -129,6 +130,7 @@ export async function getEmoticonSetsWithRepresentativeImage({
    comments_count,
    type,
    platform,
+   is_private,
    emoticon_images(
     id,
     image_url,
@@ -147,6 +149,14 @@ export async function getEmoticonSetsWithRepresentativeImage({
       query = query.ilike('title', `%${param.title}%`);
     }
 
+    if (param.isPrivate === null || param.isPrivate === false) {
+      query = query.or('is_private.eq.false,is_private.is.null');
+    }
+
+    if (param.isPrivate === true) {
+      query = query.eq('is_private', true);
+    }
+
     const orderColumn =
       param.orderBy === 'created_at'
         ? 'created_at'
@@ -162,7 +172,8 @@ export async function getEmoticonSetsWithRepresentativeImage({
 
     query = query.order('id', { ascending: param.order === 'asc' });
 
-    query = query.range(offset, offset + limit - 1);
+    const fetchLimit = Math.max(limit * 2, 16); // 최소 16개, 최대 limit * 2개
+    query = query.range(offset, offset + fetchLimit - 1);
 
     const { data: sets, error, count } = await query;
 
@@ -222,10 +233,12 @@ export async function getEmoticonSetsWithRepresentativeImage({
         })
         .filter((set): set is NonNullable<typeof set> => set !== null);
 
+      const limitedFormattedSets = formattedSets.slice(0, limit);
+
       return {
         success: true,
         data: {
-          data: formattedSets,
+          data: limitedFormattedSets,
           hasMore: offset + limit < (count || 0),
           total: count || 0,
           currentPage: Math.floor(offset / limit) + 1,
@@ -328,7 +341,8 @@ export async function getLikedEmoticonSets({
       ascending: param.order === 'asc',
     });
 
-    query = query.range(offset, offset + limit - 1);
+    const fetchLimit = Math.max(limit * 2, 16);
+    query = query.range(offset, offset + fetchLimit - 1);
 
     const { data: sets, error, count } = await query;
 
@@ -374,10 +388,12 @@ export async function getLikedEmoticonSets({
         })
         .filter((set): set is NonNullable<typeof set> => set !== null);
 
+      const limitedFormattedSets = formattedSets.slice(0, limit);
+
       return {
         success: true,
         data: {
-          data: formattedSets,
+          data: limitedFormattedSets,
           hasMore: offset + limit < (count || 0),
           total: count || 0,
           currentPage: Math.floor(offset / limit) + 1,

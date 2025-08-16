@@ -11,6 +11,7 @@ type PageParams = {
   userId?: string;
   title?: string;
   isLiked?: boolean;
+  isPrivate?: boolean;
 };
 
 export const EMOTICON_SET_QUERY_KEY: EmoticonSetQueryKey = {
@@ -33,6 +34,7 @@ export const EMOTICON_SET_QUERY_KEY: EmoticonSetQueryKey = {
       param.userId,
       param.title,
       param.isLiked,
+      param.isPrivate,
     ] as const,
   byId: (id: string) => [...EMOTICON_SET_QUERY_KEY.all, id] as const,
 };

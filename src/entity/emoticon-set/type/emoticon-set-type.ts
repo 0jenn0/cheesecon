@@ -82,6 +82,7 @@ export type EmoticonSetSortParams = BaseSortParams & {
   orderBy: EmoticonSetOrderBy;
   userId?: string;
   title?: string;
+  isPrivate?: boolean;
 };
 
 export type EmoticonSetInfinityParams = {

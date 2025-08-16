@@ -21,6 +21,7 @@ export type EmoticonSetQueryKey = {
       userId?: string;
       title?: string;
       isLiked?: boolean;
+      isPrivate?: boolean;
     },
   ) => readonly [
     ...(readonly ['emoticon-sets']),
@@ -31,6 +32,7 @@ export type EmoticonSetQueryKey = {
     string,
     string | undefined,
     string | undefined,
+    boolean | undefined,
     boolean | undefined,
   ];
   byId: (id: string) => readonly ['emoticon-sets', string];
