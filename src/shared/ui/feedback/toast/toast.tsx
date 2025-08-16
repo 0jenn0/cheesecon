@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { VariantProps, cva } from 'class-variance-authority';
 import { AnimatePresence } from 'framer-motion';
 import { motion } from 'framer-motion';
@@ -55,12 +55,12 @@ export default function Toast({
     return () => clearTimeout(timer);
   }, []);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setIsLeaving(true);
     setTimeout(() => {
       onClose?.(id);
     }, 300);
-  };
+  }, [id, onClose, removeToast]);
 
   useEffect(() => {
     if (duration > 0) {

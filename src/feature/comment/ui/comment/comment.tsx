@@ -9,7 +9,7 @@ import { useOptimisticCommentReaction } from '@/entity/comment_reactions/query/c
 import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { useCommentSectionUi } from '@/feature/comment/ui/emoticon-comment-section/provider/use-comment-section-ui';
 import { CommentForm } from '..';
-import { CommentItemProvider } from './provider';
+import { CommentItemProvider, useCommentItem } from './provider';
 import {
   CommentFooter,
   CommentHeader,
@@ -37,6 +37,7 @@ export default function Comment({
 }: CommentProps) {
   const { session } = useAuth();
   const { addToast } = useToast();
+  const { isEditing } = useCommentItem();
   const { isShowingForm } = useCommentSectionUi(comment.id);
   const {
     reactionSummary,
@@ -89,7 +90,7 @@ export default function Comment({
             )}
 
             <AnimatePresence mode='wait'>
-              {hasReactions && (
+              {!isEditing && hasReactions && (
                 <motion.div
                   initial={{ opacity: 0, height: 0, y: 10 }}
                   animate={{ opacity: 1, height: 'auto', y: 0 }}

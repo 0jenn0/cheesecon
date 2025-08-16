@@ -8,7 +8,7 @@ import { Pagination } from '@/shared/ui/navigation';
 import { useCommentListQuery } from '@/entity/comment';
 import { CommentDetail } from '@/entity/comment/api/types';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
-import { Comment, CommentForm, DefaultCommentForm } from '@/feature/comment/ui';
+import { Comment, DefaultCommentForm } from '@/feature/comment/ui';
 import { Session } from '@supabase/supabase-js';
 import { CommentItemProvider } from '../comment/provider';
 import EmoticonCommentSectionSkeleton from './emoticon-comment-section.skeleton';

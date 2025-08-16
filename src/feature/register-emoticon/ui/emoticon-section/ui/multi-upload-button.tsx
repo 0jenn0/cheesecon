@@ -62,57 +62,59 @@ export default function MultiUploadButton() {
       });
       setIsUploading(true);
 
-      try {
-        for (const [index, file] of filesToUpload.entries()) {
-          const formData = new FormData();
+      for (const [index, file] of filesToUpload.entries()) {
+        const formData = new FormData();
 
-          formData.append('file', file);
+        formData.append('file', file);
 
-          const targetSlot = emptySlots[index];
-          const imageNumber = targetSlot.imageNumber;
+        const targetSlot = emptySlots[index];
+        const imageNumber = targetSlot.imageNumber;
 
-          const result = await uploadImageMutation.mutateAsync(formData);
+        const result = await uploadImageMutation.mutateAsync(formData);
 
-          if (result.success) {
-            const { url, blurUrl, webpUrl } = result.data;
+        if (result.success) {
+          const { url, blurUrl, webpUrl } = result.data;
 
-            handleEmoticonItem(imageNumber, 'UPLOAD', {
+          handleEmoticonItem(imageNumber, 'UPLOAD', {
+            imageUrl: url,
+            blurUrl: blurUrl,
+            webpUrl: webpUrl,
+          });
+
+          handleSetImageUrl([
+            {
               imageUrl: url,
+              imageOrder: imageNumber,
               blurUrl: blurUrl,
               webpUrl: webpUrl,
-            });
+            },
+          ]);
 
-            handleSetImageUrl([
-              {
-                imageUrl: url,
-                imageOrder: imageNumber,
-                blurUrl: blurUrl,
-                webpUrl: webpUrl,
-              },
-            ]);
-
-            setCurrentUploadCount((prev) => ({
-              current: prev.current + 1,
-              total: prev.total,
-            }));
-          }
+          setCurrentUploadCount((prev) => ({
+            current: prev.current + 1,
+            total: prev.total,
+          }));
+        } else {
+          setIsUploading(false);
+          setCurrentUploadCount({ current: 0, total: 0 });
         }
+      }
 
-        console.log(`총 ${filesToUpload.length}개 파일 업로드 완료`);
-        setIsUploading(false);
-        setCurrentUploadCount({ current: 0, total: 0 });
+      setIsUploading(false);
+      setCurrentUploadCount({ current: 0, total: 0 });
 
-        // input 초기화
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
-        }
-      } catch (error) {
-        console.error('업로드 중 오류 발생:', error);
-        setIsUploading(false);
-        setCurrentUploadCount({ current: 0, total: 0 });
+      // input 초기화
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
       }
     },
-    [items, uploadImageMutation, handleEmoticonItem, handleSetImageUrl],
+    [
+      items,
+      uploadImageMutation,
+      handleEmoticonItem,
+      handleSetImageUrl,
+      addToast,
+    ],
   );
 
   const handleButtonClick = useCallback(() => {

@@ -47,7 +47,6 @@ export default function ViewEmoticonImageModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchImageId, currentImageId]);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isDragging, setIsDragging] = useState(false);
   const [color, setColor] = useState<ColorMap>('blue');
 

@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { ComponentPropsWithRef, useCallback, useEffect, useRef } from 'react';
 import { cn } from '@/shared/lib';
 import { Avatar } from '@/shared/ui/display';
@@ -153,6 +152,7 @@ export default function CommentForm({
             <div className='flex flex-wrap gap-8'>
               {uploadedImages.map((imageUrl, index) => (
                 <ImageItem
+                  key={imageUrl}
                   imageUrl={imageUrl}
                   index={index}
                   handleRemoveImage={handleRemoveImage}
@@ -174,6 +174,7 @@ export default function CommentForm({
               <div className='flex flex-wrap gap-8'>
                 {uploadedImages.map((imageUrl, index) => (
                   <ImageItem
+                    key={imageUrl}
                     imageUrl={imageUrl}
                     index={index}
                     handleRemoveImage={handleRemoveImage}
