@@ -7,17 +7,17 @@ import { useSelect } from '../../provider/select-provider';
 import { selectPlaceholderVariants } from './select-placeholder.style';
 
 export interface SelectPlaceholderProps
-  extends ComponentPropsWithRef<'select'> {
+  extends Omit<ComponentPropsWithRef<'button'>, 'onChange'> {
   label: string;
   isError?: boolean;
   disabled?: boolean;
   name?: string;
   placeholder: string;
-  selectClassName: string;
+  selectClassName?: string;
   trailingIcon?: IconProps['name'];
   iconClassName?: string;
   iconSize?: IconProps['size'];
-  onTrailingIconClick?: () => void;
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
 export default function SelectPlaceholder({
@@ -33,7 +33,6 @@ export default function SelectPlaceholder({
   trailingIcon,
   iconClassName,
   iconSize,
-  onTrailingIconClick,
   ...props
 }: SelectPlaceholderProps) {
   const { currentValue, isOpen, setIsOpen, setCurrentValue } = useSelect();
@@ -61,12 +60,36 @@ export default function SelectPlaceholder({
     disabled,
   });
 
-  const handleClick = (e: React.MouseEvent<HTMLSelectElement>) => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (disabled) return;
 
     setCurrentValue(currentValue);
     setIsOpen(!isOpen);
     onClick?.(e);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (disabled) return;
+
+    switch (e.key) {
+      case 'Enter':
+      case ' ':
+        e.preventDefault();
+        setCurrentValue(currentValue);
+        setIsOpen(!isOpen);
+        break;
+      case 'Escape':
+        setIsOpen(false);
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        setIsOpen(true);
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setIsOpen(false);
+        break;
+    }
   };
 
   return (
@@ -76,39 +99,58 @@ export default function SelectPlaceholder({
         className,
       )}
     >
-      <div className='relative flex-1'>
-        <div className='text-body-sm text-primary disabled:text-disabled pointer-events-none flex flex-1 outline-none'>
-          {currentValue || placeholder}
-        </div>
-        <select
+      <div className='relative z-20 w-full'>
+        <button
+          type='button'
+          role='combobox'
+          aria-expanded={isOpen}
+          aria-haspopup='listbox'
+          aria-labelledby={`${name || 'select'}-label`}
+          aria-describedby={`${name || 'select'}-description`}
           className={cn(
-            'absolute inset-0 h-full w-full cursor-pointer opacity-0',
+            'text-primary disabled:text-disabled w-full text-left focus:outline-none',
             selectClassName,
           )}
+          disabled={disabled}
+          onClick={handleClick}
+          onKeyDown={handleKeyDown}
+          {...props}
+        >
+          <span className='text-body-md block truncate'>
+            {currentValue || placeholder}
+          </span>
+        </button>
+
+        <select
+          name={name}
           value={currentValue}
           onChange={stableOnChange}
           disabled={disabled}
-          onClick={handleClick}
-          {...props}
-        />
-      </div>
-      {trailingIcon && (
-        <button
-          type='button'
-          disabled={disabled}
-          onClick={() => {
-            if (onTrailingIconClick) {
-              onTrailingIconClick();
-            }
-          }}
+          className='sr-only'
+          aria-hidden='true'
         >
-          <Icon
-            name={trailingIcon}
-            className={cn('text-tertiary', iconClassName)}
-            size={iconSize}
-          />
-        </button>
-      )}
+          <option value=''>{placeholder}</option>
+        </select>
+
+        {trailingIcon && (
+          <div className='pointer-events-none absolute top-1/2 right-4 z-10 -translate-y-1/2'>
+            <Icon
+              name={trailingIcon}
+              className={cn('text-tertiary', iconClassName)}
+              size={iconSize}
+            />
+          </div>
+        )}
+      </div>
+
+      <div className='sr-only'>
+        <span id={`${name || 'select'}-label`}>{label}</span>
+        <span id={`${name || 'select'}-description`}>
+          {isOpen
+            ? '드롭다운이 열려있습니다. 화살표 키로 옵션을 탐색하고 Enter로 선택하세요.'
+            : '드롭다운을 열려면 Enter를 누르세요.'}
+        </span>
+      </div>
     </div>
   );
 }

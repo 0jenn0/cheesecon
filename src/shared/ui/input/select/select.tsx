@@ -28,18 +28,34 @@ export default function Select({
   return (
     <SelectProvider>
       <div className={cn('relative', className)} {...props}>
-        <SelectPlaceholder
-          label={label}
-          placeholder={label}
-          isError={isError}
-          disabled={disabled}
-          className={placeholderClassName}
-          selectClassName={placeholderClassName || ''}
-          trailingIcon='chevron-down'
-          onChange={onChange}
-          name={name}
-        />
-        <SelectList options={options} />
+        <div className='tablet:hidden'>
+          <SelectPlaceholder
+            label={label}
+            placeholder={label}
+            isError={isError}
+            disabled={disabled}
+            className={placeholderClassName}
+            selectClassName={placeholderClassName || ''}
+            trailingIcon='chevron-down'
+            onChange={onChange}
+            name={name}
+          />
+          <SelectList options={options} name={name} />
+        </div>
+        <div className='tablet:block hidden'>
+          <SelectPlaceholder
+            label={label}
+            placeholder={label}
+            isError={isError}
+            disabled={disabled}
+            className={placeholderClassName}
+            selectClassName={placeholderClassName || ''}
+            trailingIcon='chevron-down'
+            onChange={onChange}
+            name={name}
+          />
+          <SelectList options={options} name={name} />
+        </div>
       </div>
     </SelectProvider>
   );

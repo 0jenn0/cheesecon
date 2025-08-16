@@ -13,7 +13,7 @@ export type SelectDirection = (typeof SELECT_DIRECTION)[number];
 
 export interface TextFieldProps
   extends Omit<ComponentPropsWithRef<'div'>, 'onChange'> {
-  label: string;
+  label?: string;
   placeholder: string;
   placeholderIcon?: IconProps['name'];
   placeholderIconSize?: IconProps['size'];
@@ -35,6 +35,7 @@ export interface TextFieldProps
 
 export default function SelectField({
   label,
+  placeholder,
   labelType = 'default',
   variant = 'default',
   disabled = false,
@@ -51,20 +52,22 @@ export default function SelectField({
   return (
     <div
       className={cn(
-        'flex w-full flex-col gap-12',
+        'flex flex-col gap-12',
         direction === 'row' && 'flex-row items-start',
         responsiveDirection &&
           `flex-${responsiveDirection.mobile} md:flex-${responsiveDirection.desktop} items-start`,
         className,
       )}
     >
-      <Label type={labelType} className={labelClassName}>
-        {label}
-      </Label>
+      {label && (
+        <Label type={labelType} className={labelClassName}>
+          {label}
+        </Label>
+      )}
       <div className='flex w-full flex-1 flex-col gap-8'>
         <Select
           name={name}
-          label='이모티콘 플랫폼'
+          label={placeholder}
           disabled={disabled}
           options={options}
           placeholderClassName={selectClassName}
