@@ -23,8 +23,8 @@ export default async function PopularPage() {
   return (
     <div className='tablet:gap-24 flex w-full flex-col gap-16'>
       <div className='tablet:gap-24 tablet:flex-row flex flex-col gap-16'>
-        <ApproveCalendar />
         <HelloSection />
+        <ApproveCalendar />
       </div>
       <section className='bg-primary padding-24 flex w-full flex-col gap-24'>
         <div className='flex flex-col gap-8'>
