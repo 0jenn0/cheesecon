@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Skeleton, useToast } from '@/shared/ui/feedback';
+import { useToast } from '@/shared/ui/feedback';
 import { Button, IconButton } from '@/shared/ui/input';
 import { useShareLink } from '@/app/(after)/emoticon/[id]/share/model';
 
