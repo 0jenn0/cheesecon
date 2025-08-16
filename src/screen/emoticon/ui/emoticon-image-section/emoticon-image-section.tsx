@@ -65,7 +65,7 @@ function getEmoticonImageSectionSkeleton({
   return (
     <ul className='flex w-full gap-24'>
       {Array.from({ length: columnCount }).map((_, index) => (
-        <li key={index}>
+        <li key={index} className='w-full'>
           <EmoticonImageItemSkeleton />
         </li>
       ))}
