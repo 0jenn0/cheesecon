@@ -73,7 +73,6 @@ export default function CommentForm({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     if (isEditing) {
-      // console.log('handleSubmit update!!!!!!!!!!!');
       handleUpdateSubmit(e);
     } else {
       handleCreateSubmit(e);

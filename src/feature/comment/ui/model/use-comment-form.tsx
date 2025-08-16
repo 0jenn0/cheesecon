@@ -86,19 +86,8 @@ export default function useCommentForm({
       !commentId ||
       (!comment.content.trim() && uploadedImages.length === 0)
     ) {
-      // console.log('handleUpdateSubmit return!!!!!!!!!!!');
-      console.log('commentId', commentId);
-      // console.log('comment.content', comment.content);
-      // console.log('uploadedImages', uploadedImages.length);
       return;
     }
-    console.log('uploadedImages', uploadedImages);
-    console.log('comment.content', comment.content);
-    console.log('commentId', commentId);
-    console.log('parentCommentId', parentCommentId);
-    console.log('targetId', targetId);
-    console.log('targetType', targetType);
-    console.log('key', key);
 
     updateComment(
       {
