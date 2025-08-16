@@ -109,7 +109,7 @@ export default function EmoticonInfoForm() {
         placeholder='이모티콘 플랫폼'
         labelType='required'
         options={['카카오톡', '라인']}
-        selectClassName='padding-y-12 text-body-sm'
+        selectClassName='padding-y-8'
         responsiveDirection={{ mobile: 'column', desktop: 'row' }}
         onChange={handleSelectChange}
         variant={hasFieldError('platform') ? 'error' : 'default'}
@@ -129,7 +129,7 @@ export default function EmoticonInfoForm() {
         placeholder='이모티콘 유형'
         labelType='required'
         options={['움직이는 이모티콘', '멈춰있는 이모티콘']}
-        selectClassName='padding-y-12 text-body-sm'
+        selectClassName='padding-y-8'
         responsiveDirection={{ mobile: 'column', desktop: 'row' }}
         onChange={handleSelectChange}
         variant={hasFieldError('type') ? 'error' : 'default'}

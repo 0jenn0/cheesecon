@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { usePagination } from '@/shared/lib/use-pagination';
-import { Button, Placeholder } from '@/shared/ui/input';
+import { IconButton, Placeholder, SelectField } from '@/shared/ui/input';
 import { Pagination } from '@/shared/ui/navigation';
 import { useEmoticonSetPaginationQuery } from '@/entity/emoticon-set';
 import { useAuth } from '../auth/provider/auth-provider';
@@ -22,6 +22,8 @@ export default function ViewEmoticon({ emoticonType }: ViewEmoticonProps) {
   const { currentPage, handlePageChange } = usePagination(COUNT_PER_PAGE);
   const [search, setSearch] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isPrivate, setIsPrivate] = useState(false);
+  const prevIsPrivateRef = useRef(isPrivate);
 
   const { data, isLoading } = useEmoticonSetPaginationQuery({
     orderBy: 'created_at',
@@ -31,9 +33,19 @@ export default function ViewEmoticon({ emoticonType }: ViewEmoticonProps) {
     limit: COUNT_PER_PAGE,
     title: searchQuery,
     isLiked: emoticonType === 'likes',
+    isPrivate,
   });
 
+  const totalPages = data?.success ? data.data.totalPages : 0;
+
   const emoticons = data?.success ? data.data.data : [];
+
+  if (prevIsPrivateRef.current !== isPrivate) {
+    prevIsPrivateRef.current = isPrivate;
+    if (currentPage !== 1) {
+      handlePageChange(1);
+    }
+  }
 
   const handleSearch = (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -52,26 +64,37 @@ export default function ViewEmoticon({ emoticonType }: ViewEmoticonProps) {
           isError={false}
           disabled={false}
           className='flex-1'
-          trailingIcon='logo'
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <Button
-          className='padding-x-24 max-h-[120px]'
+        <IconButton
+          icon='search'
+          className='padding-x-24 max-h-[120px] flex-shrink-0'
           variant='secondary'
           type='submit'
-        >
-          검색
-        </Button>
+        />
       </form>
-      <div className='flex w-full items-center gap-8'>
-        {searchQuery && (
-          <span className='text-sm text-gray-500'>
-            {searchQuery} 검색 결과 {data?.success ? data.data.total : 0}개
-          </span>
-        )}
-        <span>총 {data?.success ? data.data.total : 0}개의 이모티콘</span>
+      <div className='flex w-full items-center justify-between'>
+        <div className='flex w-full items-center gap-8'>
+          {searchQuery && (
+            <span className='text-sm text-gray-500'>
+              {searchQuery} 검색 결과 {data?.success ? data.data.total : 0}개
+            </span>
+          )}
+          <span>총 {data?.success ? data.data.total : 0}개의 이모티콘</span>
+        </div>
+        <SelectField
+          name='privacy'
+          placeholder='공개 여부'
+          className='w-[120px] flex-shrink-0'
+          selectClassName='padding-y-8'
+          options={['공개', '비밀']}
+          onChange={(e) => {
+            setIsPrivate(e.target.value === '비밀');
+          }}
+        />
       </div>
+
       <ul className='tablet:grid-cols-2 grid w-full grid-cols-1 gap-x-32 gap-y-16'>
         {emoticons.map((emoticon) => (
           <EmoticonViewItemClient
@@ -90,7 +113,7 @@ export default function ViewEmoticon({ emoticonType }: ViewEmoticonProps) {
       )}
       <Pagination
         currentPage={currentPage}
-        totalPages={data?.success ? data.data.totalPages : 0}
+        totalPages={totalPages}
         onPageChange={handlePageChange}
       />
     </div>

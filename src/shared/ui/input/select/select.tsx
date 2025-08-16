@@ -27,7 +27,7 @@ export default function Select({
 }: SelectProps) {
   return (
     <SelectProvider>
-      <div className={cn('relative', className)} {...props}>
+      <div className={cn('relative cursor-pointer', className)} {...props}>
         <SelectPlaceholder
           label={label}
           placeholder={label}
@@ -39,7 +39,7 @@ export default function Select({
           onChange={onChange}
           name={name}
         />
-        <SelectList options={options} />
+        <SelectList options={options} name={name} />
       </div>
     </SelectProvider>
   );

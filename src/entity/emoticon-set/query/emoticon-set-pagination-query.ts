@@ -18,6 +18,7 @@ export interface EmoticonSetPaginationQueryParams {
   userId?: string;
   title?: string;
   isLiked?: boolean;
+  isPrivate?: boolean;
 }
 
 export const useEmoticonSetPaginationQuery = (
@@ -42,6 +43,7 @@ export const useEmoticonSetPaginationQuery = (
         userId: params?.userId,
         title: params?.title,
         isLiked: params?.isLiked,
+        isPrivate: params?.isPrivate,
       },
     ),
     queryFn: () =>
@@ -53,6 +55,7 @@ export const useEmoticonSetPaginationQuery = (
           order: params?.order || 'desc',
           userId: params?.userId,
           title: params?.title,
+          isPrivate: params?.isPrivate,
         },
       }),
     ...options,
