@@ -27,17 +27,17 @@ export default function HelloSection({
         <Icon name='logo' className='icon-ghost h-[60px] w-[60px]' />
 
         <div className='flex flex-col gap-8'>
-          <h1 className='text-body-lg font-semibold'>
+          <h1 className='text-body-md tablet:text-body-lg font-semibold'>
             {data?.success ? data.data.nickname : ''} 작가님, 안녕하세요!
           </h1>
-          <p className='text-secondary'>{greeting}</p>
+          <p className='text-secondary text-body-sm'>{greeting}</p>
         </div>
       </div>
 
       <Button
         variant='primary'
         leadingIcon='edit'
-        textClassName='font-semibold'
+        textClassName='font-semibold text-body-sm tablet:text-body-md'
         onClick={() => {
           router.push('/register');
         }}

@@ -166,7 +166,7 @@ export function getMonthBoundaries(year: number, month: number) {
 
 export function getMonthDay({ date }: { date: Date }) {
   return {
-    month: date.getMonth(),
+    month: date.getMonth() + 1,
     day: date.getDate(),
   };
 }

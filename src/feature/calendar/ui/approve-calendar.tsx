@@ -9,7 +9,9 @@ export default function ApproveCalendar({
   className,
   ...props
 }: ComponentPropsWithRef<'section'>) {
-  const { month, day } = getMonthDay({ date: APPROVED_DATES[0] });
+  const { month, day } = getMonthDay({
+    date: APPROVED_DATES[APPROVED_DATES.length - 1],
+  });
 
   return (
     <section

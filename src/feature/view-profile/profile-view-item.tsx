@@ -29,7 +29,7 @@ function Thumbnail({
 }) {
   return (
     <div className='border-radius-lg relative flex gap-8 overflow-hidden font-semibold'>
-      <div className='height-24 width-24 border-radius-lg border-secondary bg-secondary flex items-center justify-center backdrop-blur-sm'>
+      <div className='height-24 width-24 flex items-center justify-center'>
         <span className='text-body-sm font-regular'>{index}</span>
       </div>
       <Image
