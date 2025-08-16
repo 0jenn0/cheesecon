@@ -6,8 +6,6 @@ import {
   CommentDetail,
   CreateCommentRequest,
   CreateCommentResponse,
-  GetCommentsRequest,
-  GetCommentsResult,
 } from './types';
 
 export async function createComment(

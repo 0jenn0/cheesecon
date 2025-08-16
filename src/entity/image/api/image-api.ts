@@ -153,7 +153,7 @@ export async function generateBlurDataUrl(
       success: false,
       error: {
         code: 'BLUR_GENERATION_ERROR',
-        message: '이미지 업로드에 실패했어요.',
+        message: `이미지 업로드에 실패했어요. ${error instanceof Error ? error.message : '알 수 없는 오류'}`,
       },
     };
   }

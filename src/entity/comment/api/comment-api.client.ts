@@ -80,10 +80,7 @@ export async function getComments(
       success: true,
       data: {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        data: rows.map(({ total_count, ...rest }) => ({
-          ...rest,
-          images: null,
-        })),
+        data,
         total,
         currentPage,
         totalPages,

@@ -1,6 +1,5 @@
 import {
   useCallback,
-  useEffect,
   useMemo,
   useOptimistic,
   useRef,
@@ -10,8 +9,6 @@ import {
 import { useToast } from '@/shared/ui/feedback';
 import { CommentReactionSummary } from '@/entity/comment/api';
 import { COMMENT_QUERY_KEY } from '@/entity/comment/query/query-key';
-import { CommentReaction } from '@/entity/comment/type';
-import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { useCommentSectionUi } from '@/feature/comment/ui/emoticon-comment-section/provider/use-comment-section-ui';
 import { queryClient } from '@/provider/QueryProvider';
 import { useMutation } from '@tanstack/react-query';
@@ -19,10 +16,7 @@ import {
   createCommentReaction,
   deleteCommentReaction,
 } from '../api/comment-reactions-api';
-import {
-  CreateCommentReactionRequest,
-  DeleteCommentReactionRequest,
-} from '../api/type';
+import { CreateCommentReactionRequest } from '../api/type';
 
 export function useCreateCommentReaction(commentId: string) {
   const { addToast } = useToast();
@@ -127,21 +121,34 @@ export function useOptimisticCommentReaction(
         try {
           if (wasReacted) {
             const res = await deleteCommentReaction({ commentId, emoji });
+            if (!res.success) {
+              addToast({
+                type: 'error',
+                message: res.error.message,
+              });
+              return;
+            }
           } else {
             const res = await createCommentReaction({ commentId, emoji });
+            if (!res.success) {
+              addToast({
+                type: 'error',
+                message: res.error.message,
+              });
+              return;
+            }
           }
 
           setActualSummary((s) =>
             reactionReducer(s, { type: 'toggle', emoji }),
           );
-        } catch (e) {
+        } catch (error) {
           if (prevActualRef.current) {
             setActualSummary(prevActualRef.current);
           }
           addToast({
             type: 'error',
-            message:
-              '이모지 반응 처리 중 오류가 발생했어요. 다시 시도해주세요.',
+            message: `이모지 반응 처리 중 오류가 발생했어요. ${error instanceof Error ? error.message : '알 수 없는 오류'}`,
           });
         } finally {
           isRequestingRef.current = false;

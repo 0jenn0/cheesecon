@@ -1,6 +1,5 @@
 'use client';
 
-import { AnimatePresence, motion } from 'framer-motion';
 import Toast from './toast';
 import { useToast } from './toast-provider';
 

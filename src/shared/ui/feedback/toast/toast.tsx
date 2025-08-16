@@ -55,6 +55,13 @@ export default function Toast({
     return () => clearTimeout(timer);
   }, []);
 
+  const handleClose = () => {
+    setIsLeaving(true);
+    setTimeout(() => {
+      onClose?.(id);
+    }, 300);
+  };
+
   useEffect(() => {
     if (duration > 0) {
       const timer = setTimeout(() => {
@@ -63,14 +70,7 @@ export default function Toast({
       }, duration);
       return () => clearTimeout(timer);
     }
-  }, [duration]);
-
-  const handleClose = () => {
-    setIsLeaving(true);
-    setTimeout(() => {
-      onClose?.(id);
-    }, 300);
-  };
+  }, [duration, handleClose, id, removeToast]);
 
   return (
     <AnimatePresence>

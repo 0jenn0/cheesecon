@@ -19,7 +19,7 @@ function LoginContent() {
     } catch (error) {
       addToast({
         type: 'error',
-        message: '로그인에 실패했어요. 다시 시도해주세요.',
+        message: `로그인에 실패했어요. ${error instanceof Error ? error.message : '알 수 없는 오류'}`,
       });
     }
   };

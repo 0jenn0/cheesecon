@@ -11,10 +11,10 @@ export default function EmoticonRegisterScreen() {
     <EmoticonRegisterContextProvider>
       <EmoticonRegisterProvider>
         <EmoticonProvider>
-          <div className='tablet:hidden block'>
+          <div className='tablet:hidden padding-b-24 block'>
             <EmoticonRegisterMobileScreen />
           </div>
-          <div className='tablet:block hidden'>
+          <div className='tablet:block padding-b-24 hidden'>
             <EmoticonRegisterDesktopScreen />
           </div>
         </EmoticonProvider>

@@ -35,8 +35,10 @@ export default function EditAvatar({
       const formData = new FormData();
       formData.append('file', file);
       const result = await uploadImageMutation(formData);
-      setImageUrl(result.url);
-      onImageUpload(result.url);
+      if (result.success) {
+        setImageUrl(result.data.url);
+        onImageUpload(result.data.url);
+      }
     }
   };
 

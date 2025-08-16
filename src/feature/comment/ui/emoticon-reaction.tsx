@@ -3,11 +3,6 @@
 import { ComponentPropsWithRef } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/shared/ui/input';
-import { CommentReactionSummary } from '@/entity/comment/api';
-import {
-  useCreateCommentReaction,
-  useOptimisticCommentReaction,
-} from '@/entity/comment_reactions/query/comment-reaciton-mutation-query';
 
 const COMMENT_EMOTICON_REACTION_LIST = ['❤️', '👍', '✅', '👀', '😢'] as const;
 

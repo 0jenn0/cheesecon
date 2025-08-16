@@ -6,7 +6,6 @@ import { cn } from '@/shared/lib';
 import { Avatar } from '@/shared/ui/display';
 import { Button, IconButton, TextArea } from '@/shared/ui/input';
 import { useGetProfile } from '@/entity/profile/query/profile-query';
-import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { useCommentItem } from './comment/provider';
 import { useCommentForm } from './model';
 
