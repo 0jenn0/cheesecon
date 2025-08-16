@@ -7,6 +7,10 @@ export async function getComments(
 ): Promise<GetCommentsResult> {
   try {
     const supabase = await createBrowserSupabaseClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const user_id = user?.id;
 
     const {
       set_id = null,
@@ -24,9 +28,10 @@ export async function getComments(
           ? null
           : false;
 
-    const query = supabase.rpc('get_comments_v3', {
+    const query = supabase.rpc('get_comments_v5', {
       p_set_id: set_id ?? undefined,
       p_image_id: image_id ?? undefined,
+      p_user_id: user_id ?? undefined,
       p_parent_comment_id: parent_comment_id ?? undefined,
       p_parent_is_null: p_parent_is_null ?? undefined,
       p_sort_order: sortOrder ?? 'asc',

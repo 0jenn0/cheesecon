@@ -1,4 +1,12 @@
-import { useOptimistic, useTransition } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useOptimistic,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import { useToast } from '@/shared/ui/feedback';
 import { CommentReactionSummary } from '@/entity/comment/api';
 import { COMMENT_QUERY_KEY } from '@/entity/comment/query/query-key';
@@ -18,7 +26,7 @@ import {
 
 export function useCreateCommentReaction(commentId: string) {
   const { addToast } = useToast();
-  const { isShowingReaction, toggleReaction } = useCommentSectionUi(commentId);
+  const { toggleReaction } = useCommentSectionUi(commentId);
 
   return useMutation({
     mutationFn: ({ commentId, emoji }: CreateCommentReactionRequest) =>
@@ -44,139 +52,111 @@ export function useCreateCommentReaction(commentId: string) {
   });
 }
 
-export function useOptimisticCommentReaction(
-  initialReactionSummary: CommentReactionSummary[],
-  initialReactions: CommentReaction[],
-) {
-  const [isPending, startTransition] = useTransition();
-  const [optimisticReactionSummary, addOptimisticReaction] = useOptimistic<
-    {
-      reactionSummary: CommentReactionSummary[];
-      reactions: CommentReaction[];
-    },
-    {
-      commentId: string;
-      emoji: string;
-      actionType: 'add' | 'remove';
+type ReactionAction = { type: 'toggle'; emoji: string };
+
+function reactionReducer(
+  state: CommentReactionSummary[],
+  action: ReactionAction,
+): CommentReactionSummary[] {
+  if (action.type !== 'toggle') return state;
+
+  const { emoji } = action;
+  const i = state.findIndex((r) => r.emoji === emoji);
+
+  if (i < 0) {
+    return [...state, { emoji, count: 1, reacted: true, my_reaction_ids: [] }];
+  }
+
+  const cur = state[i];
+
+  if (cur.reacted) {
+    const nextCount = Math.max(0, cur.count - 1);
+    if (nextCount === 0) {
+      return state.filter((_, idx) => idx !== i);
     }
-  >(
-    { reactionSummary: initialReactionSummary, reactions: initialReactions },
-    (state, action) => {
-      const { emoji, actionType } = action;
+    const newState = [...state];
+    newState[i] = {
+      ...cur,
+      count: nextCount,
+      reacted: false,
+      my_reaction_ids: [],
+    };
+    return newState;
+  }
 
-      if (actionType === 'add') {
-        const existingIndex = state.reactionSummary.findIndex(
-          (reaction) => reaction.emoji === emoji,
-        );
-
-        if (existingIndex >= 0) {
-          return {
-            ...state,
-            reactionSummary: state.reactionSummary.map((reaction, index) =>
-              index === existingIndex
-                ? { ...reaction, count: reaction.count + 1 }
-                : reaction,
-            ),
-            reactions: [
-              ...state.reactions,
-              {
-                emoji,
-                comment_id: state.reactions[0].comment_id,
-                created_at: state.reactions[0].created_at,
-                id: state.reactions[0].id,
-                user_id: state.reactions[0].user_id,
-              },
-            ],
-          };
-        } else {
-          return {
-            ...state,
-            reactionSummary: [...state.reactionSummary, { emoji, count: 1 }],
-          };
-        }
-      }
-
-      if (actionType === 'remove') {
-        const existingIndex = state.reactionSummary.findIndex(
-          (reaction) => reaction.emoji === emoji,
-        );
-
-        if (existingIndex >= 0) {
-          const currentCount = state.reactionSummary[existingIndex].count;
-          const newCount = currentCount - 1;
-
-          if (newCount <= 0) {
-            return {
-              ...state,
-              reactionSummary: state.reactionSummary.filter(
-                (_, index) => index !== existingIndex,
-              ),
-            };
-          } else {
-            return {
-              ...state,
-              reactionSummary: state.reactionSummary.map((reaction, index) =>
-                index === existingIndex
-                  ? { ...reaction, count: newCount }
-                  : reaction,
-              ),
-              reactions: state.reactions.filter(
-                (reaction) =>
-                  reaction.emoji !== action.emoji &&
-                  reaction.user_id !== state.reactions[0].user_id,
-              ),
-            };
-          }
-        }
-      }
-
-      return state;
-    },
-  );
-
-  const handleAddOptimisticReaction = async (
-    commentId: string,
-    emoji: string,
-    actionType: 'add' | 'remove',
-  ) => {
-    startTransition(() => {
-      addOptimisticReaction({ commentId, emoji, actionType });
-    });
-
-    try {
-      if (actionType === 'add') {
-        await createCommentReaction({ commentId, emoji });
-      } else if (actionType === 'remove') {
-        await deleteCommentReaction({ commentId, emoji });
-      }
-
-      await queryClient.invalidateQueries({
-        queryKey: COMMENT_QUERY_KEY.lists(),
-      });
-    } catch (error) {
-      console.error('코멘트 리액션 API 에러:', error);
-      await queryClient.refetchQueries({
-        queryKey: COMMENT_QUERY_KEY.lists(),
-      });
-    }
-  };
-
-  return {
-    optimisticReactionSummary,
-    handleAddOptimisticReaction,
-    isPending,
-  };
+  const newState = [...state];
+  newState[i] = { ...cur, count: cur.count + 1, reacted: true };
+  return newState;
 }
 
-export function useDeleteCommentReaction() {
-  return useMutation({
-    mutationFn: ({ commentId, emoji }: DeleteCommentReactionRequest) =>
-      deleteCommentReaction({ commentId, emoji }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: COMMENT_QUERY_KEY.lists() });
+export function useOptimisticCommentReaction(
+  commentId: string,
+  initialSummary: CommentReactionSummary[],
+) {
+  const { addToast } = useToast();
+  const [isPending, startTransition] = useTransition();
+
+  const [actualSummary, setActualSummary] = useState<CommentReactionSummary[]>(
+    () => initialSummary,
+  );
+
+  const isRequestingRef = useRef(false);
+  const prevActualRef = useRef<CommentReactionSummary[] | null>(null);
+
+  const [optimisticSummary, dispatchOptimistic] = useOptimistic<
+    CommentReactionSummary[],
+    ReactionAction
+  >(actualSummary, reactionReducer);
+
+  const actualSummaryRef = useRef(actualSummary);
+  actualSummaryRef.current = actualSummary;
+
+  const toggleReaction = useCallback(
+    (emoji: string) => {
+      if (isRequestingRef.current) return;
+      isRequestingRef.current = true;
+
+      startTransition(async () => {
+        dispatchOptimistic({ type: 'toggle', emoji });
+
+        const prev = actualSummaryRef.current;
+        prevActualRef.current = prev;
+        const prevItem = prev.find((r) => r.emoji === emoji);
+        const wasReacted = !!prevItem?.reacted;
+
+        try {
+          if (wasReacted) {
+            const res = await deleteCommentReaction({ commentId, emoji });
+          } else {
+            const res = await createCommentReaction({ commentId, emoji });
+          }
+
+          setActualSummary((s) =>
+            reactionReducer(s, { type: 'toggle', emoji }),
+          );
+        } catch (e) {
+          if (prevActualRef.current) {
+            setActualSummary(prevActualRef.current);
+          }
+          addToast({
+            type: 'error',
+            message:
+              '이모지 반응 처리 중 오류가 발생했어요. 다시 시도해주세요.',
+          });
+        } finally {
+          isRequestingRef.current = false;
+        }
+      });
     },
-    onError: (error) => {
-      console.log('코멘트 리액션 삭제 에러', error);
-    },
-  });
+    [commentId, addToast, dispatchOptimistic],
+  );
+
+  return useMemo(
+    () => ({
+      reactionSummary: optimisticSummary,
+      toggleReaction,
+      isLoading: isPending,
+    }),
+    [optimisticSummary, toggleReaction, isPending],
+  );
 }

@@ -8,7 +8,13 @@ import { CommentDetail } from '@/entity/comment';
 import { useCommentSectionUi } from '@/feature/comment/ui/emoticon-comment-section/provider/use-comment-section-ui';
 import { EmoticonReaction } from '../..';
 
-export default function CommentFooter({ comment }: { comment: CommentDetail }) {
+export default function CommentFooter({
+  comment,
+  handleToggleReaction,
+}: {
+  comment: CommentDetail;
+  handleToggleReaction: (emoji: string) => void;
+}) {
   const { isShowingReaction, toggleReaction, isShowingForm, toggleForm } =
     useCommentSectionUi(comment.id);
   const reactionRef = useRef<HTMLDivElement>(null);
@@ -55,7 +61,9 @@ export default function CommentFooter({ comment }: { comment: CommentDetail }) {
         />
         <div className='margin-r-8 absolute top-1/2 right-full -translate-y-1/2'>
           <AnimatePresence>
-            {isShowingReaction && <EmoticonReaction commentId={comment.id} />}
+            {isShowingReaction && (
+              <EmoticonReaction handleToggleReaction={handleToggleReaction} />
+            )}
           </AnimatePresence>
         </div>
       </div>
