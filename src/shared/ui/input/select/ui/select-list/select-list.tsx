@@ -114,7 +114,7 @@ export default function SelectList({
           tabIndex={-1}
           onKeyDown={handleKeyDown}
           className={cn(
-            'z-index-popover bg-primary border-radius-lg padding-y-4 border-secondary margin-t-4 absolute top-full right-0 left-0 max-h-[300px] w-full flex-col gap-0 overflow-y-auto border focus:outline-none',
+            'z-index-popover bg-primary border-radius-lg padding-y-4 border-secondary margin-t-4 absolute top-full right-0 left-0 max-h-[300px] w-full cursor-pointer flex-col gap-0 overflow-y-auto border focus:outline-none',
           )}
           {...props}
         >

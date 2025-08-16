@@ -108,7 +108,7 @@ export default function SelectPlaceholder({
           aria-labelledby={`${name || 'select'}-label`}
           aria-describedby={`${name || 'select'}-description`}
           className={cn(
-            'text-primary disabled:text-disabled w-full text-left focus:outline-none',
+            'text-primary disabled:text-disabled w-full cursor-pointer text-left focus:outline-none',
             selectClassName,
           )}
           disabled={disabled}

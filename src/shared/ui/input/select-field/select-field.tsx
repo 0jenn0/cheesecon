@@ -52,7 +52,7 @@ export default function SelectField({
   return (
     <div
       className={cn(
-        'flex flex-col gap-12',
+        'group flex flex-col gap-12',
         direction === 'row' && 'flex-row items-start',
         responsiveDirection &&
           `flex-${responsiveDirection.mobile} md:flex-${responsiveDirection.desktop} items-start`,
