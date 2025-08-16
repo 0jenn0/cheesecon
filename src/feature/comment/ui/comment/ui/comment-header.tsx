@@ -65,7 +65,7 @@ export default function CommentHeader({
       <div className='relative' ref={moreRef}>
         {userType === 'me' && (
           <>
-            {isShowingMore && <EditCommentMenu />}
+            <EditCommentMenu id={comment.id} />
             <button
               className='padding-0 bg-interactive-secondary-subtle cursor-pointer'
               onClick={() => {
