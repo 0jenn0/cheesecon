@@ -35,7 +35,7 @@ export default function Comment({
   targetType,
   parentNickname,
 }: CommentProps) {
-  const { user } = useAuth();
+  const { session } = useAuth();
   const { addToast } = useToast();
   const { isShowingForm } = useCommentSectionUi(comment.id);
   const {
@@ -48,7 +48,7 @@ export default function Comment({
 
   const handleToggleReaction = useCallback(
     (emoji: string) => {
-      if (!user) {
+      if (!session) {
         addToast({
           type: 'error',
           message: '로그인 후 이모지 반응을 할 수 있어요.',
@@ -57,7 +57,7 @@ export default function Comment({
       }
       toggleReactionOptimistic(emoji);
     },
-    [toggleReactionOptimistic, user, addToast],
+    [toggleReactionOptimistic, session, addToast],
   );
 
   return (
