@@ -4,12 +4,13 @@ import { useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Avatar, Icon } from '@/shared/ui/display';
 import { useToast } from '@/shared/ui/feedback';
+import { Button, IconButton } from '@/shared/ui/input';
 import { CommentDetail } from '@/entity/comment/api/types';
 import { useOptimisticCommentReaction } from '@/entity/comment_reactions/query/comment-reaciton-mutation-query';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { useCommentSectionUi } from '@/feature/comment/ui/emoticon-comment-section/provider/use-comment-section-ui';
 import { CommentForm } from '..';
-import { CommentItemProvider } from './provider';
+import { CommentItemProvider, useCommentItem } from './provider';
 import {
   CommentFooter,
   CommentHeader,

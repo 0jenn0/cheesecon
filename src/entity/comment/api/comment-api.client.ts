@@ -28,7 +28,7 @@ export async function getComments(
           ? null
           : false;
 
-    const query = supabase.rpc('get_comments_v5', {
+    const query = supabase.rpc('get_comments_v6', {
       p_set_id: set_id ?? undefined,
       p_image_id: image_id ?? undefined,
       p_user_id: user_id ?? undefined,

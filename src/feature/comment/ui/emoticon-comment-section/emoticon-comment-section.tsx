@@ -8,8 +8,9 @@ import { Pagination } from '@/shared/ui/navigation';
 import { useCommentListQuery } from '@/entity/comment';
 import { CommentDetail } from '@/entity/comment/api/types';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
-import { Comment, DefaultCommentForm } from '@/feature/comment/ui';
+import { Comment, CommentForm, DefaultCommentForm } from '@/feature/comment/ui';
 import { Session } from '@supabase/supabase-js';
+import { CommentItemProvider } from '../comment/provider';
 import EmoticonCommentSectionSkeleton from './emoticon-comment-section.skeleton';
 import { CommentSectionUiProvider } from './provider/use-comment-section-ui';
 
@@ -140,9 +141,10 @@ function renderComment({
 
   return (
     <div className='flex flex-col gap-16' key={comment.id}>
-      <Comment
-        comment={comment}
-        asChild={depth > 0}
+      <CommentItemProvider
+        commentId={comment.id}
+        targetId={targetId}
+        targetType={targetType}
         userType={
           session?.user.id === comment.user_id
             ? 'me'
@@ -150,10 +152,22 @@ function renderComment({
               ? 'author'
               : 'other'
         }
-        targetId={targetId}
-        targetType={targetType}
-        parentNickname={parentNickname}
-      />
+      >
+        <Comment
+          comment={comment}
+          asChild={depth > 0}
+          userType={
+            session?.user.id === comment.user_id
+              ? 'me'
+              : comment.user_id === authorId
+                ? 'author'
+                : 'other'
+          }
+          targetId={targetId}
+          targetType={targetType}
+          parentNickname={parentNickname}
+        />
+      </CommentItemProvider>
       {childComments.map((childComment) => (
         <div key={childComment.id} className={cn(depth < 2 && 'ml-24')}>
           {renderComment({

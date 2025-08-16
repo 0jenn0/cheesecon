@@ -1,20 +1,22 @@
 'use client';
 
 import Image from 'next/image';
-import { ComponentPropsWithRef, useCallback, useRef } from 'react';
+import { ComponentPropsWithRef, useCallback, useEffect, useRef } from 'react';
 import { cn } from '@/shared/lib';
 import { Avatar } from '@/shared/ui/display';
 import { Button, IconButton, TextArea } from '@/shared/ui/input';
+import { UpdateCommentParams } from '@/entity/comment';
 import { useGetProfile } from '@/entity/profile/query/profile-query';
-import { useCommentItem } from './comment/provider';
-import { useCommentForm } from './model';
+import { useCommentItem } from '../comment/provider';
+import { useCommentForm } from '../model';
+import { ImageItem } from './ui';
 
 interface CommentFormProps extends ComponentPropsWithRef<'div'> {
   targetId: string;
   targetType: 'emoticon_set' | 'emoticon_image';
   commentId?: string;
   parentCommentId?: string;
-  initialValue?: string;
+  initialValue?: UpdateCommentParams;
 }
 
 export default function CommentForm({
@@ -33,6 +35,7 @@ export default function CommentForm({
     handleImageUpload,
     handleRemoveImage,
     uploadedImages,
+    setUploadedImages,
     isPending,
   } = useCommentForm({
     targetId,
@@ -41,6 +44,12 @@ export default function CommentForm({
     commentId,
   });
   const { isEditing, toggleEditing } = useCommentItem();
+
+  useEffect(() => {
+    if (isEditing && initialValue?.images) {
+      setUploadedImages(initialValue.images);
+    }
+  }, [isEditing, initialValue?.images, setUploadedImages]);
 
   const { data } = useGetProfile();
   const user = data?.success ? data.data : null;
@@ -64,6 +73,7 @@ export default function CommentForm({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     if (isEditing) {
+      // console.log('handleSubmit update!!!!!!!!!!!');
       handleUpdateSubmit(e);
     } else {
       handleCreateSubmit(e);
@@ -97,45 +107,8 @@ export default function CommentForm({
           isError={false}
           disabled={!user}
           onChange={handleChange}
-          defaultValue={initialValue ?? ''}
+          defaultValue={initialValue?.content ?? ''}
         />
-
-        {uploadedImages.length > 0 && (
-          <div className='flex flex-col gap-8'>
-            <div className='flex items-center justify-between'>
-              <p className='text-body-sm text-tertiary'>
-                이미지 {uploadedImages.length}/6
-              </p>
-            </div>
-            <div className='flex flex-wrap gap-8'>
-              {uploadedImages.map((imageUrl, index) => (
-                <div
-                  key={`${imageUrl}-${index}`}
-                  className='border-ghost relative h-[80px] w-[80px] overflow-hidden rounded-lg border'
-                >
-                  <Image
-                    src={imageUrl}
-                    alt='uploaded image'
-                    fill
-                    className='object-cover'
-                  />
-                  <div className='absolute top-2 right-2'>
-                    <IconButton
-                      variant='danger'
-                      type='button'
-                      styleVariant='transparent'
-                      className='border-radius-rounded'
-                      iconClassName='icon-interactive-primary'
-                      icon='trash'
-                      iconSize={12}
-                      onClick={() => handleRemoveImage(index)}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         <div className='flex w-full justify-end gap-0'>
           <IconButton
@@ -170,6 +143,46 @@ export default function CommentForm({
             </p>
           </Button>
         </div>
+
+        {!isEditing && uploadedImages.length > 0 && (
+          <div className='flex flex-col gap-8'>
+            <div className='flex items-center justify-between'>
+              <p className='text-body-sm text-tertiary'>
+                이미지 {uploadedImages.length}/6
+              </p>
+            </div>
+            <div className='flex flex-wrap gap-8'>
+              {uploadedImages.map((imageUrl, index) => (
+                <ImageItem
+                  imageUrl={imageUrl}
+                  index={index}
+                  handleRemoveImage={handleRemoveImage}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {isEditing &&
+          initialValue?.images &&
+          initialValue?.images.length > 0 && (
+            <div className='flex flex-col gap-8'>
+              <div className='flex items-center justify-between'>
+                <p className='text-body-sm text-tertiary'>
+                  이미지 {uploadedImages.length}/6
+                </p>
+              </div>
+              <div className='flex flex-wrap gap-8'>
+                {uploadedImages.map((imageUrl, index) => (
+                  <ImageItem
+                    imageUrl={imageUrl}
+                    index={index}
+                    handleRemoveImage={handleRemoveImage}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
       </form>
     </div>
   );

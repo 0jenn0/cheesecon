@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useToast } from '@/shared/ui/feedback';
 import {
   useCreateCommentMutation,
   useUpdateCommentMutation,
@@ -21,6 +22,7 @@ export default function useCommentForm({
   isEditing?: boolean;
 }) {
   const key = targetType === 'emoticon_set' ? 'set_id' : 'image_id';
+  const { addToast } = useToast();
 
   const [comment, setComment] = useState<CreateCommentParams>(() => ({
     content: '',
@@ -52,8 +54,10 @@ export default function useCommentForm({
     const filesToUpload = files.slice(0, availableSlots);
 
     if (files.length > maxImages) {
-      // TODO: 토스트로 대체
-      alert('최대 6장까지만 업로드할 수 있습니다.');
+      addToast({
+        type: 'error',
+        message: '최대 6장까지만 업로드할 수 있습니다.',
+      });
       setUploadedImages([]);
       return;
     }
@@ -62,13 +66,9 @@ export default function useCommentForm({
       const formData = new FormData();
       formData.append('file', file);
 
-      try {
-        const result = await uploadImageMutation.mutateAsync(formData);
-        if (result.success && result.data) {
-          uploadedUrls.push(result.data.url);
-        }
-      } catch (error) {
-        console.error('Image upload error:', error);
+      const result = await uploadImageMutation.mutateAsync(formData);
+      if (result.success && result.data) {
+        uploadedUrls.push(result.data.webpUrl ?? '');
       }
     }
 
@@ -86,14 +86,25 @@ export default function useCommentForm({
       !commentId ||
       (!comment.content.trim() && uploadedImages.length === 0)
     ) {
+      // console.log('handleUpdateSubmit return!!!!!!!!!!!');
+      console.log('commentId', commentId);
+      // console.log('comment.content', comment.content);
+      // console.log('uploadedImages', uploadedImages.length);
       return;
     }
+    console.log('uploadedImages', uploadedImages);
+    console.log('comment.content', comment.content);
+    console.log('commentId', commentId);
+    console.log('parentCommentId', parentCommentId);
+    console.log('targetId', targetId);
+    console.log('targetType', targetType);
+    console.log('key', key);
 
     updateComment(
       {
         commentId,
         content: comment.content,
-        images: uploadedImages.length > 0 ? uploadedImages : null,
+        images: uploadedImages,
       },
       {
         onSuccess: () => {
@@ -111,6 +122,7 @@ export default function useCommentForm({
       },
     );
   };
+
   const handleCreateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -118,16 +130,17 @@ export default function useCommentForm({
       return;
     }
 
+    const data = {
+      ...comment,
+      images: uploadedImages,
+    };
+
     createComment(
       {
-        comment: {
-          ...comment,
-          images: uploadedImages.length > 0 ? uploadedImages : null,
-        },
+        comment: data,
       },
       {
         onSuccess: () => {
-          console.log('handleCreateSubmit success', comment);
           setComment({
             content: '',
             [key]: targetId,
@@ -150,5 +163,6 @@ export default function useCommentForm({
     handleUpdateSubmit,
     handleCreateSubmit,
     isPending: isPending || uploadImageMutation.isPending,
+    setUploadedImages,
   };
 }
