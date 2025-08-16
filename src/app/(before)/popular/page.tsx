@@ -1,4 +1,5 @@
 import { getPopularEmoticonSetsCached } from '@/entity/emoticon-set/model/main-cache';
+import { ApproveCalendar } from '@/feature/calendar/ui';
 import {
   EmoticonViewSectionClient,
   EmoticonViewSectionServer,
@@ -21,7 +22,10 @@ export default async function PopularPage() {
 
   return (
     <div className='tablet:gap-24 flex w-full flex-col gap-16'>
-      <HelloSection />
+      <div className='tablet:gap-24 tablet:flex-row flex flex-col gap-16'>
+        <HelloSection />
+        <ApproveCalendar />
+      </div>
       <section className='bg-primary padding-24 flex w-full flex-col gap-24'>
         <div className='flex flex-col gap-8'>
           <h1 className='text-heading-md'>🔥 인기 급상승 이모티콘</h1>

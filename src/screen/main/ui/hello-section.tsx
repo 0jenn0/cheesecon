@@ -12,22 +12,22 @@ export default function HelloSection() {
   const router = useRouter();
 
   return (
-    <section className='padding-16 bg-primary tablet:border-radius-xl tablet:flex-row tablet:justify-between flex w-full flex-col gap-16'>
+    <section className='padding-16 bg-primary tablet:border-radius-xl flex w-full flex-col justify-between gap-24'>
       <div className='flex items-center gap-16'>
         <Icon name='logo' className='icon-ghost h-[60px] w-[60px]' />
 
-        <div className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-8'>
           <h1 className='text-body-lg font-semibold'>
             {data?.success ? data.data.nickname : ''} 작가님, 안녕하세요!
           </h1>
-          <p className='text-body-sm text-secondary'>{greeting}</p>
+          <p className='text-secondary'>{greeting}</p>
         </div>
       </div>
 
       <Button
         variant='primary'
         leadingIcon='edit'
-        textClassName='font-semibold text-body-sm '
+        textClassName='font-semibold'
         onClick={() => {
           router.push('/register');
         }}
