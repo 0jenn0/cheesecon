@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { getTimeAgo } from '@/shared/lib/utils';
 import { Button, IconButton } from '@/shared/ui/input';
 import { CommentDetail } from '@/entity/comment';
@@ -52,11 +53,11 @@ export default function CommentFooter({ comment }: { comment: CommentDetail }) {
           styleVariant='transparent'
           onClick={toggleReaction}
         />
-        {isShowingReaction && (
-          <div className='margin-r-8 absolute top-1/2 right-full -translate-y-1/2'>
-            <EmoticonReaction commentId={comment.id} />
-          </div>
-        )}
+        <div className='margin-r-8 absolute top-1/2 right-full -translate-y-1/2'>
+          <AnimatePresence>
+            {isShowingReaction && <EmoticonReaction commentId={comment.id} />}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );
