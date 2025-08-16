@@ -81,13 +81,13 @@ export default function ViewEmoticonImageModal({
       >
         <div className='laptop:w-1/2 w-full min-w-0 flex-shrink-0'>
           {allImages && (
-            <div className='flex h-full w-full items-center justify-center overflow-hidden'>
+            <div className='relative flex h-full w-full items-center justify-center overflow-hidden'>
+              <ColorPicker
+                color={color}
+                handleChangeColor={setColor}
+                className='absolute top-0 right-0'
+              />
               <div className='relative flex'>
-                <ColorPicker
-                  color={color}
-                  handleChangeColor={setColor}
-                  className='absolute top-0 right-0'
-                />
                 <SnapCarousel
                   items={allImages}
                   itemWidth={220}
