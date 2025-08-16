@@ -1,4 +1,4 @@
-import { Modal, useModal } from '@/shared/ui/feedback';
+import { Modal, useModal, useToast } from '@/shared/ui/feedback';
 import { Button } from '@/shared/ui/input';
 import { useDeleteCommentMutation } from '@/entity/comment/query/comment-mutation';
 
@@ -10,17 +10,15 @@ export default function DeleteCommentModal({
   emoticonSetId?: string;
 }) {
   const { closeModal } = useModal();
+
   const { mutate: deleteComment, isPending: isDeleting } =
     useDeleteCommentMutation({
       commentId,
       emoticonSetId,
       onSuccess: () => {
         closeModal();
-        // TODO: 토스트 추가
       },
-      onError: () => {
-        console.error('댓글 삭제에 실패했습니다.');
-      },
+      onError: () => {},
     });
 
   const handleDeleteComment = () => {

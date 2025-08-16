@@ -22,8 +22,8 @@ export default async function RootLayout({
   return (
     <ReactQueryClientProvider>
       <AuthProvider>
-        <ModalProvider>
-          <ToastProvider>
+        <ToastProvider>
+          <ModalProvider>
             <link
               rel='preconnect'
               href='https://vbdbvqzfphlwkizvsjkx.supabase.co'
@@ -40,8 +40,8 @@ export default async function RootLayout({
                 <ToastContainer />
               </body>
             </html>
-          </ToastProvider>
-        </ModalProvider>
+          </ModalProvider>
+        </ToastProvider>
       </AuthProvider>
     </ReactQueryClientProvider>
   );

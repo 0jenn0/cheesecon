@@ -63,18 +63,23 @@ export const useUpdateCommentMutation = (
 };
 
 export const useDeleteCommentMutation = (params?: DeleteCommentParams) => {
+  const { addToast } = useToast();
+
   return useMutation({
     mutationFn: deleteComment,
-    onSuccess: (_, { emoticonSetId }) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: COMMENT_QUERY_KEY.lists() });
-
-      if (emoticonSetId && emoticonSetId.trim() !== '') {
-        queryClient.invalidateQueries({
-          queryKey: COMMENT_QUERY_KEY.lists(),
-        });
-      }
+      addToast({
+        type: 'success',
+        message: '댓글 삭제에 성공했어요.',
+      });
       params?.onSuccess?.();
     },
-    onError: params?.onError,
+    onError: () => {
+      addToast({
+        type: 'error',
+        message: '댓글 삭제에 실패했어요.',
+      });
+    },
   });
 };
