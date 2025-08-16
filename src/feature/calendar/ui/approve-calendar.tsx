@@ -2,7 +2,7 @@ import { ComponentPropsWithRef } from 'react';
 import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
 import { APPROVED_DATES } from '../const/calendar-const';
-import { formatDate, getMonthDay } from '../model/generate-date';
+import { getMonthDay } from '../model/generate-date';
 import MiniCalendar from './calendar';
 
 export default function ApproveCalendar({

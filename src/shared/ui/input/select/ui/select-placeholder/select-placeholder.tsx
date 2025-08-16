@@ -105,6 +105,7 @@ export default function SelectPlaceholder({
           role='combobox'
           aria-expanded={isOpen}
           aria-haspopup='listbox'
+          aria-controls={`${name || 'select'}-listbox`}
           aria-labelledby={`${name || 'select'}-label`}
           aria-describedby={`${name || 'select'}-description`}
           className={cn(

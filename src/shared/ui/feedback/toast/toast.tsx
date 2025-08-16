@@ -60,7 +60,7 @@ export default function Toast({
     setTimeout(() => {
       onClose?.(id);
     }, 300);
-  }, [id, onClose, removeToast]);
+  }, [id, onClose]);
 
   useEffect(() => {
     if (duration > 0) {
