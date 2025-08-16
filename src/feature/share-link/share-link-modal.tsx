@@ -18,7 +18,7 @@ export default function ShareLinkModal({
       <Modal.Header>
         <Modal.Title>게시물 공유</Modal.Title>
       </Modal.Header>
-      <Modal.Body className='flex flex-col gap-24'>
+      <Modal.Body className='flex flex-col gap-[32px]'>
         <div className='flex flex-col gap-12'>
           <ShareLinkModalHeader isPrivate={isPrivate} />
           <ShareLinkModalDescription isPrivate={isPrivate} />
@@ -61,7 +61,7 @@ function ShareLinkModalHeader({ isPrivate }: { isPrivate: boolean }) {
 
 function ShareLinkModalDescription({ isPrivate }: { isPrivate: boolean }) {
   return (
-    <p className='text-body-sm text-secondary'>
+    <p className='text-body-md text-secondary'>
       {isPrivate
         ? '링크를 받은 사람만 게시물을 볼 수 있어요. 24시간 동안 유효해요.'
         : '누구나 볼 수 있는 공개 게시물이에요.'}
