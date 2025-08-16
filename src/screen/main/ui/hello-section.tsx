@@ -1,18 +1,28 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { ComponentPropsWithRef, useEffect, useState } from 'react';
+import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
 import { Button } from '@/shared/ui/input';
 import { useGetProfile } from '@/entity/profile/query/profile-query';
 
-export default function HelloSection() {
+export default function HelloSection({
+  className,
+  ...props
+}: ComponentPropsWithRef<'section'>) {
   const greeting = useTimeBasedGreeting();
   const { data } = useGetProfile();
   const router = useRouter();
 
   return (
-    <section className='padding-16 bg-primary tablet:border-radius-xl flex w-full flex-col justify-between gap-24'>
+    <section
+      className={cn(
+        'padding-16 bg-primary tablet:border-radius-xl flex w-full flex-col justify-between gap-24',
+        className,
+      )}
+      {...props}
+    >
       <div className='flex items-center gap-16'>
         <Icon name='logo' className='icon-ghost h-[60px] w-[60px]' />
 
