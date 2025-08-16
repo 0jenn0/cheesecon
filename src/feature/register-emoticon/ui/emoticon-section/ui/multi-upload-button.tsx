@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ProgressBar from '@/shared/ui/feedback/progress-bar/progress-bar';
+import { useToast } from '@/shared/ui/feedback/toast/toast-provider';
 import { Button } from '@/shared/ui/input';
 import useEmoticonRegister from '@/feature/register-emoticon/model/hook';
 import { useUploadImageToBucketMutation } from '@/feature/upload-image/model/upload-image-mutation';
@@ -20,6 +21,7 @@ export default function MultiUploadButton() {
   const { handleEmoticonItem, items } = useEmoticonContext();
   const { handleSetImageUrl } = useEmoticonRegister();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { addToast } = useToast();
 
   useEffect(() => {
     const headerElement = window.document.querySelector('header');
@@ -35,8 +37,10 @@ export default function MultiUploadButton() {
 
       const emptySlots = items.filter((item) => item.imageUrl === '');
       if (emptySlots.length === 0) {
-        // TODO: 토스트 처리
-        // console.log('빈 슬롯이 없습니다');
+        addToast({
+          type: 'error',
+          message: '빈 슬롯이 없습니다',
+        });
         return;
       }
 
@@ -46,10 +50,10 @@ export default function MultiUploadButton() {
       );
 
       if (filesToUpload.length < files.length) {
-        // TODO: 토스트 처리
-        // alert(
-        //   `${emptySlots.length}개 슬롯만 사용 가능합니다. ${filesToUpload.length}개 파일만 업로드됩니다.`,
-        // );
+        addToast({
+          type: 'error',
+          message: `${emptySlots.length}개 슬롯만 사용 가능합니다. ${filesToUpload.length}개 파일만 업로드됩니다.`,
+        });
       }
 
       setCurrentUploadCount({
@@ -58,60 +62,59 @@ export default function MultiUploadButton() {
       });
       setIsUploading(true);
 
-      try {
-        for (const [index, file] of filesToUpload.entries()) {
-          const formData = new FormData();
+      for (const [index, file] of filesToUpload.entries()) {
+        const formData = new FormData();
 
-          formData.append('file', file);
+        formData.append('file', file);
 
-          const targetSlot = emptySlots[index];
-          const imageNumber = targetSlot.imageNumber;
+        const targetSlot = emptySlots[index];
+        const imageNumber = targetSlot.imageNumber;
 
-          try {
-            const result = await uploadImageMutation.mutateAsync(formData);
+        const result = await uploadImageMutation.mutateAsync(formData);
 
-            handleEmoticonItem(imageNumber, 'UPLOAD', {
-              imageUrl: result.url,
-              blurUrl: result.blurUrl,
-              webpUrl: result.webpUrl,
-            });
+        if (result.success) {
+          const { url, blurUrl, webpUrl } = result.data;
 
-            handleSetImageUrl([
-              {
-                imageUrl: result.url,
-                imageOrder: imageNumber,
-                blurUrl: result.blurUrl,
-                webpUrl: result.webpUrl,
-              },
-            ]);
+          handleEmoticonItem(imageNumber, 'UPLOAD', {
+            imageUrl: url,
+            blurUrl: blurUrl,
+            webpUrl: webpUrl,
+          });
 
-            setCurrentUploadCount((prev) => ({
-              current: prev.current + 1,
-              total: prev.total,
-            }));
+          handleSetImageUrl([
+            {
+              imageUrl: url,
+              imageOrder: imageNumber,
+              blurUrl: blurUrl,
+              webpUrl: webpUrl,
+            },
+          ]);
 
-            // TODO: 토스트 처리
-            // console.log('Upload successful:', result);
-          } catch (error) {
-            console.error('Upload error for file:', file.name, error);
-            // TODO: 토스트 처리
-            // console.error('Upload error for file:', file.name, error);
-            // alert(`${file.name} 업로드 실패`);
-          }
-        }
-        // TODO: 토스트 처리
-        console.log(`총 ${filesToUpload.length}개 파일 업로드 완료`);
-      } finally {
-        setIsUploading(false);
-        setCurrentUploadCount({ current: 0, total: 0 });
-
-        // input 초기화
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
+          setCurrentUploadCount((prev) => ({
+            current: prev.current + 1,
+            total: prev.total,
+          }));
+        } else {
+          setIsUploading(false);
+          setCurrentUploadCount({ current: 0, total: 0 });
         }
       }
+
+      setIsUploading(false);
+      setCurrentUploadCount({ current: 0, total: 0 });
+
+      // input 초기화
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     },
-    [items, uploadImageMutation, handleEmoticonItem, handleSetImageUrl],
+    [
+      items,
+      uploadImageMutation,
+      handleEmoticonItem,
+      handleSetImageUrl,
+      addToast,
+    ],
   );
 
   const handleButtonClick = useCallback(() => {

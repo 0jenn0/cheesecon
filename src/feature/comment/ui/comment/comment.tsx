@@ -1,10 +1,15 @@
 'use client';
 
+import { useCallback } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Avatar, Icon } from '@/shared/ui/display';
+import { useToast } from '@/shared/ui/feedback';
 import { CommentDetail } from '@/entity/comment/api/types';
+import { useOptimisticCommentReaction } from '@/entity/comment_reactions/query/comment-reaciton-mutation-query';
+import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { useCommentSectionUi } from '@/feature/comment/ui/emoticon-comment-section/provider/use-comment-section-ui';
 import { CommentForm } from '..';
-import { CommentItemProvider } from './provider';
+import { CommentItemProvider, useCommentItem } from './provider';
 import {
   CommentFooter,
   CommentHeader,
@@ -30,7 +35,31 @@ export default function Comment({
   targetType,
   parentNickname,
 }: CommentProps) {
+  const { session } = useAuth();
+  const { addToast } = useToast();
+  const { isEditing } = useCommentItem();
   const { isShowingForm } = useCommentSectionUi(comment.id);
+  const {
+    reactionSummary,
+    toggleReaction: toggleReactionOptimistic,
+    isLoading,
+  } = useOptimisticCommentReaction(comment.id, comment.reaction_summary);
+
+  const hasReactions = reactionSummary.length > 0;
+
+  const handleToggleReaction = useCallback(
+    (emoji: string) => {
+      if (!session) {
+        addToast({
+          type: 'error',
+          message: '로그인 후 이모지 반응을 할 수 있어요.',
+        });
+        return;
+      }
+      toggleReactionOptimistic(emoji);
+    },
+    [toggleReactionOptimistic, session, addToast],
+  );
 
   return (
     <CommentItemProvider
@@ -40,11 +69,7 @@ export default function Comment({
       userType={userType}
     >
       <div className='flex w-full gap-4'>
-        <>
-          {asChild && (
-            <Icon name='corner-down-right' className='text-gray-300' />
-          )}
-        </>
+        {asChild && <Icon name='corner-down-right' className='text-gray-300' />}
         <div className='flex flex-1 gap-8'>
           <Avatar
             name={comment.profile.nickname ?? ''}
@@ -59,14 +84,34 @@ export default function Comment({
               userType={userType}
             />
             <CommentContent comment={comment} />
+
             {comment.images && comment.images?.length > 0 && (
               <CommentImages images={comment.images} />
             )}
 
-            {comment.reactions && comment.reactions?.length > 0 && (
-              <CommentReaction comment={comment} />
-            )}
-            <CommentFooter comment={comment} />
+            <AnimatePresence mode='wait'>
+              {!isEditing && hasReactions && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, y: 10 }}
+                  animate={{ opacity: 1, height: 'auto', y: 0 }}
+                  exit={{ opacity: 0, height: 0, y: 10 }}
+                  transition={{
+                    duration: 0.2,
+                  }}
+                >
+                  <CommentReaction
+                    reactionSummary={reactionSummary}
+                    toggleReaction={handleToggleReaction}
+                    isLoading={isLoading}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <CommentFooter
+              comment={comment}
+              handleToggleReaction={handleToggleReaction}
+            />
 
             <div className='border-ghost w-full border-b-[0.6px]' />
 

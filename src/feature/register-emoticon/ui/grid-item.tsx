@@ -38,21 +38,13 @@ const GridItem = ({
         acceptedFiles.forEach((file) => {
           formData.append('file', file);
         });
-        try {
-          const result = await uploadImageMutation.mutateAsync(formData);
 
-          onImageUpload?.(
-            imageNumber,
-            result.url,
-            result.blurUrl ?? null,
-            result.webpUrl ?? null,
-          );
-          // TODO: 토스트로 성공처리
-          console.log('Upload successful:', result);
-          // TODO: 이미지 업로드 성공 후 리다이렉팅 추가
-        } catch (error) {
-          // TODO: 토스트로 에러처리
-          console.error('Upload error:', error);
+        const result = await uploadImageMutation.mutateAsync(formData);
+
+        if (result.success) {
+          const { url, blurUrl, webpUrl } = result.data;
+          onImageUpload?.(imageNumber, url, blurUrl ?? null, webpUrl ?? null);
+          return;
         }
       }
     },

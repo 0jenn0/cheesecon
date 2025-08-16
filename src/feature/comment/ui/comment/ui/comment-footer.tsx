@@ -1,15 +1,22 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { getTimeAgo } from '@/shared/lib/utils';
 import { Button, IconButton } from '@/shared/ui/input';
 import { CommentDetail } from '@/entity/comment';
 import { useCommentSectionUi } from '@/feature/comment/ui/emoticon-comment-section/provider/use-comment-section-ui';
 import { EmoticonReaction } from '../..';
 
-export default function CommentFooter({ comment }: { comment: CommentDetail }) {
-  const { isShowingForm, toggleForm } = useCommentSectionUi(comment.id);
-  const { isShowingReaction, toggleReaction } = useCommentSectionUi(comment.id);
+export default function CommentFooter({
+  comment,
+  handleToggleReaction,
+}: {
+  comment: CommentDetail;
+  handleToggleReaction: (emoji: string) => void;
+}) {
+  const { isShowingReaction, toggleReaction, isShowingForm, toggleForm } =
+    useCommentSectionUi(comment.id);
   const reactionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -52,11 +59,13 @@ export default function CommentFooter({ comment }: { comment: CommentDetail }) {
           styleVariant='transparent'
           onClick={toggleReaction}
         />
-        {isShowingReaction && (
-          <div className='margin-r-8 absolute top-1/2 right-full -translate-y-1/2'>
-            <EmoticonReaction commentId={comment.id} />
-          </div>
-        )}
+        <div className='margin-r-8 absolute top-1/2 right-full -translate-y-1/2'>
+          <AnimatePresence>
+            {isShowingReaction && (
+              <EmoticonReaction handleToggleReaction={handleToggleReaction} />
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );

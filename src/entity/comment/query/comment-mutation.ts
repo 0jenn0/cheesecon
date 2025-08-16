@@ -1,3 +1,4 @@
+import { useToast } from '@/shared/ui/feedback';
 import { EMOTICON_SET_QUERY_KEY } from '@/entity/emoticon-set';
 import { queryClient } from '@/provider/QueryProvider';
 import { useMutation } from '@tanstack/react-query';
@@ -33,10 +34,16 @@ export const useCreateCommentMutation = (params?: CommentMutationParams) => {
 export const useUpdateCommentMutation = (
   params?: CommentMutationParams & { emoticonSetId?: string },
 ) => {
+  const { addToast } = useToast();
+
   return useMutation({
     mutationFn: updateComment,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: COMMENT_QUERY_KEY.lists() });
+      addToast({
+        type: 'success',
+        message: '댓글 수정에 성공했어요.',
+      });
 
       if (params?.emoticonSetId && params.emoticonSetId.trim() !== '') {
         queryClient.invalidateQueries({
@@ -46,23 +53,33 @@ export const useUpdateCommentMutation = (
 
       params?.onSuccess?.();
     },
-    onError: params?.onError,
+    onError: () => {
+      addToast({
+        type: 'error',
+        message: '댓글 수정에 실패했어요.',
+      });
+    },
   });
 };
 
 export const useDeleteCommentMutation = (params?: DeleteCommentParams) => {
+  const { addToast } = useToast();
+
   return useMutation({
     mutationFn: deleteComment,
-    onSuccess: (_, { emoticonSetId }) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: COMMENT_QUERY_KEY.lists() });
-
-      if (emoticonSetId && emoticonSetId.trim() !== '') {
-        queryClient.invalidateQueries({
-          queryKey: COMMENT_QUERY_KEY.lists(),
-        });
-      }
+      addToast({
+        type: 'success',
+        message: '댓글 삭제에 성공했어요.',
+      });
       params?.onSuccess?.();
     },
-    onError: params?.onError,
+    onError: () => {
+      addToast({
+        type: 'error',
+        message: '댓글 삭제에 실패했어요.',
+      });
+    },
   });
 };

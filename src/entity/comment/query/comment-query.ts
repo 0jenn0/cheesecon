@@ -1,5 +1,5 @@
-// useCommentListQuery.ts
 import { useQuery } from '@tanstack/react-query';
+import { getComments } from '../api/comment-api.client';
 import { COMMENT_QUERY_KEY } from './query-key';
 import { CommentInfiniteQueryParams } from './types';
 
@@ -21,41 +21,17 @@ export const useCommentListQuery = (params: CommentInfiniteQueryParams) => {
   return useQuery({
     queryKey: key,
     queryFn: async ({ signal }) => {
-      const controller = new AbortController();
+      const res = await getComments(
+        {
+          set_id: scope === 'set' ? id : undefined,
+          image_id: scope === 'image' ? id : undefined,
+          limit,
+          offset,
+        },
+        signal,
+      );
 
-      if (signal) {
-        signal.addEventListener('abort', () => {
-          controller.abort();
-        });
-      }
-
-      const qs = new URLSearchParams({
-        scope,
-        id,
-        limit: String(limit),
-        offset: String(offset),
-        sortOrder: 'asc',
-      });
-
-      try {
-        const res = await fetch(`/api/comments?${qs.toString()}`, {
-          signal: controller.signal,
-          cache: 'no-store',
-        });
-
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-        if (!json?.success)
-          throw new Error(json?.error?.message ?? 'Unknown error');
-
-        return json.data;
-      } catch (error) {
-        // AbortError인 경우 명시적으로 처리
-        if (error instanceof Error && error.name === 'AbortError') {
-          throw new Error('Request was aborted');
-        }
-        throw error;
-      }
+      return res.success ? res.data.data : [];
     },
     enabled,
     staleTime: 30_000,

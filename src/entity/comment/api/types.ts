@@ -13,6 +13,8 @@ export type CreateCommentRequest = {
 export type CommentReactionSummary = {
   emoji: string;
   count: number;
+  reacted: boolean;
+  my_reaction_ids: string[];
 };
 
 export type CommentDetail = Comment & {

@@ -6,6 +6,7 @@ import {
   createServerSupabaseAdminClient,
   createServerSupabaseClient,
 } from '@/shared/lib/supabase/server';
+import { ApiResult } from '@/shared/types';
 
 const SECRET = process.env.EMOTICON_LOCK_SECRET || '';
 const ENC = new TextEncoder();
@@ -41,16 +42,18 @@ async function signShareToken(payload: {
 }
 
 /** 게시물 소유자만 실행 가능: 공유 링크 생성 (기본 24시간 유효) */
-export async function createShareLinkAction(id: string, hours = 24) {
-  if (!id) return { ok: false, message: 'invalid id' };
-  if (!SECRET) return { ok: false, message: 'server misconfigured: SECRET' };
+export async function createShareLinkAction(
+  id: string,
+  hours = 24,
+): Promise<ApiResult<{ url: string; exp: number }>> {
+  if (!SECRET)
+    return {
+      success: false,
+      error: { message: 'server misconfigured: SECRET' },
+    };
 
   // 로그인 사용자
   const supabase = await createServerSupabaseClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { ok: false, message: 'unauthorized' };
 
   // 소유권 확인 + 비공개 여부 확인
   const admin = await createServerSupabaseAdminClient();
@@ -60,8 +63,19 @@ export async function createShareLinkAction(id: string, hours = 24) {
     .eq('id', id)
     .maybeSingle();
 
-  if (error || !data) return { ok: false, message: 'not found' };
-  if (data.user_id !== user.id) return { ok: false, message: 'forbidden' };
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (data?.is_private && !user)
+    return { success: false, error: { message: 'unauthorized' } };
+
+  if (error || !data) {
+    return { success: false, error: { message: 'not found' } };
+  }
+  if (data.is_private && data.user_id !== user?.id) {
+    return { success: false, error: { message: 'forbidden' } };
+  }
+
   const isPrivate = data.is_private;
 
   const exp = Date.now() + hours * 60 * 60 * 1000;
@@ -74,5 +88,5 @@ export async function createShareLinkAction(id: string, hours = 24) {
     ? `${origin}/emoticon/access/${token}`
     : `${origin}/emoticon/${id}`;
 
-  return { ok: true, url, exp };
+  return { success: true, data: { url, exp } };
 }

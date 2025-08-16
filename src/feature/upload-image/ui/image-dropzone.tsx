@@ -38,24 +38,20 @@ export default function ImageDropzone({
           formData.append('file', file);
         });
 
-        try {
-          const result = await uploadImageMutation.mutateAsync(formData);
-          setImageUrl(result.url);
+        const result = await uploadImageMutation.mutateAsync(formData);
+        if (result.success) {
+          setImageUrl(result.data.url);
           setEmoticonSet({
             ...emoticonSetWithRepresentativeImage,
             representative_image: {
               ...emoticonSetWithRepresentativeImage.representative_image,
-              image_url: result.url,
-              blur_url: result.blurUrl ?? null,
+              image_url: result.data.url,
+              blur_url: result.data.blurUrl ?? null,
               image_order: 0,
               is_representative: true,
             },
           });
-          // TODO: 토스트로 성공처리
-          console.log('Upload successful:', result);
-        } catch (error) {
-          // TODO: 토스트로 에러처리
-          console.error('Upload error:', error);
+          return;
         }
       }
     },

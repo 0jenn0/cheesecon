@@ -3,10 +3,12 @@
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { Icon } from '@/shared/ui/display';
+import { useToast } from '@/shared/ui/feedback';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { LoginButton } from '@/feature/auth/ui';
 
 function LoginContent() {
+  const { addToast } = useToast();
   const { signInWithProvider } = useAuth();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get('redirect') || '/';
@@ -15,7 +17,10 @@ function LoginContent() {
     try {
       await signInWithProvider(provider, redirectUrl);
     } catch (error) {
-      console.error('로그인 실패:', error);
+      addToast({
+        type: 'error',
+        message: `로그인에 실패했어요. ${error instanceof Error ? error.message : '알 수 없는 오류'}`,
+      });
     }
   };
 

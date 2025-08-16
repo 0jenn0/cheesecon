@@ -10,17 +10,15 @@ export default function DeleteCommentModal({
   emoticonSetId?: string;
 }) {
   const { closeModal } = useModal();
+
   const { mutate: deleteComment, isPending: isDeleting } =
     useDeleteCommentMutation({
       commentId,
       emoticonSetId,
       onSuccess: () => {
         closeModal();
-        // TODO: 토스트 추가
       },
-      onError: () => {
-        console.error('댓글 삭제에 실패했습니다.');
-      },
+      onError: () => {},
     });
 
   const handleDeleteComment = () => {

@@ -11,6 +11,7 @@ import {
 export interface ToastData {
   id: string;
   type: 'success' | 'error' | 'warning' | 'info';
+  position?: 'top' | 'bottom';
   title?: string;
   message: string;
   duration?: number;
