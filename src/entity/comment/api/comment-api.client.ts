@@ -79,7 +79,6 @@ export async function getComments(
     return {
       success: true,
       data: {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         data,
         total,
         currentPage,

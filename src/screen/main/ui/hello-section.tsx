@@ -1,10 +1,10 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { ComponentPropsWithRef, useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
-import { Button } from '@/shared/ui/input';
 import { useGetProfile } from '@/entity/profile/query/profile-query';
 
 export default function HelloSection({
@@ -13,19 +13,16 @@ export default function HelloSection({
 }: ComponentPropsWithRef<'section'>) {
   const greeting = useTimeBasedGreeting();
   const { data } = useGetProfile();
-  const router = useRouter();
 
   return (
     <section
       className={cn(
-        'padding-16 bg-primary tablet:border-radius-xl flex w-full flex-col justify-between gap-24',
+        'padding-16 bg-primary tablet:border-radius-xl relative flex w-full flex-col justify-between gap-24 overflow-hidden',
         className,
       )}
       {...props}
     >
       <div className='flex items-center gap-16'>
-        <Icon name='logo' className='icon-ghost h-[60px] w-[60px]' />
-
         <div className='flex flex-col gap-8'>
           <h1 className='text-body-md tablet:text-body-lg font-semibold'>
             {data?.success ? data.data.nickname : ''} 작가님, 안녕하세요!
@@ -33,17 +30,42 @@ export default function HelloSection({
           <p className='text-secondary text-body-sm'>{greeting}</p>
         </div>
       </div>
-
-      <Button
-        variant='primary'
-        leadingIcon='edit'
-        textClassName='font-semibold text-body-sm tablet:text-body-md'
-        onClick={() => {
-          router.push('/register');
-        }}
+      <Link
+        href='/register'
+        className='border-radius-xl padding-12 border-gradient-to-r z-10 flex w-full items-center justify-center gap-8 border border-yellow-200 bg-yellow-300/60 font-semibold backdrop-blur-sm'
       >
+        <motion.div
+          animate={{
+            x: [-10, 0, -10],
+          }}
+          transition={{
+            duration: 1,
+            repeat: Infinity,
+          }}
+        >
+          <Icon
+            name='chevron-up'
+            className='h-[24px] w-[24px] rotate-90 text-yellow-500'
+          />
+        </motion.div>
         새 이모티콘 등록하기
-      </Button>
+      </Link>
+      <motion.div
+        animate={{
+          rotate: [0, 0.2, 0, -0.2, 0],
+          y: [0, 4, 0, -4, 0],
+        }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+        }}
+        className='tablet:right-[-80px] tablet:bottom-[-110px] absolute right-[-40px] bottom-[-30px]'
+      >
+        <Icon
+          name='logo'
+          className='tablet:h-[360px] tablet:w-[360px] h-[200px] w-[200px] text-gray-100/50'
+        />
+      </motion.div>
     </section>
   );
 }
