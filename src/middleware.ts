@@ -63,7 +63,13 @@ async function verifyLockTokenDetailed(token: string, expectId: string) {
   }
 }
 
-const publicPaths = ['/login', '/popular', '/new', '/activity', '/emoticon'];
+const publicPaths = [
+  '/login',
+  '/main/popular',
+  '/main/new',
+  '/main/activity',
+  '/emoticon',
+];
 const authPaths = ['/auth/callback'];
 
 function isPublicPath(pathname: string): boolean {
@@ -77,7 +83,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname === '/') {
-    return NextResponse.redirect(new URL('/popular', request.url));
+    return NextResponse.redirect(new URL('/main/popular', request.url));
   }
 
   if (isPublicPath(pathname)) return NextResponse.next();

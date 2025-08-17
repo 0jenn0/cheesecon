@@ -31,7 +31,7 @@ export default function LockModal() {
           className='w-full'
           variant='primary'
           type='button'
-          onClick={() => router.push('/popular')}
+          onClick={() => router.push('/main/popular')}
         >
           홈으로 이동
         </Button>

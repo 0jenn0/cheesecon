@@ -7,10 +7,7 @@ import { Logo, MenuButton, Navigation, UserProfile } from './ui';
 export default function GlobalNavigationBar() {
   const pathname = usePathname();
 
-  const isTabActive =
-    pathname.startsWith('/popular') ||
-    pathname.startsWith('/new') ||
-    pathname.startsWith('/activity');
+  const isTabActive = pathname.startsWith('/main');
 
   return (
     <div className='z-index-sticky sticky top-0 right-0 left-0 z-10'>
@@ -29,9 +26,9 @@ export default function GlobalNavigationBar() {
         <div className='bg-primary w-full'>
           <Tabs
             items={[
-              { label: '인기순', href: '/popular' },
-              { label: '최신순', href: '/new' },
-              { label: '활동순', href: '/activity' },
+              { label: '인기순', href: '/main/popular' },
+              { label: '최신순', href: '/main/new' },
+              { label: '활동순', href: '/main/activity' },
             ]}
           />
         </div>

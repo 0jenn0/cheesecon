@@ -15,7 +15,7 @@ export default function Navigation({
         styleVariant='transparent'
         size='sm'
         as={Link}
-        href='/popular'
+        href='/main/popular'
       >
         홈
       </Button>

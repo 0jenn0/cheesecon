@@ -26,7 +26,7 @@ export default function MenuList({ menus, onClick, ...props }: MenuListProps) {
 
   const handleSignOut = async () => {
     await signOut();
-    router.push('/popular');
+    router.push('/main/popular');
   };
 
   const handleSignIn = () => {

@@ -5,7 +5,7 @@ export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
   const redirect = searchParams.get('redirect');
-  const next = searchParams.get('next') ?? '/popular';
+  const next = searchParams.get('next') ?? '/main/popular';
 
   let targetUrl = redirect || next;
 
