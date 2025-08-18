@@ -5,6 +5,7 @@ import {
   validateEmoticonSet,
   validateEmoticonSetField,
   validateImageUrlItem,
+  validateImageUrls,
 } from '../lib/validation';
 
 export interface ImageMeta extends EmoticonImageState {
@@ -303,16 +304,21 @@ export function createDraftStore() {
     getOrder: () => get().order,
 
     validateAll: () => {
-      const s = get();
-      const payload = {
-        ...s.meta,
-        image_urls: recomputeOrder(s.byOrder).map(
-          (slot) => s.byOrder[slot]!.image_url,
-        ),
-      };
+      const store = get();
+      const info = { ...store.meta };
 
-      const r = validateEmoticonSet(payload);
-      if (!r.success) return { success: false, error: r.error };
+      const infoResult = validateEmoticonSet(info);
+      const imageArray = Object.values(store.byOrder).filter(Boolean);
+      const imageResult = validateImageUrls(imageArray);
+
+      if (!infoResult.success) {
+        return { success: false, error: infoResult.error };
+      }
+
+      if (!imageResult.success) {
+        return { success: false, error: imageResult.error };
+      }
+
       return { success: true };
     },
   }));

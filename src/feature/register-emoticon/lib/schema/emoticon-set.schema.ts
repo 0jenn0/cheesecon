@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
 export const imageUrlSchema = z.object({
-  image_url: z.string().startsWith('http', '올바른 URL 형식이 아니에요'),
+  id: z.string(),
+  image_url: z.string().startsWith('https', '올바른 URL 형식이 아니에요'),
   image_order: z
     .number()
     .int()
@@ -20,8 +21,7 @@ export const emoticonSetSchema = z.object({
     .string()
     .min(10, '설명은 10자 이상이어야 해요')
     .max(100, '설명은 300자 이하여야 해요'),
-  is_private: z.boolean(),
-  representative_i: imageUrlSchema,
+  is_private: z.boolean().nullable().default(null),
 });
 
 export const imageUrlsArraySchema = z.array(imageUrlSchema);

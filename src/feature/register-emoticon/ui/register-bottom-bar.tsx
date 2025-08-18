@@ -10,6 +10,7 @@ export function RegisterBottomBar() {
   const emoticonSetInfo = useDraft((store) => store.meta);
 
   const getAllImages = useDraft((store) => store.getAllImages);
+  const validateAll = useDraft((store) => store.validateAll);
 
   const allImages = getAllImages();
 
@@ -33,6 +34,7 @@ export function RegisterBottomBar() {
         textClassName='text-body-lg font-semibold'
         className='padding-32'
         type='submit'
+        disabled={!validateAll().success}
       >
         등록하기
       </Button>
