@@ -44,7 +44,7 @@ export default function EmoticonGridItem({
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [imageUrl, setImageUrl] = useState<string | null>(
-    imageInSlot?.image_url ?? null,
+    imageInSlot?.webp_url ?? null,
   );
 
   const isDraggable = !!imageInSlot && isDragMode;
@@ -135,7 +135,7 @@ export default function EmoticonGridItem({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'bg-primary relative flex aspect-square h-full w-full min-w-[120px] flex-col',
+        'bg-primary relative flex aspect-square h-full w-full min-w-[60px] flex-col',
         isDraggable && 'cursor-grab active:cursor-grabbing',
         className,
       )}
@@ -162,7 +162,7 @@ export default function EmoticonGridItem({
               </>
             )}
             <Image
-              src={imageInSlot?.image_url ?? imageUrl ?? ''}
+              src={imageInSlot?.webp_url ?? imageUrl ?? ''}
               alt='emoticon'
               width={120}
               height={120}
