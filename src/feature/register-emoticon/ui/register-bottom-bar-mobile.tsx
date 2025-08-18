@@ -1,5 +1,4 @@
 import { Button } from '@/shared/ui/input';
-import { useRegisterMutation } from '@/entity/emoticon-set/query/emoticon-set-mutation';
 
 const INITIAL_STEP = 0;
 

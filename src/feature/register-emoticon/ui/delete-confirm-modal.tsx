@@ -1,12 +1,12 @@
 import { Modal, useModal } from '@/shared/ui/feedback';
 import { Button } from '@/shared/ui/input';
-import { EmoticonItem } from './emoticon-section/provider/emotion-provider';
+import { EmoticonImageState } from '@/entity/emoticon-images/type/emoticon-image.type';
 
 export default function DeleteConfirmModal({
   items,
   handleEmoticonItem,
 }: {
-  items: EmoticonItem[];
+  items: EmoticonImageState[];
   handleEmoticonItem: (
     imageNumber: number,
     action: 'UPLOAD' | 'UNCHECK',
@@ -15,8 +15,8 @@ export default function DeleteConfirmModal({
 }) {
   const { closeModal } = useModal();
 
-  const checkedItems = items.filter((item) => item.isChecked);
-  const checkedItemsImageNumber = checkedItems.map((item) => item.imageNumber);
+  const checkedItems = items.filter((item) => item.is_representative);
+  const checkedItemsImageNumber = checkedItems.map((item) => item.image_order);
   const checkItemsCount = checkedItemsImageNumber.length;
 
   const handleDelete = () => {

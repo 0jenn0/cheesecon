@@ -12,14 +12,16 @@ export default function EmoticonInfoForm() {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
       metaErrors[name as keyof typeof metaErrors] = undefined;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setMetaField(name as any, value);
     },
-    [setMetaField],
+    [setMetaField, metaErrors],
   );
 
   const handleTextAreaChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       const { name, value } = e.target;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setMetaField(name as any, value);
     },
     [setMetaField],
@@ -36,6 +38,7 @@ export default function EmoticonInfoForm() {
             ? toTypeCode(value)
             : value;
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setMetaField(name as any, mapped);
     },
     [setMetaField],

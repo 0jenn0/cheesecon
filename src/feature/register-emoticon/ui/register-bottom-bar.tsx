@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { Button } from '@/shared/ui/input';
 import { useRegisterMutation } from '@/entity/emoticon-set/query/emoticon-set-mutation';
 import { useDraft } from '../model/draft-context';
@@ -22,7 +22,7 @@ export function RegisterBottomBar() {
         imageUrls: allImages,
       });
     },
-    [emoticonSetInfo, allImages],
+    [emoticonSetInfo, allImages, registerMutation],
   );
 
   return (

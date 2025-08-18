@@ -6,6 +6,9 @@ import { ApiResult } from '@/shared/types';
 import { ImageUploadResult, ImageUrlResult } from '../type';
 import { sanitizeFileName } from '../util';
 
+const MAX_FILE_SIZE_MB = 2;
+const MAX_FILE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+
 export async function uploadImageToBucket(
   formData: FormData,
 ): Promise<ApiResult<ImageUploadResult>> {
@@ -19,8 +22,6 @@ export async function uploadImageToBucket(
       };
     }
 
-    const MAX_FILE_SIZE_MB = 2;
-    const MAX_FILE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
     if (file.size > MAX_FILE_BYTES) {
       return {
         success: false,
@@ -33,6 +34,7 @@ export async function uploadImageToBucket(
 
     const bucketName = process.env.NEXT_PUBLIC_STORAGE_BUCKET;
     const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+
     if (!bucketName || !baseUrl) {
       return {
         success: false,
@@ -48,18 +50,32 @@ export async function uploadImageToBucket(
     const inputArrayBuffer = await file.arrayBuffer();
     const inputBuffer = Buffer.from(inputArrayBuffer);
 
-    const [webpBuffer, blurBase64] = await Promise.all([
-      sharp(inputBuffer).webp({ quality: 80 }).toBuffer(),
-      sharp(inputBuffer)
-        .resize(10, 10, { fit: 'inside' })
-        .flatten({ background: { r: 255, g: 255, b: 255, alpha: 0 } })
-        .png()
-        .blur(1)
-        .toBuffer()
-        .then((b) => `data:image/png;base64,${b.toString('base64')}`),
-    ]);
-
-    if (!webpBuffer || !blurBase64) {
+    let webpBuffer: Buffer;
+    let blurBase64: string;
+    try {
+      const [webpBufferData, blurBase64Data] = await Promise.all([
+        sharp(inputBuffer).webp({ quality: 80 }).toBuffer(),
+        sharp(inputBuffer)
+          .resize(10, 10, { fit: 'inside' })
+          .flatten({ background: { r: 255, g: 255, b: 255, alpha: 0 } })
+          .png()
+          .blur(1)
+          .toBuffer()
+          .then((b) => `data:image/png;base64,${b.toString('base64')}`),
+      ]);
+      if (!webpBufferData || !blurBase64Data) {
+        return {
+          success: false,
+          error: {
+            code: 'IMAGE_PROCESSING_ERROR',
+            message: '이미지 처리에 실패했어요.',
+          },
+        };
+      }
+      webpBuffer = webpBufferData;
+      blurBase64 = blurBase64Data;
+      console.log('image processing success');
+    } catch {
       return {
         success: false,
         error: {
@@ -96,7 +112,9 @@ export async function uploadImageToBucket(
 
     let webpPath = '';
     {
-      const blob = new Blob([webpBuffer], { type: 'image/webp' });
+      const blob = new Blob([new Uint8Array(webpBuffer)], {
+        type: 'image/webp',
+      });
       const { data, error } = await supabase.storage
         .from(bucketName)
         .upload(webpName, blob, { upsert: true, contentType: 'image/webp' });

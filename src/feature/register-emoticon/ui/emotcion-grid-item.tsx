@@ -1,13 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import {
-  ComponentPropsWithRef,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { ComponentPropsWithRef, useCallback, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
@@ -21,7 +15,6 @@ const MAX_SIZE = 2; // 2mb
 
 interface EmoticonGridItemProps extends ComponentPropsWithRef<'div'> {
   imageOrder: number;
-  isUploading?: boolean;
   isDragMode?: boolean;
   showCheckbox?: boolean;
   showGrip?: boolean;
@@ -31,7 +24,6 @@ interface EmoticonGridItemProps extends ComponentPropsWithRef<'div'> {
 
 export default function EmoticonGridItem({
   imageOrder,
-  isUploading,
   className,
   isDragMode = false,
   showCheckbox = false,
@@ -92,7 +84,7 @@ export default function EmoticonGridItem({
             blur_url: result.data.blurUrl ?? '',
             webp_url: result.data.webpUrl ?? '',
             is_representative: false,
-          } as any,
+          },
         ]);
         setImageUrl(result.data.webpUrl ?? result.data.url ?? null);
       }

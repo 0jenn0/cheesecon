@@ -55,7 +55,7 @@ export default function ImageDropzone({
         }
       }
     },
-    [uploadImageMutation],
+    [uploadImageMutation, addImages],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

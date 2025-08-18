@@ -20,6 +20,7 @@ export const validateEmoticonSetField = (field: string, value: unknown) => {
         safeParse: (value: unknown) => {
           success: boolean;
           data?: unknown;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           error?: any;
         };
       }

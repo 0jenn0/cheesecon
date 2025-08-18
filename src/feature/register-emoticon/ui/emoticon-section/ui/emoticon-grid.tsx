@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback } from 'react';
 import {
   EMOTICON_CONFIG,
   EmoticonPlatform,

@@ -1,7 +1,4 @@
-import {
-  getNewEmoticonSetsCached,
-  getPopularEmoticonSetsCached,
-} from '@/entity/emoticon-set/model/main-cache';
+import { getNewEmoticonSetsCached } from '@/entity/emoticon-set/model/main-cache';
 import {
   EmoticonViewSectionClient,
   EmoticonViewSectionServer,

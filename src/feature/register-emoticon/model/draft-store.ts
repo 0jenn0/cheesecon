@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createStore } from 'zustand/vanilla';
 import { EmoticonImageState } from '@/entity/emoticon-images/type/emoticon-image.type';
 import { CreateEmoticonSetForm } from '@/entity/emoticon-set';

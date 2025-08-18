@@ -13,7 +13,7 @@ export default function SecretCheckForm() {
       const { checked } = e.target;
       updateMeta({ is_private: checked });
     },
-    [],
+    [updateMeta],
   );
 
   return (
