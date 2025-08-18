@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback, useState } from 'react';
 import {
   EmoticonGrid,
   MultiSelectButton,
@@ -8,6 +9,12 @@ import {
 } from './ui';
 
 export default function EmoticonSection() {
+  const [isOrderChangeMode, setIsOrderChangeMode] = useState(false);
+
+  const toggleOrderChangeMode = useCallback(() => {
+    setIsOrderChangeMode((prev) => !prev);
+  }, []);
+
   return (
     <section className='tablet:border-radius-xl tablet: tablet:padding-24 tablet:bg-white tablet:border-radius-2xl flex w-full flex-col gap-24'>
       <div className='tablet:flex-row tablet:justify-between tablet:items-center flex w-full flex-col gap-16'>
@@ -16,7 +23,10 @@ export default function EmoticonSection() {
           <MultiUploadButton />
         </div>
         <div className='tablet:justify-normal tablet:gap-24 tablet:w-fit flex w-full justify-between gap-[48px]'>
-          <OrderChangeButton />
+          <OrderChangeButton
+            isOrderChangeMode={isOrderChangeMode}
+            toggleOrderChangeMode={toggleOrderChangeMode}
+          />
           <MultiSelectButton />
           <div className='tablet:block hidden'>
             <MultiUploadButton />
@@ -26,7 +36,7 @@ export default function EmoticonSection() {
 
       <div className='border-ghost border-b' />
 
-      <EmoticonGrid />
+      <EmoticonGrid isOrderChangeMode={isOrderChangeMode} />
     </section>
   );
 }

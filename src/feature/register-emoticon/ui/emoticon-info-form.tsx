@@ -2,11 +2,15 @@
 
 import { useCallback } from 'react';
 import { SelectField, TextAreaField, TextField } from '@/shared/ui/input';
+import { useDraft } from '../model/draft-context';
 
 export default function EmoticonInfoForm() {
+  const updateMeta = useDraft((store) => store.updateMeta);
+
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
+      updateMeta({ [name]: value });
     },
     [],
   );
@@ -14,6 +18,7 @@ export default function EmoticonInfoForm() {
   const handleTextAreaChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       const { name, value } = e.target;
+      updateMeta({ [name]: value });
     },
     [],
   );
@@ -32,6 +37,8 @@ export default function EmoticonInfoForm() {
               ? 'animated'
               : 'static'
             : value;
+
+      updateMeta({ [name]: mapped });
     },
     [],
   );

@@ -4,9 +4,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import ProgressBar from '@/shared/ui/feedback/progress-bar/progress-bar';
 import { useToast } from '@/shared/ui/feedback/toast/toast-provider';
 import { Button } from '@/shared/ui/input';
+import { useDraft } from '@/feature/register-emoticon/model/draft-context';
 import { useUploadImageToBucketMutation } from '@/feature/upload-image/model/upload-image-mutation';
 
 export default function MultiUploadButton() {
+  const addImages = useDraft((store) => store.addImages);
   const [isUploading, setIsUploading] = useState(false);
   const [currentUploadCount, setCurrentUploadCount] = useState({
     current: 0,
@@ -27,10 +29,14 @@ export default function MultiUploadButton() {
   const handleFileUpload = useCallback(
     async (files: File[]) => {
       if (files.length === 0) {
-        console.log('No files to upload');
+        addToast({
+          type: 'error',
+          message: '파일을 선택해주세요.',
+        });
         return;
       }
 
+      // FIXME : 선택된 type에 따라 수정
       const filesToUpload = files.slice(0, 32);
 
       if (filesToUpload.length < files.length) {
@@ -54,7 +60,16 @@ export default function MultiUploadButton() {
         const result = await uploadImageMutation.mutateAsync(formData);
 
         if (result.success) {
-          const { url, blurUrl, webpUrl } = result.data;
+          addImages([
+            {
+              id: crypto.randomUUID(),
+              image_url: result.data.url,
+              image_order: index + 1,
+              blur_url: result.data.blurUrl ?? null,
+              webp_url: result.data.webpUrl ?? null,
+              is_representative: false,
+            },
+          ]);
 
           setCurrentUploadCount((prev) => ({
             current: prev.current + 1,
@@ -69,7 +84,6 @@ export default function MultiUploadButton() {
       setIsUploading(false);
       setCurrentUploadCount({ current: 0, total: 0 });
 
-      // input 초기화
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }

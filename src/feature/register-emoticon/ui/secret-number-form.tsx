@@ -1,11 +1,29 @@
+'use client';
+
+import { useCallback } from 'react';
 import { Icon } from '@/shared/ui/display';
 import { Checkbox } from '@/shared/ui/input';
+import { useDraft } from '../model/draft-context';
 
 export default function SecretCheckForm() {
+  const updateMeta = useDraft((store) => store.updateMeta);
+  const isPrivate = useDraft((store) => store.meta.is_private);
+  const handleCheckboxChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { checked } = e.target;
+      updateMeta({ is_private: checked });
+    },
+    [],
+  );
+
   return (
     <div className='flex w-full flex-col gap-12'>
       <div className='flex w-full items-center gap-12'>
-        <Checkbox id='secretNumberCheck' />
+        <Checkbox
+          id='secretNumberCheck'
+          status={isPrivate ? 'checked' : 'unchecked'}
+          onChange={handleCheckboxChange}
+        />
         <div className='flex items-center gap-4'>
           <label
             className='text-body-lg cursor-pointer font-semibold select-none'

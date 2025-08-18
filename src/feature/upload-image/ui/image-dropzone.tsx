@@ -7,6 +7,7 @@ import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
 import { Spinner } from '@/shared/ui/feedback';
 import { Button } from '@/shared/ui/input';
+import { useDraft } from '@/feature/register-emoticon/model/draft-context';
 import { useUploadImageToBucketMutation } from '../model/upload-image-mutation';
 
 export interface ImageDropzoneProps extends ComponentPropsWithRef<'div'> {
@@ -15,12 +16,16 @@ export interface ImageDropzoneProps extends ComponentPropsWithRef<'div'> {
 }
 
 export default function ImageDropzone({
-  maxSize = 5, // MB 단위
+  maxSize = 2, // MB 단위
   disabled = false,
   className,
   ...props
 }: ImageDropzoneProps) {
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const addImages = useDraft((store) => store.addImages);
+  const imageStoreValue = useDraft((store) => store.representativeImage);
+  const [imageUrl, setImageUrl] = useState<string | null>(
+    imageStoreValue?.webp_url ?? null,
+  );
   const uploadImageMutation = useUploadImageToBucketMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -36,7 +41,16 @@ export default function ImageDropzone({
         const result = await uploadImageMutation.mutateAsync(formData);
         if (result.success) {
           setImageUrl(result.data.url);
-
+          addImages([
+            {
+              id: crypto.randomUUID(),
+              image_url: result.data.url,
+              image_order: 0,
+              blur_url: result.data.blurUrl ?? null,
+              webp_url: result.data.webpUrl ?? null,
+              is_representative: true,
+            },
+          ]);
           return;
         }
       }
@@ -108,7 +122,7 @@ export default function ImageDropzone({
       )}
 
       {imageUrl && !isLoading && (
-        <div className='group/image border-radius-xl bg-primary border-ghost effect-shadow-4 relative flex aspect-square h-auto w-full items-center justify-center overflow-hidden'>
+        <div className='group/image border-radius-xl border-ghost effect-shadow-4 tablet:w-full tablet:h-auto bg-primary relative flex aspect-square h-full w-auto items-center justify-center overflow-hidden'>
           <Image
             width={240}
             height={240}

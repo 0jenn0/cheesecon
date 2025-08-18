@@ -24,6 +24,7 @@ interface EmoticonGridItemProps extends ComponentPropsWithRef<'div'> {
   isUploading?: boolean;
   isDragMode?: boolean;
   showCheckbox?: boolean;
+  showGrip?: boolean;
   onCheckboxChange?: (checked: boolean) => void;
 }
 

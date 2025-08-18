@@ -1,26 +1,63 @@
-import { useCallback } from 'react';
-import { DndContext, DragEndEvent } from '@dnd-kit/core';
-import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
-import EmoticonGridItem from '../../grid-item';
+'use client';
 
-export default function EmoticonGrid() {
-  const handleDragEnd = useCallback((event: DragEndEvent) => {
-    const { active, over } = event;
-    if (over) {
-    }
-  }, []);
+import { useCallback, useMemo } from 'react';
+import { useDraft } from '@/feature/register-emoticon/model/draft-context';
+import {
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
+import EmoticonGridItem from '../../emotcion-grid-item';
+
+const EMOTICON_COUNT = 2;
+
+export default function EmoticonGrid({
+  isOrderChangeMode,
+}: {
+  isOrderChangeMode: boolean;
+}) {
+  const reorder = useDraft((store) => store.reorder);
+
+  const allSlots = useMemo(
+    () => Array.from({ length: EMOTICON_COUNT }, (_, i) => i + 1),
+    [],
+  );
+
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 120, tolerance: 8 },
+    }),
+    useSensor(KeyboardSensor),
+  );
+
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+      if (!over) return;
+      const fromSlot = Number(active.id);
+      const toSlot = Number(over.id);
+      if (fromSlot === toSlot) return;
+      reorder(fromSlot, toSlot);
+    },
+    [reorder],
+  );
+
   return (
-    <DndContext onDragEnd={handleDragEnd}>
-      <SortableContext
-        items={Array.from({ length: 32 }, (_, index) => index)}
-        strategy={rectSortingStrategy}
-      >
+    <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
+      <SortableContext items={allSlots} strategy={rectSortingStrategy}>
         <div className='tablet:grid-cols-6 grid grid-cols-4 gap-16'>
-          {Array.from({ length: 24 }, (_, index) => (
+          {allSlots.map((slot, index) => (
             <EmoticonGridItem
-              key={index}
-              imageNumber={index + 1}
-              image={undefined}
+              key={slot}
+              imageOrder={index + 1}
+              showGrip={isOrderChangeMode}
+              isDragMode={isOrderChangeMode}
             />
           ))}
         </div>
