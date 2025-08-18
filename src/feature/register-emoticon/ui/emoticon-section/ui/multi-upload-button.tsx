@@ -36,13 +36,12 @@ export default function MultiUploadButton() {
         return;
       }
 
-      // FIXME : 선택된 type에 따라 수정
-      const filesToUpload = files.slice(0, 32);
+      const filesToUpload = files.slice(0, 6);
 
       if (filesToUpload.length < files.length) {
         addToast({
           type: 'error',
-          message: `최대 32개의 이모티콘만 업로드 가능합니다. ${filesToUpload.length}개 파일만 업로드됩니다.`,
+          message: `한번에 최대 6개의 이모티콘만 업로드 가능합니다. ${filesToUpload.length}개 파일만 업로드됩니다.`,
         });
       }
 
