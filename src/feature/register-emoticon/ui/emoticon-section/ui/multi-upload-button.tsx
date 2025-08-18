@@ -1,9 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import ProgressBar from '@/shared/ui/feedback/progress-bar/progress-bar';
+import { useCallback, useMemo, useRef } from 'react';
 import { useToast } from '@/shared/ui/feedback/toast/toast-provider';
 import { Button } from '@/shared/ui/input';
+import { useProgressStore } from '@/shared/ui/navigation/global-navigation-bar/model/progress-context';
 import { useDraft } from '@/feature/register-emoticon/model/draft-context';
 import { useUploadImageToBucketMutation } from '@/feature/upload-image/model/upload-image-mutation';
 
