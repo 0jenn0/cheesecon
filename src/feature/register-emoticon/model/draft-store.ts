@@ -2,6 +2,11 @@ import { createStore } from 'zustand/vanilla';
 import { EmoticonImageState } from '@/entity/emoticon-images/type/emoticon-image.type';
 import { CreateEmoticonSetForm } from '@/entity/emoticon-set';
 import {
+  EMOTICON_CONFIG,
+  EmoticonPlatform,
+  EmoticonType,
+} from '../config/emoticon-config';
+import {
   validateEmoticonSet,
   validateEmoticonSetField,
   validateImageUrlItem,
@@ -212,16 +217,12 @@ export function createDraftStore() {
         const byOrder = { ...store.byOrder };
         const imageErrors = { ...store.imageErrors };
 
-        // byId에서 제거
         delete byId[id];
 
-        // byOrder에서 제거
         byOrder[target.image_order] = undefined;
 
-        // 에러 정보 제거
         if (imageErrors[id]) delete imageErrors[id];
 
-        // files에서 제거
         files.delete(id);
 
         return {
@@ -242,16 +243,12 @@ export function createDraftStore() {
         const dst = byOrder[toSlot];
         if (!src) return store;
 
-        // 기존 위치에서 제거
         byOrder[fromSlot] = undefined;
 
-        // 새 위치에 배치
         byOrder[toSlot] = { ...src, image_order: toSlot };
         byId[src.id] = byOrder[toSlot]!;
 
-        // 기존에 있던 이미지가 있다면 다른 위치로 이동
         if (dst) {
-          // dst를 fromSlot으로 이동
           byOrder[fromSlot] = { ...dst, image_order: fromSlot };
           byId[dst.id] = byOrder[fromSlot]!;
         }
@@ -318,6 +315,15 @@ export function createDraftStore() {
       if (!imageResult.success) {
         return { success: false, error: imageResult.error };
       }
+
+      if (
+        imageArray.length !==
+        EMOTICON_CONFIG[store.meta.platform as EmoticonPlatform][
+          store.meta.type as EmoticonType
+        ].count +
+          1 // 대표 이모티콘 1개
+      )
+        return { success: false, error: '이모티콘 개수가 일치하지 않습니다.' };
 
       return { success: true };
     },
