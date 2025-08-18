@@ -1,14 +1,18 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ProgressBar from '@/shared/ui/feedback/progress-bar/progress-bar';
 import { useToast } from '@/shared/ui/feedback/toast/toast-provider';
 import { Button } from '@/shared/ui/input';
 import { useDraft } from '@/feature/register-emoticon/model/draft-context';
 import { useUploadImageToBucketMutation } from '@/feature/upload-image/model/upload-image-mutation';
 
+const MAX_UPLOAD_COUNT = 6;
+
 export default function MultiUploadButton() {
   const addImages = useDraft((store) => store.addImages);
+  const order = useDraft((store) => store.order);
+  const currentImageCount = useMemo(() => order.length, [order]);
   const [isUploading, setIsUploading] = useState(false);
   const [currentUploadCount, setCurrentUploadCount] = useState({
     current: 0,
@@ -36,12 +40,12 @@ export default function MultiUploadButton() {
         return;
       }
 
-      const filesToUpload = files.slice(0, 6);
+      const filesToUpload = files.slice(0, MAX_UPLOAD_COUNT);
 
       if (filesToUpload.length < files.length) {
         addToast({
           type: 'error',
-          message: `한번에 최대 6개의 이모티콘만 업로드 가능합니다. ${filesToUpload.length}개 파일만 업로드됩니다.`,
+          message: `한번에 최대 ${MAX_UPLOAD_COUNT}개의 이모티콘만 업로드 가능합니다. ${filesToUpload.length}개 파일만 업로드됩니다.`,
         });
       }
 
@@ -63,7 +67,7 @@ export default function MultiUploadButton() {
             {
               id: crypto.randomUUID(),
               image_url: result.data.url,
-              image_order: index + 1,
+              image_order: currentImageCount + index + 1,
               blur_url: result.data.blurUrl ?? null,
               webp_url: result.data.webpUrl ?? null,
               is_representative: false,
@@ -75,8 +79,8 @@ export default function MultiUploadButton() {
             total: prev.total,
           }));
         } else {
-          setIsUploading(false);
-          setCurrentUploadCount({ current: 0, total: 0 });
+          console.error('업로드 실패', result.error);
+          break;
         }
       }
 
@@ -148,7 +152,6 @@ export default function MultiUploadButton() {
           textClassName='text-body-sm font-semibold '
           className='tablet:w-fit tablet:hidden w-full'
           leadingIcon='image-plus'
-          onClick={handleButtonClick}
           disabled={true}
         >
           PC 사용시 다중 업로드 가능
