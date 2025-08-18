@@ -1,9 +1,14 @@
 'use client';
 
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { useToast } from '@/shared/ui/feedback/toast/toast-provider';
 import { Button } from '@/shared/ui/input';
 import { useProgressStore } from '@/shared/ui/navigation/global-navigation-bar/model/progress-context';
+import {
+  EMOTICON_CONFIG,
+  EmoticonPlatform,
+  EmoticonType,
+} from '@/feature/register-emoticon/config/emoticon-config';
 import { useDraft } from '@/feature/register-emoticon/model/draft-context';
 import { useUploadImageToBucketMutation } from '@/feature/upload-image/model/upload-image-mutation';
 
@@ -11,8 +16,13 @@ const MAX_UPLOAD_COUNT = 6;
 
 export default function MultiUploadButton() {
   const addImages = useDraft((store) => store.addImages);
-  const order = useDraft((store) => store.order);
-  const currentImageCount = useMemo(() => order.length, [order]);
+  const uploadedCount = useDraft((store) => store.uploadedCount);
+  const meta = useDraft((store) => store.meta);
+  const { type, platform } = meta;
+  const totalEmoticonCount =
+    EMOTICON_CONFIG[(platform as EmoticonPlatform) ?? 'kakaotalk'][
+      (type as EmoticonType) ?? 'animated'
+    ].count;
 
   const uploadImageMutation = useUploadImageToBucketMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -46,6 +56,14 @@ export default function MultiUploadButton() {
         });
       }
 
+      if (uploadedCount + filesToUpload.length > totalEmoticonCount) {
+        addToast({
+          type: 'error',
+          message: `현재 최대 ${totalEmoticonCount - uploadedCount}개의 이모티콘만 업로드 가능합니다.`,
+        });
+        return;
+      }
+
       setCurrentUploadCount(0);
       setIsUploading(true);
 
@@ -61,7 +79,7 @@ export default function MultiUploadButton() {
             {
               id: crypto.randomUUID(),
               image_url: result.data.url,
-              image_order: currentImageCount + index + 1,
+              image_order: uploadedCount + index + 1,
               blur_url: result.data.blurUrl ?? null,
               webp_url: result.data.webpUrl ?? null,
               is_representative: false,
@@ -70,7 +88,10 @@ export default function MultiUploadButton() {
 
           setCurrentUploadCount(currentUploadCount + 1);
         } else {
-          console.error('업로드 실패', result.error);
+          addToast({
+            type: 'error',
+            message: '이미지 업로드에 실패했어요. 다시 시도해주세요.',
+          });
           break;
         }
       }
@@ -83,7 +104,7 @@ export default function MultiUploadButton() {
         fileInputRef.current.value = '';
       }
     },
-    [uploadImageMutation, addToast, addImages, currentImageCount],
+    [uploadImageMutation, addToast, addImages, uploadedCount],
   );
 
   const handleButtonClick = useCallback(() => {

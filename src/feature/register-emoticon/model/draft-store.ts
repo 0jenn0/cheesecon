@@ -23,6 +23,8 @@ export type DraftMeta = CreateEmoticonSetForm;
 
 type State = {
   order: number[];
+  representativeImage: EmoticonImageState | null;
+  uploadedCount: number;
   byId: Record<string, EmoticonImageState>;
   byOrder: Record<number, EmoticonImageState | undefined>;
   meta: DraftMeta;
@@ -50,9 +52,14 @@ type Actions = {
     rejected: Array<{ id: string; errors: string[] }>;
   };
 
+  addRepresentativeImage: (file: EmoticonImageState) => {
+    success: boolean;
+    accepted: string[];
+    rejected: Array<{ id: string; errors: string[] }>;
+  };
+
   removeImage: (id: string) => void;
   reorder: (fromSlot: number, toSlot: number) => void;
-  setRepresentativeImage: (id: string) => void;
   updateMeta: (patch: Partial<DraftMeta>) => void;
   setStatus: (id: string, status: ImageMeta['status'], msg?: string) => void;
   getFile: (id: string) => EmoticonImageState | undefined;
@@ -64,14 +71,7 @@ type Actions = {
 
 export type DraftStore = State & Actions;
 
-const EMPTY_REPRESENTATIVE_IMAGE: EmoticonImageState = {
-  id: '',
-  image_url: '',
-  blur_url: '',
-  webp_url: '',
-  image_order: 0,
-  is_representative: true,
-};
+const EMPTY_REPRESENTATIVE_IMAGE: EmoticonImageState | null = null;
 
 function recomputeOrder(
   byOrder: Record<number, EmoticonImageState | undefined>,
@@ -96,6 +96,7 @@ export function createDraftStore() {
 
   return createStore<DraftStore>()((set, get) => ({
     order: [],
+    uploadedCount: 0,
     representativeImage: EMPTY_REPRESENTATIVE_IMAGE,
     byId: {},
     byOrder: {},
@@ -157,6 +158,7 @@ export function createDraftStore() {
           ...store.byOrder,
         };
         const imageErrors = { ...store.imageErrors };
+        let uploadedCount = store.uploadedCount;
 
         for (const image of arr) {
           const item: EmoticonImageState = {
@@ -165,7 +167,7 @@ export function createDraftStore() {
             blur_url: image.blur_url ?? '',
             webp_url: image.webp_url ?? '',
             image_order: image.image_order,
-            is_representative: image.is_representative ?? false,
+            is_representative: false,
           };
 
           const errs = validateImageUrlsOf(item);
@@ -190,6 +192,8 @@ export function createDraftStore() {
             }
           }
 
+          uploadedCount++;
+
           files.set(item.id, item);
           byId[item.id] = item;
           byOrder[item.image_order] = item;
@@ -200,8 +204,8 @@ export function createDraftStore() {
         return {
           byId,
           byOrder,
+          uploadedCount,
           order: recomputeOrder(byOrder),
-          representativeImage: EMPTY_REPRESENTATIVE_IMAGE,
           imageErrors,
         };
       });
@@ -209,7 +213,38 @@ export function createDraftStore() {
       return { success: rejected.length === 0, accepted, rejected };
     },
 
+    addRepresentativeImage: (item) => {
+      const accepted: string[] = [];
+      const rejected: Array<{ id: string; errors: string[] }> = [];
+
+      set((store) => {
+        const byId = { ...store.byId, [item.id]: item };
+        const byOrder = { ...store.byOrder, [item.image_order]: item };
+        const imageErrors = { ...store.imageErrors };
+        const representativeImage = { ...store.representativeImage, ...item };
+
+        const errs = validateImageUrlsOf(item);
+
+        if (errs.length > 0) {
+          rejected.push({ id: item.id, errors: errs });
+          imageErrors[item.id] = errs;
+        }
+
+        accepted.push(item.id);
+
+        return {
+          byId,
+          byOrder,
+          representativeImage,
+          imageErrors,
+        };
+      });
+
+      return { success: rejected.length === 0, accepted: [item.id], rejected };
+    },
+
     removeImage: (id) => {
+      const uploadCount = get().uploadedCount - 1;
       set((store) => {
         const target = store.byId[id];
         if (!target) return store;
@@ -229,6 +264,7 @@ export function createDraftStore() {
         return {
           byId,
           byOrder,
+          uploadedCount: uploadCount,
           order: recomputeOrder(byOrder),
           imageErrors,
         };
@@ -253,27 +289,12 @@ export function createDraftStore() {
           byOrder[fromSlot] = { ...dst, image_order: fromSlot };
           byId[dst.id] = byOrder[fromSlot]!;
         }
+        console.log('byOrder!!!!!!', byOrder);
 
         return {
           byOrder,
           byId,
           order: recomputeOrder(byOrder),
-        };
-      });
-    },
-
-    setRepresentativeImage: (id) => {
-      set((store) => {
-        if (!store.byId[id]) return store;
-
-        const byId: Record<string, EmoticonImageState> = {};
-        for (const [k, v] of Object.entries(store.byId)) {
-          byId[k] = { ...v, is_representative: k === id };
-        }
-
-        return {
-          byId,
-          representativeImage: byId[id],
         };
       });
     },

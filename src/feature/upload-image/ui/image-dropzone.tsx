@@ -21,11 +21,11 @@ export default function ImageDropzone({
   className,
   ...props
 }: ImageDropzoneProps) {
-  const addImages = useDraft((store) => store.addImages);
-  const imageInSlot = useDraft((store) => store.byOrder[0]);
-  const [imageUrl, setImageUrl] = useState<string | null>(
-    imageInSlot?.webp_url ?? imageInSlot?.image_url ?? null,
+  const addRepresentativeImage = useDraft(
+    (store) => store.addRepresentativeImage,
   );
+  const imageInSlot = useDraft((store) => store.byOrder[0]);
+  const representativeImage = useDraft((store) => store.representativeImage);
   const uploadImageMutation = useUploadImageToBucketMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -40,22 +40,19 @@ export default function ImageDropzone({
 
         const result = await uploadImageMutation.mutateAsync(formData);
         if (result.success) {
-          setImageUrl(result.data.webpUrl ?? result.data.url ?? null);
-          addImages([
-            {
-              id: crypto.randomUUID(),
-              image_url: result.data.url,
-              image_order: 0,
-              blur_url: result.data.blurUrl ?? null,
-              webp_url: result.data.webpUrl ?? null,
-              is_representative: true,
-            },
-          ]);
+          addRepresentativeImage({
+            id: crypto.randomUUID(),
+            image_url: result.data.url,
+            image_order: 0,
+            blur_url: result.data.blurUrl ?? null,
+            webp_url: result.data.webpUrl ?? null,
+            is_representative: true,
+          });
           return;
         }
       }
     },
-    [uploadImageMutation, addImages],
+    [uploadImageMutation, addRepresentativeImage],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -121,27 +118,33 @@ export default function ImageDropzone({
         </div>
       )}
 
-      {imageUrl && !isLoading && (
-        <div className='group/image border-radius-xl border-ghost effect-shadow-4 bg-primary tablet:h-auto tablet:w-full relative flex aspect-square h-full w-auto items-center justify-center overflow-hidden'>
-          <Image
-            width={240}
-            height={240}
-            src={imageInSlot?.webp_url ?? imageUrl ?? ''}
-            alt='Uploaded preview'
-            className='h-auto w-full object-cover transition-transform duration-300'
-          />
+      {representativeImage &&
+        (representativeImage.image_url || representativeImage.webp_url) &&
+        !isLoading && (
+          <div className='group/image border-radius-xl border-ghost effect-shadow-4 bg-primary tablet:h-auto tablet:w-full relative flex aspect-square h-full w-auto items-center justify-center overflow-hidden'>
+            <Image
+              width={240}
+              height={240}
+              src={
+                representativeImage?.webp_url ??
+                representativeImage.image_url ??
+                ''
+              }
+              alt='Uploaded preview'
+              className='h-auto w-full object-cover transition-transform duration-300'
+            />
 
-          <div className='absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 transition-opacity duration-300 group-hover/image:opacity-100'>
-            <div className='flex flex-col gap-12 text-center text-white'>
-              <Icon name='edit' className='mx-auto' size={24} />
-              <p className='text-body-md font-medium'>클릭하여 수정</p>
-              <p className='text-body-md opacity-90'>새 이미지로 교체</p>
+            <div className='absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 transition-opacity duration-300 group-hover/image:opacity-100'>
+              <div className='flex flex-col gap-12 text-center text-white'>
+                <Icon name='edit' className='mx-auto' size={24} />
+                <p className='text-body-md font-medium'>클릭하여 수정</p>
+                <p className='text-body-md opacity-90'>새 이미지로 교체</p>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {!imageUrl && !isLoading && (
+      {!representativeImage && !isLoading && (
         <div className='padding-24 border-radius-xl bg-primary flex aspect-square h-full w-full flex-col items-center justify-center gap-12 text-center'>
           <div
             className={cn(
