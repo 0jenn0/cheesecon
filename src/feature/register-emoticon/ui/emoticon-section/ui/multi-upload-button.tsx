@@ -13,22 +13,19 @@ export default function MultiUploadButton() {
   const addImages = useDraft((store) => store.addImages);
   const order = useDraft((store) => store.order);
   const currentImageCount = useMemo(() => order.length, [order]);
-  const [isUploading, setIsUploading] = useState(false);
-  const [currentUploadCount, setCurrentUploadCount] = useState({
-    current: 0,
-    total: 0,
-  });
-  const [headerHeight, setHeaderHeight] = useState<number | undefined>(
-    undefined,
-  );
+
   const uploadImageMutation = useUploadImageToBucketMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { addToast } = useToast();
 
-  useEffect(() => {
-    const headerElement = window.document.querySelector('header');
-    setHeaderHeight(headerElement?.clientHeight);
-  }, []);
+  const {
+    isUploading,
+    currentUploadCount,
+    totalUploadCount,
+    setCurrentUploadCount,
+    setIsUploading,
+    setTotalUploadCount,
+  } = useProgressStore();
 
   const handleFileUpload = useCallback(
     async (files: File[]) => {
@@ -49,10 +46,7 @@ export default function MultiUploadButton() {
         });
       }
 
-      setCurrentUploadCount({
-        current: 0,
-        total: filesToUpload.length,
-      });
+      setCurrentUploadCount(0);
       setIsUploading(true);
 
       for (const [index, file] of filesToUpload.entries()) {
@@ -74,10 +68,7 @@ export default function MultiUploadButton() {
             },
           ]);
 
-          setCurrentUploadCount((prev) => ({
-            current: prev.current + 1,
-            total: prev.total,
-          }));
+          setCurrentUploadCount(currentUploadCount + 1);
         } else {
           console.error('업로드 실패', result.error);
           break;
@@ -85,7 +76,8 @@ export default function MultiUploadButton() {
       }
 
       setIsUploading(false);
-      setCurrentUploadCount({ current: 0, total: 0 });
+      setCurrentUploadCount(0);
+      setTotalUploadCount(0);
 
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
@@ -112,18 +104,7 @@ export default function MultiUploadButton() {
   );
 
   return (
-    <div className='relative'>
-      {isUploading && (
-        <ProgressBar
-          className='fixed left-0 z-50 w-full'
-          style={{
-            top: headerHeight ? `${headerHeight}px` : '56px',
-          }}
-          current={currentUploadCount.current}
-          total={currentUploadCount.total}
-        />
-      )}
-
+    <div>
       <input
         ref={fileInputRef}
         type='file'
@@ -144,7 +125,7 @@ export default function MultiUploadButton() {
           disabled={isUploading}
         >
           {isUploading
-            ? `업로드 중 (${currentUploadCount.current}/${currentUploadCount.total})`
+            ? `업로드 중 (${currentUploadCount}/${totalUploadCount})`
             : `다중 업로드`}
         </Button>
         <Button
