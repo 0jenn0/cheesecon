@@ -24,7 +24,7 @@ export default function ImageDropzone({
   const addImages = useDraft((store) => store.addImages);
   const imageInSlot = useDraft((store) => store.byOrder[0]);
   const [imageUrl, setImageUrl] = useState<string | null>(
-    imageInSlot?.webp_url ?? null,
+    imageInSlot?.webp_url ?? imageInSlot?.image_url ?? null,
   );
   const uploadImageMutation = useUploadImageToBucketMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
