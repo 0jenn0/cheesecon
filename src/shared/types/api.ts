@@ -34,4 +34,5 @@ export type ImageUrlWithOrder = {
   imageOrder: number;
   blurUrl?: string | null;
   webpUrl?: string | null;
+  isRepresentative?: boolean;
 };

@@ -1,9 +1,5 @@
-import {
-  ApiResult,
-  BaseApiRequest,
-  BaseApiResponse,
-  ImageUrlWithOrder,
-} from '@/shared/types';
+import { ApiResult, BaseApiRequest, BaseApiResponse } from '@/shared/types';
+import { EmoticonImageState } from '@/entity/emoticon-images/type/emoticon-image.type';
 import { Tables } from '@/types/types_db';
 import {
   EmoticonSet,
@@ -13,7 +9,7 @@ import {
 
 export type CreateEmoticonSetRequest = {
   emoticonSet: CreateEmoticonSetForm;
-  imageUrls: ImageUrlWithOrder[];
+  imageUrls: EmoticonImageState[];
 };
 
 export type GetEmoticonSetsRequest = BaseApiRequest & {
@@ -35,9 +31,4 @@ export type GetEmoticonSetsWithRepresentativeImageResult = ApiResult<
 export type CreateEmoticonSetForm = Pick<
   EmoticonSet,
   'title' | 'author_name' | 'description' | 'platform' | 'type' | 'is_private'
-> & {
-  representative_image: Pick<
-    Tables<'emoticon_images'>,
-    'image_url' | 'blur_url' | 'image_order' | 'is_representative' | 'webp_url'
-  >;
-};
+>;
