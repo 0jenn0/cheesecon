@@ -25,7 +25,9 @@ export default async function PopularPage() {
       </div>
       <div className='border-ghost w-full border-b' />
       <EmoticonViewSectionServer initial={flattenedData} />
-      <EmoticonViewSectionClient limit={LIMIT} offset={LIMIT} />
+      {flattenedData.length > LIMIT && (
+        <EmoticonViewSectionClient limit={LIMIT} offset={LIMIT} />
+      )}
     </section>
   );
 }

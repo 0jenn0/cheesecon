@@ -23,7 +23,9 @@ export default async function ActivityPage() {
       </div>
       <div className='border-ghost w-full border-b' />
       <ProfileViewSectionServer initial={flattenedData} />
-      <ProfileViewSectionClient offset={LIMIT} />
+      {flattenedData.length > LIMIT && (
+        <ProfileViewSectionClient offset={LIMIT} />
+      )}
     </section>
   );
 }
