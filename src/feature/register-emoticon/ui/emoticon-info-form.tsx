@@ -5,22 +5,24 @@ import { SelectField, TextAreaField, TextField } from '@/shared/ui/input';
 import { useDraft } from '../model/draft-context';
 
 export default function EmoticonInfoForm() {
-  const updateMeta = useDraft((store) => store.updateMeta);
+  const metaErrors = useDraft((s) => s.metaErrors);
+  const setMetaField = useDraft((s) => s.setMetaField);
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
-      updateMeta({ [name]: value });
+      metaErrors[name as keyof typeof metaErrors] = undefined;
+      setMetaField(name as any, value);
     },
-    [],
+    [setMetaField],
   );
 
   const handleTextAreaChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       const { name, value } = e.target;
-      updateMeta({ [name]: value });
+      setMetaField(name as any, value);
     },
-    [],
+    [setMetaField],
   );
 
   const handleSelectChange = useCallback(
@@ -29,18 +31,14 @@ export default function EmoticonInfoForm() {
 
       const mapped =
         name === 'platform'
-          ? value === '카카오톡'
-            ? 'kakaotalk'
-            : 'line'
+          ? toPlatformCode(value)
           : name === 'type'
-            ? value === '움직이는 이모티콘'
-              ? 'animated'
-              : 'static'
+            ? toTypeCode(value)
             : value;
 
-      updateMeta({ [name]: mapped });
+      setMetaField(name as any, mapped);
     },
-    [],
+    [setMetaField],
   );
 
   return (
@@ -52,9 +50,16 @@ export default function EmoticonInfoForm() {
         labelType='required'
         placeholderClassName='padding-y-12'
         direction='column'
+        variant={metaErrors.title ? 'error' : 'default'}
         onChange={handleInputChange}
-        variant='default'
+        aria-invalid={!!metaErrors.title}
+        helpMessage={{
+          default: '',
+          success: '',
+          error: metaErrors.title ?? '',
+        }}
       />
+
       <TextField
         name='author_name'
         label='이모티콘 작가명'
@@ -62,9 +67,16 @@ export default function EmoticonInfoForm() {
         labelType='required'
         placeholderClassName='padding-y-12'
         direction='column'
+        variant={metaErrors.author_name ? 'error' : 'default'}
         onChange={handleInputChange}
-        variant='default'
+        aria-invalid={!!metaErrors.author_name}
+        helpMessage={{
+          default: '',
+          success: '',
+          error: metaErrors.author_name ?? '',
+        }}
       />
+
       <SelectField
         name='platform'
         label='이모티콘 플랫폼'
@@ -73,9 +85,16 @@ export default function EmoticonInfoForm() {
         options={['카카오톡', '라인']}
         selectClassName='padding-y-8'
         responsiveDirection={{ mobile: 'column', desktop: 'row' }}
+        variant={metaErrors.platform ? 'error' : 'default'}
         onChange={handleSelectChange}
-        variant='default'
+        aria-invalid={!!metaErrors.platform}
+        helpMessage={{
+          default: '',
+          success: '',
+          error: metaErrors.platform ?? '',
+        }}
       />
+
       <SelectField
         name='type'
         label='이모티콘 유형'
@@ -84,18 +103,38 @@ export default function EmoticonInfoForm() {
         options={['움직이는 이모티콘', '멈춰있는 이모티콘']}
         selectClassName='padding-y-8'
         responsiveDirection={{ mobile: 'column', desktop: 'row' }}
+        variant={metaErrors.type ? 'error' : 'default'}
         onChange={handleSelectChange}
-        variant='default'
+        aria-invalid={!!metaErrors.type}
+        helpMessage={{
+          default: '',
+          success: '',
+          error: metaErrors.type ?? '',
+        }}
       />
+
       <TextAreaField
         name='description'
         label='이모티콘 설명'
         placeholder='이모티콘 설명'
         labelType='required'
         responsiveDirection={{ mobile: 'column', desktop: 'row' }}
+        variant={metaErrors.description ? 'error' : 'default'}
         onChange={handleTextAreaChange}
-        variant='default'
+        aria-invalid={!!metaErrors.description}
+        helpMessage={{
+          default: '',
+          success: '',
+          error: metaErrors.description ?? '',
+        }}
       />
     </div>
   );
+}
+
+function toPlatformCode(label: string) {
+  return label === '카카오톡' ? 'kakaotalk' : 'line';
+}
+function toTypeCode(label: string) {
+  return label === '움직이는 이모티콘' ? 'animated' : 'static';
 }

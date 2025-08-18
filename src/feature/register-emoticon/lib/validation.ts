@@ -16,7 +16,13 @@ export const validateEmoticonSetField = (field: string, value: unknown) => {
   const fieldSchema = (
     emoticonSetSchema.shape as Record<
       string,
-      { safeParse: (value: unknown) => unknown }
+      {
+        safeParse: (value: unknown) => {
+          success: boolean;
+          data?: unknown;
+          error?: any;
+        };
+      }
     >
   )[field];
   if (!fieldSchema) {
