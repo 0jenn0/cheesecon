@@ -500,6 +500,15 @@ export type Database = {
       }
     }
     Functions: {
+      _bump_comment_counts: {
+        Args: {
+          p_new_img: string
+          p_new_set: string
+          p_old_img: string
+          p_old_set: string
+        }
+        Returns: undefined
+      }
       get_comments_v1: {
         Args: {
           p_image_id?: string
@@ -615,7 +624,7 @@ export type Database = {
           created_at: string
           id: string
           image_id: string
-          images: string
+          images: string[]
           parent_comment_id: string
           profile: Json
           reaction_summary: Json
