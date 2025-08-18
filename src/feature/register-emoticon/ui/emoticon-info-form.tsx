@@ -82,7 +82,7 @@ export default function EmoticonInfoForm() {
         label='이모티콘 플랫폼'
         placeholder='이모티콘 플랫폼'
         labelType='required'
-        options={['카카오톡', '라인']}
+        options={['카카오톡', 'OGQ']}
         selectClassName='padding-y-8'
         responsiveDirection={{ mobile: 'column', desktop: 'row' }}
         variant={metaErrors.platform ? 'error' : 'default'}
@@ -133,7 +133,7 @@ export default function EmoticonInfoForm() {
 }
 
 function toPlatformCode(label: string) {
-  return label === '카카오톡' ? 'kakaotalk' : 'line';
+  return label === '카카오톡' ? 'kakaotalk' : 'ogq';
 }
 function toTypeCode(label: string) {
   return label === '움직이는 이모티콘' ? 'animated' : 'static';

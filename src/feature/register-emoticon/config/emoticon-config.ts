@@ -15,7 +15,7 @@ export const EMOTICON_CONFIG = {
       size: 320,
     },
   },
-  line: {
+  ogq: {
     static: {
       count: 32,
       size: 320,

@@ -15,7 +15,7 @@ export default function EmoticonPlatformItem({
       )}
     >
       <Icon
-        name={platform === 'kakaotalk' ? 'kakao-logo' : 'line-logo'}
+        name={platform === 'kakaotalk' ? 'kakao-logo' : 'ogq-logo'}
         size={20}
       />
       <p

@@ -103,7 +103,7 @@ function EmoticonPlatform({
   return (
     <div className='flex h-[24px] w-[24px] items-center justify-center'>
       <Icon
-        name={platform === 'kakaotalk' ? 'kakao-logo' : 'line-logo'}
+        name={platform === 'kakaotalk' ? 'kakao-logo' : 'ogq-logo'}
         size={24}
         className='h-full w-full text-gray-600'
       />

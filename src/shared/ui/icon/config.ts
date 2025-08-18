@@ -19,6 +19,7 @@ export const ICON_NAMES = [
   'image',
   'kakao-logo',
   'line-logo',
+  'ogq-logo',
   'link',
   'lock',
   'log-in',

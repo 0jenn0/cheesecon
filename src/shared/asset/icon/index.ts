@@ -44,3 +44,4 @@ export { default as HeartFilled } from './heart-filled.svg';
 export { default as MoreVertical } from './more-vertical.svg';
 export { default as SmilePlus } from './smile-plus.svg';
 export { default as Search } from './search.svg';
+export { default as OgqLogo } from './ogq-logo.svg';
