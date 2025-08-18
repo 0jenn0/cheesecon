@@ -1,14 +1,14 @@
 import { z } from 'zod';
 
 export const imageUrlSchema = z.object({
-  imageUrl: z.string().startsWith('http', '올바른 URL 형식이 아니에요'),
-  imageOrder: z
+  image_url: z.string().startsWith('http', '올바른 URL 형식이 아니에요'),
+  image_order: z
     .number()
     .int()
     .min(0, '이미지 순서는 0 이상이어야 해요')
     .default(0),
-  blurUrl: z.string().nullable(),
-  webpUrl: z.string().nullable(),
+  blur_url: z.string().nullable(),
+  webp_url: z.string().nullable(),
 });
 
 export const emoticonSetSchema = z.object({

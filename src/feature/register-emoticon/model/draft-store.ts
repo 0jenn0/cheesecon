@@ -1,4 +1,3 @@
-import z, { safeParse } from 'zod';
 import { createStore } from 'zustand/vanilla';
 import { EmoticonImageState } from '@/entity/emoticon-images/type/emoticon-image.type';
 import { CreateEmoticonSetForm } from '@/entity/emoticon-set';
@@ -17,7 +16,6 @@ export type DraftMeta = CreateEmoticonSetForm;
 
 type State = {
   order: number[];
-  representativeImage: EmoticonImageState;
   byId: Record<string, EmoticonImageState>;
   byOrder: Record<number, EmoticonImageState | undefined>;
   meta: DraftMeta;
@@ -79,14 +77,10 @@ function recomputeOrder(
 
 function validateImageUrlsOf(item: EmoticonImageState): string[] {
   const errs: string[] = [];
-  const check = (label: string, v?: string | null) => {
-    if (!v) return;
-    const r = validateImageUrlItem(v);
-    if (!r.success) errs.push(`${label} invalid`);
-  };
-  check('image_url', item.image_url);
-  check('webp_url', item.webp_url);
-  check('blur_url', item.blur_url);
+
+  const r = validateImageUrlItem(item);
+  if (!r.success) errs.push(r.error?.issues?.[0]?.message ?? 'invalid');
+
   return errs;
 }
 
@@ -146,7 +140,6 @@ export function createDraftStore() {
       return { success: Object.keys(errors).length === 0, errors };
     },
 
-    // ✅ 이미지 추가 시 URL 검증(실패 항목은 스킵)
     addImages: (arr) => {
       const accepted: string[] = [];
       const rejected: Array<{ id: string; errors: string[] }> = [];
@@ -159,26 +152,40 @@ export function createDraftStore() {
         const imageErrors = { ...store.imageErrors };
 
         for (const image of arr) {
-          const slot = image.image_order;
           const item: EmoticonImageState = {
             id: image.id,
             image_url: image.image_url,
             blur_url: image.blur_url ?? '',
             webp_url: image.webp_url ?? '',
-            image_order: slot,
+            image_order: image.image_order,
             is_representative: image.is_representative ?? false,
           };
 
           const errs = validateImageUrlsOf(item);
+
           if (errs.length > 0) {
             rejected.push({ id: item.id, errors: errs });
             imageErrors[item.id] = errs;
             continue;
           }
 
+          if (byId[item.id]) {
+            const existingImage = byId[item.id];
+            if (existingImage) {
+              byOrder[existingImage.image_order] = undefined;
+            }
+          }
+
+          if (byOrder[item.image_order]) {
+            const existingImage = byOrder[item.image_order];
+            if (existingImage) {
+              delete byId[existingImage.id];
+            }
+          }
+
           files.set(item.id, item);
           byId[item.id] = item;
-          byOrder[slot] = item;
+          byOrder[item.image_order] = item;
           if (imageErrors[item.id]) delete imageErrors[item.id];
           accepted.push(item.id);
         }
@@ -203,11 +210,17 @@ export function createDraftStore() {
         const byId = { ...store.byId };
         const byOrder = { ...store.byOrder };
         const imageErrors = { ...store.imageErrors };
-        const slot = target.image_order;
 
+        // byId에서 제거
         delete byId[id];
-        byOrder[slot] = undefined;
+
+        // byOrder에서 제거
+        byOrder[target.image_order] = undefined;
+
+        // 에러 정보 제거
         if (imageErrors[id]) delete imageErrors[id];
+
+        // files에서 제거
         files.delete(id);
 
         return {
@@ -228,15 +241,18 @@ export function createDraftStore() {
         const dst = byOrder[toSlot];
         if (!src) return store;
 
-        // 이동/스왑
+        // 기존 위치에서 제거
+        byOrder[fromSlot] = undefined;
+
+        // 새 위치에 배치
         byOrder[toSlot] = { ...src, image_order: toSlot };
         byId[src.id] = byOrder[toSlot]!;
 
+        // 기존에 있던 이미지가 있다면 다른 위치로 이동
         if (dst) {
+          // dst를 fromSlot으로 이동
           byOrder[fromSlot] = { ...dst, image_order: fromSlot };
           byId[dst.id] = byOrder[fromSlot]!;
-        } else {
-          byOrder[fromSlot] = undefined;
         }
 
         return {
