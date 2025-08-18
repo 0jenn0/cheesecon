@@ -1,37 +1,27 @@
 import { useModal } from '@/shared/ui/feedback';
 import { Button } from '@/shared/ui/input';
-import useEmoticonContext from '../provider/emotion-provider';
-import useUIContext from '../provider/ui-provider';
 
 export default function MultiSelectButton() {
   const { openModal } = useModal();
-  const { isMultipleSelect, toggleMultipleSelect } = useUIContext();
 
-  const { items, handleEmoticonItem } = useEmoticonContext();
-
-  const handleClickCancel = () => {
-    toggleMultipleSelect();
-    items.forEach((item) => {
-      handleEmoticonItem(item.imageNumber, 'UNCHECK');
-    });
-  };
+  const handleClickCancel = () => {};
 
   const handleDeleteSelectedItems = () =>
     openModal('deleteConfirm', {
-      items,
-      handleEmoticonItem,
+      items: [],
+      handleEmoticonItem: () => {},
     });
 
-  const isCheckedItems = items.filter((item) => item.isChecked).length;
+  const isCheckedItems = 0;
 
   return (
     <>
-      {!isMultipleSelect ? (
+      {false ? (
         <Button
           variant='secondary'
           textClassName='text-body-sm font-semibold'
           className='tablet:w-fit w-full'
-          onClick={toggleMultipleSelect}
+          onClick={() => {}}
         >
           다중 선택
         </Button>

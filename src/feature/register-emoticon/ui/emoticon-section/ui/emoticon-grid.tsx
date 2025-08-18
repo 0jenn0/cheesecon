@@ -1,53 +1,26 @@
 import { useCallback } from 'react';
-import useEmoticonRegister from '@/feature/register-emoticon/model/hook';
 import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
-import GridItem from '../../grid-item';
-import useEmoticonContext from '../provider/emotion-provider';
+import EmoticonGridItem from '../../grid-item';
 
 export default function EmoticonGrid() {
-  const { items, setChangeStack, handleEmoticonItem } = useEmoticonContext();
-  const { handleSetImageUrl } = useEmoticonRegister();
-  const handleImageUpload = useCallback(
-    (
-      imageNumber: number,
-      imageUrl: string,
-      blurUrl: string | null,
-      webpUrl: string | null,
-    ) => {
-      handleEmoticonItem(imageNumber, 'UPLOAD', { imageUrl, blurUrl, webpUrl });
-      handleSetImageUrl([
-        { imageUrl, imageOrder: imageNumber, blurUrl, webpUrl },
-      ]);
-    },
-    [handleEmoticonItem, handleSetImageUrl],
-  );
-  const handleDragEnd = useCallback(
-    (event: DragEndEvent) => {
-      const { active, over } = event;
-      if (over) {
-        handleEmoticonItem(Number(active.id), 'CHANGE_ORDER', {
-          newImageNumber: Number(over.id),
-        });
-        setChangeStack(Number(active.id), Number(over.id));
-      }
-    },
-    [handleEmoticonItem, setChangeStack],
-  );
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over) {
+    }
+  }, []);
   return (
     <DndContext onDragEnd={handleDragEnd}>
       <SortableContext
-        items={items.map((item) => item.imageNumber)}
+        items={Array.from({ length: 32 }, (_, index) => index)}
         strategy={rectSortingStrategy}
       >
         <div className='tablet:grid-cols-6 grid grid-cols-4 gap-16'>
-          {items.map((item, index) => (
-            <GridItem
-              key={item.imageNumber}
-              id={item.imageNumber}
+          {Array.from({ length: 24 }, (_, index) => (
+            <EmoticonGridItem
+              key={index}
               imageNumber={index + 1}
-              onImageUpload={handleImageUpload}
-              imageUrl={item.imageUrl}
+              image={undefined}
             />
           ))}
         </div>

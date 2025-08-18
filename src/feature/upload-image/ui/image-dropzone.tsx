@@ -7,7 +7,6 @@ import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
 import { Spinner } from '@/shared/ui/feedback';
 import { Button } from '@/shared/ui/input';
-import useEmoticonRegister from '@/feature/register-emoticon/model/hook';
 import { useUploadImageToBucketMutation } from '../model/upload-image-mutation';
 
 export interface ImageDropzoneProps extends ComponentPropsWithRef<'div'> {
@@ -21,10 +20,6 @@ export default function ImageDropzone({
   className,
   ...props
 }: ImageDropzoneProps) {
-  const {
-    createEmoticonSetForm: emoticonSetWithRepresentativeImage,
-    setEmoticonSet,
-  } = useEmoticonRegister();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const uploadImageMutation = useUploadImageToBucketMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -41,21 +36,12 @@ export default function ImageDropzone({
         const result = await uploadImageMutation.mutateAsync(formData);
         if (result.success) {
           setImageUrl(result.data.url);
-          setEmoticonSet({
-            ...emoticonSetWithRepresentativeImage,
-            representative_image: {
-              ...emoticonSetWithRepresentativeImage.representative_image,
-              image_url: result.data.url,
-              blur_url: result.data.blurUrl ?? null,
-              image_order: 0,
-              is_representative: true,
-            },
-          });
+
           return;
         }
       }
     },
-    [uploadImageMutation, emoticonSetWithRepresentativeImage, setEmoticonSet],
+    [uploadImageMutation],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

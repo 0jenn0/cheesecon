@@ -1,33 +1,11 @@
 import { Icon } from '@/shared/ui/display';
 import { Checkbox } from '@/shared/ui/input';
-import useEmoticonRegister from '../model/hook';
 
 export default function SecretCheckForm() {
-  const {
-    createEmoticonSetForm: emoticonSetWithRepresentativeImage,
-    setEmoticonSet,
-  } = useEmoticonRegister();
-
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmoticonSet({
-      ...emoticonSetWithRepresentativeImage,
-      is_private: e.target.checked,
-    });
-  };
-
   return (
     <div className='flex w-full flex-col gap-12'>
       <div className='flex w-full items-center gap-12'>
-        <Checkbox
-          checked={emoticonSetWithRepresentativeImage.is_private || false}
-          onChange={handleCheckboxChange}
-          status={
-            emoticonSetWithRepresentativeImage.is_private
-              ? 'checked'
-              : 'unchecked'
-          }
-          id='secretNumberCheck'
-        />
+        <Checkbox id='secretNumberCheck' />
         <div className='flex items-center gap-4'>
           <label
             className='text-body-lg cursor-pointer font-semibold select-none'

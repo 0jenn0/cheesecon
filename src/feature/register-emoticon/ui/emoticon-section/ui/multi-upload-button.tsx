@@ -4,9 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import ProgressBar from '@/shared/ui/feedback/progress-bar/progress-bar';
 import { useToast } from '@/shared/ui/feedback/toast/toast-provider';
 import { Button } from '@/shared/ui/input';
-import useEmoticonRegister from '@/feature/register-emoticon/model/hook';
 import { useUploadImageToBucketMutation } from '@/feature/upload-image/model/upload-image-mutation';
-import useEmoticonContext from '../provider/emotion-provider';
 
 export default function MultiUploadButton() {
   const [isUploading, setIsUploading] = useState(false);
@@ -18,8 +16,6 @@ export default function MultiUploadButton() {
     undefined,
   );
   const uploadImageMutation = useUploadImageToBucketMutation();
-  const { handleEmoticonItem, items } = useEmoticonContext();
-  const { handleSetImageUrl } = useEmoticonRegister();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { addToast } = useToast();
 
@@ -35,24 +31,12 @@ export default function MultiUploadButton() {
         return;
       }
 
-      const emptySlots = items.filter((item) => item.imageUrl === '');
-      if (emptySlots.length === 0) {
-        addToast({
-          type: 'error',
-          message: '빈 슬롯이 없습니다',
-        });
-        return;
-      }
-
-      const filesToUpload = files.slice(
-        0,
-        Math.min(files.length, emptySlots.length),
-      );
+      const filesToUpload = files.slice(0, 32);
 
       if (filesToUpload.length < files.length) {
         addToast({
           type: 'error',
-          message: `${emptySlots.length}개 슬롯만 사용 가능합니다. ${filesToUpload.length}개 파일만 업로드됩니다.`,
+          message: `최대 32개의 이모티콘만 업로드 가능합니다. ${filesToUpload.length}개 파일만 업로드됩니다.`,
         });
       }
 
@@ -67,28 +51,10 @@ export default function MultiUploadButton() {
 
         formData.append('file', file);
 
-        const targetSlot = emptySlots[index];
-        const imageNumber = targetSlot.imageNumber;
-
         const result = await uploadImageMutation.mutateAsync(formData);
 
         if (result.success) {
           const { url, blurUrl, webpUrl } = result.data;
-
-          handleEmoticonItem(imageNumber, 'UPLOAD', {
-            imageUrl: url,
-            blurUrl: blurUrl,
-            webpUrl: webpUrl,
-          });
-
-          handleSetImageUrl([
-            {
-              imageUrl: url,
-              imageOrder: imageNumber,
-              blurUrl: blurUrl,
-              webpUrl: webpUrl,
-            },
-          ]);
 
           setCurrentUploadCount((prev) => ({
             current: prev.current + 1,
@@ -108,13 +74,7 @@ export default function MultiUploadButton() {
         fileInputRef.current.value = '';
       }
     },
-    [
-      items,
-      uploadImageMutation,
-      handleEmoticonItem,
-      handleSetImageUrl,
-      addToast,
-    ],
+    [uploadImageMutation, addToast],
   );
 
   const handleButtonClick = useCallback(() => {
@@ -133,8 +93,6 @@ export default function MultiUploadButton() {
     },
     [handleFileUpload],
   );
-
-  const emptySlotCount = items.filter((item) => item.imageUrl === '').length;
 
   return (
     <div className='relative'>
@@ -156,7 +114,7 @@ export default function MultiUploadButton() {
         multiple
         onChange={handleFileChange}
         className='hidden'
-        disabled={isUploading || emptySlotCount === 0}
+        disabled={isUploading}
       />
 
       <>
@@ -166,7 +124,7 @@ export default function MultiUploadButton() {
           className='tablet:w-fit tablet:flex hidden w-full'
           leadingIcon='image-plus'
           onClick={handleButtonClick}
-          disabled={isUploading || emptySlotCount === 0}
+          disabled={isUploading}
         >
           {isUploading
             ? `업로드 중 (${currentUploadCount.current}/${currentUploadCount.total})`

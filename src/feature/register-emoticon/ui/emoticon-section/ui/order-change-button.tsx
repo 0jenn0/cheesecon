@@ -1,59 +1,33 @@
 import { Button } from '@/shared/ui/input';
-import useEmoticonContext from '../provider/emotion-provider';
-import useUIContext from '../provider/ui-provider';
 
 export default function OrderChangeButton() {
-  const {
-    changeStack,
-    clearChangeStack,
-    saveInitialOrder,
-    clearInitialOrder,
-    handleEmoticonItem,
-  } = useEmoticonContext();
-  const { isOrderChange, handleOrderChange } = useUIContext();
+  const handleStartOrderChange = () => {};
 
-  const handleStartOrderChange = () => {
-    saveInitialOrder();
-    handleOrderChange(true);
-  };
+  const handleCancelOrder = () => {};
 
-  const handleCancelOrder = () => {
-    handleEmoticonItem(0, 'RESTORE_INITIAL_ORDER');
-    clearChangeStack();
-    clearInitialOrder();
-    handleOrderChange(false);
-  };
-
-  const handleSaveOrder = () => {
-    clearChangeStack();
-    clearInitialOrder();
-    handleOrderChange(false);
-  };
+  const handleSaveOrder = () => {};
 
   return (
     <>
-      {isOrderChange ? (
-        <div className='tablet:w-fit flex w-full gap-8'>
-          <Button
-            variant='secondary'
-            styleVariant='outlined'
-            textClassName='text-body-sm font-semibold'
-            className='tablet:w-fit w-full'
-            onClick={handleCancelOrder}
-          >
-            취소
-          </Button>
-          <Button
-            variant='primary'
-            textClassName='text-body-sm font-semibold'
-            onClick={handleSaveOrder}
-            disabled={!changeStack.length}
-            className='tablet:w-fit w-full'
-          >
-            {changeStack.length ? '저장' : '저장됨'}
-          </Button>
-        </div>
-      ) : (
+      <div className='tablet:w-fit flex w-full gap-8'>
+        {/* <Button
+          variant='secondary'
+          styleVariant='outlined'
+          textClassName='text-body-sm font-semibold'
+          className='tablet:w-fit w-full'
+          onClick={handleCancelOrder}
+        >
+          취소
+        </Button>
+        <Button
+          variant='primary'
+          textClassName='text-body-sm font-semibold'
+          onClick={handleSaveOrder}
+          disabled={false}
+          className='tablet:w-fit w-full'
+        >
+          {'저장'}
+        </Button> */}
         <Button
           variant='secondary'
           className='tablet:w-fit w-full'
@@ -62,7 +36,7 @@ export default function OrderChangeButton() {
         >
           순서 바꾸기
         </Button>
-      )}
+      </div>
     </>
   );
 }
