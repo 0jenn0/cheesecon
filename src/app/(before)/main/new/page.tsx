@@ -1,15 +1,18 @@
-import { getPopularEmoticonSetsCached } from '@/entity/emoticon-set/model/main-cache';
+import {
+  getNewEmoticonSetsCached,
+  getPopularEmoticonSetsCached,
+} from '@/entity/emoticon-set/model/main-cache';
 import {
   EmoticonViewSectionClient,
   EmoticonViewSectionServer,
 } from '@/feature/view-emotion/emoticon-view-section';
 
-export const revalidate = 3600;
+export const revalidate = 300;
 
 const LIMIT = 12;
 
-export default async function PopularPage() {
-  const initial = await getPopularEmoticonSetsCached({
+export default async function NewPage() {
+  const initial = await getNewEmoticonSetsCached({
     limit: LIMIT,
     offset: 0,
     orderBy: 'created_at',
