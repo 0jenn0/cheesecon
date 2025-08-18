@@ -26,6 +26,7 @@ interface EmoticonGridItemProps extends ComponentPropsWithRef<'div'> {
   showCheckbox?: boolean;
   showGrip?: boolean;
   onCheckboxChange?: (checked: boolean) => void;
+  imageSize?: number;
 }
 
 export default function EmoticonGridItem({
@@ -36,6 +37,7 @@ export default function EmoticonGridItem({
   showCheckbox = false,
   showGrip = false,
   onCheckboxChange,
+  imageSize,
   ...props
 }: EmoticonGridItemProps) {
   const imageInSlot = useDraft((store) => store.byOrder[imageOrder]);
@@ -172,7 +174,7 @@ export default function EmoticonGridItem({
           </div>
         ) : (
           <div
-            className='flex h-full w-full items-center justify-center'
+            className='flex h-full w-full flex-col items-center justify-center gap-8'
             {...(isDragMode ? {} : getRootProps())}
             onClick={handleFileSelect}
           >
@@ -190,14 +192,19 @@ export default function EmoticonGridItem({
               </>
             )}
             <Icon name='image-plus' size={24} className='icon-ghost' />
+            {imageSize && (
+              <span className='text-body-sm text-black/20'>
+                {imageSize}x{imageSize}
+              </span>
+            )}
           </div>
         )}
       </div>
 
-      <div className='padding-12 flex h-full w-full flex-col items-center justify-between'>
+      <div className='tablet:padding-12 flex h-full w-full flex-col items-center justify-between'>
         <div className='flex w-full items-center justify-between'>
-          <div className='border-radius-rounded flex aspect-square min-w-24 items-center justify-center bg-white/20 backdrop-blur-md'>
-            <span className='text-body-sm'>{imageOrder}</span>
+          <div className='border-radius-rounded flex aspect-square min-w-24 items-center justify-center bg-white/10 backdrop-blur-sm'>
+            <span className='text-body-sm text-black/60'>{imageOrder}</span>
           </div>
           {showCheckbox && (
             <EmoticonGridItemCheckbox onCheckboxChange={onCheckboxChange} />
