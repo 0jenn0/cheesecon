@@ -22,9 +22,9 @@ export default function ImageDropzone({
   ...props
 }: ImageDropzoneProps) {
   const addImages = useDraft((store) => store.addImages);
-  const imageStoreValue = useDraft((store) => store.representativeImage);
+  const imageInSlot = useDraft((store) => store.byOrder[0]);
   const [imageUrl, setImageUrl] = useState<string | null>(
-    imageStoreValue?.webp_url ?? null,
+    imageInSlot?.webp_url ?? null,
   );
   const uploadImageMutation = useUploadImageToBucketMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -40,7 +40,7 @@ export default function ImageDropzone({
 
         const result = await uploadImageMutation.mutateAsync(formData);
         if (result.success) {
-          setImageUrl(result.data.url);
+          setImageUrl(result.data.webpUrl ?? result.data.url ?? null);
           addImages([
             {
               id: crypto.randomUUID(),
@@ -60,7 +60,7 @@ export default function ImageDropzone({
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    multiple: true,
+    multiple: false,
     accept: {
       'image/png': ['.png'],
       'image/jpeg': ['.jpg', '.jpeg'],
@@ -80,7 +80,7 @@ export default function ImageDropzone({
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const files = event.target.files;
       if (files && files.length > 0) {
-        onDrop(Array.from(files));
+        onDrop([files[0]]);
       }
       event.target.value = '';
     },
@@ -122,11 +122,11 @@ export default function ImageDropzone({
       )}
 
       {imageUrl && !isLoading && (
-        <div className='group/image border-radius-xl border-ghost effect-shadow-4 tablet:w-full tablet:h-auto bg-primary relative flex aspect-square h-full w-auto items-center justify-center overflow-hidden'>
+        <div className='group/image border-radius-xl border-ghost effect-shadow-4 bg-primary tablet:h-auto tablet:w-full relative flex aspect-square h-full w-auto items-center justify-center overflow-hidden'>
           <Image
             width={240}
             height={240}
-            src={imageUrl}
+            src={imageInSlot?.webp_url ?? imageUrl ?? ''}
             alt='Uploaded preview'
             className='h-auto w-full object-cover transition-transform duration-300'
           />
@@ -142,7 +142,7 @@ export default function ImageDropzone({
       )}
 
       {!imageUrl && !isLoading && (
-        <div className='padding-24 border-radius-xl bg-primary tablet:w-full tablet:h-auto flex aspect-square h-full w-auto flex-col items-center justify-center gap-12 text-center'>
+        <div className='padding-24 border-radius-xl bg-primary flex aspect-square h-full w-full flex-col items-center justify-center gap-12 text-center'>
           <div
             className={cn(
               'padding-16 rounded-full transition-all duration-300',
