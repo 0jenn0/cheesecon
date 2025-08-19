@@ -5,6 +5,7 @@ import { ComponentPropsWithRef, useCallback, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
+import { Spinner } from '@/shared/ui/feedback';
 import { Checkbox } from '@/shared/ui/input';
 import { useUploadImageToBucketMutation } from '@/feature/upload-image/model/upload-image-mutation';
 import { useSortable } from '@dnd-kit/sortable';
@@ -50,6 +51,7 @@ export default function EmoticonGridItem({
     transform,
     transition,
     isDragging,
+    isSorting,
   } = useSortable({
     id: imageOrder,
     data: { image_order: imageOrder },
@@ -63,7 +65,7 @@ export default function EmoticonGridItem({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    zIndex: isDragging ? 10 : undefined,
+    opacity: isDragging ? 0.5 : 1,
   } as const;
 
   const onDrop = useCallback(
@@ -129,14 +131,23 @@ export default function EmoticonGridItem({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'bg-primary relative flex aspect-square h-full w-full min-w-[60px] flex-col',
-        isDraggable && 'cursor-grab active:cursor-grabbing',
+        'bg-primary relative flex aspect-square h-full w-full min-w-[60px] flex-col border border-white transition-all duration-100 ease-in-out',
+        isDraggable && 'cursor-grab active:scale-95 active:cursor-grabbing',
+        isDragging &&
+          'border-radius-lg border-interactive-primary border border-dashed',
+        isSorting && 'border-radius-lg border-ghost border',
         className,
       )}
       {...finalRootProps}
     >
       <div className='border-ghost absolute inset-0 aspect-square w-full overflow-hidden border-b'>
-        {hasImage ? (
+        {imageInSlot?.status === 'uploading' && (
+          <div className='absolute inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm'>
+            <Spinner size='lg' />
+          </div>
+        )}
+        {imageInSlot &&
+        (imageInSlot.status === 'done' || imageInSlot.image_url) ? (
           <div
             className='flex h-full w-full items-center justify-center'
             {...(isDragMode ? {} : getRootProps())}
@@ -193,7 +204,7 @@ export default function EmoticonGridItem({
         )}
       </div>
 
-      <div className='tablet:padding-12 flex h-full w-full flex-col items-center justify-between'>
+      <div className='tablet:padding-12 z-10 flex h-full w-full flex-col items-center justify-between'>
         <div className='flex w-full items-center justify-between'>
           <div className='border-radius-rounded flex aspect-square min-w-24 items-center justify-center bg-white/10 backdrop-blur-sm'>
             <span className='text-body-sm text-black/60'>{imageOrder}</span>
@@ -204,8 +215,8 @@ export default function EmoticonGridItem({
         </div>
         <div className='flex w-full items-center justify-end'>
           {showGrip && hasImage && (
-            <div className='cursor-grab active:cursor-grabbing'>
-              <Icon name='grip-vertical' size={16} className='icon-ghost' />
+            <div className='border-radius-rounded padding-4 bg-white/20 backdrop-blur-md'>
+              <Icon name='grip-vertical' size={16} className='icon-secondary' />
             </div>
           )}
         </div>
