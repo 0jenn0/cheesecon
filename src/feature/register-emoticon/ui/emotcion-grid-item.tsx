@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { ComponentPropsWithRef, useCallback, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
 import { Spinner } from '@/shared/ui/feedback';
@@ -39,6 +40,7 @@ export default function EmoticonGridItem({
   const [imageUrl, setImageUrl] = useState<string | null>(
     imageInSlot?.webp_url ?? null,
   );
+  const [mouseHover, setMouseHover] = useState(false);
 
   const isDraggable = !!imageInSlot && isDragMode;
 
@@ -55,10 +57,6 @@ export default function EmoticonGridItem({
     data: { image_order: imageOrder },
     disabled: !isDraggable,
   });
-
-  const finalRootProps = isDraggable
-    ? { ...attributes, ...listeners, ...props }
-    : props;
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -95,7 +93,7 @@ export default function EmoticonGridItem({
     [addImages, imageOrder, uploadImageMutation],
   );
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: false,
     accept: {
@@ -108,6 +106,10 @@ export default function EmoticonGridItem({
     disabled: uploadImageMutation.isPending || isDragMode,
     noClick: true,
   });
+
+  const finalRootProps = isDraggable
+    ? { ...attributes, ...listeners, ...props }
+    : { ...getRootProps(), ...props };
 
   const handleFileSelect = useCallback(() => {
     if (isDragMode) return;
@@ -138,9 +140,13 @@ export default function EmoticonGridItem({
           'border-radius-lg border-interactive-primary border border-dashed',
         isSorting && 'border-radius-lg border-ghost border',
         className,
+        isDragActive &&
+          'border-radius-lg border-interactive-primary effect-shadow-8 scale-110 border border-dashed',
       )}
       {...finalRootProps}
       onClick={isDragMode ? undefined : handleFileSelect}
+      onMouseEnter={() => setMouseHover(true)}
+      onMouseLeave={() => setMouseHover(false)}
     >
       <div className='border-ghost absolute inset-0 aspect-square w-full overflow-hidden border-b'>
         {imageInSlot?.status === 'uploading' && (
@@ -150,11 +156,25 @@ export default function EmoticonGridItem({
         )}
         {imageInSlot &&
         (imageInSlot.status === 'done' || imageInSlot.image_url) ? (
-          <div
-            className='flex h-full w-full items-center justify-center'
-            {...(isDragMode ? {} : getRootProps())}
-            onClick={handleFileSelect}
-          >
+          <div className='flex h-full w-full items-center justify-center'>
+            {isDragActive || (
+              <AnimatePresence>
+                {mouseHover && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.1, ease: 'easeInOut' }}
+                    className='border-radius-rounded absolute inset-0 flex flex-col items-center justify-center gap-8 bg-black/70'
+                  >
+                    <Icon name='image-plus' size={24} className='icon-ghost' />
+                    <span className='text-body-sm font-semibold text-white'>
+                      이미지 변경
+                    </span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            )}
             {!isDragMode && (
               <>
                 <input
@@ -179,11 +199,7 @@ export default function EmoticonGridItem({
             />
           </div>
         ) : (
-          <div
-            className='flex h-full w-full cursor-pointer flex-col items-center justify-center gap-8'
-            {...(isDragMode ? {} : getRootProps())}
-            onClick={handleFileSelect}
-          >
+          <div className='flex h-full w-full cursor-pointer flex-col items-center justify-center gap-8'>
             {!isDragMode && (
               <>
                 <input
@@ -197,10 +213,22 @@ export default function EmoticonGridItem({
                 <input {...getInputProps()} className='hidden' />
               </>
             )}
-            <Icon name='image-plus' size={24} className='icon-ghost' />
+            <Icon
+              name='image-plus'
+              size={24}
+              className={cn(
+                'transition-all duration-100 ease-in-out',
+                isDragActive ? 'text-yellow-500' : 'icon-ghost',
+              )}
+            />
             {imageSize && (
-              <span className='text-body-sm text-black/20'>
-                {imageSize}x{imageSize}
+              <span
+                className={cn(
+                  'text-body-sm transition-colors duration-100 ease-in-out',
+                  isDragActive ? 'text-yellow-600' : 'text-black/20',
+                )}
+              >
+                {isDragActive ? '이미지 추가' : `${imageSize}x${imageSize}`}
               </span>
             )}
           </div>
