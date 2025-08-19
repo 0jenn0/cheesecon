@@ -19,7 +19,7 @@ export default async function NewPage() {
   const flattenedData = initial?.success ? initial.data.data : [];
 
   return (
-    <section className='bg-primary padding-24 flex w-full flex-col gap-24'>
+    <section className='bg-primary padding-16 flex w-full flex-col gap-24'>
       <div className='flex flex-col gap-8'>
         <h1 className='text-heading-md'>✨ 따끈따끈 최신 이모티콘</h1>
       </div>
