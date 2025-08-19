@@ -25,8 +25,8 @@ type State = {
   order: number[];
   representativeImage: EmoticonImageState | null;
   uploadedCount: number;
-  byId: Record<string, EmoticonImageState>;
-  byOrder: Record<number, EmoticonImageState | undefined>;
+  byId: Record<string, ImageMeta>;
+  byOrder: Record<number, ImageMeta | undefined>;
   meta: DraftMeta;
 
   metaErrors: Partial<Record<keyof DraftMeta & string, string>>;
@@ -61,7 +61,8 @@ type Actions = {
   removeImage: (id: string) => void;
   reorder: (fromSlot: number, toSlot: number) => void;
   updateMeta: (patch: Partial<DraftMeta>) => void;
-  setStatus: (id: string, status: ImageMeta['status'], msg?: string) => void;
+  setStatus: (order: number, status: ImageMeta['status'], msg?: string) => void;
+  getStatus: (order: number) => ImageMeta['status'];
   getFile: (id: string) => EmoticonImageState | undefined;
   getAllImages: () => EmoticonImageState[];
   getOrder: () => number[];
@@ -154,7 +155,7 @@ export function createDraftStore() {
 
       set((store) => {
         const byId = { ...store.byId };
-        const byOrder: Record<number, EmoticonImageState | undefined> = {
+        const byOrder = {
           ...store.byOrder,
         };
         const imageErrors = { ...store.imageErrors };
@@ -195,8 +196,8 @@ export function createDraftStore() {
           uploadedCount++;
 
           files.set(item.id, item);
-          byId[item.id] = item;
-          byOrder[item.image_order] = item;
+          byId[item.id] = { ...item };
+          byOrder[item.image_order] = { ...item };
           if (imageErrors[item.id]) delete imageErrors[item.id];
           accepted.push(item.id);
         }
@@ -289,7 +290,6 @@ export function createDraftStore() {
           byOrder[fromSlot] = { ...dst, image_order: fromSlot };
           byId[dst.id] = byOrder[fromSlot]!;
         }
-        console.log('byOrder!!!!!!', byOrder);
 
         return {
           byOrder,
@@ -304,18 +304,44 @@ export function createDraftStore() {
         meta: { ...store.meta, ...(patch as Partial<DraftMeta>) },
       })),
 
-    setStatus: (id, status, msg) => {
+    setStatus: (order, status, msg) => {
       set((store) => {
-        if (!store.byId[id]) return store;
-        const next = {
-          ...(store.byId[id] as any),
-          status,
-          errorMessage: msg,
-        };
+        const byOrder = { ...store.byOrder };
+        const byId = { ...store.byId };
+
+        if (!byOrder[order]) {
+          const tempId = crypto.randomUUID();
+          const tempImage: ImageMeta = {
+            id: tempId,
+            image_url: '',
+            image_order: order,
+            blur_url: '',
+            webp_url: '',
+            is_representative: false,
+            status,
+            errorMessage: msg,
+          };
+          byOrder[order] = tempImage;
+          byId[tempId] = tempImage;
+        } else {
+          const existingImage = byOrder[order]!;
+          byOrder[order] = {
+            ...existingImage,
+            status,
+            errorMessage: msg,
+          };
+          byId[existingImage.id] = byOrder[order]!;
+        }
+
         return {
-          byId: { ...store.byId, [id]: next },
-        } as any;
+          byOrder,
+          byId,
+        };
       });
+    },
+
+    getStatus: (order) => {
+      return get().byOrder[order]?.status ?? 'idle';
     },
 
     getFile: (id) => files.get(id),

@@ -18,6 +18,7 @@ export default function MultiUploadButton() {
   const addImages = useDraft((store) => store.addImages);
   const uploadedCount = useDraft((store) => store.uploadedCount);
   const meta = useDraft((store) => store.meta);
+  const setStatus = useDraft((store) => store.setStatus);
   const { type, platform } = meta;
   const totalEmoticonCount =
     EMOTICON_CONFIG[(platform as EmoticonPlatform) ?? 'kakaotalk'][
@@ -72,6 +73,10 @@ export default function MultiUploadButton() {
 
         formData.append('file', file);
 
+        const currentOrder = uploadedCount + index + 1;
+
+        setStatus(currentOrder, 'uploading');
+
         const result = await uploadImageMutation.mutateAsync(formData);
 
         if (result.success) {
@@ -79,12 +84,14 @@ export default function MultiUploadButton() {
             {
               id: crypto.randomUUID(),
               image_url: result.data.url,
-              image_order: uploadedCount + index + 1,
+              image_order: currentOrder,
               blur_url: result.data.blurUrl ?? null,
               webp_url: result.data.webpUrl ?? null,
               is_representative: false,
             },
           ]);
+
+          setStatus(currentOrder, 'done');
 
           setCurrentUploadCount(currentUploadCount + 1);
         } else {
