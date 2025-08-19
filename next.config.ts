@@ -1,11 +1,21 @@
 import type { NextConfig } from 'next';
+import ffm from '@ffmpeg-installer/ffmpeg';
+import ffp from '@ffprobe-installer/ffprobe';
 
 const nextConfig: NextConfig = {
+  serverExternalPackages: [
+    '@ffprobe-installer/ffprobe',
+    '@ffmpeg-installer/ffmpeg',
+  ],
   experimental: {
     turbo: {
       rules: {
         '*.svg': {
           loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+        '**/*.md': {
+          loaders: ['raw-loader'],
           as: '*.js',
         },
       },
@@ -54,6 +64,9 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
+  },
+  outputFileTracingIncludes: {
+    'src/server/media/ffmpeg.ts': [ffm.path, ffp.path],
   },
   webpack: (config) => {
     // @ts-expect-error
