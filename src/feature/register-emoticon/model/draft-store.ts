@@ -67,8 +67,8 @@ type Actions = {
   updateMeta: (patch: Partial<DraftMeta>) => void;
   setStatus: (order: number, status: ImageMeta['status'], msg?: string) => void;
   getStatus: (order: number) => ImageMeta['status'];
-  getFile: (id: string) => EmoticonImageState | undefined;
-  getAllImages: () => EmoticonImageState[];
+  getFile: (id: string) => ImageMeta | undefined;
+  getAllImages: () => ImageMeta[];
   getOrder: () => number[];
 
   cancelReordering: () => void;
@@ -358,7 +358,7 @@ export function createDraftStore() {
     },
 
     getFile: (id) => files.get(id),
-    getAllImages: () => Object.values(get().byId),
+    getAllImages: () => Object.values(get().byIdOriginal),
     getOrder: () => get().order,
 
     validateAll: () => {
