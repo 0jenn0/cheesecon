@@ -173,6 +173,8 @@ export default function EmoticonGridItem({
               height={120}
               className='h-full w-auto object-cover'
               draggable={false}
+              placeholder='blur'
+              blurDataURL={imageInSlot?.blur_url ?? ''}
             />
           </div>
         ) : (
