@@ -32,6 +32,7 @@ export default function EmoticonGridItem({
   ...props
 }: EmoticonGridItemProps) {
   const imageInSlot = useDraft((store) => store.byOrderOriginal[imageOrder]);
+  const setStatus = useDraft((store) => store.setStatus);
   const addImages = useDraft((store) => store.addImages);
   const uploadImageMutation = useUploadImageToBucketMutation();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -72,6 +73,8 @@ export default function EmoticonGridItem({
       const formData = new FormData();
       formData.append('file', acceptedFiles[0]);
 
+      setStatus(imageOrder, 'uploading');
+
       const result = await uploadImageMutation.mutateAsync(formData);
       if (result.success) {
         const id = crypto.randomUUID();
@@ -85,6 +88,7 @@ export default function EmoticonGridItem({
             is_representative: false,
           },
         ]);
+        setStatus(imageOrder, 'done');
         setImageUrl(result.data.webpUrl ?? result.data.url ?? null);
       }
     },
@@ -128,7 +132,7 @@ export default function EmoticonGridItem({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'bg-primary relative flex aspect-square h-full w-full min-w-[60px] flex-col border border-white transition-all duration-100 ease-in-out',
+        'bg-primary relative flex aspect-square h-full w-full min-w-[60px] cursor-pointer flex-col border border-white transition-all duration-100 ease-in-out',
         isDraggable && 'cursor-grab active:scale-95 active:cursor-grabbing',
         isDragging &&
           'border-radius-lg border-interactive-primary border border-dashed',
@@ -136,6 +140,7 @@ export default function EmoticonGridItem({
         className,
       )}
       {...finalRootProps}
+      onClick={isDragMode ? undefined : handleFileSelect}
     >
       <div className='border-ghost absolute inset-0 aspect-square w-full overflow-hidden border-b'>
         {imageInSlot?.status === 'uploading' && (
@@ -156,7 +161,6 @@ export default function EmoticonGridItem({
                   ref={fileRef}
                   type='file'
                   accept='image/png,image/jpeg,image/gif,image/webp'
-                  multiple
                   onChange={handleFileChange}
                   className='hidden'
                 />
@@ -176,7 +180,7 @@ export default function EmoticonGridItem({
           </div>
         ) : (
           <div
-            className='flex h-full w-full flex-col items-center justify-center gap-8'
+            className='flex h-full w-full cursor-pointer flex-col items-center justify-center gap-8'
             {...(isDragMode ? {} : getRootProps())}
             onClick={handleFileSelect}
           >
