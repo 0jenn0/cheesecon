@@ -1,9 +1,10 @@
 export const EMOTICON_TYPE = ['static', 'animated'] as const;
-export const EMOTICON_PLATFORM = ['kakaotalk', 'line'] as const;
+export const EMOTICON_PLATFORM = ['kakaotalk', 'ogq'] as const;
 
 export type EmoticonPlatform = (typeof EMOTICON_PLATFORM)[number];
 export type EmoticonType = (typeof EMOTICON_TYPE)[number];
 
+// FIXME : 선택된 type에 따라 수정
 export const EMOTICON_CONFIG = {
   kakaotalk: {
     static: {
@@ -15,7 +16,7 @@ export const EMOTICON_CONFIG = {
       size: 320,
     },
   },
-  line: {
+  ogq: {
     static: {
       count: 32,
       size: 320,

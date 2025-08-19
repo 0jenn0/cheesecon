@@ -82,9 +82,9 @@ export default function MiniCalendar({
         {calendarData.map((item, index) => (
           <div
             key={index}
-            className={`flex aspect-square cursor-pointer items-center justify-center text-[10px] transition-all duration-200 ease-in-out ${
+            className={`border-radius-md flex aspect-square cursor-pointer items-center justify-center text-[10px] transition-all duration-200 ease-in-out ${
               item.isToday
-                ? 'bg-secondary font-semibold'
+                ? 'border-secondary border font-semibold'
                 : item.isApproved
                   ? 'bg-emerald-50 font-semibold text-emerald-600'
                   : item.isCurrentMonth

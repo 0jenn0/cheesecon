@@ -1,6 +1,4 @@
 import { Button } from '@/shared/ui/input';
-import { useRegisterMutation } from '@/entity/emoticon-set/query/emoticon-set-mutation';
-import useEmoticonRegister from '../model/hook';
 
 const INITIAL_STEP = 0;
 
@@ -13,25 +11,6 @@ export function RegisterBottomBarMobile({
   STEP_COUNT: number;
   handleStepChange: (step: number) => void;
 }) {
-  const {
-    createEmoticonSetForm: emoticonSetWithRepresentativeImage,
-    imageUrls,
-    validateAll,
-    isValid,
-  } = useEmoticonRegister();
-  const registerMutation = useRegisterMutation({ imageUrls });
-
-  const handleRegister = () => {
-    const isFormValid = validateAll();
-
-    if (!isFormValid) {
-      // TODO: 토스트 메시지로 오류 표시
-      return;
-    }
-
-    registerMutation.mutate(emoticonSetWithRepresentativeImage);
-  };
-
   return (
     <div className='padding-16 fixed right-0 bottom-0 left-0 flex gap-8 bg-white/60 backdrop-blur-lg'>
       {currentStep === STEP_COUNT - 1 && (
@@ -44,13 +23,7 @@ export function RegisterBottomBarMobile({
           >
             이전
           </Button>
-          <Button
-            className='w-full'
-            textClassName='text-body-lg font-semibold'
-            onClick={handleRegister}
-            isLoading={registerMutation.isPending}
-            disabled={registerMutation.isPending || !isValid}
-          >
+          <Button className='w-full' textClassName='text-body-lg font-semibold'>
             등록하기
           </Button>
         </>

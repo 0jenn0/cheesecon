@@ -1,5 +1,7 @@
 'use server';
 
+import { revalidateTag } from 'next/cache';
+import { CACHE_TAGS } from '@/shared/config/cach-tag';
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
 import { ApiResult } from '@/shared/types';
 import {
@@ -28,11 +30,8 @@ export async function createEmoticonSet({
 
   const emoticonSetId = crypto.randomUUID();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { representative_image, ...rest } = emoticonSet;
-
   const emoticonRequest = {
-    ...rest,
+    ...emoticonSet,
     id: emoticonSetId,
     user_id: user.id,
   };
@@ -48,35 +47,17 @@ export async function createEmoticonSet({
     throw new Error(`이모티콘 세트 생성에 실패했습니다: ${error.message}`);
   }
 
-  const isRepresentativeInImageUrls = imageUrls.some(
-    (imageUrl) =>
-      imageUrl.imageUrl === emoticonSet.representative_image.image_url,
-  );
-
-  const allImageUrls = isRepresentativeInImageUrls
-    ? imageUrls
-    : [
-        ...imageUrls,
-        {
-          imageUrl: emoticonSet.representative_image.image_url,
-          imageOrder: emoticonSet.representative_image.image_order,
-          blurUrl: emoticonSet.representative_image.blur_url,
-          webpUrl: emoticonSet.representative_image.webp_url,
-        },
-      ];
-
-  const { data: emoticonImages, error: emoticonImagesError } = await supabase
+  const { data: allEmoticonImages, error: emoticonImagesError } = await supabase
     .from('emoticon_images')
     .insert(
-      allImageUrls.map(
+      imageUrls.map(
         (imageUrl): EmoticonImageRequest => ({
           set_id: emoticonSetId,
-          image_url: imageUrl.imageUrl,
-          image_order: imageUrl.imageOrder,
-          blur_url: imageUrl.blurUrl ?? null,
-          webp_url: imageUrl.webpUrl ?? null,
-          is_representative:
-            imageUrl.imageUrl === emoticonSet.representative_image.image_url,
+          image_url: imageUrl.image_url,
+          image_order: imageUrl.image_order,
+          blur_url: imageUrl.blur_url ?? null,
+          webp_url: imageUrl.webp_url ?? null,
+          is_representative: imageUrl.is_representative ?? false,
         }),
       ),
     )
@@ -89,17 +70,22 @@ export async function createEmoticonSet({
     );
   }
 
-  const representativeImage =
-    emoticonImages.find((img) => img.is_representative) ?? emoticonImages[0];
+  const emoticonImagesData = allEmoticonImages.filter(
+    (image) => !image.is_representative,
+  );
+
+  const representativeImageData = allEmoticonImages.find(
+    (image) => image.is_representative,
+  );
+
+  revalidateTag(CACHE_TAGS.new);
 
   return {
     success: true,
     data: {
       emoticonSet: data,
-      emoticonImages: emoticonImages.filter(
-        (img) => img.id !== representativeImage.id,
-      ),
-      representativeImage: representativeImage,
+      emoticonImages: emoticonImagesData,
+      representativeImage: representativeImageData ?? emoticonImagesData[0],
     },
   };
 }

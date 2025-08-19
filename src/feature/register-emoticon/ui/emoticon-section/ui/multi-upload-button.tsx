@@ -1,65 +1,71 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import ProgressBar from '@/shared/ui/feedback/progress-bar/progress-bar';
+import { useCallback, useRef } from 'react';
 import { useToast } from '@/shared/ui/feedback/toast/toast-provider';
 import { Button } from '@/shared/ui/input';
-import useEmoticonRegister from '@/feature/register-emoticon/model/hook';
+import { useProgressStore } from '@/shared/ui/navigation/global-navigation-bar/model/progress-context';
+import {
+  EMOTICON_CONFIG,
+  EmoticonPlatform,
+  EmoticonType,
+} from '@/feature/register-emoticon/config/emoticon-config';
+import { useDraft } from '@/feature/register-emoticon/model/draft-context';
 import { useUploadImageToBucketMutation } from '@/feature/upload-image/model/upload-image-mutation';
-import useEmoticonContext from '../provider/emotion-provider';
+
+const MAX_UPLOAD_COUNT = 6;
 
 export default function MultiUploadButton() {
-  const [isUploading, setIsUploading] = useState(false);
-  const [currentUploadCount, setCurrentUploadCount] = useState({
-    current: 0,
-    total: 0,
-  });
-  const [headerHeight, setHeaderHeight] = useState<number | undefined>(
-    undefined,
-  );
+  const addImages = useDraft((store) => store.addImages);
+  const uploadedCount = useDraft((store) => store.uploadedCount);
+  const meta = useDraft((store) => store.meta);
+  const setStatus = useDraft((store) => store.setStatus);
+  const { type, platform } = meta;
+  const totalEmoticonCount =
+    EMOTICON_CONFIG[(platform as EmoticonPlatform) ?? 'kakaotalk'][
+      (type as EmoticonType) ?? 'animated'
+    ].count;
+
   const uploadImageMutation = useUploadImageToBucketMutation();
-  const { handleEmoticonItem, items } = useEmoticonContext();
-  const { handleSetImageUrl } = useEmoticonRegister();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { addToast } = useToast();
 
-  useEffect(() => {
-    const headerElement = window.document.querySelector('header');
-    setHeaderHeight(headerElement?.clientHeight);
-  }, []);
+  const {
+    isUploading,
+    currentUploadCount,
+    totalUploadCount,
+    setCurrentUploadCount,
+    setIsUploading,
+    setTotalUploadCount,
+  } = useProgressStore();
 
   const handleFileUpload = useCallback(
     async (files: File[]) => {
       if (files.length === 0) {
-        console.log('No files to upload');
-        return;
-      }
-
-      const emptySlots = items.filter((item) => item.imageUrl === '');
-      if (emptySlots.length === 0) {
         addToast({
           type: 'error',
-          message: '빈 슬롯이 없습니다',
+          message: '파일을 선택해주세요.',
         });
         return;
       }
 
-      const filesToUpload = files.slice(
-        0,
-        Math.min(files.length, emptySlots.length),
-      );
+      const filesToUpload = files.slice(0, MAX_UPLOAD_COUNT);
 
       if (filesToUpload.length < files.length) {
         addToast({
           type: 'error',
-          message: `${emptySlots.length}개 슬롯만 사용 가능합니다. ${filesToUpload.length}개 파일만 업로드됩니다.`,
+          message: `한번에 최대 ${MAX_UPLOAD_COUNT}개의 이모티콘만 업로드 가능합니다. ${filesToUpload.length}개 파일만 업로드됩니다.`,
         });
       }
 
-      setCurrentUploadCount({
-        current: 0,
-        total: filesToUpload.length,
-      });
+      if (uploadedCount + filesToUpload.length > totalEmoticonCount) {
+        addToast({
+          type: 'error',
+          message: `현재 최대 ${totalEmoticonCount - uploadedCount}개의 이모티콘만 업로드 가능합니다.`,
+        });
+        return;
+      }
+
+      setCurrentUploadCount(0);
       setIsUploading(true);
 
       for (const [index, file] of filesToUpload.entries()) {
@@ -67,53 +73,55 @@ export default function MultiUploadButton() {
 
         formData.append('file', file);
 
-        const targetSlot = emptySlots[index];
-        const imageNumber = targetSlot.imageNumber;
+        const currentOrder = uploadedCount + index + 1;
+
+        setStatus(currentOrder, 'uploading');
 
         const result = await uploadImageMutation.mutateAsync(formData);
 
         if (result.success) {
-          const { url, blurUrl, webpUrl } = result.data;
-
-          handleEmoticonItem(imageNumber, 'UPLOAD', {
-            imageUrl: url,
-            blurUrl: blurUrl,
-            webpUrl: webpUrl,
-          });
-
-          handleSetImageUrl([
+          addImages([
             {
-              imageUrl: url,
-              imageOrder: imageNumber,
-              blurUrl: blurUrl,
-              webpUrl: webpUrl,
+              id: crypto.randomUUID(),
+              image_url: result.data.url,
+              image_order: currentOrder,
+              blur_url: result.data.blurUrl ?? null,
+              webp_url: result.data.webpUrl ?? null,
+              is_representative: false,
             },
           ]);
 
-          setCurrentUploadCount((prev) => ({
-            current: prev.current + 1,
-            total: prev.total,
-          }));
+          setStatus(currentOrder, 'done');
+
+          setCurrentUploadCount(currentUploadCount + 1);
         } else {
-          setIsUploading(false);
-          setCurrentUploadCount({ current: 0, total: 0 });
+          addToast({
+            type: 'error',
+            message: '이미지 업로드에 실패했어요. 다시 시도해주세요.',
+          });
+          break;
         }
       }
 
       setIsUploading(false);
-      setCurrentUploadCount({ current: 0, total: 0 });
+      setCurrentUploadCount(0);
+      setTotalUploadCount(0);
 
-      // input 초기화
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
     },
     [
-      items,
       uploadImageMutation,
-      handleEmoticonItem,
-      handleSetImageUrl,
       addToast,
+      addImages,
+      uploadedCount,
+      currentUploadCount,
+      setCurrentUploadCount,
+      setIsUploading,
+      setTotalUploadCount,
+      setStatus,
+      totalEmoticonCount,
     ],
   );
 
@@ -134,21 +142,8 @@ export default function MultiUploadButton() {
     [handleFileUpload],
   );
 
-  const emptySlotCount = items.filter((item) => item.imageUrl === '').length;
-
   return (
-    <div className='relative'>
-      {isUploading && (
-        <ProgressBar
-          className='fixed left-0 z-50 w-full'
-          style={{
-            top: headerHeight ? `${headerHeight}px` : '56px',
-          }}
-          current={currentUploadCount.current}
-          total={currentUploadCount.total}
-        />
-      )}
-
+    <div>
       <input
         ref={fileInputRef}
         type='file'
@@ -156,7 +151,7 @@ export default function MultiUploadButton() {
         multiple
         onChange={handleFileChange}
         className='hidden'
-        disabled={isUploading || emptySlotCount === 0}
+        disabled={isUploading}
       />
 
       <>
@@ -166,10 +161,10 @@ export default function MultiUploadButton() {
           className='tablet:w-fit tablet:flex hidden w-full'
           leadingIcon='image-plus'
           onClick={handleButtonClick}
-          disabled={isUploading || emptySlotCount === 0}
+          disabled={isUploading}
         >
           {isUploading
-            ? `업로드 중 (${currentUploadCount.current}/${currentUploadCount.total})`
+            ? `업로드 중 (${currentUploadCount}/${totalUploadCount})`
             : `다중 업로드`}
         </Button>
         <Button
@@ -177,7 +172,6 @@ export default function MultiUploadButton() {
           textClassName='text-body-sm font-semibold '
           className='tablet:w-fit tablet:hidden w-full'
           leadingIcon='image-plus'
-          onClick={handleButtonClick}
           disabled={true}
         >
           PC 사용시 다중 업로드 가능

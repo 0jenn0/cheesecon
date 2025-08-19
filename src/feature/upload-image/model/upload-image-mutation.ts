@@ -9,6 +9,7 @@ export const useUploadImageToBucketMutation = () => {
 
   return useMutation({
     mutationFn: (formData: FormData) => uploadImageToBucket(formData),
+    retry: 0,
     onSuccess: (data) => {
       if (data.success) {
         queryClient.invalidateQueries({
@@ -25,6 +26,12 @@ export const useUploadImageToBucketMutation = () => {
           message: data.error?.message ?? '이미지 업로드에 실패했어요.',
         });
       }
+    },
+    onError: () => {
+      addToast({
+        type: 'error',
+        message: '이미지 업로드에 실패했어요.',
+      });
     },
   });
 };

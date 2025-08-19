@@ -1,37 +1,44 @@
 import { useModal } from '@/shared/ui/feedback';
 import { Button } from '@/shared/ui/input';
-import useEmoticonContext from '../provider/emotion-provider';
-import useUIContext from '../provider/ui-provider';
+import { useDraft } from '@/feature/register-emoticon/model/draft-context';
 
-export default function MultiSelectButton() {
+export default function MultiSelectButton({
+  isMultiSelectedMode = false,
+  toggleMultiSelectedMode,
+}: {
+  isMultiSelectedMode?: boolean;
+  toggleMultiSelectedMode: () => void;
+}) {
   const { openModal } = useModal();
-  const { isMultipleSelect, toggleMultipleSelect } = useUIContext();
+  const selectedImageIds = useDraft((store) => store.selectedImageIds);
+  const toggleSelectedImage = useDraft((store) => store.toggleSelectedImage);
+  const removeImage = useDraft((store) => store.removeImage);
 
-  const { items, handleEmoticonItem } = useEmoticonContext();
-
-  const handleClickCancel = () => {
-    toggleMultipleSelect();
-    items.forEach((item) => {
-      handleEmoticonItem(item.imageNumber, 'UNCHECK');
-    });
+  const handleDelete = (imageId: string) => {
+    removeImage(imageId);
+    toggleSelectedImage(imageId);
   };
 
-  const handleDeleteSelectedItems = () =>
-    openModal('deleteConfirm', {
-      items,
-      handleEmoticonItem,
-    });
+  const handleClickCancel = () => {
+    toggleMultiSelectedMode();
+  };
 
-  const isCheckedItems = items.filter((item) => item.isChecked).length;
+  const handleDeleteSelectedItems = () => {
+    openModal('deleteConfirm', {
+      imageIds: selectedImageIds,
+      onDelete: handleDelete,
+    });
+    toggleMultiSelectedMode();
+  };
 
   return (
     <>
-      {!isMultipleSelect ? (
+      {!isMultiSelectedMode ? (
         <Button
           variant='secondary'
           textClassName='text-body-sm font-semibold'
           className='tablet:w-fit w-full'
-          onClick={toggleMultipleSelect}
+          onClick={toggleMultiSelectedMode}
         >
           다중 선택
         </Button>
@@ -52,7 +59,7 @@ export default function MultiSelectButton() {
             textClassName='text-body-sm font-semibold'
             className='tablet:w-fit w-full'
             onClick={handleDeleteSelectedItems}
-            disabled={!isCheckedItems}
+            disabled={selectedImageIds.length === 0}
           >
             선택 삭제
           </Button>

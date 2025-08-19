@@ -1,32 +1,28 @@
+'use client';
+
+import { useCallback } from 'react';
 import { Icon } from '@/shared/ui/display';
 import { Checkbox } from '@/shared/ui/input';
-import useEmoticonRegister from '../model/hook';
+import { useDraft } from '../model/draft-context';
 
 export default function SecretCheckForm() {
-  const {
-    createEmoticonSetForm: emoticonSetWithRepresentativeImage,
-    setEmoticonSet,
-  } = useEmoticonRegister();
-
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmoticonSet({
-      ...emoticonSetWithRepresentativeImage,
-      is_private: e.target.checked,
-    });
-  };
+  const updateMeta = useDraft((store) => store.updateMeta);
+  const isPrivate = useDraft((store) => store.meta.is_private);
+  const handleCheckboxChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { checked } = e.target;
+      updateMeta({ is_private: checked });
+    },
+    [updateMeta],
+  );
 
   return (
     <div className='flex w-full flex-col gap-12'>
       <div className='flex w-full items-center gap-12'>
         <Checkbox
-          checked={emoticonSetWithRepresentativeImage.is_private || false}
-          onChange={handleCheckboxChange}
-          status={
-            emoticonSetWithRepresentativeImage.is_private
-              ? 'checked'
-              : 'unchecked'
-          }
           id='secretNumberCheck'
+          status={isPrivate ? 'checked' : 'unchecked'}
+          onChange={handleCheckboxChange}
         />
         <div className='flex items-center gap-4'>
           <label

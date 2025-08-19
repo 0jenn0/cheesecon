@@ -1,13 +1,13 @@
 'use client';
 
 import Image from 'next/image';
-import { ComponentPropsWithRef, useCallback, useRef, useState } from 'react';
+import { ComponentPropsWithRef, useCallback, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
 import { Spinner } from '@/shared/ui/feedback';
 import { Button } from '@/shared/ui/input';
-import useEmoticonRegister from '@/feature/register-emoticon/model/hook';
+import { useDraft } from '@/feature/register-emoticon/model/draft-context';
 import { useUploadImageToBucketMutation } from '../model/upload-image-mutation';
 
 export interface ImageDropzoneProps extends ComponentPropsWithRef<'div'> {
@@ -16,16 +16,15 @@ export interface ImageDropzoneProps extends ComponentPropsWithRef<'div'> {
 }
 
 export default function ImageDropzone({
-  maxSize = 5, // MB 단위
+  maxSize = 2, // MB 단위
   disabled = false,
   className,
   ...props
 }: ImageDropzoneProps) {
-  const {
-    createEmoticonSetForm: emoticonSetWithRepresentativeImage,
-    setEmoticonSet,
-  } = useEmoticonRegister();
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const addRepresentativeImage = useDraft(
+    (store) => store.addRepresentativeImage,
+  );
+  const representativeImage = useDraft((store) => store.representativeImage);
   const uploadImageMutation = useUploadImageToBucketMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -40,27 +39,24 @@ export default function ImageDropzone({
 
         const result = await uploadImageMutation.mutateAsync(formData);
         if (result.success) {
-          setImageUrl(result.data.url);
-          setEmoticonSet({
-            ...emoticonSetWithRepresentativeImage,
-            representative_image: {
-              ...emoticonSetWithRepresentativeImage.representative_image,
-              image_url: result.data.url,
-              blur_url: result.data.blurUrl ?? null,
-              image_order: 0,
-              is_representative: true,
-            },
+          addRepresentativeImage({
+            id: crypto.randomUUID(),
+            image_url: result.data.url,
+            image_order: 0,
+            blur_url: result.data.blurUrl ?? null,
+            webp_url: result.data.webpUrl ?? null,
+            is_representative: true,
           });
           return;
         }
       }
     },
-    [uploadImageMutation, emoticonSetWithRepresentativeImage, setEmoticonSet],
+    [uploadImageMutation, addRepresentativeImage],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    multiple: true,
+    multiple: false,
     accept: {
       'image/png': ['.png'],
       'image/jpeg': ['.jpg', '.jpeg'],
@@ -80,7 +76,7 @@ export default function ImageDropzone({
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const files = event.target.files;
       if (files && files.length > 0) {
-        onDrop(Array.from(files));
+        onDrop([files[0]]);
       }
       event.target.value = '';
     },
@@ -121,28 +117,34 @@ export default function ImageDropzone({
         </div>
       )}
 
-      {imageUrl && !isLoading && (
-        <div className='group/image border-radius-xl bg-primary border-ghost effect-shadow-4 relative flex aspect-square h-auto w-full items-center justify-center overflow-hidden'>
-          <Image
-            width={240}
-            height={240}
-            src={imageUrl}
-            alt='Uploaded preview'
-            className='h-auto w-full object-cover transition-transform duration-300'
-          />
+      {representativeImage &&
+        (representativeImage.image_url || representativeImage.webp_url) &&
+        !isLoading && (
+          <div className='group/image border-radius-xl border-ghost effect-shadow-4 bg-primary tablet:h-auto tablet:w-full relative flex aspect-square h-full w-auto items-center justify-center overflow-hidden'>
+            <Image
+              width={240}
+              height={240}
+              src={
+                representativeImage?.webp_url ??
+                representativeImage.image_url ??
+                ''
+              }
+              alt='Uploaded preview'
+              className='h-auto w-full object-cover transition-transform duration-300'
+            />
 
-          <div className='absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 transition-opacity duration-300 group-hover/image:opacity-100'>
-            <div className='flex flex-col gap-12 text-center text-white'>
-              <Icon name='edit' className='mx-auto' size={24} />
-              <p className='text-body-md font-medium'>클릭하여 수정</p>
-              <p className='text-body-md opacity-90'>새 이미지로 교체</p>
+            <div className='absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 transition-opacity duration-300 group-hover/image:opacity-100'>
+              <div className='flex flex-col gap-12 text-center text-white'>
+                <Icon name='edit' className='mx-auto' size={24} />
+                <p className='text-body-md font-medium'>클릭하여 수정</p>
+                <p className='text-body-md opacity-90'>새 이미지로 교체</p>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {!imageUrl && !isLoading && (
-        <div className='padding-24 border-radius-xl bg-primary tablet:w-full tablet:h-auto flex aspect-square h-full w-auto flex-col items-center justify-center gap-12 text-center'>
+      {!representativeImage && !isLoading && (
+        <div className='padding-24 border-radius-xl bg-primary flex aspect-square h-full w-full flex-col items-center justify-center gap-12 text-center'>
           <div
             className={cn(
               'padding-16 rounded-full transition-all duration-300',

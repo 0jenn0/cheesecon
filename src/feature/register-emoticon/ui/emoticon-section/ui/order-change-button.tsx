@@ -1,38 +1,34 @@
 import { Button } from '@/shared/ui/input';
-import useEmoticonContext from '../provider/emotion-provider';
-import useUIContext from '../provider/ui-provider';
+import { useDraft } from '@/feature/register-emoticon/model/draft-context';
 
-export default function OrderChangeButton() {
-  const {
-    changeStack,
-    clearChangeStack,
-    saveInitialOrder,
-    clearInitialOrder,
-    handleEmoticonItem,
-  } = useEmoticonContext();
-  const { isOrderChange, handleOrderChange } = useUIContext();
+export default function OrderChangeButton({
+  isOrderChangeMode,
+  toggleOrderChangeMode,
+}: {
+  isOrderChangeMode: boolean;
+  toggleOrderChangeMode: () => void;
+}) {
+  const saveReordering = useDraft((s) => s.saveReordering);
+  const cancelReordering = useDraft((s) => s.cancelReordering);
 
   const handleStartOrderChange = () => {
-    saveInitialOrder();
-    handleOrderChange(true);
+    saveReordering();
+    toggleOrderChangeMode();
   };
 
   const handleCancelOrder = () => {
-    handleEmoticonItem(0, 'RESTORE_INITIAL_ORDER');
-    clearChangeStack();
-    clearInitialOrder();
-    handleOrderChange(false);
+    toggleOrderChangeMode();
+    cancelReordering();
   };
 
   const handleSaveOrder = () => {
-    clearChangeStack();
-    clearInitialOrder();
-    handleOrderChange(false);
+    toggleOrderChangeMode();
+    saveReordering();
   };
 
   return (
     <>
-      {isOrderChange ? (
+      {isOrderChangeMode ? (
         <div className='tablet:w-fit flex w-full gap-8'>
           <Button
             variant='secondary'
@@ -47,10 +43,10 @@ export default function OrderChangeButton() {
             variant='primary'
             textClassName='text-body-sm font-semibold'
             onClick={handleSaveOrder}
-            disabled={!changeStack.length}
+            disabled={false}
             className='tablet:w-fit w-full'
           >
-            {changeStack.length ? '저장' : '저장됨'}
+            저장
           </Button>
         </div>
       ) : (

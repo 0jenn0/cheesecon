@@ -16,7 +16,14 @@ export const validateEmoticonSetField = (field: string, value: unknown) => {
   const fieldSchema = (
     emoticonSetSchema.shape as Record<
       string,
-      { safeParse: (value: unknown) => unknown }
+      {
+        safeParse: (value: unknown) => {
+          success: boolean;
+          data?: unknown;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          error?: any;
+        };
+      }
     >
   )[field];
   if (!fieldSchema) {

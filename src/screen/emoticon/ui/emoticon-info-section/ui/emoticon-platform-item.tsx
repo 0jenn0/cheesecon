@@ -15,7 +15,7 @@ export default function EmoticonPlatformItem({
       )}
     >
       <Icon
-        name={platform === 'kakaotalk' ? 'kakao-logo' : 'line-logo'}
+        name={platform === 'kakaotalk' ? 'kakao-logo' : 'ogq-logo'}
         size={20}
       />
       <p
@@ -23,7 +23,7 @@ export default function EmoticonPlatformItem({
           platform === 'kakaotalk' ? 'text-yellow-700' : 'text-green-700',
         )}
       >
-        {platform === 'kakaotalk' ? '카카오톡' : '라인'}
+        {platform === 'kakaotalk' ? '카카오톡' : 'OGQ'}
       </p>
     </div>
   );

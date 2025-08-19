@@ -1,28 +1,43 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { ImageUrlWithOrder } from '@/shared/types';
+import { useToast } from '@/shared/ui/feedback';
+import { EmoticonImageState } from '@/entity/emoticon-images/type/emoticon-image.type';
 import { useMutation } from '@tanstack/react-query';
 import { createEmoticonSet } from '../api/emoticon-set-api';
 import { CreateEmoticonSetForm } from '../api/types';
 
-export interface RegisterMutationProps {
-  imageUrls: ImageUrlWithOrder[];
-}
-
-export function useRegisterMutation({ imageUrls }: RegisterMutationProps) {
+export function useRegisterMutation() {
   const router = useRouter();
+  const { addToast } = useToast();
+
   return useMutation({
-    mutationFn: (emoticonSet: CreateEmoticonSetForm) =>
-      createEmoticonSet({ emoticonSet, imageUrls }),
+    mutationFn: ({
+      emoticonSet,
+      imageUrls,
+    }: {
+      emoticonSet: CreateEmoticonSetForm;
+      imageUrls: EmoticonImageState[];
+    }) => createEmoticonSet({ emoticonSet, imageUrls }),
     onSuccess: (data) => {
-      router.push(`/new`);
-      console.log('이모티콘 등록 성공:', data);
-      // 성공 후 처리 (예: 페이지 이동, 토스트 메시지 등)
+      if (data.success) {
+        router.push(`/main/new`);
+        addToast({
+          type: 'success',
+          message: '이모티콘 등록이 완료되었어요',
+        });
+      } else {
+        addToast({
+          type: 'error',
+          message: '이모티콘 등록에 실패했어요',
+        });
+      }
     },
-    onError: (error) => {
-      console.error('이모티콘 등록 실패:', error);
-      // 에러 처리 (예: 에러 토스트 메시지 등)
+    onError: () => {
+      addToast({
+        type: 'error',
+        message: '이모티콘 등록에 실패했어요',
+      });
     },
   });
 }
