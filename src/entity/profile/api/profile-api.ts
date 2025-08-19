@@ -43,7 +43,6 @@ export async function getActiveUsers({
     const likesReceivedByUser = new Map<string, number>();
     const commentCountByUser = new Map<string, number>();
 
-    console.log('Emoticon stats:', emoticonStats);
     emoticonStats?.forEach((stat) => {
       const userId = stat.user_id;
       if (userId && stat.is_private !== true) {
