@@ -121,7 +121,6 @@ export default function MultiUploadButton() {
       setIsUploading,
       setTotalUploadCount,
       setStatus,
-      setTotalUploadCount,
       totalEmoticonCount,
     ],
   );

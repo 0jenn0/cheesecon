@@ -265,7 +265,7 @@ function EmoticonGridItemCheckbox({ imageId }: { imageId: string }) {
     <Checkbox
       className='w-fit'
       status={isSelected ? 'checked' : 'unchecked'}
-      onChange={(e) => toggleSelectedImage(imageId)}
+      onChange={() => toggleSelectedImage(imageId)}
     />
   );
 }
