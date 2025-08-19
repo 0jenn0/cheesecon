@@ -27,6 +27,9 @@ type State = {
   uploadedCount: number;
   byId: Record<string, ImageMeta>;
   byOrder: Record<number, ImageMeta | undefined>;
+  byIdOriginal: Record<string, ImageMeta>;
+  byOrderOriginal: Record<number, ImageMeta | undefined>;
+
   meta: DraftMeta;
 
   metaErrors: Partial<Record<keyof DraftMeta & string, string>>;
@@ -67,6 +70,9 @@ type Actions = {
   getAllImages: () => EmoticonImageState[];
   getOrder: () => number[];
 
+  cancelReordering: () => void;
+  saveReordering: () => void;
+
   validateAll: () => { success: boolean; error?: any };
 };
 
@@ -97,10 +103,13 @@ export function createDraftStore() {
 
   return createStore<DraftStore>()((set, get) => ({
     order: [],
+    originalOrder: [],
     uploadedCount: 0,
     representativeImage: EMPTY_REPRESENTATIVE_IMAGE,
     byId: {},
     byOrder: {},
+    byIdOriginal: {},
+    byOrderOriginal: {},
     meta: {} as DraftMeta,
 
     metaErrors: {},
@@ -154,9 +163,9 @@ export function createDraftStore() {
       const rejected: Array<{ id: string; errors: string[] }> = [];
 
       set((store) => {
-        const byId = { ...store.byId };
-        const byOrder = {
-          ...store.byOrder,
+        const byIdOriginal = { ...store.byIdOriginal };
+        const byOrderOriginal = {
+          ...store.byOrderOriginal,
         };
         const imageErrors = { ...store.imageErrors };
         let uploadedCount = store.uploadedCount;
@@ -179,34 +188,34 @@ export function createDraftStore() {
             continue;
           }
 
-          if (byId[item.id]) {
-            const existingImage = byId[item.id];
+          if (byIdOriginal[item.id]) {
+            const existingImage = byIdOriginal[item.id];
             if (existingImage) {
-              byOrder[existingImage.image_order] = undefined;
+              byOrderOriginal[existingImage.image_order] = undefined;
             }
           }
 
-          if (byOrder[item.image_order]) {
-            const existingImage = byOrder[item.image_order];
+          if (byOrderOriginal[item.image_order]) {
+            const existingImage = byOrderOriginal[item.image_order];
             if (existingImage) {
-              delete byId[existingImage.id];
+              delete byIdOriginal[existingImage.id];
             }
           }
 
           uploadedCount++;
 
           files.set(item.id, item);
-          byId[item.id] = { ...item };
-          byOrder[item.image_order] = { ...item };
+          byIdOriginal[item.id] = { ...item };
+          byOrderOriginal[item.image_order] = { ...item };
           if (imageErrors[item.id]) delete imageErrors[item.id];
           accepted.push(item.id);
         }
 
         return {
-          byId,
-          byOrder,
+          byIdOriginal,
+          byOrderOriginal,
           uploadedCount,
-          order: recomputeOrder(byOrder),
+          order: recomputeOrder(byOrderOriginal),
           imageErrors,
         };
       });
@@ -274,27 +283,27 @@ export function createDraftStore() {
 
     reorder: (fromSlot, toSlot) => {
       set((store) => {
-        const byOrder = { ...store.byOrder };
-        const byId = { ...store.byId };
+        const byOrderOriginal = { ...store.byOrderOriginal };
+        const byIdOriginal = { ...store.byIdOriginal };
 
-        const src = byOrder[fromSlot];
-        const dst = byOrder[toSlot];
+        const src = byOrderOriginal[fromSlot];
+        const dst = byOrderOriginal[toSlot];
         if (!src) return store;
 
-        byOrder[fromSlot] = undefined;
+        byOrderOriginal[fromSlot] = undefined;
 
-        byOrder[toSlot] = { ...src, image_order: toSlot };
-        byId[src.id] = byOrder[toSlot]!;
+        byOrderOriginal[toSlot] = { ...src, image_order: toSlot };
+        byIdOriginal[src.id] = byOrderOriginal[toSlot]!;
 
         if (dst) {
-          byOrder[fromSlot] = { ...dst, image_order: fromSlot };
-          byId[dst.id] = byOrder[fromSlot]!;
+          byOrderOriginal[fromSlot] = { ...dst, image_order: fromSlot };
+          byIdOriginal[dst.id] = byOrderOriginal[fromSlot]!;
         }
 
         return {
-          byOrder,
-          byId,
-          order: recomputeOrder(byOrder),
+          byOrderOriginal,
+          byIdOriginal,
+          order: recomputeOrder(byOrderOriginal),
         };
       });
     },
@@ -306,10 +315,10 @@ export function createDraftStore() {
 
     setStatus: (order, status, msg) => {
       set((store) => {
-        const byOrder = { ...store.byOrder };
-        const byId = { ...store.byId };
+        const byOrderOriginal = { ...store.byOrderOriginal };
+        const byIdOriginal = { ...store.byIdOriginal };
 
-        if (!byOrder[order]) {
+        if (!byOrderOriginal[order]) {
           const tempId = crypto.randomUUID();
           const tempImage: ImageMeta = {
             id: tempId,
@@ -321,27 +330,27 @@ export function createDraftStore() {
             status,
             errorMessage: msg,
           };
-          byOrder[order] = tempImage;
-          byId[tempId] = tempImage;
+          byOrderOriginal[order] = tempImage;
+          byIdOriginal[tempId] = tempImage;
         } else {
-          const existingImage = byOrder[order]!;
-          byOrder[order] = {
+          const existingImage = byOrderOriginal[order]!;
+          byOrderOriginal[order] = {
             ...existingImage,
             status,
             errorMessage: msg,
           };
-          byId[existingImage.id] = byOrder[order]!;
+          byIdOriginal[existingImage.id] = byOrderOriginal[order]!;
         }
 
         return {
-          byOrder,
-          byId,
+          byOrderOriginal,
+          byIdOriginal,
         };
       });
     },
 
     getStatus: (order) => {
-      return get().byOrder[order]?.status ?? 'idle';
+      return get().byOrderOriginal[order]?.status ?? 'idle';
     },
 
     getFile: (id) => files.get(id),
@@ -374,6 +383,20 @@ export function createDraftStore() {
         return { success: false, error: '이모티콘 개수가 일치하지 않습니다.' };
 
       return { success: true };
+    },
+
+    saveReordering: () => {
+      set((store) => ({
+        byId: store.byIdOriginal,
+        byOrder: store.byOrderOriginal,
+      }));
+    },
+
+    cancelReordering: () => {
+      set((store) => ({
+        byIdOriginal: store.byId,
+        byOrderOriginal: store.byOrder,
+      }));
     },
   }));
 }

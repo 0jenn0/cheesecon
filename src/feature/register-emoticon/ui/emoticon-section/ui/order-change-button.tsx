@@ -1,4 +1,6 @@
+import { shallow } from 'zustand/shallow';
 import { Button } from '@/shared/ui/input';
+import { useDraft } from '@/feature/register-emoticon/model/draft-context';
 
 export default function OrderChangeButton({
   isOrderChangeMode,
@@ -7,16 +9,22 @@ export default function OrderChangeButton({
   isOrderChangeMode: boolean;
   toggleOrderChangeMode: () => void;
 }) {
+  const saveReordering = useDraft((s) => s.saveReordering);
+  const cancelReordering = useDraft((s) => s.cancelReordering);
+
   const handleStartOrderChange = () => {
+    saveReordering();
     toggleOrderChangeMode();
   };
 
   const handleCancelOrder = () => {
     toggleOrderChangeMode();
+    cancelReordering();
   };
 
   const handleSaveOrder = () => {
     toggleOrderChangeMode();
+    saveReordering();
   };
 
   return (
@@ -39,7 +47,7 @@ export default function OrderChangeButton({
             disabled={false}
             className='tablet:w-fit w-full'
           >
-            {'저장'}
+            저장
           </Button>
         </div>
       ) : (

@@ -33,7 +33,7 @@ export default function EmoticonGridItem({
   imageSize,
   ...props
 }: EmoticonGridItemProps) {
-  const imageInSlot = useDraft((store) => store.byOrder[imageOrder]);
+  const imageInSlot = useDraft((store) => store.byOrderOriginal[imageOrder]);
   const addImages = useDraft((store) => store.addImages);
   const uploadImageMutation = useUploadImageToBucketMutation();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -174,7 +174,7 @@ export default function EmoticonGridItem({
               className='h-full w-auto object-cover'
               draggable={false}
               placeholder='blur'
-              blurDataURL={imageInSlot?.blur_url ?? ''}
+              blurDataURL={imageInSlot?.blur_url ?? imageInSlot?.webp_url ?? ''}
             />
           </div>
         ) : (
