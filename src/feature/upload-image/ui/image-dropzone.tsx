@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { ComponentPropsWithRef, useCallback, useRef, useState } from 'react';
+import { ComponentPropsWithRef, useCallback, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
@@ -24,7 +24,6 @@ export default function ImageDropzone({
   const addRepresentativeImage = useDraft(
     (store) => store.addRepresentativeImage,
   );
-  const imageInSlot = useDraft((store) => store.byOrder[0]);
   const representativeImage = useDraft((store) => store.representativeImage);
   const uploadImageMutation = useUploadImageToBucketMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);

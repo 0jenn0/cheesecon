@@ -8,8 +8,11 @@ export const imageUrlSchema = z.object({
     .int()
     .min(0, '이미지 순서는 0 이상이어야 해요')
     .default(0),
-  blur_url: z.string().nullable(),
-  webp_url: z.string().nullable(),
+  blur_url: z.string().nullable().optional(),
+  webp_url: z.string().nullable().optional(),
+  is_representative: z.boolean().optional(),
+  errorMessage: z.string().optional(),
+  status: z.enum(['idle', 'uploading', 'done', 'error']).optional(),
 });
 
 export const emoticonSetSchema = z.object({

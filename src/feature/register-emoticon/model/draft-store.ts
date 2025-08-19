@@ -362,7 +362,9 @@ export function createDraftStore() {
       const info = { ...store.meta };
 
       const infoResult = validateEmoticonSet(info);
-      const imageArray = Object.values(store.byOrder).filter(Boolean);
+
+      const imageArray = Object.values(store.byOrderOriginal).filter(Boolean);
+
       const imageResult = validateImageUrls(imageArray);
 
       if (!infoResult.success) {
@@ -377,10 +379,10 @@ export function createDraftStore() {
         imageArray.length !==
         EMOTICON_CONFIG[store.meta.platform as EmoticonPlatform][
           store.meta.type as EmoticonType
-        ].count +
-          1 // 대표 이모티콘 1개
-      )
+        ].count
+      ) {
         return { success: false, error: '이모티콘 개수가 일치하지 않습니다.' };
+      }
 
       return { success: true };
     },

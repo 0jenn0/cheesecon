@@ -1,4 +1,3 @@
-import { shallow } from 'zustand/shallow';
 import { Button } from '@/shared/ui/input';
 import { useDraft } from '@/feature/register-emoticon/model/draft-context';
 

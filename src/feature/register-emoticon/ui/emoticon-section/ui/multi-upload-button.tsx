@@ -111,7 +111,19 @@ export default function MultiUploadButton() {
         fileInputRef.current.value = '';
       }
     },
-    [uploadImageMutation, addToast, addImages, uploadedCount],
+    [
+      uploadImageMutation,
+      addToast,
+      addImages,
+      uploadedCount,
+      currentUploadCount,
+      setCurrentUploadCount,
+      setIsUploading,
+      setTotalUploadCount,
+      setStatus,
+      setTotalUploadCount,
+      totalEmoticonCount,
+    ],
   );
 
   const handleButtonClick = useCallback(() => {

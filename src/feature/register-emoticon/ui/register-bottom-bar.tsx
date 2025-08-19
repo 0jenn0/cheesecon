@@ -7,6 +7,7 @@ import { useDraft } from '../model/draft-context';
 
 export function RegisterBottomBar() {
   const registerMutation = useRegisterMutation();
+
   const emoticonSetInfo = useDraft((store) => store.meta);
 
   const getAllImages = useDraft((store) => store.getAllImages);
