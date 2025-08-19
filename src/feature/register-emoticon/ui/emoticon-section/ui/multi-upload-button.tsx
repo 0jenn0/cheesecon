@@ -158,7 +158,7 @@ export default function MultiUploadButton() {
         <Button
           variant='primary'
           textClassName='text-body-sm font-semibold'
-          className='tablet:w-fit tablet:flex hidden w-full'
+          className='tablet:w-fit tablet:flex w-full'
           leadingIcon='image-plus'
           onClick={handleButtonClick}
           disabled={isUploading}
@@ -166,15 +166,6 @@ export default function MultiUploadButton() {
           {isUploading
             ? `업로드 중 (${currentUploadCount}/${totalUploadCount})`
             : `다중 업로드`}
-        </Button>
-        <Button
-          variant='primary'
-          textClassName='text-body-sm font-semibold '
-          className='tablet:w-fit tablet:hidden w-full'
-          leadingIcon='image-plus'
-          disabled={true}
-        >
-          PC 사용시 다중 업로드 가능
         </Button>
       </>
     </div>
