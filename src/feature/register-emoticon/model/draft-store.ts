@@ -23,6 +23,7 @@ export type DraftMeta = CreateEmoticonSetForm;
 
 type State = {
   order: number[];
+  selectedImageIds: string[];
   representativeImage: EmoticonImageState | null;
   uploadedCount: number;
   byId: Record<string, ImageMeta>;
@@ -74,6 +75,8 @@ type Actions = {
   saveReordering: () => void;
 
   validateAll: () => { success: boolean; error?: any };
+
+  toggleSelectedImage: (id: string) => void;
 };
 
 export type DraftStore = State & Actions;
@@ -104,6 +107,7 @@ export function createDraftStore() {
   return createStore<DraftStore>()((set, get) => ({
     order: [],
     originalOrder: [],
+    selectedImageIds: [],
     uploadedCount: 0,
     representativeImage: EMPTY_REPRESENTATIVE_IMAGE,
     byId: {},
@@ -256,26 +260,26 @@ export function createDraftStore() {
     removeImage: (id) => {
       const uploadCount = get().uploadedCount - 1;
       set((store) => {
-        const target = store.byId[id];
+        const target = store.byIdOriginal[id];
         if (!target) return store;
 
-        const byId = { ...store.byId };
-        const byOrder = { ...store.byOrder };
+        const byIdOriginal = { ...store.byIdOriginal };
+        const byOrderOriginal = { ...store.byOrderOriginal };
         const imageErrors = { ...store.imageErrors };
 
-        delete byId[id];
+        delete byIdOriginal[id];
 
-        byOrder[target.image_order] = undefined;
+        byOrderOriginal[target.image_order] = undefined;
 
         if (imageErrors[id]) delete imageErrors[id];
 
         files.delete(id);
 
         return {
-          byId,
-          byOrder,
+          byIdOriginal,
+          byOrderOriginal,
           uploadedCount: uploadCount,
-          order: recomputeOrder(byOrder),
+          order: recomputeOrder(byOrderOriginal),
           imageErrors,
         };
       });
@@ -398,6 +402,14 @@ export function createDraftStore() {
       set((store) => ({
         byIdOriginal: store.byId,
         byOrderOriginal: store.byOrder,
+      }));
+    },
+
+    toggleSelectedImage: (id: string) => {
+      set((store) => ({
+        selectedImageIds: store.selectedImageIds.includes(id)
+          ? store.selectedImageIds.filter((imageId) => imageId !== id)
+          : [...store.selectedImageIds, id],
       }));
     },
   }));

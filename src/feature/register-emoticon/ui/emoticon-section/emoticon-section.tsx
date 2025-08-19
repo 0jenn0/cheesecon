@@ -10,9 +10,14 @@ import {
 
 export default function EmoticonSection() {
   const [isOrderChangeMode, setIsOrderChangeMode] = useState(false);
+  const [isMultiSelectedMode, setIsMultiSelectedMode] = useState(false);
 
   const toggleOrderChangeMode = useCallback(() => {
     setIsOrderChangeMode((prev) => !prev);
+  }, []);
+
+  const toggleMultiSelectedMode = useCallback(() => {
+    setIsMultiSelectedMode((prev) => !prev);
   }, []);
 
   return (
@@ -27,7 +32,10 @@ export default function EmoticonSection() {
             isOrderChangeMode={isOrderChangeMode}
             toggleOrderChangeMode={toggleOrderChangeMode}
           />
-          <MultiSelectButton />
+          <MultiSelectButton
+            isMultiSelectedMode={isMultiSelectedMode}
+            toggleMultiSelectedMode={toggleMultiSelectedMode}
+          />
           <div className='tablet:block hidden'>
             <MultiUploadButton />
           </div>
@@ -36,7 +44,10 @@ export default function EmoticonSection() {
 
       <div className='border-ghost border-b' />
 
-      <EmoticonGrid isOrderChangeMode={isOrderChangeMode} />
+      <EmoticonGrid
+        isOrderChangeMode={isOrderChangeMode}
+        isMultiSelectedMode={isMultiSelectedMode}
+      />
     </section>
   );
 }

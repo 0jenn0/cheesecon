@@ -1,27 +1,44 @@
 import { useModal } from '@/shared/ui/feedback';
 import { Button } from '@/shared/ui/input';
+import { useDraft } from '@/feature/register-emoticon/model/draft-context';
 
-export default function MultiSelectButton() {
+export default function MultiSelectButton({
+  isMultiSelectedMode = false,
+  toggleMultiSelectedMode,
+}: {
+  isMultiSelectedMode?: boolean;
+  toggleMultiSelectedMode: () => void;
+}) {
   const { openModal } = useModal();
+  const selectedImageIds = useDraft((store) => store.selectedImageIds);
+  const toggleSelectedImage = useDraft((store) => store.toggleSelectedImage);
+  const removeImage = useDraft((store) => store.removeImage);
 
-  const handleClickCancel = () => {};
+  const handleDelete = (imageId: string) => {
+    removeImage(imageId);
+    toggleSelectedImage(imageId);
+  };
 
-  const handleDeleteSelectedItems = () =>
+  const handleClickCancel = () => {
+    toggleMultiSelectedMode();
+  };
+
+  const handleDeleteSelectedItems = () => {
     openModal('deleteConfirm', {
-      items: [],
-      handleEmoticonItem: () => {},
+      imageIds: selectedImageIds,
+      onDelete: handleDelete,
     });
-
-  const isCheckedItems = 0;
+    toggleMultiSelectedMode();
+  };
 
   return (
     <>
-      {false ? (
+      {!isMultiSelectedMode ? (
         <Button
           variant='secondary'
           textClassName='text-body-sm font-semibold'
           className='tablet:w-fit w-full'
-          onClick={() => {}}
+          onClick={toggleMultiSelectedMode}
         >
           다중 선택
         </Button>
@@ -42,7 +59,7 @@ export default function MultiSelectButton() {
             textClassName='text-body-sm font-semibold'
             className='tablet:w-fit w-full'
             onClick={handleDeleteSelectedItems}
-            disabled={!isCheckedItems}
+            disabled={selectedImageIds.length === 0}
           >
             선택 삭제
           </Button>

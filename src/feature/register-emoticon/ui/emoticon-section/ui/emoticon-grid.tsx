@@ -21,8 +21,10 @@ import EmoticonGridItem from '../../emotcion-grid-item';
 
 export default function EmoticonGrid({
   isOrderChangeMode,
+  isMultiSelectedMode,
 }: {
   isOrderChangeMode: boolean;
+  isMultiSelectedMode: boolean;
 }) {
   const reorder = useDraft((store) => store.reorder);
   const platform = useDraft((store) => store.meta.platform) as EmoticonPlatform;
@@ -67,6 +69,7 @@ export default function EmoticonGrid({
               showGrip={isOrderChangeMode}
               isDragMode={isOrderChangeMode}
               imageSize={imageSize}
+              showCheckbox={isMultiSelectedMode}
             />
           ))}
         </div>

@@ -19,7 +19,6 @@ interface EmoticonGridItemProps extends ComponentPropsWithRef<'div'> {
   isDragMode?: boolean;
   showCheckbox?: boolean;
   showGrip?: boolean;
-  onCheckboxChange?: (checked: boolean) => void;
   imageSize?: number;
 }
 
@@ -29,7 +28,6 @@ export default function EmoticonGridItem({
   isDragMode = false,
   showCheckbox = false,
   showGrip = false,
-  onCheckboxChange,
   imageSize,
   ...props
 }: EmoticonGridItemProps) {
@@ -37,7 +35,6 @@ export default function EmoticonGridItem({
   const addImages = useDraft((store) => store.addImages);
   const uploadImageMutation = useUploadImageToBucketMutation();
   const fileRef = useRef<HTMLInputElement>(null);
-
   const [imageUrl, setImageUrl] = useState<string | null>(
     imageInSlot?.webp_url ?? null,
   );
@@ -212,7 +209,7 @@ export default function EmoticonGridItem({
             <span className='text-body-sm text-black/60'>{imageOrder}</span>
           </div>
           {showCheckbox && (
-            <EmoticonGridItemCheckbox onCheckboxChange={onCheckboxChange} />
+            <EmoticonGridItemCheckbox imageId={imageInSlot?.id ?? ''} />
           )}
         </div>
         <div className='flex w-full items-center justify-end'>
@@ -227,23 +224,16 @@ export default function EmoticonGridItem({
   );
 }
 
-function EmoticonGridItemCheckbox({
-  onCheckboxChange,
-}: {
-  onCheckboxChange?: (checked: boolean) => void;
-}) {
-  const [isSelected, setIsSelected] = useState(false);
-
-  const handleCheckboxChange = (checked: boolean) => {
-    setIsSelected(checked);
-    onCheckboxChange?.(checked);
-  };
+function EmoticonGridItemCheckbox({ imageId }: { imageId: string }) {
+  const selectedImageIds = useDraft((store) => store.selectedImageIds);
+  const isSelected = selectedImageIds.includes(imageId);
+  const toggleSelectedImage = useDraft((store) => store.toggleSelectedImage);
 
   return (
     <Checkbox
       className='w-fit'
       status={isSelected ? 'checked' : 'unchecked'}
-      onChange={(e) => handleCheckboxChange(e.target.checked)}
+      onChange={(e) => toggleSelectedImage(imageId)}
     />
   );
 }
