@@ -82,7 +82,7 @@ export default function MiniCalendar({
         {calendarData.map((item, index) => (
           <div
             key={index}
-            className={`border-radius-md flex aspect-square cursor-pointer items-center justify-center text-[10px] transition-all duration-200 ease-in-out ${
+            className={`border-radius-md flex aspect-square items-center justify-center text-[10px] transition-all duration-200 ease-in-out select-none ${
               item.isToday
                 ? 'border-secondary border font-semibold'
                 : item.isApproved
