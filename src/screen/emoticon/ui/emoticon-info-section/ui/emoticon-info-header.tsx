@@ -34,22 +34,38 @@ export default function EmoticonInfoHeader({
   return (
     <div className={cn('bg-primary flex w-full items-center gap-16')}>
       <div className='border-ghost tablet:w-[160px] tablet:h-[160px] border-radius-lg aspect-square h-[100px] w-[100px] overflow-hidden border'>
-        <Image
-          src={representativeImage.webp_url ?? representativeImage.image_url}
-          alt={author_name}
-          width={160}
-          height={160}
-          className='h-full w-full object-cover'
-          priority
-          loading='eager'
-          placeholder='blur'
-          blurDataURL={
-            representativeImage.blur_url ??
-            representativeImage.webp_url ??
-            representativeImage.image_url ??
-            ''
-          }
-        />
+        {representativeImage.mp4_url || representativeImage.webm_url ? (
+          <video
+            src={
+              representativeImage.mp4_url ?? representativeImage.webm_url ?? ''
+            }
+            poster={
+              representativeImage.webp_url ?? representativeImage.image_url
+            }
+            className='h-full w-full object-cover'
+            autoPlay
+            muted
+            loop
+            playsInline
+          />
+        ) : (
+          <Image
+            src={representativeImage.webp_url ?? representativeImage.image_url}
+            alt={author_name}
+            width={160}
+            height={160}
+            className='h-full w-full object-cover'
+            priority
+            loading='eager'
+            placeholder='blur'
+            blurDataURL={
+              representativeImage.blur_url ??
+              representativeImage.webp_url ??
+              representativeImage.image_url ??
+              ''
+            }
+          />
+        )}
       </div>
 
       <div className='tablet:gap-12 flex h-full flex-1 flex-col gap-8'>

@@ -2,16 +2,17 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ComponentPropsWithRef } from 'react';
+import { useRef } from 'react';
 import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
-import { ICON_NAMES } from '@/shared/ui/icon/config';
-import {
+import type {
   EmoticonSetDetail,
   EmoticonSetWithRepresentativeImage,
 } from '@/entity/emoticon-set/type';
+import { IconLabel } from './icon-label';
+import LikeLabel from './like-label';
 
-interface EmoticonViewItemProps extends ComponentPropsWithRef<'section'> {
+interface EmoticonViewItemProps {
   item: EmoticonSetDetail | EmoticonSetWithRepresentativeImage;
   index?: number;
   hideLikes?: boolean;
@@ -22,29 +23,56 @@ export default function EmoticonViewItemClient({
   index,
   hideLikes = false,
 }: EmoticonViewItemProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const play = () => videoRef.current?.play();
+  const reset = () => {
+    if (!videoRef.current) return;
+    videoRef.current.pause();
+    videoRef.current.currentTime = 0;
+    videoRef.current.load();
+  };
+
   return (
-    <Link
-      href={`/emoticon/${item.id}`}
-      className='group flex cursor-pointer gap-24'
+    <section
+      className='group flex w-full cursor-pointer'
+      onMouseEnter={play}
+      onMouseLeave={reset}
     >
-      <Thumbnail index={index} item={item} />
-      <Content item={item} hideLikes={hideLikes} />
-    </Link>
+      <Link href={`/emoticon/${item.id}`} className='group flex w-full gap-24'>
+        <Thumbnail
+          index={index}
+          item={item as EmoticonSetWithRepresentativeImage}
+          videoRef={videoRef}
+        />
+        <Content
+          item={item as EmoticonSetWithRepresentativeImage}
+          hideLikes={hideLikes}
+        />
+      </Link>
+    </section>
   );
 }
 
 function Thumbnail({
   index,
   item,
+  videoRef,
 }: {
   index?: number;
   item: EmoticonSetWithRepresentativeImage;
+  videoRef: React.RefObject<HTMLVideoElement | null>;
 }) {
+  const hasVideo =
+    !!item.representative_image.mp4_url ||
+    !!item.representative_image.webm_url ||
+    !!item.representative_image.poster_url;
+
   return (
     <div className='border-radius-lg relative flex gap-8 overflow-hidden font-semibold'>
       <div className='flex flex-col justify-between'>
         <div className='height-24 width-24 flex items-center justify-center'>
-          {index && (
+          {typeof index === 'number' && (
             <span className='text-body-sm text-secondary font-regular'>
               {index}
             </span>
@@ -55,25 +83,51 @@ function Thumbnail({
           <EmoticonPlatform platform={item.platform} />
         </div>
       </div>
-      <Image
-        src={
-          item.representative_image.webp_url ??
-          item.representative_image.image_url
-        }
-        alt={item.title}
-        className='border-radius-lg border-ghost tablet:w-[96px] tablet:h-[96px] h-[80px] w-[80px] border object-cover transition-all duration-200'
-        width={80}
-        height={80}
-        priority={index && index < 4 ? true : false}
-        loading={index && index < 4 ? 'eager' : 'lazy'}
-        placeholder='blur'
-        blurDataURL={
-          item.representative_image.blur_url ??
-          item.representative_image.webp_url ??
-          item.representative_image.image_url ??
-          ''
-        }
-      />
+
+      {hasVideo ? (
+        <video
+          ref={videoRef}
+          src={
+            item.representative_image.mp4_url ??
+            item.representative_image.webm_url ??
+            ''
+          }
+          poster={
+            item.representative_image.poster_url ??
+            item.representative_image.webp_url ??
+            item.representative_image.image_url ??
+            ''
+          }
+          className={cn(
+            'border-radius-lg border-ghost tablet:w-[96px] tablet:h-[96px] h-[80px] w-[80px] border object-cover transition-all duration-200 group-hover:scale-105',
+          )}
+          muted
+          loop
+          playsInline
+          // 개별 비디오에 핸들러는 필요 없음 (부모에서 전체 제어)
+        />
+      ) : (
+        <Image
+          src={
+            item.representative_image.webp_url ??
+            item.representative_image.image_url ??
+            ''
+          }
+          alt={item.title}
+          className='border-radius-lg border-ghost tablet:w-[96px] tablet:h-[96px] h-[80px] w-[80px] border object-cover transition-all duration-200'
+          width={80}
+          height={80}
+          priority={typeof index === 'number' && index < 4 ? true : false}
+          loading={typeof index === 'number' && index < 4 ? 'eager' : 'lazy'}
+          placeholder='blur'
+          blurDataURL={
+            item.representative_image.blur_url ??
+            item.representative_image.webp_url ??
+            item.representative_image.image_url ??
+            ''
+          }
+        />
+      )}
     </div>
   );
 }
@@ -128,31 +182,10 @@ function Content({
         <div className='flex gap-12'>
           <IconLabel icon='message-circle' label={item.comments_count} />
           {!hideLikes && (
-            <IconLabel
-              icon={item.is_liked ? 'heart-filled' : 'heart'}
-              iconClassName={item.is_liked ? 'text-rose-400' : 'text-gray-500'}
-              label={item.likes_count}
-            />
+            <LikeLabel itemId={item.id} likesCount={item.likes_count ?? 0} />
           )}
         </div>
       </div>
-    </div>
-  );
-}
-
-function IconLabel({
-  icon,
-  label,
-  iconClassName,
-}: {
-  icon: (typeof ICON_NAMES)[number];
-  label: number | null;
-  iconClassName?: string;
-}) {
-  return (
-    <div className='flex gap-2'>
-      <Icon name={icon} className={cn('text-gray-500', iconClassName)} />
-      <p className='text-body-sm text-secondary'>{label}</p>
     </div>
   );
 }
