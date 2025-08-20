@@ -15,4 +15,7 @@ export type EmoticonImageState = Pick<
   | 'webp_url'
   | 'image_order'
   | 'is_representative'
+  | 'poster_url'
+  | 'mp4_url'
+  | 'webm_url'
 >;

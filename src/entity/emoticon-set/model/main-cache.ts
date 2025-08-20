@@ -39,7 +39,7 @@ export async function fetchEmoticonSets({
     .select(
       `
       id, title, author_name, likes_count, comments_count, type, platform,
-      emoticon_images ( id, image_url, blur_url, image_order, is_representative, webp_url )
+      emoticon_images ( id, image_url, blur_url, image_order, is_representative, webp_url, mp4_url, webm_url, poster_url )
     `,
       { count: 'exact' },
     )
@@ -102,7 +102,7 @@ async function fetchEmoticonSet(id: string): Promise<EmoticonSetInfo> {
     .from('emoticon_sets')
     .select(
       `id, title, user_id, author_name, likes_count, comments_count, type, platform, is_private,views_count,description,
-      emoticon_images ( id, image_url, blur_url, image_order, is_representative, webp_url )`,
+      emoticon_images ( id, image_url, blur_url, image_order, is_representative, webp_url, mp4_url, webm_url, poster_url )`,
     )
     .eq('id', id)
     .single();
