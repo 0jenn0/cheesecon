@@ -43,21 +43,42 @@ export default function ImageBox({
           duration: 0.15,
         }}
       >
-        <Image
-          src={imageData?.webp_url ?? imageData?.image_url}
-          alt={`image-${imageData.id}`}
-          placeholder='blur'
-          width={currentSize}
-          height={currentSize}
-          blurDataURL={imageData?.blur_url ?? imageData?.image_url}
-          className='object-contain transition-transform duration-300 group-hover:scale-110 active:cursor-grabbing'
-          draggable={false}
-          priority={isCenter}
-          loading={isCenter ? 'eager' : 'lazy'}
-          style={{
-            backgroundColor: COLOR_MAP[color],
-          }}
-        />
+        {!imageData.webm_url && !imageData.mp4_url && (
+          <Image
+            src={imageData?.webp_url ?? imageData?.image_url}
+            alt={`image-${imageData.id}`}
+            placeholder='blur'
+            width={currentSize}
+            height={currentSize}
+            blurDataURL={imageData?.blur_url ?? imageData?.image_url}
+            className='object-contain transition-transform duration-300 group-hover:scale-110 active:cursor-grabbing'
+            draggable={false}
+            priority={isCenter}
+            loading={isCenter ? 'eager' : 'lazy'}
+            style={{
+              backgroundColor: COLOR_MAP[color],
+            }}
+          />
+        )}
+        {(imageData.webm_url || imageData.mp4_url) && (
+          <video
+            src={imageData.webm_url ?? imageData.mp4_url ?? ''}
+            className='object-contain transition-transform duration-300 group-hover:scale-110 active:cursor-grabbing'
+            draggable={false}
+            autoPlay
+            muted
+            loop
+            playsInline
+            controls={false}
+            width={currentSize}
+            height={currentSize}
+            preload='auto'
+            poster={imageData.blur_url ?? imageData.image_url}
+            style={{
+              backgroundColor: COLOR_MAP[color],
+            }}
+          />
+        )}
       </motion.div>
     </div>
   );
