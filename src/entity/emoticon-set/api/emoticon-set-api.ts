@@ -57,6 +57,9 @@ export async function createEmoticonSet({
           image_order: imageUrl.image_order,
           blur_url: imageUrl.blur_url ?? null,
           webp_url: imageUrl.webp_url ?? null,
+          mp4_url: imageUrl.mp4_url ?? null,
+          poster_url: imageUrl.poster_url ?? null,
+          webm_url: imageUrl.webm_url ?? null,
           is_representative: imageUrl.is_representative ?? false,
         }),
       ),
@@ -123,7 +126,10 @@ export async function getEmoticonSetsWithRepresentativeImage({
     blur_url,
     image_order,
     is_representative,
-    webp_url
+    webp_url,
+    mp4_url,
+    webm_url,
+    poster_url
    )`,
       { count: 'exact' },
     );
@@ -211,7 +217,12 @@ export async function getEmoticonSetsWithRepresentativeImage({
             author_name: set.author_name,
             likes_count: set.likes_count || 0,
             comments_count: set.comments_count || 0,
-            representative_image: representativeImage,
+            representative_image: {
+              ...representativeImage,
+              mp4_url: representativeImage.mp4_url || null,
+              webm_url: representativeImage.webm_url || null,
+              poster_url: representativeImage.poster_url || null,
+            },
             is_liked: likedSets.includes(set.id),
             type: set.type,
             platform: set.platform,
@@ -312,7 +323,10 @@ export async function getLikedEmoticonSets({
           blur_url,
           image_order,
           is_representative,
-          webp_url
+          webp_url,
+          mp4_url,
+          webm_url,
+          poster_url
         )
       `,
         { count: 'exact' },
@@ -368,7 +382,12 @@ export async function getLikedEmoticonSets({
             comments_count: set.comments_count || 0,
             type: set.type,
             platform: set.platform,
-            representative_image: representativeImage,
+            representative_image: {
+              ...representativeImage,
+              mp4_url: representativeImage.mp4_url || null,
+              webm_url: representativeImage.webm_url || null,
+              poster_url: representativeImage.poster_url || null,
+            },
             is_liked: true,
           };
         })

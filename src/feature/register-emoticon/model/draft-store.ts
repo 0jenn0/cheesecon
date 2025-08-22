@@ -182,6 +182,9 @@ export function createDraftStore() {
             webp_url: image.webp_url ?? '',
             image_order: image.image_order,
             is_representative: false,
+            poster_url: image.poster_url ?? '',
+            mp4_url: image.mp4_url ?? '',
+            webm_url: image.webm_url ?? '',
           };
 
           const errs = validateImageUrlsOf(item);
@@ -232,8 +235,11 @@ export function createDraftStore() {
       const rejected: Array<{ id: string; errors: string[] }> = [];
 
       set((store) => {
-        const byId = { ...store.byId, [item.id]: item };
-        const byOrder = { ...store.byOrder, [item.image_order]: item };
+        const byIdOriginal = { ...store.byIdOriginal, [item.id]: item };
+        const byOrderOriginal = {
+          ...store.byOrderOriginal,
+          [item.image_order]: item,
+        };
         const imageErrors = { ...store.imageErrors };
         const representativeImage = { ...store.representativeImage, ...item };
 
@@ -247,8 +253,8 @@ export function createDraftStore() {
         accepted.push(item.id);
 
         return {
-          byId,
-          byOrder,
+          byIdOriginal,
+          byOrderOriginal,
           representativeImage,
           imageErrors,
         };
@@ -331,6 +337,9 @@ export function createDraftStore() {
             blur_url: '',
             webp_url: '',
             is_representative: false,
+            poster_url: '',
+            mp4_url: '',
+            webm_url: '',
             status,
             errorMessage: msg,
           };
@@ -383,7 +392,8 @@ export function createDraftStore() {
         imageArray.length !==
         EMOTICON_CONFIG[store.meta.platform as EmoticonPlatform][
           store.meta.type as EmoticonType
-        ].count
+        ].count +
+          1
       ) {
         return { success: false, error: '이모티콘 개수가 일치하지 않습니다.' };
       }

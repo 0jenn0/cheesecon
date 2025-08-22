@@ -170,7 +170,10 @@ export type Database = {
           image_url: string
           is_representative: boolean | null
           likes_count: number | null
+          mp4_url: string | null
+          poster_url: string | null
           set_id: string | null
+          webm_url: string | null
           webp_url: string | null
         }
         Insert: {
@@ -182,7 +185,10 @@ export type Database = {
           image_url: string
           is_representative?: boolean | null
           likes_count?: number | null
+          mp4_url?: string | null
+          poster_url?: string | null
           set_id?: string | null
+          webm_url?: string | null
           webp_url?: string | null
         }
         Update: {
@@ -194,7 +200,10 @@ export type Database = {
           image_url?: string
           is_representative?: boolean | null
           likes_count?: number | null
+          mp4_url?: string | null
+          poster_url?: string | null
           set_id?: string | null
+          webm_url?: string | null
           webp_url?: string | null
         }
         Relationships: [
@@ -509,6 +518,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      _text_to_uuid_safe: {
+        Args: { p: string }
+        Returns: string
+      }
       get_comments_v1: {
         Args: {
           p_image_id?: string
@@ -712,6 +725,14 @@ export type Database = {
       toggle_like: {
         Args: { p_image_id?: string; p_set_id?: string; p_user_id: string }
         Returns: Json
+      }
+      update_image_comment_count: {
+        Args: { p_image_id: string }
+        Returns: undefined
+      }
+      update_set_comment_count: {
+        Args: { p_set_id: string }
+        Returns: undefined
       }
     }
     Enums: {

@@ -9,7 +9,7 @@ export default async function EmoticonViewSectionServer({
   initial?: EmoticonSetWithRepresentativeImage[];
 }) {
   return (
-    <ul className='grid grid-cols-1 gap-x-24 gap-y-12 md:grid-cols-2'>
+    <ul className='grid grid-cols-1 gap-x-48 gap-y-12 md:grid-cols-2'>
       {initial?.map((item, index) => (
         <li
           className='flex cursor-pointer flex-col gap-12'

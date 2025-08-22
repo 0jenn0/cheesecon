@@ -55,7 +55,6 @@ export async function getEmoticonImages(
     const { data, error } = await query;
 
     if (error) {
-      console.error('Query error:', error);
       return {
         success: false,
         error: {
@@ -69,8 +68,7 @@ export async function getEmoticonImages(
       success: true,
       data: data || [],
     };
-  } catch (err) {
-    console.error('getEmoticonImages 전체 에러:', err);
+  } catch {
     return {
       success: false,
       error: {
@@ -99,7 +97,6 @@ export async function getEmoticonImage({
       .single();
 
     if (error) {
-      console.error('Query error:', error);
       return {
         success: false,
         error: {
@@ -123,8 +120,7 @@ export async function getEmoticonImage({
       success: true,
       data,
     };
-  } catch (err) {
-    console.error('getEmoticonImages 전체 에러:', err);
+  } catch {
     return {
       success: false,
       error: {
@@ -148,11 +144,17 @@ export async function getRepresentativeImageBySetId(
     .single();
 
   if (error) {
-    throw new Error(`대표 이모티콘 이미지 조회 에러: ${error.message}`);
+    return {
+      success: false,
+      error: { message: `대표 이모티콘 이미지 조회 에러: ${error.message}` },
+    };
   }
 
   if (!data) {
-    throw new Error('대표 이모티콘 이미지를 찾을 수 없습니다.');
+    return {
+      success: false,
+      error: { message: '대표 이모티콘 이미지를 찾을 수 없습니다.' },
+    };
   }
 
   return {
@@ -224,7 +226,10 @@ export async function getEmoticonImageIdsAndOrder(
     .order('image_order', { ascending: true });
 
   if (error) {
-    throw new Error(`이모티콘 이미지 조회 에러: ${error.message}`);
+    return {
+      success: false,
+      error: { message: error.message },
+    };
   }
 
   return {

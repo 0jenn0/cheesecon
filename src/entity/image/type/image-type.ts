@@ -4,6 +4,9 @@ export interface ImageUploadResult {
   blurUrl?: string | null;
   webpUrl?: string | null;
   isRepresentative?: boolean;
+  posterUrl?: string | null;
+  mp4Url?: string | null;
+  webmUrl?: string | null;
 }
 
 export interface ImageUrlResult {

@@ -38,6 +38,7 @@ export default function ImageDropzone({
         });
 
         const result = await uploadImageMutation.mutateAsync(formData);
+
         if (result.success) {
           addRepresentativeImage({
             id: crypto.randomUUID(),
@@ -46,8 +47,10 @@ export default function ImageDropzone({
             blur_url: result.data.blurUrl ?? null,
             webp_url: result.data.webpUrl ?? null,
             is_representative: true,
+            mp4_url: result.data.mp4Url ?? null,
+            poster_url: result.data.posterUrl ?? null,
+            webm_url: result.data.webmUrl ?? null,
           });
-          return;
         }
       }
     },
@@ -121,17 +124,32 @@ export default function ImageDropzone({
         (representativeImage.image_url || representativeImage.webp_url) &&
         !isLoading && (
           <div className='group/image border-radius-xl border-ghost effect-shadow-4 bg-primary tablet:h-auto tablet:w-full relative flex aspect-square h-full w-auto items-center justify-center overflow-hidden'>
-            <Image
-              width={240}
-              height={240}
-              src={
-                representativeImage?.webp_url ??
-                representativeImage.image_url ??
-                ''
-              }
-              alt='Uploaded preview'
-              className='h-auto w-full object-cover transition-transform duration-300'
-            />
+            {representativeImage.mp4_url || representativeImage.webm_url ? (
+              <video
+                src={
+                  representativeImage.mp4_url ??
+                  representativeImage.webm_url ??
+                  ''
+                }
+                className='h-auto w-full object-cover transition-transform duration-300'
+                autoPlay
+                muted
+                loop
+                playsInline
+              />
+            ) : (
+              <Image
+                width={240}
+                height={240}
+                src={
+                  representativeImage?.webp_url ??
+                  representativeImage.image_url ??
+                  ''
+                }
+                alt='Uploaded preview'
+                className='h-auto w-full object-cover transition-transform duration-300'
+              />
+            )}
 
             <div className='absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 transition-opacity duration-300 group-hover/image:opacity-100'>
               <div className='flex flex-col gap-12 text-center text-white'>

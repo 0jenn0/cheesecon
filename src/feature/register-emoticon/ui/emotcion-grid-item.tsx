@@ -41,9 +41,7 @@ export default function EmoticonGridItem({
     imageInSlot?.webp_url ?? null,
   );
   const [mouseHover, setMouseHover] = useState(false);
-
   const isDraggable = !!imageInSlot && isDragMode;
-
   const {
     attributes,
     listeners,
@@ -84,13 +82,16 @@ export default function EmoticonGridItem({
             blur_url: result.data.blurUrl ?? '',
             webp_url: result.data.webpUrl ?? '',
             is_representative: false,
+            poster_url: result.data.posterUrl ?? '',
+            mp4_url: result.data.mp4Url ?? '',
+            webm_url: result.data.webmUrl ?? '',
           },
         ]);
         setStatus(imageOrder, 'done');
         setImageUrl(result.data.webpUrl ?? result.data.url ?? null);
       }
     },
-    [addImages, imageOrder, uploadImageMutation],
+    [addImages, imageOrder, uploadImageMutation, setStatus],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -187,16 +188,36 @@ export default function EmoticonGridItem({
                 <input {...getInputProps()} className='hidden' />
               </>
             )}
-            <Image
-              src={imageInSlot?.webp_url ?? imageUrl ?? ''}
-              alt='emoticon'
-              width={120}
-              height={120}
-              className='h-full w-auto object-cover'
-              draggable={false}
-              placeholder='blur'
-              blurDataURL={imageInSlot?.blur_url ?? imageInSlot?.webp_url ?? ''}
-            />
+            {imageInSlot.mp4_url || imageInSlot.webm_url ? (
+              <video
+                src={imageInSlot?.mp4_url ?? imageInSlot?.webm_url ?? ''}
+                className='h-full w-auto object-cover'
+                autoPlay
+                muted
+                loop
+                playsInline
+              />
+            ) : (
+              <Image
+                src={
+                  imageInSlot?.webp_url ??
+                  imageInSlot?.poster_url ??
+                  imageInSlot?.mp4_url ??
+                  imageInSlot?.webm_url ??
+                  imageInSlot?.image_url ??
+                  ''
+                }
+                alt='emoticon'
+                width={120}
+                height={120}
+                className='h-full w-auto object-cover'
+                draggable={false}
+                placeholder='blur'
+                blurDataURL={
+                  imageInSlot?.blur_url ?? imageInSlot?.webp_url ?? ''
+                }
+              />
+            )}
           </div>
         ) : (
           <div className='flex h-full w-full cursor-pointer flex-col items-center justify-center gap-8'>

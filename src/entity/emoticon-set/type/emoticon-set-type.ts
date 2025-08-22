@@ -25,6 +25,9 @@ export type EmoticonSetWithRepresentativeImage = Pick<
     | 'image_order'
     | 'is_representative'
     | 'webp_url'
+    | 'mp4_url'
+    | 'webm_url'
+    | 'poster_url'
   >;
 };
 
@@ -68,6 +71,9 @@ export type EmoticonImageRequest = {
   image_order: number;
   blur_url: string | null;
   webp_url: string | null;
+  mp4_url: string | null;
+  poster_url: string | null;
+  webm_url: string | null;
   is_representative: boolean;
 };
 
@@ -114,5 +120,8 @@ export type EmoticonSetInfo = Pick<
     | 'image_order'
     | 'is_representative'
     | 'webp_url'
+    | 'mp4_url'
+    | 'webm_url'
+    | 'poster_url'
   >;
 };

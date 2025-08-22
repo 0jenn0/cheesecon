@@ -1,13 +1,39 @@
 'use server';
 
+import 'server-only';
 import sharp from 'sharp';
+import { gifWebpToVideoFiles } from '@/shared/lib/media';
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
-import { ApiResult } from '@/shared/types';
-import { ImageUploadResult, ImageUrlResult } from '../type';
+import type { ApiResult } from '@/shared/types';
+import type { ImageUploadResult, ImageUrlResult } from '../type';
 import { sanitizeFileName } from '../util';
 
 const MAX_FILE_SIZE_MB = 2;
 const MAX_FILE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+
+async function toBlurDataURL(
+  buf: Buffer,
+  useTransparentBackground: boolean = true,
+) {
+  const tiny = sharp(buf).resize(24).blur().png({ quality: 40 });
+
+  if (!useTransparentBackground) {
+    tiny.flatten({ background: { r: 255, g: 255, b: 255 } });
+  }
+
+  const buffer = await tiny.toBuffer();
+  const mimeType = useTransparentBackground ? 'image/png' : 'image/png';
+  return `data:${mimeType};base64,${buffer.toString('base64')}`;
+}
+
+async function isAnimated(buffer: Buffer, mime: string) {
+  if (mime === 'image/gif') return true;
+  if (mime === 'image/webp') {
+    const meta = await sharp(buffer, { animated: true }).metadata();
+    return (meta.pages ?? 1) > 1;
+  }
+  return false;
+}
 
 export async function uploadImageToBucket(
   formData: FormData,
@@ -49,57 +75,24 @@ export async function uploadImageToBucket(
 
     const inputArrayBuffer = await file.arrayBuffer();
     const inputBuffer = Buffer.from(inputArrayBuffer);
-
-    let webpBuffer: Buffer;
-    let blurBase64: string;
-    try {
-      const [webpBufferData, blurBase64Data] = await Promise.all([
-        sharp(inputBuffer).webp({ quality: 80 }).toBuffer(),
-        sharp(inputBuffer)
-          .resize(10, 10, { fit: 'inside' })
-          .flatten({ background: { r: 255, g: 255, b: 255, alpha: 0 } })
-          .png()
-          .blur(1)
-          .toBuffer()
-          .then((b) => `data:image/png;base64,${b.toString('base64')}`),
-      ]);
-      if (!webpBufferData || !blurBase64Data) {
-        return {
-          success: false,
-          error: {
-            code: 'IMAGE_PROCESSING_ERROR',
-            message: '이미지 처리에 실패했어요.',
-          },
-        };
-      }
-      webpBuffer = webpBufferData;
-      blurBase64 = blurBase64Data;
-      console.log('image processing success');
-    } catch {
-      return {
-        success: false,
-        error: {
-          code: 'IMAGE_PROCESSING_ERROR',
-          message: '이미지 처리에 실패했어요.',
-        },
-      };
-    }
-
     const safeFileName = sanitizeFileName(file.name);
-    const webpName = safeFileName.replace(/\.[^.]+$/, '') + '.webp';
+    const baseName = safeFileName.replace(/\.[^.]+$/, '');
+
+    const animated = await isAnimated(inputBuffer, file.type || '');
 
     {
       const blob = new Blob([inputBuffer], {
         type: file.type || 'application/octet-stream',
       });
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from(bucketName)
         .upload(safeFileName, blob, {
           upsert: true,
           contentType: file.type || undefined,
+          cacheControl: '31536000, immutable',
         });
 
-      if (error || !data) {
+      if (error) {
         return {
           success: false,
           error: {
@@ -110,14 +103,100 @@ export async function uploadImageToBucket(
       }
     }
 
-    let webpPath = '';
-    {
-      const blob = new Blob([new Uint8Array(webpBuffer)], {
-        type: 'image/webp',
-      });
-      const { data, error } = await supabase.storage
+    const imageUrl = `${baseUrl}/storage/v1/object/public/${bucketName}/${safeFileName}`;
+    let blurBase64 = '';
+    let posterUrl = '';
+    let webpUrl = '';
+    let mp4Url = '';
+    let webmUrl = '';
+
+    if (animated) {
+      const { posterBuf, mp4Buf, webmBuf } = await gifWebpToVideoFiles(
+        inputBuffer,
+        {
+          width: 720,
+          fps: 18,
+        },
+      );
+
+      blurBase64 = await toBlurDataURL(posterBuf, true);
+
+      const posterName = `${baseName}_poster.jpg`;
+      const mp4Name = `${baseName}.mp4`;
+      const webmName = `${baseName}.webm`;
+
+      const uploads = await Promise.all([
+        supabase.storage
+          .from(bucketName)
+          .upload(
+            posterName,
+            new Blob([new Uint8Array(posterBuf)], { type: 'image/jpeg' }),
+            {
+              upsert: true,
+              contentType: 'image/jpeg',
+              cacheControl: '31536000, immutable',
+            },
+          ),
+        supabase.storage
+          .from(bucketName)
+          .upload(
+            mp4Name,
+            new Blob([new Uint8Array(mp4Buf)], { type: 'video/mp4' }),
+            {
+              upsert: true,
+              contentType: 'video/mp4',
+              cacheControl: '31536000, immutable',
+            },
+          ),
+        supabase.storage
+          .from(bucketName)
+          .upload(
+            webmName,
+            new Blob([new Uint8Array(webmBuf)], { type: 'video/webm' }),
+            {
+              upsert: true,
+              contentType: 'video/webm',
+              cacheControl: '31536000, immutable',
+            },
+          ),
+      ]);
+
+      if (uploads.some(({ error }) => error)) {
+        return {
+          success: false,
+          error: {
+            code: 'VIDEO_UPLOAD_ERROR',
+            message: '비디오/포스터 업로드 중 오류가 발생했어요.',
+          },
+        };
+      }
+
+      posterUrl = `${baseUrl}/storage/v1/object/public/${bucketName}/${posterName}`;
+      mp4Url = `${baseUrl}/storage/v1/object/public/${bucketName}/${mp4Name}`;
+      webmUrl = `${baseUrl}/storage/v1/object/public/${bucketName}/${webmName}`;
+    } else {
+      const [webpBuffer, blur] = await Promise.all([
+        sharp(inputBuffer)
+          .webp({
+            quality: 80,
+          })
+          .toBuffer(),
+        toBlurDataURL(inputBuffer, true),
+      ]);
+      blurBase64 = blur;
+
+      const webpName = `${baseName}.webp`;
+      const { error, data } = await supabase.storage
         .from(bucketName)
-        .upload(webpName, blob, { upsert: true, contentType: 'image/webp' });
+        .upload(
+          webpName,
+          new Blob([new Uint8Array(webpBuffer)], { type: 'image/webp' }),
+          {
+            upsert: true,
+            contentType: 'image/webp',
+            cacheControl: '31536000, immutable',
+          },
+        );
 
       if (error || !data) {
         return {
@@ -128,11 +207,10 @@ export async function uploadImageToBucket(
           },
         };
       }
-      webpPath = data.path;
-    }
 
-    const imageUrl = `${baseUrl}/storage/v1/object/public/${bucketName}/${safeFileName}`;
-    const webpUrl = `${baseUrl}/storage/v1/object/public/${bucketName}/${webpPath}`;
+      webpUrl = `${baseUrl}/storage/v1/object/public/${bucketName}/${data.path}`;
+      posterUrl = imageUrl;
+    }
 
     return {
       success: true,
@@ -140,7 +218,10 @@ export async function uploadImageToBucket(
         path: safeFileName,
         url: imageUrl,
         blurUrl: blurBase64,
+        posterUrl,
         webpUrl,
+        mp4Url,
+        webmUrl,
       },
     };
   } catch (e) {
@@ -148,7 +229,9 @@ export async function uploadImageToBucket(
       success: false,
       error: {
         code: 'UNEXPECTED',
-        message: `이미지 업로드에 실패했어요. ${e instanceof Error ? e.message : '알 수 없는 오류'}`,
+        message: `이미지 업로드에 실패했어요. ${
+          e instanceof Error ? e.message : '알 수 없는 오류'
+        }`,
       },
     };
   }

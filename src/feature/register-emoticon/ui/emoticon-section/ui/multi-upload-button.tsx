@@ -88,6 +88,9 @@ export default function MultiUploadButton() {
               blur_url: result.data.blurUrl ?? null,
               webp_url: result.data.webpUrl ?? null,
               is_representative: false,
+              poster_url: result.data.posterUrl ?? '',
+              mp4_url: result.data.mp4Url ?? '',
+              webm_url: result.data.webmUrl ?? '',
             },
           ]);
 
