@@ -28,13 +28,13 @@ const nextConfig: NextConfig = {
     unoptimized: true,
     remotePatterns: [
       {
-        protocol: 'http',
+        protocol: 'https',
         hostname: 'img1.kakaocdn.net',
         port: '',
         pathname: '/**',
       },
       {
-        protocol: 'http',
+        protocol: 'https',
         hostname: 't1.kakaocdn.net',
         port: '',
         pathname: '/**',
@@ -46,7 +46,7 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
       {
-        protocol: 'http',
+        protocol: 'https',
         hostname: 'k.kakaocdn.net',
         port: '',
         pathname: '/**',
