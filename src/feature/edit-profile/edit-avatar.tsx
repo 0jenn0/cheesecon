@@ -60,7 +60,7 @@ export default function EditAvatar({
       <input
         ref={fileInputRef}
         type='file'
-        accept='image/png,image/jpeg,image/gif,image/webp'
+        accept='image/png,image/jpeg,image/gif,image/webp,image/heic,image/heif'
         multiple
         onChange={handleFileChange}
         className='hidden'

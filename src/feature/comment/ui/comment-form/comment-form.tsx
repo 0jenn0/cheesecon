@@ -123,7 +123,7 @@ export default function CommentForm({
           <input
             ref={fileInputRef}
             type='file'
-            accept='image/png,image/jpeg,image/gif,image/webp'
+            accept='image/png,image/jpeg,image/gif,image/webp,image/heic,image/heif'
             multiple
             onChange={handleFileChange}
             disabled={!user || isPending || uploadedImages.length >= 6}

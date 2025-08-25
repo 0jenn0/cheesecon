@@ -35,6 +35,14 @@ async function isAnimated(buffer: Buffer, mime: string) {
   return false;
 }
 
+async function convertHeicToWebp(buffer: Buffer): Promise<Buffer> {
+  try {
+    return await sharp(buffer).webp({ quality: 80 }).toBuffer();
+  } catch (error) {
+    return buffer;
+  }
+}
+
 export async function uploadImageToBucket(
   formData: FormData,
 ): Promise<ApiResult<ImageUploadResult>> {
@@ -74,9 +82,57 @@ export async function uploadImageToBucket(
     const supabase = await createServerSupabaseClient();
 
     const inputArrayBuffer = await file.arrayBuffer();
-    const inputBuffer = Buffer.from(inputArrayBuffer);
+    let inputBuffer: Buffer = Buffer.from(new Uint8Array(inputArrayBuffer));
     const safeFileName = sanitizeFileName(file.name);
     const baseName = safeFileName.replace(/\.[^.]+$/, '');
+
+    const isHeic =
+      file.type === 'image/heic' ||
+      file.type === 'image/heif' ||
+      file.name.toLowerCase().endsWith('.heic') ||
+      file.name.toLowerCase().endsWith('.heif');
+
+    if (isHeic) {
+      inputBuffer = await convertHeicToWebp(inputBuffer);
+      const newFileName = safeFileName.replace(/\.(heic|heif)$/i, '.webp');
+      const newBaseName = newFileName.replace(/\.[^.]+$/, '');
+
+      const blob = new Blob([inputBuffer], { type: 'image/webp' });
+      const { error } = await supabase.storage
+        .from(bucketName)
+        .upload(newFileName, blob, {
+          upsert: true,
+          contentType: 'image/webp',
+          cacheControl: '31536000, immutable',
+        });
+
+      if (error) {
+        return {
+          success: false,
+          error: {
+            code: 'SUPABASE_UPLOAD_ERROR',
+            message: 'HEIC 변환 이미지 업로드 중 오류가 발생했어요.',
+          },
+        };
+      }
+
+      const imageUrl = `${baseUrl}/storage/v1/object/public/${bucketName}/${newFileName}`;
+
+      const blur = await toBlurDataURL(inputBuffer, true);
+
+      return {
+        success: true,
+        data: {
+          path: newFileName,
+          url: imageUrl,
+          blurUrl: blur,
+          posterUrl: imageUrl,
+          webpUrl: imageUrl,
+          mp4Url: '',
+          webmUrl: '',
+        },
+      };
+    }
 
     const animated = await isAnimated(inputBuffer, file.type || '');
 
