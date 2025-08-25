@@ -38,7 +38,7 @@ async function isAnimated(buffer: Buffer, mime: string) {
 async function convertHeicToWebp(buffer: Buffer): Promise<Buffer> {
   try {
     return await sharp(buffer).webp({ quality: 80 }).toBuffer();
-  } catch (error) {
+  } catch {
     return buffer;
   }
 }
@@ -95,7 +95,6 @@ export async function uploadImageToBucket(
     if (isHeic) {
       inputBuffer = await convertHeicToWebp(inputBuffer);
       const newFileName = safeFileName.replace(/\.(heic|heif)$/i, '.webp');
-      const newBaseName = newFileName.replace(/\.[^.]+$/, '');
 
       const blob = new Blob([inputBuffer], { type: 'image/webp' });
       const { error } = await supabase.storage
