@@ -82,7 +82,7 @@ export async function uploadImageToBucket(
     const supabase = await createServerSupabaseClient();
 
     const inputArrayBuffer = await file.arrayBuffer();
-    let inputBuffer: Buffer = Buffer.from(new Uint8Array(inputArrayBuffer));
+    let inputBuffer: Buffer = Buffer.from(inputArrayBuffer);
     const safeFileName = sanitizeFileName(file.name);
     const baseName = safeFileName.replace(/\.[^.]+$/, '');
 
@@ -96,7 +96,9 @@ export async function uploadImageToBucket(
       inputBuffer = await convertHeicToWebp(inputBuffer);
       const newFileName = safeFileName.replace(/\.(heic|heif)$/i, '.webp');
 
-      const blob = new Blob([inputBuffer], { type: 'image/webp' });
+      const blob = new Blob([new Uint8Array(inputBuffer)], {
+        type: 'image/webp',
+      });
       const { error } = await supabase.storage
         .from(bucketName)
         .upload(newFileName, blob, {
@@ -136,7 +138,7 @@ export async function uploadImageToBucket(
     const animated = await isAnimated(inputBuffer, file.type || '');
 
     {
-      const blob = new Blob([inputBuffer], {
+      const blob = new Blob([new Uint8Array(inputBuffer)], {
         type: file.type || 'application/octet-stream',
       });
       const { error } = await supabase.storage
