@@ -86,7 +86,9 @@ export default function AuthProvider({
         setUser({
           email: metadata?.email ?? '',
           name: metadata?.full_name ?? '',
-          avatarUrl: metadata?.avatar_url ?? '',
+          avatarUrl: metadata?.avatar_url
+            ? metadata.avatar_url.replace(/^http:\/\//, 'https://')
+            : '',
         });
       } catch (error) {
         console.error('초기 세션 조회 오류:', error);
