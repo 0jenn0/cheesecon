@@ -38,6 +38,7 @@ export interface TextFieldProps
   placeholderClassName?: string;
   name?: string;
   inputProps?: ComponentPropsWithRef<'input'>;
+  defaultValue?: string;
 }
 
 export default function TextField({

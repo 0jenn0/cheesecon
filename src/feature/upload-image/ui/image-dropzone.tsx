@@ -27,7 +27,6 @@ export default function ImageDropzone({
   const representativeImage = useDraft((store) => store.representativeImage);
   const uploadImageMutation = useUploadImageToBucketMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {

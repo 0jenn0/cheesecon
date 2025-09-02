@@ -5,17 +5,17 @@ import { SelectField, TextAreaField, TextField } from '@/shared/ui/input';
 import { useDraft } from '../model/draft-context';
 
 export default function EmoticonInfoForm() {
+  const meta = useDraft((s) => s.meta);
   const metaErrors = useDraft((s) => s.metaErrors);
   const setMetaField = useDraft((s) => s.setMetaField);
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
-      metaErrors[name as keyof typeof metaErrors] = undefined;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setMetaField(name as any, value);
     },
-    [setMetaField, metaErrors],
+    [setMetaField],
   );
 
   const handleTextAreaChange = useCallback(
@@ -61,6 +61,9 @@ export default function EmoticonInfoForm() {
           success: '',
           error: metaErrors.title ?? '',
         }}
+        inputProps={{
+          defaultValue: meta.title,
+        }}
       />
 
       <TextField
@@ -77,6 +80,9 @@ export default function EmoticonInfoForm() {
           default: '',
           success: '',
           error: metaErrors.author_name ?? '',
+        }}
+        inputProps={{
+          defaultValue: meta.author_name,
         }}
       />
 
@@ -96,6 +102,7 @@ export default function EmoticonInfoForm() {
           success: '',
           error: metaErrors.platform ?? '',
         }}
+        defaultValue={meta.platform === 'kakaotalk' ? '카카오톡' : 'OGQ'}
       />
 
       <SelectField
@@ -114,6 +121,9 @@ export default function EmoticonInfoForm() {
           success: '',
           error: metaErrors.type ?? '',
         }}
+        defaultValue={
+          meta.type === 'static' ? '멈춰있는 이모티콘' : '움직이는 이모티콘'
+        }
       />
 
       <TextAreaField
@@ -130,6 +140,7 @@ export default function EmoticonInfoForm() {
           success: '',
           error: metaErrors.description ?? '',
         }}
+        defaultValue={meta.description}
       />
     </div>
   );

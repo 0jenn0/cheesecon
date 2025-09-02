@@ -1,18 +1,21 @@
-'use server';
-
 import { getEmoticonImages } from '@/entity/emoticon-images/api';
-import EmoticonImageItem from './emoticon-image-item.server';
+import { EmoticonImage } from '@/entity/emoticon-set/type';
 
 export default async function ImageBatch({
   setId,
   limit,
   offset,
   isUnlocked,
+  Wrapper,
 }: {
   setId: string;
   limit: number;
   offset: number;
   isUnlocked: boolean;
+  Wrapper: React.ComponentType<{
+    image: EmoticonImage;
+    isUnlocked: boolean;
+  }>;
 }) {
   const { data: emoticonImages } = await getEmoticonImages(
     setId,
@@ -30,7 +33,7 @@ export default async function ImageBatch({
     >
       {emoticonImages?.map((image) => (
         <li key={image.id}>
-          <EmoticonImageItem image={image} isUnlocked={isUnlocked} />
+          <Wrapper image={image} isUnlocked={isUnlocked} />
         </li>
       ))}
     </ul>

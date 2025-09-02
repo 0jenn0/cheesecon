@@ -1,14 +1,15 @@
+import { DraftMeta, ImageMeta } from '../model/draft-store';
 import {
   emoticonSetSchema,
   imageUrlSchema,
   imageUrlsArraySchema,
 } from './schema/emoticon-set.schema';
 
-export const validateEmoticonSet = (data: unknown) => {
+export const validateEmoticonSet = (data: DraftMeta) => {
   return emoticonSetSchema.safeParse(data);
 };
 
-export const validateImageUrls = (data: unknown) => {
+export const validateImageUrls = (data: ImageMeta[]) => {
   return imageUrlsArraySchema.safeParse(data);
 };
 

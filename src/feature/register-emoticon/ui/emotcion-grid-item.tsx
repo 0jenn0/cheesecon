@@ -37,9 +37,7 @@ export default function EmoticonGridItem({
   const addImages = useDraft((store) => store.addImages);
   const uploadImageMutation = useUploadImageToBucketMutation();
   const fileRef = useRef<HTMLInputElement>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(
-    imageInSlot?.webp_url ?? null,
-  );
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [mouseHover, setMouseHover] = useState(false);
   const isDraggable = !!imageInSlot && isDragMode;
   const {
@@ -70,9 +68,13 @@ export default function EmoticonGridItem({
       formData.append('file', acceptedFiles[0]);
 
       setStatus(imageOrder, 'uploading');
+      setImageUrl(null);
 
       const result = await uploadImageMutation.mutateAsync(formData);
       if (result.success) {
+        const newImageUrl = result.data.webpUrl ?? result.data.url ?? null;
+        setImageUrl(newImageUrl);
+
         const id = crypto.randomUUID();
         addImages([
           {
@@ -88,7 +90,6 @@ export default function EmoticonGridItem({
           },
         ]);
         setStatus(imageOrder, 'done');
-        setImageUrl(result.data.webpUrl ?? result.data.url ?? null);
       }
     },
     [addImages, imageOrder, uploadImageMutation, setStatus],
@@ -156,9 +157,10 @@ export default function EmoticonGridItem({
           </div>
         )}
         {imageInSlot &&
-        (imageInSlot.status === 'done' || imageInSlot.image_url) ? (
+        ((imageInSlot.status && imageInSlot.status === 'done') ||
+          imageInSlot.image_url) ? (
           <div className='flex h-full w-full items-center justify-center'>
-            {isDragActive || (
+            {!showGrip && (
               <AnimatePresence>
                 {mouseHover && (
                   <motion.div
@@ -188,7 +190,7 @@ export default function EmoticonGridItem({
                 <input {...getInputProps()} className='hidden' />
               </>
             )}
-            {imageInSlot.mp4_url || imageInSlot.webm_url ? (
+            {imageInSlot?.mp4_url || imageInSlot?.webm_url ? (
               <video
                 src={imageInSlot?.mp4_url ?? imageInSlot?.webm_url ?? ''}
                 className='h-full w-auto object-cover'
@@ -200,6 +202,7 @@ export default function EmoticonGridItem({
             ) : (
               <Image
                 src={
+                  imageUrl ??
                   imageInSlot?.webp_url ??
                   imageInSlot?.poster_url ??
                   imageInSlot?.mp4_url ??

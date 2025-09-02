@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
 import { useModal } from '@/shared/ui/feedback';
@@ -19,6 +20,7 @@ export default function EmoticonInfoHeader({
   const { author_name, title, is_private, views_count, comments_count } =
     emoticonInfo;
   const { openModal } = useModal();
+  const router = useRouter();
 
   const isAuthor = emoticonInfo.user_id === session?.user.id;
   const canShare = (is_private && isAuthor) || !is_private;
@@ -29,6 +31,10 @@ export default function EmoticonInfoHeader({
       emoticonSetId: emoticonInfo.id,
       isPrivate: is_private ?? false,
     });
+  };
+
+  const handleEdit = () => {
+    router.push(`/emoticon/${emoticonInfo.id}/edit`);
   };
 
   return (
@@ -119,7 +125,7 @@ export default function EmoticonInfoHeader({
                 variant='secondary'
                 icon='edit-2'
                 iconSize={20}
-                // onClick={handleEdit} TODO: 수정 기능 추가
+                onClick={handleEdit}
               />
             )}
           </div>

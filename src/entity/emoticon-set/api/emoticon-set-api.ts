@@ -4,6 +4,8 @@ import { revalidateTag } from 'next/cache';
 import { CACHE_TAGS } from '@/shared/config/cach-tag';
 import { createServerSupabaseClient } from '@/shared/lib/supabase/server';
 import { ApiResult } from '@/shared/types';
+import { updateEmoticonImage } from '@/entity/emoticon-images/api/emoticon-images-api';
+import { EmoticonImageState } from '@/entity/emoticon-images/type/emoticon-image.type';
 import {
   EmoticonImage,
   EmoticonImageRequest,
@@ -15,6 +17,8 @@ import {
   CreateEmoticonSetResult,
   GetEmoticonSetsRequest,
   GetEmoticonSetsWithRepresentativeImageResult,
+  UpdateEmoticonSetRequest,
+  UpdateEmoticonSetResult,
 } from './types';
 
 export async function createEmoticonSet({
@@ -90,6 +94,111 @@ export async function createEmoticonSet({
       emoticonImages: emoticonImagesData,
       representativeImage: representativeImageData ?? emoticonImagesData[0],
     },
+  };
+}
+
+export async function updateEmoticonSet({
+  emoticonSet,
+  imageUrls,
+}: UpdateEmoticonSetRequest): Promise<UpdateEmoticonSetResult> {
+  const supabase = await createServerSupabaseClient();
+
+  const { data: existingImages } = await supabase
+    .from('emoticon_images')
+    .select('id, image_order')
+    .eq('set_id', emoticonSet.id);
+
+  const existingImageIds = new Set(existingImages?.map((img) => img.id) || []);
+  const existingOrderMap = new Map(
+    existingImages?.map((img) => [img.image_order, img.id]) || [],
+  );
+
+  const imagesToUpdate: EmoticonImageState[] = [];
+  const imagesToInsert: EmoticonImageState[] = [];
+  const ordersToDelete: number[] = [];
+
+  imageUrls.forEach((image) => {
+    if (existingImageIds.has(image.id)) {
+      imagesToUpdate.push(image);
+    } else if (existingOrderMap.has(image.image_order)) {
+      ordersToDelete.push(image.image_order);
+      imagesToInsert.push(image);
+    } else {
+      imagesToInsert.push(image);
+    }
+  });
+
+  if (ordersToDelete.length > 0) {
+    await supabase
+      .from('emoticon_images')
+      .delete()
+      .eq('set_id', emoticonSet.id)
+      .in('image_order', ordersToDelete);
+  }
+
+  const emoticonSetPromise = supabase
+    .from('emoticon_sets')
+    .update(emoticonSet)
+    .eq('id', emoticonSet.id)
+    .select()
+    .single();
+
+  const updatePromises = imagesToUpdate.map((image) =>
+    updateEmoticonImage({
+      imageId: image.id,
+      imageUrl: image.image_url,
+      imageOrder: image.image_order,
+    }),
+  );
+
+  const insertPromises = imagesToInsert.map((image) =>
+    supabase
+      .from('emoticon_images')
+      .insert({
+        id: image.id,
+        set_id: emoticonSet.id,
+        image_url: image.image_url,
+        image_order: image.image_order,
+        blur_url: image.blur_url || null,
+        webp_url: image.webp_url || null,
+        mp4_url: image.mp4_url || null,
+        poster_url: image.poster_url || null,
+        webm_url: image.webm_url || null,
+        is_representative: image.is_representative || false,
+      })
+      .select()
+      .single(),
+  );
+
+  const [emoticonSetData, ...imageResults] = await Promise.all([
+    emoticonSetPromise,
+    ...updatePromises,
+    ...insertPromises,
+  ]);
+
+  if (!emoticonSetData.data) {
+    return {
+      success: false,
+      error: {
+        message: '이모티콘 세트 업데이트에 실패했습니다.',
+      },
+    };
+  }
+
+  if (imageResults.some((result) => 'error' in result && result.error)) {
+    return {
+      success: false,
+      error: {
+        message: '이모티콘 이미지 업데이트에 실패했습니다.',
+      },
+    };
+  }
+
+  revalidateTag(CACHE_TAGS.emoticonSet);
+
+  return {
+    success: true,
+    data: emoticonSetData.data,
   };
 }
 

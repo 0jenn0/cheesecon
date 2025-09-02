@@ -6,6 +6,7 @@ import { Checkbox } from '@/shared/ui/input';
 import { useDraft } from '../model/draft-context';
 
 export default function SecretCheckForm() {
+  const meta = useDraft((store) => store.meta);
   const updateMeta = useDraft((store) => store.updateMeta);
   const isPrivate = useDraft((store) => store.meta.is_private);
   const handleCheckboxChange = useCallback(
@@ -23,6 +24,7 @@ export default function SecretCheckForm() {
           id='secretNumberCheck'
           status={isPrivate ? 'checked' : 'unchecked'}
           onChange={handleCheckboxChange}
+          defaultChecked={meta.is_private ?? false}
         />
         <div className='flex items-center gap-4'>
           <label

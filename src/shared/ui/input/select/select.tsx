@@ -23,6 +23,7 @@ export default function Select({
   placeholderClassName,
   onChange,
   name,
+  defaultValue,
   ...props
 }: SelectProps) {
   return (
@@ -38,6 +39,7 @@ export default function Select({
           trailingIcon='chevron-down'
           onChange={onChange}
           name={name}
+          defaultValue={defaultValue as string}
         />
         <SelectList options={options} name={name} />
       </div>
