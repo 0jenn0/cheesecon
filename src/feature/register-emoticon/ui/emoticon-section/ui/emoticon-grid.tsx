@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback } from 'react';
+import { EmoticonImage } from '@/entity/emoticon-set';
 import {
   EMOTICON_CONFIG,
   EmoticonPlatform,
@@ -62,16 +63,18 @@ export default function EmoticonGrid({
     <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
       <SortableContext items={allSlots} strategy={rectSortingStrategy}>
         <div className='tablet:grid-cols-6 grid grid-cols-4 gap-16'>
-          {allSlots.map((slot, index) => (
-            <EmoticonGridItem
-              key={slot}
-              imageOrder={index + 1}
-              showGrip={isOrderChangeMode}
-              isDragMode={isOrderChangeMode}
-              imageSize={imageSize}
-              showCheckbox={isMultiSelectedMode}
-            />
-          ))}
+          {allSlots.map((slot, index) => {
+            return (
+              <EmoticonGridItem
+                key={slot}
+                imageOrder={index + 1}
+                showGrip={isOrderChangeMode}
+                isDragMode={isOrderChangeMode}
+                imageSize={imageSize}
+                showCheckbox={isMultiSelectedMode}
+              />
+            );
+          })}
         </div>
       </SortableContext>
     </DndContext>

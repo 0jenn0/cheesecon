@@ -38,7 +38,11 @@ type State = {
 };
 
 type Actions = {
-  initMeta: (v?: Partial<DraftMeta>) => void;
+  initMeta: (
+    v?: Partial<DraftMeta & { representative_image?: EmoticonImageState }>,
+  ) => void;
+
+  initImages: (v: EmoticonImageState[]) => void;
 
   setMetaField: <K extends keyof DraftMeta & string>(
     field: K,
@@ -120,9 +124,40 @@ export function createDraftStore() {
     imageErrors: {},
 
     initMeta: (v) =>
-      set((store) => ({
-        meta: { ...store.meta, ...(v as Partial<DraftMeta>) },
-      })),
+      set((store) => {
+        return {
+          meta: {
+            ...store.meta,
+            title: v?.title ?? '',
+            author_name: v?.author_name ?? '',
+            description: v?.description ?? '',
+            platform: v?.platform ?? '',
+            type: v?.type ?? '',
+            is_private: v?.is_private ?? false,
+          },
+          representativeImage: v?.representative_image ?? null,
+        };
+      }),
+
+    initImages: (v) => {
+      set(() => ({
+        byIdOriginal: v.reduce(
+          (acc, image) => {
+            acc[image.id] = image;
+            return acc;
+          },
+          {} as Record<string, EmoticonImageState>,
+        ),
+        byOrderOriginal: v.reduce(
+          (acc, image) => {
+            acc[image.image_order] = image;
+            return acc;
+          },
+          {} as Record<number, EmoticonImageState>,
+        ),
+        order: v.map((image) => image.image_order),
+      }));
+    },
 
     setMetaField: (field, value) => {
       const result = validateEmoticonSetField(field, value);
@@ -132,8 +167,10 @@ export function createDraftStore() {
         const msg = err?.issues?.[0]?.message ?? 'invalid';
 
         set((store) => ({
+          meta: { ...store.meta, [field]: value },
           metaErrors: { ...store.metaErrors, [field]: msg },
         }));
+
         return { success: false, error: msg };
       }
 
@@ -142,6 +179,24 @@ export function createDraftStore() {
         metaErrors: { ...s.metaErrors, [field]: undefined as any },
       }));
       return { success: true };
+    },
+
+    setImagesBatch: (images: EmoticonImageState[]) => {
+      const byOrderOriginal: Record<number, EmoticonImageState | undefined> =
+        {};
+      const byIdOriginal: Record<string, EmoticonImageState> = {};
+      const order: number[] = [];
+
+      images.forEach((raw) => {
+        const id = raw.id ?? crypto.randomUUID();
+        const img = { ...raw, id };
+        byOrderOriginal[img.image_order] = img;
+        byIdOriginal[id] = img;
+        order.push(img.image_order);
+      });
+
+      order.sort((a, b) => a - b);
+      set((s) => ({ ...s, byOrderOriginal, byIdOriginal, order }));
     },
 
     updateMetaValidated: (patch) => {
@@ -298,6 +353,7 @@ export function createDraftStore() {
 
         const src = byOrderOriginal[fromSlot];
         const dst = byOrderOriginal[toSlot];
+
         if (!src) return store;
 
         byOrderOriginal[fromSlot] = undefined;
@@ -375,10 +431,11 @@ export function createDraftStore() {
       const info = { ...store.meta };
 
       const infoResult = validateEmoticonSet(info);
-
       const imageArray = Object.values(store.byOrderOriginal).filter(Boolean);
 
-      const imageResult = validateImageUrls(imageArray);
+      const imageResult = validateImageUrls(
+        imageArray.filter((image) => image !== undefined),
+      );
 
       if (!infoResult.success) {
         return { success: false, error: infoResult.error };
@@ -388,13 +445,12 @@ export function createDraftStore() {
         return { success: false, error: imageResult.error };
       }
 
-      if (
-        imageArray.length !==
+      const expectedCount =
         EMOTICON_CONFIG[store.meta.platform as EmoticonPlatform][
           store.meta.type as EmoticonType
-        ].count +
-          1
-      ) {
+        ].count;
+
+      if (imageArray.length !== expectedCount) {
         return { success: false, error: '이모티콘 개수가 일치하지 않습니다.' };
       }
 

@@ -1,6 +1,7 @@
 'use server';
 
 import { ComponentProps, Suspense } from 'react';
+import EmoticonImageItem from './emoticon-image-item.server';
 import EmoticonImageItemSkeleton from './emoticon-image-item.skeleton';
 import ImageBatch from './image-batch.server';
 
@@ -33,6 +34,7 @@ export default async function EmoticonImageSection({
               limit={4}
               offset={index * 4}
               isUnlocked={isUnlocked}
+              Wrapper={EmoticonImageItem}
             />
           </Suspense>
         ))}
@@ -49,6 +51,7 @@ export default async function EmoticonImageSection({
               limit={6}
               offset={index * 6}
               isUnlocked={isUnlocked}
+              Wrapper={EmoticonImageItem}
             />
           </Suspense>
         ))}
