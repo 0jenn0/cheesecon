@@ -1,7 +1,8 @@
 'use client';
 
-import { ComponentPropsWithRef, useState } from 'react';
+import { ComponentPropsWithRef, useEffect, useState } from 'react';
 import { cn } from '@/shared/lib/utils';
+import { useDraft } from '@/feature/register-emoticon/model/draft-context';
 import Icon, { IconProps } from '../../icon/icon';
 import { placeholderVariants } from './placeholder.style';
 
@@ -29,8 +30,15 @@ export default function Placeholder({
   onChange,
   ...props
 }: PlaceholderProps) {
-  const [value, setValue] = useState('');
-  const isFilled = value.length > 0;
+  const [value, setValue] = useState(props.defaultValue || '');
+
+  useEffect(() => {
+    if (props.defaultValue !== undefined && props.defaultValue !== null) {
+      setValue(String(props.defaultValue));
+    }
+  }, [props.defaultValue]);
+
+  const isFilled = !!value;
 
   const finalVariant = getFinalVariant({
     isFilled,
@@ -56,7 +64,7 @@ export default function Placeholder({
           inputClassName,
         )}
         placeholder={placeholder}
-        value={value}
+        value={typeof value === 'string' ? value : ''}
         onChange={handleChange}
         disabled={disabled}
       />

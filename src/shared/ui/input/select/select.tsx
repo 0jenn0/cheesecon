@@ -1,5 +1,6 @@
 import { ComponentPropsWithRef } from 'react';
 import { cn } from '@/shared/lib/utils';
+import { useDraft } from '@/feature/register-emoticon/model/draft-context';
 import SelectProvider from './provider/select-provider';
 import { SelectList, SelectPlaceholder } from './ui';
 
@@ -23,6 +24,7 @@ export default function Select({
   placeholderClassName,
   onChange,
   name,
+  defaultValue,
   ...props
 }: SelectProps) {
   return (
@@ -38,6 +40,7 @@ export default function Select({
           trailingIcon='chevron-down'
           onChange={onChange}
           name={name}
+          defaultValue={defaultValue as string}
         />
         <SelectList options={options} name={name} />
       </div>

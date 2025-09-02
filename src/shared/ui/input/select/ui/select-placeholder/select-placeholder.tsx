@@ -18,6 +18,7 @@ export interface SelectPlaceholderProps
   iconClassName?: string;
   iconSize?: IconProps['size'];
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  defaultValue?: string;
 }
 
 export default function SelectPlaceholder({
@@ -33,6 +34,7 @@ export default function SelectPlaceholder({
   trailingIcon,
   iconClassName,
   iconSize,
+  defaultValue,
   ...props
 }: SelectPlaceholderProps) {
   const { currentValue, isOpen, setIsOpen, setCurrentValue } = useSelect();
@@ -118,7 +120,7 @@ export default function SelectPlaceholder({
           {...props}
         >
           <span className='text-body-md block truncate'>
-            {currentValue || placeholder}
+            {currentValue || defaultValue || placeholder}
           </span>
         </button>
 

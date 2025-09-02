@@ -13,6 +13,12 @@ export interface CreateEmoticonImageProps {
   imageOrder: number;
 }
 
+export interface UpdateEmoticonImageProps {
+  imageId: string;
+  imageUrl: string;
+  imageOrder: number;
+}
+
 export async function createEmoticonImage({
   setId,
   imageUrl,
@@ -25,6 +31,21 @@ export async function createEmoticonImage({
     image_url: imageUrl,
     image_order: imageOrder,
   });
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+export async function updateEmoticonImage({
+  imageId,
+  imageUrl,
+  imageOrder,
+}: UpdateEmoticonImageProps) {
+  const supabase = await createServerSupabaseClient();
+
 
   if (error) {
     throw error;

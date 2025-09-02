@@ -156,9 +156,10 @@ export default function EmoticonGridItem({
           </div>
         )}
         {imageInSlot &&
-        (imageInSlot.status === 'done' || imageInSlot.image_url) ? (
+        ((imageInSlot.status && imageInSlot.status === 'done') ||
+          imageInSlot.image_url) ? (
           <div className='flex h-full w-full items-center justify-center'>
-            {isDragActive || (
+            {!showGrip && (
               <AnimatePresence>
                 {mouseHover && (
                   <motion.div

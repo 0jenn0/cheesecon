@@ -3,6 +3,7 @@
 import { PropsWithChildren, createContext, useContext, useRef } from 'react';
 import { useStore } from 'zustand';
 import type { StoreApi } from 'zustand/vanilla';
+import { EmoticonImageState } from '@/entity/emoticon-images/type/emoticon-image.type';
 import {
   type DraftMeta,
   type DraftStore,
@@ -14,11 +15,21 @@ const DraftStoreCtx = createContext<StoreApi<DraftStore> | null>(null);
 export function DraftProvider({
   children,
   initialMeta,
-}: PropsWithChildren<{ initialMeta?: Partial<DraftMeta> }>) {
+  initialImages,
+}: PropsWithChildren<{
+  initialMeta?: Partial<DraftMeta>;
+  initialImages?: EmoticonImageState[];
+}>) {
   const storeRef = useRef<StoreApi<DraftStore>>(createDraftStore());
+
   if (!storeRef.current) {
     storeRef.current = createDraftStore();
-    if (initialMeta) storeRef.current.getState().initMeta(initialMeta);
+  }
+  if (initialMeta) {
+    storeRef.current.getState().initMeta(initialMeta);
+  }
+  if (initialImages) {
+    storeRef.current.getState().initImages(initialImages);
   }
   return (
     <DraftStoreCtx.Provider value={storeRef.current}>

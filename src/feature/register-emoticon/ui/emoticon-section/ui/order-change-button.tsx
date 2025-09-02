@@ -12,18 +12,17 @@ export default function OrderChangeButton({
   const cancelReordering = useDraft((s) => s.cancelReordering);
 
   const handleStartOrderChange = () => {
-    saveReordering();
     toggleOrderChangeMode();
   };
 
   const handleCancelOrder = () => {
-    toggleOrderChangeMode();
     cancelReordering();
+    toggleOrderChangeMode();
   };
 
   const handleSaveOrder = () => {
-    toggleOrderChangeMode();
     saveReordering();
+    toggleOrderChangeMode();
   };
 
   return (

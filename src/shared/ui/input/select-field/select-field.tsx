@@ -31,6 +31,7 @@ export interface TextFieldProps
   selectClassName?: string;
   name?: string;
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  defaultValue?: string;
 }
 
 export default function SelectField({
@@ -48,6 +49,7 @@ export default function SelectField({
   selectClassName,
   onChange,
   name,
+  defaultValue,
 }: TextFieldProps) {
   return (
     <div
@@ -72,6 +74,7 @@ export default function SelectField({
           options={options}
           placeholderClassName={selectClassName}
           onChange={onChange}
+          defaultValue={defaultValue}
         />
         {helpMessage && (
           <HelpMessage variant={variant}>{helpMessage[variant]}</HelpMessage>
