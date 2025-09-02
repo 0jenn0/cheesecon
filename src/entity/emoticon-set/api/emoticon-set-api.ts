@@ -103,90 +103,78 @@ export async function updateEmoticonSet({
 }: UpdateEmoticonSetRequest): Promise<UpdateEmoticonSetResult> {
   const supabase = await createServerSupabaseClient();
 
-  // 기존 이미지 조회 (ID와 order로 매핑)
   const { data: existingImages } = await supabase
     .from('emoticon_images')
     .select('id, image_order')
     .eq('set_id', emoticonSet.id);
 
-  const existingImageIds = new Set(existingImages?.map(img => img.id) || []);
-  const existingOrderMap = new Map(existingImages?.map(img => [img.image_order, img.id]) || []);
-  
-  // 이미지를 기존/신규/교체로 구분
+  const existingImageIds = new Set(existingImages?.map((img) => img.id) || []);
+  const existingOrderMap = new Map(
+    existingImages?.map((img) => [img.image_order, img.id]) || [],
+  );
+
   const imagesToUpdate: EmoticonImageState[] = [];
   const imagesToInsert: EmoticonImageState[] = [];
   const ordersToDelete: number[] = [];
 
-  imageUrls.forEach(image => {
+  imageUrls.forEach((image) => {
     if (existingImageIds.has(image.id)) {
-      // 기존 이미지 (ID가 이미 존재)
       imagesToUpdate.push(image);
     } else if (existingOrderMap.has(image.image_order)) {
-      // 같은 order 위치에 기존 이미지가 있는 경우 = 교체
       ordersToDelete.push(image.image_order);
       imagesToInsert.push(image);
     } else {
-      // 완전히 새로운 위치
       imagesToInsert.push(image);
     }
   });
 
-  const promises: Promise<any>[] = [
-    // 이모티콘 세트 업데이트
-    supabase
-      .from('emoticon_sets')
-      .update(emoticonSet)
-      .eq('id', emoticonSet.id)
-      .select()
-      .single(),
-  ];
-
-  // 교체할 이미지들 삭제
   if (ordersToDelete.length > 0) {
-    promises.push(
-      supabase
-        .from('emoticon_images')
-        .delete()
-        .eq('set_id', emoticonSet.id)
-        .in('image_order', ordersToDelete)
-    );
+    await supabase
+      .from('emoticon_images')
+      .delete()
+      .eq('set_id', emoticonSet.id)
+      .in('image_order', ordersToDelete);
   }
 
-  // 기존 이미지 업데이트
-  promises.push(
-    ...imagesToUpdate.map((image) =>
-      updateEmoticonImage({
-        imageId: image.id,
-        imageUrl: image.image_url,
-        imageOrder: image.image_order,
-      }),
-    )
-  );
-  
-  // 새로운/교체 이미지 삽입
-  promises.push(
-    ...imagesToInsert.map((image) =>
-      supabase
-        .from('emoticon_images')
-        .insert({
-          id: image.id,
-          set_id: emoticonSet.id,
-          image_url: image.image_url,
-          image_order: image.image_order,
-          blur_url: image.blur_url || null,
-          webp_url: image.webp_url || null,
-          mp4_url: image.mp4_url || null,
-          poster_url: image.poster_url || null,
-          webm_url: image.webm_url || null,
-          is_representative: image.is_representative || false,
-        })
-        .select()
-        .single()
-    )
+  const emoticonSetPromise = supabase
+    .from('emoticon_sets')
+    .update(emoticonSet)
+    .eq('id', emoticonSet.id)
+    .select()
+    .single();
+
+  const updatePromises = imagesToUpdate.map((image) =>
+    updateEmoticonImage({
+      imageId: image.id,
+      imageUrl: image.image_url,
+      imageOrder: image.image_order,
+    }),
   );
 
-  const results = await Promise.all(promises);
-  const emoticonSetData = results[0];
+  const insertPromises = imagesToInsert.map((image) =>
+    supabase
+      .from('emoticon_images')
+      .insert({
+        id: image.id,
+        set_id: emoticonSet.id,
+        image_url: image.image_url,
+        image_order: image.image_order,
+        blur_url: image.blur_url || null,
+        webp_url: image.webp_url || null,
+        mp4_url: image.mp4_url || null,
+        poster_url: image.poster_url || null,
+        webm_url: image.webm_url || null,
+        is_representative: image.is_representative || false,
+      })
+      .select()
+      .single(),
+  );
+
+  const [emoticonSetData, ...imageResults] = await Promise.all([
+    emoticonSetPromise,
+    ...updatePromises,
+    ...insertPromises,
+  ]);
 
   if (!emoticonSetData.data) {
     return {
@@ -197,9 +185,7 @@ export async function updateEmoticonSet({
     };
   }
 
-  // 이미지 처리 결과 확인 (첫 번째는 이모티콘 세트 업데이트 결과이므로 제외)
-  const imageResults = results.slice(1);
-  if (imageResults.some((result) => result?.error)) {
+  if (imageResults.some((result) => 'error' in result && result.error)) {
     return {
       success: false,
       error: {

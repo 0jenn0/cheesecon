@@ -28,9 +28,11 @@ export function DraftProvider({
   if (initialMeta) {
     storeRef.current.getState().initMeta(initialMeta);
   }
+
   if (initialImages) {
     storeRef.current.getState().initImages(initialImages);
   }
+
   return (
     <DraftStoreCtx.Provider value={storeRef.current}>
       {children}

@@ -291,10 +291,6 @@ export function createDraftStore() {
 
       set((store) => {
         const byIdOriginal = { ...store.byIdOriginal, [item.id]: item };
-        const byOrderOriginal = {
-          ...store.byOrderOriginal,
-          [item.image_order]: item,
-        };
         const imageErrors = { ...store.imageErrors };
         const representativeImage = { ...store.representativeImage, ...item };
 
@@ -309,7 +305,6 @@ export function createDraftStore() {
 
         return {
           byIdOriginal,
-          byOrderOriginal,
           representativeImage,
           imageErrors,
         };
