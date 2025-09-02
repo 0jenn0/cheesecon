@@ -1,6 +1,5 @@
 import { ComponentPropsWithRef } from 'react';
 import { cn } from '@/shared/lib/utils';
-import { useDraft } from '@/feature/register-emoticon/model/draft-context';
 import SelectProvider from './provider/select-provider';
 import { SelectList, SelectPlaceholder } from './ui';
 

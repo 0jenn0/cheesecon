@@ -2,7 +2,6 @@
 
 import { ComponentPropsWithRef, useEffect, useState } from 'react';
 import { cn } from '@/shared/lib/utils';
-import { useDraft } from '@/feature/register-emoticon/model/draft-context';
 import Icon, { IconProps } from '../../icon/icon';
 import { placeholderVariants } from './placeholder.style';
 

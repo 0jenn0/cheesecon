@@ -1,4 +1,3 @@
-import { EmoticonImageState } from '@/entity/emoticon-images/type/emoticon-image.type';
 import { DraftMeta, ImageMeta } from '../model/draft-store';
 import {
   emoticonSetSchema,

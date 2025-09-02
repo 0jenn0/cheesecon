@@ -3,7 +3,6 @@
 import { useParams } from 'next/navigation';
 import React, { useEffect } from 'react';
 import useIntersectionObserver from '@/shared/lib/use-intersection-observer';
-import { EmoticonImage } from '@/entity/emoticon-set';
 import { EditBottomBar } from '@/feature/edit-emoticon/edit-bottom-bar';
 import EmoticonEditSection from '@/feature/edit-emoticon/ui/emociton-section';
 import {

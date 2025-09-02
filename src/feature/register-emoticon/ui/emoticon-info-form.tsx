@@ -15,7 +15,7 @@ export default function EmoticonInfoForm() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setMetaField(name as any, value);
     },
-    [setMetaField, metaErrors, meta],
+    [setMetaField],
   );
 
   const handleTextAreaChange = useCallback(

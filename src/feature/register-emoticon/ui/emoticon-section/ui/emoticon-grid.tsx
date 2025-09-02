@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback } from 'react';
-import { EmoticonImage } from '@/entity/emoticon-set';
 import {
   EMOTICON_CONFIG,
   EmoticonPlatform,

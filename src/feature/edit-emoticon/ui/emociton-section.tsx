@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { EmoticonImage } from '@/entity/emoticon-set';
 import {
   EmoticonGrid,
   MultiSelectButton,
