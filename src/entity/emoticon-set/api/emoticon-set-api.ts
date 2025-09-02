@@ -194,6 +194,8 @@ export async function updateEmoticonSet({
     };
   }
 
+  revalidateTag(CACHE_TAGS.emoticonSet);
+
   return {
     success: true,
     data: emoticonSetData.data,
