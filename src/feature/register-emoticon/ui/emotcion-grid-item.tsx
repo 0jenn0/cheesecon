@@ -156,11 +156,9 @@ export default function EmoticonGridItem({
             <Spinner size='lg' />
           </div>
         )}
-        {(imageUrl ||
-          (imageInSlot &&
-            ((imageInSlot.status && imageInSlot.status === 'done') ||
-              imageInSlot.image_url))) &&
-        imageInSlot?.status !== 'uploading' ? (
+        {imageInSlot &&
+        ((imageInSlot.status && imageInSlot.status === 'done') ||
+          imageInSlot.image_url) ? (
           <div className='flex h-full w-full items-center justify-center'>
             {!showGrip && (
               <AnimatePresence>
