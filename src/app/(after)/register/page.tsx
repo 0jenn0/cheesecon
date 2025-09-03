@@ -1,5 +1,5 @@
-import { EmoticonRegisterScreen } from '@/screen';
+import EmoticonFormScreen from '@/screen/emoticon-form/screen';
 
 export default function EmoticonRegisterPage() {
-  return <EmoticonRegisterScreen />;
+  return <EmoticonFormScreen action='create' />;
 }

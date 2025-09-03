@@ -4,7 +4,7 @@ import { EmoticonSection } from '@/feature/register-emoticon/ui';
 import { ImageDropzone } from '@/feature/upload-image/ui';
 import { useEmoticonRegisterContext } from '../../model/emoticon-register-context';
 
-export default function EmoticonRegisterStep2Screen() {
+export default function EmoticonFormStep2Screen() {
   const { setIsEmoticonSectionVisibleMobile } = useEmoticonRegisterContext();
 
   const { ref: emoticonSectionMobileRef, isIntersecting } =

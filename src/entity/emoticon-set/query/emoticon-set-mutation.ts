@@ -33,10 +33,10 @@ export function useRegisterMutation() {
         });
       }
     },
-    onError: () => {
+    onError: (error) => {
       addToast({
         type: 'error',
-        message: '이모티콘 등록에 실패했어요',
+        message: error.message,
       });
     },
   });

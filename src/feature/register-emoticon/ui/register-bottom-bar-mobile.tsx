@@ -1,8 +1,12 @@
 'use client';
 
+import { useParams } from 'next/navigation';
 import { useCallback } from 'react';
 import { Button } from '@/shared/ui/input';
-import { useRegisterMutation } from '@/entity/emoticon-set/query/emoticon-set-mutation';
+import {
+  useRegisterMutation,
+  useUpdateMutation,
+} from '@/entity/emoticon-set/query/emoticon-set-mutation';
 import { useDraft } from '../model/draft-context';
 
 const INITIAL_STEP = 0;
@@ -11,12 +15,16 @@ export function RegisterBottomBarMobile({
   currentStep,
   STEP_COUNT,
   handleStepChange,
+  action,
 }: {
   currentStep: number;
   STEP_COUNT: number;
   handleStepChange: (step: number) => void;
+  action: 'create' | 'update';
 }) {
+  const { id } = useParams();
   const registerMutation = useRegisterMutation();
+  const updateMutation = useUpdateMutation(id as string);
 
   const emoticonSetInfo = useDraft((store) => store.meta);
 
@@ -25,13 +33,23 @@ export function RegisterBottomBarMobile({
 
   const allImages = getAllImages();
 
-  const handleRegister = useCallback(
+  const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      registerMutation.mutate({
-        emoticonSet: emoticonSetInfo,
-        imageUrls: allImages,
-      });
+      if (action === 'create') {
+        registerMutation.mutate({
+          emoticonSet: emoticonSetInfo,
+          imageUrls: allImages,
+        });
+      } else {
+        updateMutation.mutate({
+          emoticonSet: {
+            id: id as string,
+            ...emoticonSetInfo,
+          },
+          imageUrls: allImages,
+        });
+      }
     },
     [emoticonSetInfo, allImages, registerMutation],
   );
@@ -39,7 +57,7 @@ export function RegisterBottomBarMobile({
   return (
     <form
       className='fixed right-0 bottom-0 left-0 flex items-center justify-end bg-white/60 px-24 py-16 backdrop-blur-lg'
-      onSubmit={handleRegister}
+      onSubmit={handleSubmit}
     >
       {currentStep === STEP_COUNT - 1 && (
         <>
@@ -58,7 +76,7 @@ export function RegisterBottomBarMobile({
             textClassName='text-body-lg font-semibold'
             disabled={!validateAll().success}
           >
-            등록하기
+            {action === 'create' ? '등록하기' : '수정하기'}
           </Button>
         </>
       )}

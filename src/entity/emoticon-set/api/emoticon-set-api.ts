@@ -195,6 +195,7 @@ export async function updateEmoticonSet({
   }
 
   revalidateTag(CACHE_TAGS.emoticonSet);
+  revalidateTag(CACHE_TAGS.new);
 
   return {
     success: true,
