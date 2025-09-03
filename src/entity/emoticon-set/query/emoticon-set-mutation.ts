@@ -4,7 +4,11 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/shared/ui/feedback';
 import { EmoticonImageState } from '@/entity/emoticon-images/type/emoticon-image.type';
 import { useMutation } from '@tanstack/react-query';
-import { createEmoticonSet, updateEmoticonSet } from '../api/emoticon-set-api';
+import {
+  createEmoticonSet,
+  deleteEmoticonSet,
+  updateEmoticonSet,
+} from '../api/emoticon-set-api';
 import { CreateEmoticonSetForm, UpdateEmoticonSetForm } from '../api/types';
 
 export function useRegisterMutation() {
@@ -72,6 +76,28 @@ export function useUpdateMutation(id: string) {
       addToast({
         type: 'error',
         message: '이모티콘 수정에 실패했어요',
+      });
+    },
+  });
+}
+
+export function useDeleteMutation() {
+  const { addToast } = useToast();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: (id: string) => deleteEmoticonSet(id),
+    onSuccess: () => {
+      router.push('/main/new');
+      addToast({
+        type: 'success',
+        message: '이모티콘 세트 삭제에 성공했어요.',
+      });
+    },
+    onError: () => {
+      addToast({
+        type: 'error',
+        message: '이모티콘 세트 삭제에 실패했어요.',
       });
     },
   });

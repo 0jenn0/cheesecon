@@ -203,6 +203,37 @@ export async function updateEmoticonSet({
   };
 }
 
+export async function deleteEmoticonSet(
+  id: string,
+): Promise<ApiResult<EmoticonSet>> {
+  const supabase = await createServerSupabaseClient();
+
+  const { data, error } = await supabase
+    .from('emoticon_sets')
+    .delete()
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    return {
+      success: false,
+      error: {
+        message: '이모티콘 세트 삭제에 실패했어요.',
+      },
+    };
+  }
+
+  revalidateTag(CACHE_TAGS.new);
+  revalidateTag(CACHE_TAGS.popular);
+  revalidateTag(CACHE_TAGS.activity);
+
+  return {
+    success: true,
+    data: data,
+  };
+}
+
 export async function getEmoticonSetsWithRepresentativeImage({
   limit = 10,
   offset = 0,

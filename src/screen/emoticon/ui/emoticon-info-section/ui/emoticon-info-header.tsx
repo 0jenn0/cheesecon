@@ -6,6 +6,7 @@ import { cn } from '@/shared/lib';
 import { Icon } from '@/shared/ui/display';
 import { useModal } from '@/shared/ui/feedback';
 import { IconButton } from '@/shared/ui/input';
+import { useDeleteMutation } from '@/entity/emoticon-set/query/emoticon-set-mutation';
 import { EmoticonSetInfo } from '@/entity/emoticon-set/type';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
 import LikeButton from '@/feature/like/ui/like-button/like-button';
@@ -25,6 +26,7 @@ export default function EmoticonInfoHeader({
   const isAuthor = emoticonInfo.user_id === session?.user.id;
   const canShare = (is_private && isAuthor) || !is_private;
   const representativeImage = emoticonInfo.representative_image;
+  const { mutate: deleteMutation, isPending: isDeleting } = useDeleteMutation();
 
   const handleShareLink = () => {
     openModal('shareLink', {
@@ -35,6 +37,18 @@ export default function EmoticonInfoHeader({
 
   const handleEdit = () => {
     router.push(`/emoticon/${emoticonInfo.id}/edit`);
+  };
+
+  const handleDelete = () => {
+    openModal('danger', {
+      title: '이모티콘 삭제',
+      description: '등록한 이모티콘을 삭제하시겠어요?',
+      confirmButtonText: '삭제',
+      isLoading: isDeleting,
+      onConfirm: () => {
+        deleteMutation(emoticonInfo.id);
+      },
+    });
   };
 
   return (
@@ -126,6 +140,14 @@ export default function EmoticonInfoHeader({
                 icon='edit-2'
                 iconSize={20}
                 onClick={handleEdit}
+              />
+            )}
+            {isAuthor && (
+              <IconButton
+                variant='secondary'
+                icon='trash'
+                iconSize={20}
+                onClick={handleDelete}
               />
             )}
           </div>
