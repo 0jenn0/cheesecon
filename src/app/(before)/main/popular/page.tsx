@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { getPopularEmoticonSetsCached } from '@/entity/emoticon-set/model/main-cache';
 import {
   EmoticonViewSectionClient,
@@ -5,6 +6,28 @@ import {
 } from '@/feature/view-emotion/emoticon-view-section';
 
 export const revalidate = 3600;
+
+export const metadata: Metadata = {
+  title: '치즈콘 | 🔥 인기 급상승 이모티콘',
+  description:
+    '커뮤니티에서 가장 많은 사랑을 받고 있는 이모티콘들을 만나보세요. 좋아요와 피드백이 가장 많은 인기작들을 모았습니다.',
+  keywords: [
+    '인기 이모티콘',
+    '좋아요 많은 이모티콘',
+    '피드백',
+    '커뮤니티 인기',
+    '트렌딩',
+  ],
+  openGraph: {
+    title: '치즈콘 | 🔥 인기 급상승 이모티콘',
+    description:
+      '커뮤니티에서 가장 많은 사랑을 받고 있는 이모티콘들을 만나보세요. 좋아요와 피드백이 가장 많은 인기작들을 모았습니다.',
+    url: 'https://cheesecon.kr/main/popular',
+  },
+  alternates: {
+    canonical: 'https://cheesecon.kr/main/popular',
+  },
+};
 
 const LIMIT = 12;
 
