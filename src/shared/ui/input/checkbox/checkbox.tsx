@@ -17,12 +17,13 @@ export default function Checkbox({
   onChange,
   ...props
 }: CheckboxProps) {
+  const { defaultChecked, ...restProps } = props;
   const iconName = getIconName(status);
 
   return (
     <div className={checkboxVariants({ status, disabled })}>
       <input
-        {...props}
+        {...restProps}
         type='checkbox'
         disabled={disabled}
         className={cn(

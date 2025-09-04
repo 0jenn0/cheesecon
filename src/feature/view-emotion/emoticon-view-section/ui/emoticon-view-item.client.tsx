@@ -65,8 +65,7 @@ function Thumbnail({
 }) {
   const hasVideo =
     !!item.representative_image.mp4_url ||
-    !!item.representative_image.webm_url ||
-    !!item.representative_image.poster_url;
+    !!item.representative_image.webm_url;
 
   return (
     <div className='border-radius-lg relative flex gap-8 overflow-hidden font-semibold'>
@@ -88,9 +87,9 @@ function Thumbnail({
         <video
           ref={videoRef}
           src={
-            item.representative_image.mp4_url ??
-            item.representative_image.webm_url ??
-            ''
+            item.representative_image.mp4_url ||
+            item.representative_image.webm_url ||
+            undefined
           }
           poster={
             item.representative_image.poster_url ??
