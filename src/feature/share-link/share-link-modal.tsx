@@ -29,7 +29,11 @@ export default function ShareLinkModal({
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant='secondary' className='w-full' onClick={closeModal}>
+        <Button
+          variant='secondary'
+          className='w-full'
+          onClick={() => closeModal()}
+        >
           닫기
         </Button>
       </Modal.Footer>

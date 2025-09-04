@@ -35,6 +35,7 @@ export default function SelectPlaceholder({
   iconClassName,
   iconSize,
   defaultValue,
+  id,
   ...props
 }: SelectPlaceholderProps) {
   const { currentValue, isOpen, setIsOpen, setCurrentValue } = useSelect();
@@ -103,6 +104,7 @@ export default function SelectPlaceholder({
     >
       <div className='relative z-20 w-full'>
         <button
+          id={id}
           type='button'
           role='combobox'
           aria-expanded={isOpen}

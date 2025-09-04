@@ -41,12 +41,12 @@ export const Default: StoryObj<typeof Modal.Portal> = {
             <Button
               variant='secondary'
               styleVariant='transparent'
-              onClick={closeModal}
+              onClick={() => closeModal()}
               className='w-full'
             >
               취소
             </Button>
-            <Button className='w-full' onClick={closeModal}>
+            <Button className='w-full' onClick={() => closeModal()}>
               확인
             </Button>
           </Modal.Footer>

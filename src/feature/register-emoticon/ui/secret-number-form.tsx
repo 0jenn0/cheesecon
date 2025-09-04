@@ -6,7 +6,6 @@ import { Checkbox } from '@/shared/ui/input';
 import { useDraft } from '../model/draft-context';
 
 export default function SecretCheckForm() {
-  const meta = useDraft((store) => store.meta);
   const updateMeta = useDraft((store) => store.updateMeta);
   const isPrivate = useDraft((store) => store.meta.is_private);
   const handleCheckboxChange = useCallback(
