@@ -24,12 +24,14 @@ export default function Select({
   onChange,
   name,
   defaultValue,
+  id,
   ...props
 }: SelectProps) {
   return (
     <SelectProvider>
       <div className={cn('relative cursor-pointer', className)} {...props}>
         <SelectPlaceholder
+          id={id}
           label={label}
           placeholder={label}
           isError={isError}

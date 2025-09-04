@@ -1,4 +1,4 @@
-import { ComponentPropsWithRef } from 'react';
+import { ComponentPropsWithRef, useId } from 'react';
 import { cn } from '@/shared/lib';
 import { Label, Select } from '..';
 import { IconProps } from '../../icon/icon';
@@ -51,6 +51,8 @@ export default function SelectField({
   name,
   defaultValue,
 }: TextFieldProps) {
+  const selectId = useId();
+
   return (
     <div
       className={cn(
@@ -62,12 +64,13 @@ export default function SelectField({
       )}
     >
       {label && (
-        <Label type={labelType} className={labelClassName}>
+        <Label type={labelType} className={labelClassName} htmlFor={selectId}>
           {label}
         </Label>
       )}
       <div className='flex w-full flex-1 flex-col gap-8'>
         <Select
+          id={selectId}
           name={name}
           label={placeholder}
           disabled={disabled}
