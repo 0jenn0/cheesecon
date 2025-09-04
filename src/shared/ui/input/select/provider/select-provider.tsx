@@ -1,22 +1,23 @@
 'use client';
 
-import { PropsWithChildren, createContext, useContext, useState, useRef, useEffect } from 'react';
+import {
+  PropsWithChildren,
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 export interface SelectContextType {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   currentValue: string;
   setCurrentValue: (currentValue: string) => void;
-  selectRef: React.RefObject<HTMLDivElement>;
+  selectRef: React.RefObject<HTMLDivElement | null>;
 }
 
-export const SelectContext = createContext<SelectContextType>({
-  isOpen: false,
-  setIsOpen: () => {},
-  currentValue: '',
-  setCurrentValue: () => {},
-  selectRef: { current: null },
-});
+export const SelectContext = createContext<SelectContextType | null>(null);
 
 export default function SelectProvider({ children }: PropsWithChildren) {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,7 +26,10 @@ export default function SelectProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
+      if (
+        selectRef.current &&
+        !selectRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };

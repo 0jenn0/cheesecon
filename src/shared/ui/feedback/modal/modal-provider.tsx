@@ -112,6 +112,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
               zIndex={modalZIndex}
               showOverlay={false}
             >
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               <ModalComponent {...(modal.props as any)} />
             </Modal.Portal>,
           ];

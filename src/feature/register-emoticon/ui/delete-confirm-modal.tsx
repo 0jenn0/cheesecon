@@ -36,7 +36,7 @@ export default function DeleteConfirmModal({
             variant='secondary'
             styleVariant='outlined'
             className='w-full'
-            onClick={closeModal}
+            onClick={() => closeModal()}
           >
             취소
           </Button>
