@@ -7,7 +7,7 @@ import { useModal } from '../modal-provider';
 interface DangerModalProps {
   title: string;
   description: string;
-  onCancel: () => void;
+  onCancel?: () => void;
   onConfirm: () => void;
   secondaryButtonText?: string;
   confirmButtonText?: string;
@@ -26,7 +26,7 @@ export default function DangerModal({
   const { closeModal } = useModal();
 
   const handleCancel = () => {
-    onCancel();
+    onCancel?.();
     closeModal();
   };
 
@@ -41,7 +41,7 @@ export default function DangerModal({
         <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>{description}</p>
+        <p className='padding-16'>{description}</p>
       </Modal.Body>
       <Modal.Footer className='flex gap-8'>
         <Button variant='secondary' className='w-full' onClick={handleCancel}>
