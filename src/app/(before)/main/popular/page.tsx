@@ -19,7 +19,7 @@ export default async function PopularPage() {
   const flattenedData = initial?.success ? initial.data.data : [];
 
   return (
-    <section className='bg-primary padding-24 flex w-full flex-col gap-24'>
+    <section className='bg-primary padding-16 flex w-full flex-col gap-16'>
       <div className='flex flex-col gap-8'>
         <h1 className='text-heading-md'>🔥 인기 급상승 이모티콘</h1>
       </div>

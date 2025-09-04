@@ -17,7 +17,7 @@ export default async function ActivityPage() {
   const flattenedData = initial?.success ? initial.data.data : [];
 
   return (
-    <section className='bg-primary padding-24 flex w-full flex-col gap-24'>
+    <section className='bg-primary padding-16 flex w-full flex-col gap-16'>
       <div className='flex flex-col gap-8'>
         <h1 className='text-heading-md'>🎨 열활하시는 작가님들</h1>
       </div>
