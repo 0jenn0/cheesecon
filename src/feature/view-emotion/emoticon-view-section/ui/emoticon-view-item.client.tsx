@@ -65,8 +65,7 @@ function Thumbnail({
 }) {
   const hasVideo =
     !!item.representative_image.mp4_url ||
-    !!item.representative_image.webm_url ||
-    !!item.representative_image.poster_url;
+    !!item.representative_image.webm_url;
 
   return (
     <div className='border-radius-lg relative flex gap-8 overflow-hidden font-semibold'>
@@ -88,15 +87,15 @@ function Thumbnail({
         <video
           ref={videoRef}
           src={
-            item.representative_image.mp4_url ??
-            item.representative_image.webm_url ??
-            ''
+            item.representative_image.mp4_url ||
+            item.representative_image.webm_url ||
+            undefined
           }
           poster={
-            item.representative_image.poster_url ??
-            item.representative_image.webp_url ??
-            item.representative_image.image_url ??
-            ''
+            item.representative_image.poster_url ||
+            item.representative_image.webp_url ||
+            item.representative_image.image_url ||
+            undefined
           }
           className={cn(
             'border-radius-lg border-ghost tablet:w-[96px] tablet:h-[96px] h-[80px] w-[80px] border object-cover transition-all duration-200 group-hover:scale-105',

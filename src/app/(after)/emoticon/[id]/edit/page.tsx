@@ -1,6 +1,6 @@
 import { getEmoticonImages } from '@/entity/emoticon-images/api';
 import { getEmoticonSetCached } from '@/entity/emoticon-set/model/main-cache';
-import EmoticonEditScreen from '@/screen/emoticon-edit/page';
+import EmoticonFormScreen from '@/screen/emoticon-form/screen';
 
 export default async function EmoticonEditPage({
   params,
@@ -14,7 +14,8 @@ export default async function EmoticonEditPage({
   ]);
 
   return (
-    <EmoticonEditScreen
+    <EmoticonFormScreen
+      action='update'
       initialEmoticonInfo={emoticonInfo}
       initialImages={images.success ? (images.data ?? []) : []}
     />

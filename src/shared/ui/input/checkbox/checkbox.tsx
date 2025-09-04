@@ -22,7 +22,6 @@ export default function Checkbox({
   return (
     <div className={checkboxVariants({ status, disabled })}>
       <input
-        {...props}
         type='checkbox'
         disabled={disabled}
         className={cn(
@@ -36,6 +35,7 @@ export default function Checkbox({
             input.indeterminate = status === 'partial';
           }
         }}
+        {...props}
       />
       {iconName && (
         <Icon
