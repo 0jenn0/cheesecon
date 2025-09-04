@@ -1,6 +1,6 @@
 import { ComponentPropsWithRef } from 'react';
 import { cn } from '@/shared/lib/utils';
-import SelectProvider from './provider/select-provider';
+import SelectProvider, { useSelect } from './provider/select-provider';
 import { SelectList, SelectPlaceholder } from './ui';
 
 export interface SelectProps
@@ -14,7 +14,7 @@ export interface SelectProps
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
-export default function Select({
+function SelectContent({
   label,
   options,
   isError = false,
@@ -27,24 +27,32 @@ export default function Select({
   id,
   ...props
 }: SelectProps) {
+  const { selectRef } = useSelect();
+
+  return (
+    <div ref={selectRef} className={cn('relative cursor-pointer', className)} {...props}>
+      <SelectPlaceholder
+        id={id}
+        label={label}
+        placeholder={label}
+        isError={isError}
+        disabled={disabled}
+        className={placeholderClassName}
+        selectClassName={placeholderClassName || ''}
+        trailingIcon='chevron-down'
+        onChange={onChange}
+        name={name}
+        defaultValue={defaultValue as string}
+      />
+      <SelectList options={options} name={name} />
+    </div>
+  );
+}
+
+export default function Select(props: SelectProps) {
   return (
     <SelectProvider>
-      <div className={cn('relative cursor-pointer', className)} {...props}>
-        <SelectPlaceholder
-          id={id}
-          label={label}
-          placeholder={label}
-          isError={isError}
-          disabled={disabled}
-          className={placeholderClassName}
-          selectClassName={placeholderClassName || ''}
-          trailingIcon='chevron-down'
-          onChange={onChange}
-          name={name}
-          defaultValue={defaultValue as string}
-        />
-        <SelectList options={options} name={name} />
-      </div>
+      <SelectContent {...props} />
     </SelectProvider>
   );
 }
