@@ -74,6 +74,11 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://cheesecon.kr',
   },
+  icons: {
+    icon: '/cheesecon-favicon.ico',
+    shortcut: '/cheesecon-favicon.ico',
+    apple: '/cheesecon-favicon.ico',
+  },
 };
 
 export default async function RootLayout({
