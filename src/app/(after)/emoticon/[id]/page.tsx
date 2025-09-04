@@ -13,15 +13,15 @@ export async function generateMetadata({
   const id = (await params).id;
   const emoticonInfo = await getEmoticonSetCached(id);
 
-  if (!emoticonInfo?.success || !emoticonInfo.data) {
+  if (!emoticonInfo) {
     return {
       title: '이모티콘을 찾을 수 없습니다',
       description: '요청하신 이모티콘을 찾을 수 없습니다.',
     };
   }
 
-  const { title, description, thumbnail } = emoticonInfo.data;
-  const imageUrl = thumbnail || '/og-image.png';
+  const { title, description, representative_image } = emoticonInfo;
+  const imageUrl = representative_image || '/og-image.png';
 
   return {
     title: title,
@@ -38,14 +38,14 @@ export async function generateMetadata({
       '크리에이터',
     ],
     openGraph: {
-      title: `${title} | 치즈콘`,
+      title: `치즈콘 | ${title}`,
       description:
         description ||
         `${title} 이모티콘에 대한 여러분의 소중한 피드백을 남겨주세요. 크리에이터와 소통해보세요!`,
       url: `https://cheesecon.kr/emoticon/${id}`,
       images: [
         {
-          url: imageUrl,
+          url: imageUrl.webp_url ?? imageUrl.image_url,
           width: 1200,
           height: 630,
           alt: title,
@@ -55,11 +55,11 @@ export async function generateMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${title} | 치즈콘`,
+      title: `치즈콘 | ${title}`,
       description:
         description ||
         `${title} 이모티콘에 대한 여러분의 소중한 피드백을 남겨주세요. 크리에이터와 소통해보세요!`,
-      images: [imageUrl],
+      images: [imageUrl.webp_url ?? imageUrl.image_url],
     },
     alternates: {
       canonical: `https://cheesecon.kr/emoticon/${id}`,

@@ -8,7 +8,7 @@ import {
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: '🔥 인기 급상승 이모티콘',
+  title: '치즈콘 | 🔥 인기 급상승 이모티콘',
   description:
     '커뮤니티에서 가장 많은 사랑을 받고 있는 이모티콘들을 만나보세요. 좋아요와 피드백이 가장 많은 인기작들을 모았습니다.',
   keywords: [
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     '트렌딩',
   ],
   openGraph: {
-    title: '🔥 인기 급상승 이모티콘 | 치즈콘',
+    title: '치즈콘 | 🔥 인기 급상승 이모티콘',
     description:
       '커뮤니티에서 가장 많은 사랑을 받고 있는 이모티콘들을 만나보세요. 좋아요와 피드백이 가장 많은 인기작들을 모았습니다.',
     url: 'https://cheesecon.kr/main/popular',

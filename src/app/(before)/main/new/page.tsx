@@ -8,7 +8,7 @@ import {
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: '✨ 따끈따끈 최신 이모티콘',
+  title: '치즈콘 | ✨ 따끈따끈 최신 이모티콘',
   description:
     '크리에이터들이 방금 업로드한 따끈따끈한 이모티콘들을 만나보세요. 첫 번째 피드백을 남겨주세요!',
   keywords: [
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     '새로운 작품',
   ],
   openGraph: {
-    title: '✨ 따끈따끈 최신 이모티콘 | 치즈콘',
+    title: '치즈콘 | ✨ 따끈따끈 최신 이모티콘',
     description:
       '크리에이터들이 방금 업로드한 따끈따끈한 이모티콘들을 만나보세요. 첫 번째 피드백을 남겨주세요!',
     url: 'https://cheesecon.kr/main/new',
