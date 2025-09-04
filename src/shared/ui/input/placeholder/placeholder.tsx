@@ -58,6 +58,7 @@ export default function Placeholder({
     >
       <input
         {...props}
+        id={props.id}
         className={cn(
           'text-primary disabled:text-disabled flex min-w-0 flex-1 text-[16px] outline-none',
           inputClassName,

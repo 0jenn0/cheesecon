@@ -1,4 +1,4 @@
-import { ComponentPropsWithRef } from 'react';
+import { ComponentPropsWithRef, useId } from 'react';
 import { VariantProps, cva } from 'class-variance-authority';
 import { cn } from '@/shared/lib';
 import { Label } from '..';
@@ -57,6 +57,9 @@ export default function TextField({
   name,
   inputProps,
 }: TextFieldProps) {
+  const id = useId();
+  const inputId = name || id;
+
   return (
     <div
       className={cn(
@@ -65,11 +68,12 @@ export default function TextField({
           : 'tablet:flex-row flex flex-col gap-12',
       )}
     >
-      <Label type={labelType} className={labelClassName}>
+      <Label type={labelType} className={labelClassName} htmlFor={inputId}>
         {label}
       </Label>
       <div className='flex w-full flex-1 flex-col gap-8'>
         <Placeholder
+          id={inputId}
           name={name}
           placeholder={placeholder}
           trailingIcon={placeholderIcon}
