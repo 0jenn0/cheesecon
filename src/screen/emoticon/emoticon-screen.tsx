@@ -1,9 +1,12 @@
 import { EmoticonSetInfo } from '@/entity/emoticon-set';
-import { trackEmoticonView } from '@/entity/view/api';
-import { EmoticonCommentSection, EmoticonInfoSection } from './ui';
-import EmoticonImageSection from './ui/emoticon-image-section/emoticon-image-section';
+import {
+  EmoticonCommentSection,
+  EmoticonImageSection,
+  EmoticonInfoSection,
+  EmoticonViewTracker,
+} from './ui';
 
-export default async function EmoticonScreen({
+export default function EmoticonScreen({
   emoticonSetId,
   isUnlocked,
   emoticonInfo,
@@ -12,10 +15,9 @@ export default async function EmoticonScreen({
   isUnlocked: boolean;
   emoticonInfo: EmoticonSetInfo;
 }) {
-  await trackEmoticonView(emoticonSetId);
-
   return (
     <div className='padding-y-16 tablet:padding-y-24 tablet:gap-24 flex flex-col gap-16'>
+      <EmoticonViewTracker emoticonSetId={emoticonSetId} />
       <EmoticonInfoSection emoticonInfo={emoticonInfo} />
       <EmoticonImageSection
         emoticonSetId={emoticonSetId}

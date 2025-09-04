@@ -1,14 +1,9 @@
-import type { Metadata } from 'next';
+'use client';
 
-export const metadata: Metadata = {
-  title: '내 정보',
-  description: '내 프로필과 계정 정보를 확인하고 관리하세요.',
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+import { useAmplitudePageView } from '@/shared/lib/use-amplitude-page-view';
 
-export default async function MePage() {
+export default function MePage() {
+  useAmplitudePageView('my_profile');
+
   return <></>;
 }

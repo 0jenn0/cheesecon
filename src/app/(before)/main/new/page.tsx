@@ -4,6 +4,7 @@ import {
   EmoticonViewSectionClient,
   EmoticonViewSectionServer,
 } from '@/feature/view-emotion/emoticon-view-section';
+import NewPageClientWrapper from './client-wrapper';
 
 export const revalidate = 300;
 
@@ -42,15 +43,17 @@ export default async function NewPage() {
   const flattenedData = initial?.success ? initial.data.data : [];
 
   return (
-    <section className='bg-primary padding-16 flex w-full flex-col gap-16'>
-      <div className='flex flex-col gap-8'>
-        <h1 className='text-heading-md'>✨ 따끈따끈 최신 이모티콘</h1>
-      </div>
-      <div className='border-ghost w-full border-b' />
-      <EmoticonViewSectionServer initial={flattenedData} />
-      {flattenedData.length > LIMIT && (
-        <EmoticonViewSectionClient limit={LIMIT} offset={LIMIT} />
-      )}
-    </section>
+    <NewPageClientWrapper>
+      <section className='bg-primary padding-16 flex w-full flex-col gap-16'>
+        <div className='flex flex-col gap-8'>
+          <h1 className='text-heading-md'>✨ 따끈따끈 최신 이모티콘</h1>
+        </div>
+        <div className='border-ghost w-full border-b' />
+        <EmoticonViewSectionServer initial={flattenedData} />
+        {flattenedData.length > LIMIT && (
+          <EmoticonViewSectionClient limit={LIMIT} offset={LIMIT} />
+        )}
+      </section>
+    </NewPageClientWrapper>
   );
 }

@@ -3,6 +3,7 @@
 import { ComponentPropsWithRef } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/shared/ui/input';
+import { trackEvent } from '@/shared/lib/amplitude';
 
 const COMMENT_EMOTICON_REACTION_LIST = ['❤️', '👍', '✅', '👀', '😢'] as const;
 
@@ -35,7 +36,16 @@ export default function EmoticonReaction({
           key={item}
           size='sm'
           className='text-body-lg transition-all duration-200 select-none'
-          onClick={() => handleToggleReaction(item)}
+          onClick={() => {
+            trackEvent('select_feedback_tag', {
+              tag_name: item,
+              tag_category: 'emoji_reaction_picker',
+              is_custom: false,
+              action: 'add',
+              from_picker: true
+            });
+            handleToggleReaction(item);
+          }}
         >
           {item}
         </Button>

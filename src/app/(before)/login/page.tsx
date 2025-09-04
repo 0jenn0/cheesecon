@@ -1,11 +1,12 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import { Icon } from '@/shared/ui/display';
 import { useToast } from '@/shared/ui/feedback';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { LoginButton } from '@/feature/auth/ui';
+import { trackEvent } from '@/shared/lib/amplitude';
 
 function LoginContent() {
   const { addToast } = useToast();
@@ -13,10 +14,17 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get('redirect') || '/';
 
+  useEffect(() => {
+    trackEvent('page_view', { page: 'login' });
+  }, []);
+
   const handleSignIn = async (provider: 'kakao' | 'google') => {
     try {
+      trackEvent('login_attempt', { provider });
       await signInWithProvider(provider, redirectUrl);
+      trackEvent('login_success', { provider });
     } catch (error) {
+      trackEvent('login_error', { provider, error: error instanceof Error ? error.message : 'unknown' });
       addToast({
         type: 'error',
         message: `로그인에 실패했어요. ${error instanceof Error ? error.message : '알 수 없는 오류'}`,

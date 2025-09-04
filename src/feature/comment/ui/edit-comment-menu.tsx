@@ -4,6 +4,7 @@ import { cn } from '@/shared/lib/utils';
 import { useModal } from '@/shared/ui/feedback';
 import { IconProps } from '@/shared/ui/icon/icon';
 import { Button } from '@/shared/ui/input';
+import { trackEvent } from '@/shared/lib/amplitude';
 import { useCommentSectionUi } from '@/feature/comment/ui/emoticon-comment-section/provider/use-comment-section-ui';
 import { useCommentItem } from './comment/provider';
 
@@ -33,6 +34,9 @@ export default function EditCommentMenu({
   };
 
   const handleDelete = () => {
+    trackEvent('delete_feedback_start', {
+      feedback_id: commentId,
+    });
     toggleMore();
     openModal('deleteComment', {
       commentId,

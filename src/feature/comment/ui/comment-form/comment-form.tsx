@@ -6,6 +6,7 @@ import { Avatar } from '@/shared/ui/display';
 import { Button, IconButton, TextArea } from '@/shared/ui/input';
 import { UpdateCommentParams } from '@/entity/comment';
 import { useGetProfile } from '@/entity/profile/query/profile-query';
+import { trackEvent } from '@/shared/lib/amplitude';
 import { useCommentItem } from '../comment/provider';
 import { useCommentForm } from '../model';
 import { ImageItem } from './ui';
@@ -70,10 +71,40 @@ export default function CommentForm({
     [handleImageUpload],
   );
 
+  const handleTextAreaFocus = () => {
+    trackEvent('start_feedback_input', {
+      emoji_id: targetId,
+      target_type: targetType,
+      is_reply: !!parentCommentId,
+      is_editing: isEditing
+    });
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const content = formData.get('content') as string || '';
+    
     if (isEditing) {
+      trackEvent('edit_feedback', { 
+        targetType, 
+        targetId,
+        feedback_id: commentId,
+        original_length: initialValue?.content?.length || 0,
+        new_length: content.length,
+        has_images: uploadedImages.length > 0,
+        image_count: uploadedImages.length
+      });
       handleUpdateSubmit(e);
     } else {
+      trackEvent('submit_feedback', { 
+        emoji_id: targetId,
+        target_type: targetType,
+        length: content.length,
+        has_images: uploadedImages.length > 0,
+        image_count: uploadedImages.length,
+        is_reply: !!parentCommentId
+      });
       handleCreateSubmit(e);
     }
     toggleEditing();
@@ -105,6 +136,7 @@ export default function CommentForm({
           isError={false}
           disabled={!user}
           onChange={handleChange}
+          onFocus={handleTextAreaFocus}
           defaultValue={initialValue?.content ?? ''}
         />
 

@@ -1,5 +1,6 @@
 import { cn } from '@/shared/lib';
 import { CommentReactionSummary } from '@/entity/comment';
+import { trackEvent } from '@/shared/lib/amplitude';
 
 export default function CommentReaction({
   reactionSummary,
@@ -24,6 +25,13 @@ export default function CommentReaction({
                 : 'bg-interactive-secondary-subtle border border-white',
             )}
             onClick={() => {
+              trackEvent('select_feedback_tag', {
+                tag_name: reaction.emoji,
+                tag_category: 'emoji_reaction',
+                is_custom: false,
+                action: reaction.reacted ? 'remove' : 'add',
+                current_count: reaction.count
+              });
               toggleReaction(reaction.emoji);
             }}
           >

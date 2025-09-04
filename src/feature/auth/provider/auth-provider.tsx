@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
+import { setUserId, setUserProperties } from '@/shared/lib/amplitude';
 import { Provider, Session } from '@supabase/supabase-js';
 import { AuthApiResponse, authApi } from '../api';
 import { signInWithProvider } from '../model';
@@ -83,13 +84,27 @@ export default function AuthProvider({
 
         const metadata = session?.user?.user_metadata;
 
-        setUser({
+        const userInfo = {
           email: metadata?.email ?? '',
           name: metadata?.full_name ?? '',
           avatarUrl: metadata?.avatar_url
             ? metadata.avatar_url.replace(/^http:\/\//, 'https://')
             : '',
-        });
+        };
+
+        setUser(userInfo);
+
+        if (session?.user?.id) {
+          setUserId(session.user.id);
+          setUserProperties({
+            user_type: 'creator',
+            email: userInfo.email,
+            name: userInfo.name,
+            provider: metadata?.provider,
+            created_at: session.user.created_at,
+            has_avatar: !!userInfo.avatarUrl,
+          });
+        }
       } catch (error) {
         console.error('초기 세션 조회 오류:', error);
         setError(error as Error);
@@ -105,11 +120,30 @@ export default function AuthProvider({
     } = authApi.onAuthStateChange(
       async (event: string, session: Session | null) => {
         setSession(session);
-        setUser({
+
+        const userInfo = {
           email: session?.user?.email ?? '',
           name: session?.user?.user_metadata?.full_name ?? '',
           avatarUrl: session?.user?.user_metadata?.avatar_url ?? '',
-        });
+        };
+
+        setUser(userInfo);
+
+        if (session?.user?.id) {
+          setUserId(session.user.id);
+          setUserProperties({
+            user_type: 'creator',
+            email: userInfo.email,
+            name: userInfo.name,
+            provider: session.user.user_metadata?.provider,
+            created_at: session.user.created_at,
+            has_avatar: !!userInfo.avatarUrl,
+            auth_event: event,
+          });
+        } else {
+          setUserId('');
+        }
+
         setIsLoading(false);
         setError(null);
       },

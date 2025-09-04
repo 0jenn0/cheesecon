@@ -2,8 +2,10 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { cn } from '@/shared/lib';
+import useIntersectionObserver from '@/shared/lib/use-intersection-observer';
+import { trackEvent } from '@/shared/lib/amplitude';
 import { Icon } from '@/shared/ui/display';
 import type {
   EmoticonSetDetail,
@@ -24,6 +26,10 @@ export default function EmoticonViewItemClient({
   hideLikes = false,
 }: EmoticonViewItemProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const { ref: intersectionRef, isIntersecting } = useIntersectionObserver({
+    threshold: 0.5,
+    triggerOnce: true,
+  });
 
   const play = () => videoRef.current?.play();
   const reset = () => {
@@ -33,8 +39,26 @@ export default function EmoticonViewItemClient({
     videoRef.current.load();
   };
 
+  useEffect(() => {
+    if (isIntersecting) {
+      const hasVideo = 
+        !!(item as EmoticonSetWithRepresentativeImage).representative_image?.mp4_url || 
+        !!(item as EmoticonSetWithRepresentativeImage).representative_image?.webm_url;
+      
+      trackEvent('emoji_preview_viewed', {
+        emoji_id: item.id,
+        preview_type: hasVideo ? 'animated' : 'static',
+        position_index: index,
+        emoji_title: item.title,
+        emoji_platform: (item as EmoticonSetWithRepresentativeImage).platform,
+        emoji_type: (item as EmoticonSetWithRepresentativeImage).type,
+      });
+    }
+  }, [isIntersecting, item.id, item.title, index]);
+
   return (
     <section
+      ref={intersectionRef}
       className='group flex w-full cursor-pointer'
       onMouseEnter={play}
       onMouseLeave={reset}

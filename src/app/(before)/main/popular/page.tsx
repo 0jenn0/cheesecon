@@ -4,6 +4,7 @@ import {
   EmoticonViewSectionClient,
   EmoticonViewSectionServer,
 } from '@/feature/view-emotion/emoticon-view-section';
+import PopularPageClientWrapper from './client-wrapper';
 
 export const revalidate = 3600;
 
@@ -42,15 +43,17 @@ export default async function PopularPage() {
   const flattenedData = initial?.success ? initial.data.data : [];
 
   return (
-    <section className='bg-primary padding-16 flex w-full flex-col gap-16'>
-      <div className='flex flex-col gap-8'>
-        <h1 className='text-heading-md'>🔥 인기 급상승 이모티콘</h1>
-      </div>
-      <div className='border-ghost w-full border-b' />
-      <EmoticonViewSectionServer initial={flattenedData} />
-      {flattenedData.length > LIMIT && (
-        <EmoticonViewSectionClient limit={LIMIT} offset={LIMIT} />
-      )}
-    </section>
+    <PopularPageClientWrapper>
+      <section className='bg-primary padding-16 flex w-full flex-col gap-16'>
+        <div className='flex flex-col gap-8'>
+          <h1 className='text-heading-md'>🔥 인기 급상승 이모티콘</h1>
+        </div>
+        <div className='border-ghost w-full border-b' />
+        <EmoticonViewSectionServer initial={flattenedData} />
+        {flattenedData.length > LIMIT && (
+          <EmoticonViewSectionClient limit={LIMIT} offset={LIMIT} />
+        )}
+      </section>
+    </PopularPageClientWrapper>
   );
 }

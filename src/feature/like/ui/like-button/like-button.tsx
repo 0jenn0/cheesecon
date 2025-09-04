@@ -7,6 +7,7 @@ import { Icon } from '@/shared/ui/display';
 import { useLikeCount } from '@/entity/like/query';
 import { useOptimisticLike } from '@/entity/like/query/like-mutation-query';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
+import { trackEvent } from '@/shared/lib/amplitude';
 import { likeButtonVariants } from './like-button.style';
 
 export interface LikeButtonProps
@@ -37,13 +38,22 @@ export default function LikeButton({
     initialLikesCount ?? initialLikesCountReplaced ?? 0,
   );
 
+  const handleToggleLike = () => {
+    trackEvent('like_toggle', {
+      targetType,
+      targetId,
+      action: isLiked ? 'unlike' : 'like',
+    });
+    toggleLike();
+  };
+
   return (
     <button
       className={cn(
         likeButtonVariants({ variant: isLiked ? 'filled' : 'default' }),
         className,
       )}
-      onClick={toggleLike}
+      onClick={handleToggleLike}
       disabled={isLoading}
       {...props}
     >
