@@ -24,7 +24,6 @@ export default function SecretCheckForm() {
           id='secretNumberCheck'
           status={isPrivate ? 'checked' : 'unchecked'}
           onChange={handleCheckboxChange}
-          defaultChecked={meta.is_private ?? false}
         />
         <div className='flex items-center gap-4'>
           <label

@@ -92,7 +92,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
       {children}
       {modals
         .sort((a, b) => a.zIndex - b.zIndex)
-        .flatMap((modal, index) => {
+        .flatMap((modal) => {
           const ModalComponent = MODAL_CONFIG[modal.type];
           const overlayZIndex = modal.zIndex;
           const modalZIndex = modal.zIndex + 5;

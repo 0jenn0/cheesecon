@@ -51,7 +51,7 @@ export function RegisterBottomBarMobile({
         });
       }
     },
-    [emoticonSetInfo, allImages, registerMutation],
+    [emoticonSetInfo, allImages, registerMutation, updateMutation, action, id],
   );
 
   return (

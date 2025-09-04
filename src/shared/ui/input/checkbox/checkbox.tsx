@@ -17,13 +17,11 @@ export default function Checkbox({
   onChange,
   ...props
 }: CheckboxProps) {
-  const { defaultChecked, ...restProps } = props;
   const iconName = getIconName(status);
 
   return (
     <div className={checkboxVariants({ status, disabled })}>
       <input
-        {...restProps}
         type='checkbox'
         disabled={disabled}
         className={cn(
@@ -37,6 +35,7 @@ export default function Checkbox({
             input.indeterminate = status === 'partial';
           }
         }}
+        {...props}
       />
       {iconName && (
         <Icon
