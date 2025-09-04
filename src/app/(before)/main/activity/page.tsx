@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { getActivityUsersCached } from '@/entity/profile/model/main-cache';
 import {
   ProfileViewSectionClient,
@@ -5,6 +6,22 @@ import {
 } from '@/feature/view-profile';
 
 export const revalidate = 3600;
+
+export const metadata: Metadata = {
+  title: '🎨 열활하시는 작가님들',
+  description:
+    '활발하게 활동하고 있는 이모티콘 크리에이터들을 만나보세요. 다양한 작가들의 작품과 스타일을 탐험해보세요.',
+  keywords: ['이모티콘 작가', '크리에이터', '활동', '작가 프로필', '커뮤니티'],
+  openGraph: {
+    title: '🎨 열활하시는 작가님들 | 치즈콘',
+    description:
+      '활발하게 활동하고 있는 이모티콘 크리에이터들을 만나보세요. 다양한 작가들의 작품과 스타일을 탐험해보세요.',
+    url: 'https://cheesecon.kr/main/activity',
+  },
+  alternates: {
+    canonical: 'https://cheesecon.kr/main/activity',
+  },
+};
 
 const LIMIT = 8;
 
