@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/shared/lib';
 import { IconButton } from '../../input';
-import { useModal } from './modal-provider';
+import { MODAL_Z_INDEX, useModal } from './modal-provider';
 
 export interface ModalProps extends ComponentPropsWithRef<'section'> {
   isOpen?: boolean;
@@ -13,6 +13,8 @@ export interface ModalProps extends ComponentPropsWithRef<'section'> {
   overlayClassName?: string;
   modalClassName?: string;
   children: ReactNode;
+  zIndex?: number;
+  showOverlay?: boolean;
 }
 
 export interface ModalSubComponentProps extends ComponentPropsWithRef<'div'> {
@@ -26,6 +28,8 @@ function ModalPortal({
   overlayClassName = '',
   modalClassName = '',
   isOpen = false,
+  zIndex,
+  showOverlay = true,
   ...props
 }: ModalProps) {
   const [mounted, setMounted] = useState(false);
@@ -75,6 +79,8 @@ function ModalPortal({
       onClose={onClose || closeModal}
       overlayClassName={overlayClassName}
       modalClassName={modalClassName}
+      zIndex={zIndex}
+      showOverlay={showOverlay}
       {...props}
     >
       {children}
@@ -89,6 +95,8 @@ function ModalContainer({
   overlayClassName,
   className,
   modalClassName,
+  zIndex,
+  showOverlay = true,
   ...props
 }: Omit<ModalProps, 'isOpen'>) {
   const handleOverlayClick = (event: React.MouseEvent) => {
@@ -113,14 +121,20 @@ function ModalContainer({
         transition={{
           opacity: { duration: 0.15, ease: 'easeInOut' },
         }}
-        className='z-index-modal tablet:items-center tablet:justify-center fixed inset-0 flex items-end justify-center'
+        className='tablet:items-center tablet:justify-center fixed inset-0 flex items-end justify-center'
         onClick={handleOverlayClick}
+        style={{ zIndex: zIndex || MODAL_Z_INDEX }}
+        data-z-index={zIndex || MODAL_Z_INDEX}
       >
-        <div className={cn('absolute inset-0 bg-black/70', overlayClassName)} />
+        {showOverlay && (
+          <div
+            className={cn('absolute inset-0 bg-black/70', overlayClassName)}
+          />
+        )}
 
         <div
           className={cn(
-            'z-index-modal relative max-h-[90vh] w-full overflow-auto',
+            'relative max-h-[90vh] w-full overflow-auto',
             'tablet:w-auto tablet:max-w-[90vw]',
             modalClassName,
           )}
@@ -156,6 +170,8 @@ function ModalContent({
   modalClassName,
   overlayClassName,
   onClose,
+  zIndex,
+  showOverlay,
   ...props
 }: Omit<ModalProps, 'isOpen'>) {
   return (
@@ -163,6 +179,8 @@ function ModalContent({
       onClose={onClose}
       overlayClassName={overlayClassName}
       modalClassName={modalClassName}
+      zIndex={zIndex}
+      showOverlay={showOverlay}
       {...props}
     >
       {children}
