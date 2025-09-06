@@ -86,7 +86,6 @@ Next.js 15 (App Router) + React 19 + TypeScript
 ### **Development & Quality**
 
 - **Storybook** - 컴포넌트 문서화
-- **Vitest + Playwright** - 단위/E2E 테스트
 - **Lighthouse CI** - 성능 모니터링
 - **ESLint + Prettier** - 코드 품질 관리
 
