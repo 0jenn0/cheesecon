@@ -23,6 +23,9 @@ importers:
       '@ffprobe-installer/ffprobe':
         specifier: ^2.1.2
         version: 2.1.2
+      '@rive-app/react-webgl2':
+        specifier: ^4.23.3
+        version: 4.23.3(react@19.1.1)
       '@storybook/nextjs':
         specifier: ^9.0.16
         version: 9.1.1(esbuild@0.25.8)(next@15.3.3(@babel/core@7.28.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(storybook@9.1.1(@testing-library/dom@10.4.1)(prettier@3.6.2)(vite@7.1.1(@types/node@20.19.10)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)))(type-fest@2.19.0)(typescript@5.9.2)(webpack-hot-middleware@2.26.1)(webpack@5.101.0(esbuild@0.25.8))
@@ -1406,6 +1409,14 @@ packages:
     resolution: {integrity: sha512-pHUn6ZRt39bP3698HFQlu2ZHCkS/lPcpv7fVQcGBSzNNygw171UXAKrCUhy+TEMw4lEttOKDgNpb04hwUAJeiQ==}
     engines: {node: '>=18'}
     hasBin: true
+
+  '@rive-app/react-webgl2@4.23.3':
+    resolution: {integrity: sha512-2ZgwGDA9CKHIAFdn3bWWgyuwvt1uyerf+KwRrelx6xBV6hRM/ch1Y5YuR12iZUcdxBMBB9R86ofVVY9xSvJZmQ==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0
+
+  '@rive-app/webgl2@2.31.5':
+    resolution: {integrity: sha512-yBCyWogdlD8otlT9V7UzIEvpbL5HEtuaxAMJvUcx2vUmLXp52C45H+G9/RvK98e0r3WcEDM2aNQzTjNZE9UrOA==}
 
   '@rollup/pluginutils@5.2.0':
     resolution: {integrity: sha512-qWJ2ZTbmumwiLFomfzTyt5Kng4hwPi9rwCYN4SHb6eaRU1KNO4ccxINHr/VhH4GgPlt1XfSTLX2LBTme8ne4Zw==}
@@ -7346,6 +7357,13 @@ snapshots:
     transitivePeerDependencies:
       - bare-buffer
       - supports-color
+
+  '@rive-app/react-webgl2@4.23.3(react@19.1.1)':
+    dependencies:
+      '@rive-app/webgl2': 2.31.5
+      react: 19.1.1
+
+  '@rive-app/webgl2@2.31.5': {}
 
   '@rollup/pluginutils@5.2.0(rollup@4.46.2)':
     dependencies:
