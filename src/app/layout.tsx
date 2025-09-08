@@ -8,7 +8,6 @@ import GlobalNavigationBar from '@/shared/ui/navigation/global-navigation-bar/gl
 import AuthProvider from '@/feature/auth/provider/auth-provider';
 import ReactQueryClientProvider from '@/provider/QueryProvider';
 import '../shared/ui/styles/globals.css';
-import './_rive-runtime';
 
 export const metadata: Metadata = {
   title: {
