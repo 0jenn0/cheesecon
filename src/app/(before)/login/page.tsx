@@ -2,16 +2,24 @@
 
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
-import { Icon } from '@/shared/ui/display';
 import { useToast } from '@/shared/ui/feedback';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
 import { LoginButton } from '@/feature/auth/ui';
+import { useRive } from '@rive-app/react-webgl2';
+
+const STATE_MACHINE_NAME = 'state_machine_1';
 
 function LoginContent() {
   const { addToast } = useToast();
   const { signInWithProvider } = useAuth();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get('redirect') || '/';
+
+  const { RiveComponent, rive } = useRive({
+    src: '/cheesecon-logo.riv',
+    stateMachines: STATE_MACHINE_NAME,
+    autoplay: true,
+  });
 
   const handleSignIn = async (provider: 'kakao' | 'google') => {
     try {
@@ -26,11 +34,8 @@ function LoginContent() {
 
   return (
     <div className='padding-16 tablet:padding-24 flex h-full w-full flex-col items-center justify-center'>
-      <div className='flex w-full flex-1 items-center justify-center'>
-        <Icon
-          name='logo'
-          className='h-[200px] w-[200px] text-[var(--color-cheesecon-primary-400)]'
-        />
+      <div className='flex h-full w-full flex-1 items-center justify-center'>
+        <RiveComponent />
       </div>
 
       <div className='flex w-full flex-col items-center gap-12'>
