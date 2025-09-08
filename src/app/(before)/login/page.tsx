@@ -15,7 +15,7 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get('redirect') || '/';
 
-  const { RiveComponent, rive } = useRive({
+  const { RiveComponent } = useRive({
     src: '/cheesecon-logo.riv',
     stateMachines: STATE_MACHINE_NAME,
     autoplay: true,
