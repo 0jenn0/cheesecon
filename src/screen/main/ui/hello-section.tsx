@@ -34,8 +34,10 @@ export default function HelloSection({
       <Link
         href='/register'
         className={cn(
-          'border-radius-xl padding-12 border-gradient-to-r z-10 flex w-full items-center justify-center gap-8 border border-yellow-200 bg-yellow-300/60 font-semibold backdrop-blur-sm transition-all duration-200',
-          isButtonHovered && 'scale-105',
+          'border-radius-xl padding-12 border-gradient-to-r z-10 flex w-full cursor-pointer items-center justify-center gap-8 border font-semibold backdrop-blur-sm transition-all duration-200',
+          isButtonHovered
+            ? 'scale-105 border-white bg-white/60 text-yellow-500'
+            : 'border-yellow-200 bg-yellow-300/60 text-yellow-700',
         )}
         onMouseEnter={() => setIsButtonHovered(true)}
         onMouseLeave={() => setIsButtonHovered(false)}
@@ -61,7 +63,8 @@ export default function HelloSection({
           isButtonHovered
             ? {
                 rotate: [2, 0.2, 2, 0.2, 2],
-                y: [-80, -76, -80, -76, -80],
+                y: [-72, -68, -72, -68, -72],
+                // y: [-20, -16, -20, -16, -20],
               }
             : {
                 rotate: [0, 0.2, 0, -0.2, 0],
