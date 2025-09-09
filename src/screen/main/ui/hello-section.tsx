@@ -13,6 +13,7 @@ export default function HelloSection({
 }: ComponentPropsWithRef<'section'>) {
   const greeting = useTimeBasedGreeting();
   const { data } = useGetProfile();
+  const [isButtonHovered, setIsButtonHovered] = useState(false);
 
   return (
     <section
@@ -32,7 +33,12 @@ export default function HelloSection({
       </div>
       <Link
         href='/register'
-        className='border-radius-xl padding-12 border-gradient-to-r z-10 flex w-full items-center justify-center gap-8 border border-yellow-200 bg-yellow-300/60 font-semibold backdrop-blur-sm'
+        className={cn(
+          'border-radius-xl padding-12 border-gradient-to-r z-10 flex w-full items-center justify-center gap-8 border border-yellow-200 bg-yellow-300/60 font-semibold backdrop-blur-sm transition-all duration-200',
+          isButtonHovered && 'scale-105',
+        )}
+        onMouseEnter={() => setIsButtonHovered(true)}
+        onMouseLeave={() => setIsButtonHovered(false)}
       >
         <motion.div
           animate={{
@@ -51,19 +57,38 @@ export default function HelloSection({
         새 이모티콘 등록하기
       </Link>
       <motion.div
-        animate={{
-          rotate: [0, 0.2, 0, -0.2, 0],
-          y: [0, 4, 0, -4, 0],
-        }}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-        }}
+        animate={
+          isButtonHovered
+            ? {
+                rotate: [2, 0.2, 2, 0.2, 2],
+                y: [-80, -76, -80, -76, -80],
+              }
+            : {
+                rotate: [0, 0.2, 0, -0.2, 0],
+                y: [0, 4, 0, 4, 0],
+              }
+        }
+        transition={
+          isButtonHovered
+            ? {
+                duration: 2,
+                repeat: Infinity,
+              }
+            : {
+                duration: 2,
+                repeat: Infinity,
+              }
+        }
         className='tablet:right-[-80px] tablet:bottom-[-110px] absolute right-[-40px] bottom-[-30px]'
       >
         <Icon
           name='logo'
-          className='tablet:h-[360px] tablet:w-[360px] h-[200px] w-[200px] text-gray-100/50'
+          className={cn(
+            'tablet:h-[360px] tablet:w-[360px] h-[200px] w-[200px] transition-all duration-200',
+            isButtonHovered
+              ? 'scale-50 text-yellow-300/50'
+              : 'text-gray-100/50',
+          )}
         />
       </motion.div>
     </section>
