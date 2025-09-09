@@ -7,8 +7,6 @@ import { useToast } from '@/shared/ui/feedback';
 import { CommentDetail } from '@/entity/comment/api/types';
 import { useOptimisticCommentReaction } from '@/entity/comment_reactions/query/comment-reaciton-mutation-query';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
-import { useCommentSectionUi } from '@/feature/comment/ui/emoticon-comment-section/provider/use-comment-section-ui';
-import { CommentForm } from '..';
 import { CommentItemProvider, useCommentItem } from './provider';
 import {
   CommentFooter,
@@ -38,7 +36,6 @@ export default function Comment({
   const { session } = useAuth();
   const { addToast } = useToast();
   const { isEditing } = useCommentItem();
-  const { isShowingForm } = useCommentSectionUi(comment.id);
   const {
     reactionSummary,
     toggleReaction: toggleReactionOptimistic,
@@ -114,15 +111,6 @@ export default function Comment({
             />
 
             <div className='border-ghost w-full border-b-[0.6px]' />
-
-            {isShowingForm && (
-              <CommentForm
-                targetId={targetId}
-                targetType={targetType}
-                parentCommentId={comment.id}
-                className='padding-t-8'
-              />
-            )}
           </div>
         </div>
       </div>

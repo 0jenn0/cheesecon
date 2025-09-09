@@ -73,10 +73,10 @@ export default function CommentForm({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     if (isEditing) {
       handleUpdateSubmit(e);
+      toggleEditing();
     } else {
       handleCreateSubmit(e);
     }
-    toggleEditing();
   };
 
   return (

@@ -8,11 +8,10 @@ import { Pagination } from '@/shared/ui/navigation';
 import { useCommentListQuery } from '@/entity/comment';
 import { CommentDetail } from '@/entity/comment/api/types';
 import { useAuth } from '@/feature/auth/provider/auth-provider';
-import { Comment, DefaultCommentForm } from '@/feature/comment/ui';
-import { Session } from '@supabase/supabase-js';
-import { CommentItemProvider } from '../comment/provider';
+import { DefaultCommentForm } from '@/feature/comment/ui';
 import EmoticonCommentSectionSkeleton from './emoticon-comment-section.skeleton';
 import { CommentSectionUiProvider } from './provider/use-comment-section-ui';
+import { RenderCommentForm } from './ui';
 
 const COUNT_PER_PAGE = 100;
 
@@ -76,17 +75,18 @@ export default function EmoticonCommentSection({
 
           <div className='flex w-full flex-1 flex-col gap-24'>
             {parentComments.length > 0 &&
-              parentComments.map((comment: CommentDetail) =>
-                renderComment({
-                  comment,
-                  parentNickname: comment.profile.nickname ?? '',
-                  comments,
-                  authorId,
-                  targetId,
-                  targetType,
-                  session,
-                }),
-              )}
+              parentComments.map((comment: CommentDetail) => (
+                <RenderCommentForm
+                  key={comment.id}
+                  comment={comment}
+                  parentNickname={comment.profile.nickname ?? ''}
+                  comments={comments}
+                  authorId={authorId}
+                  targetId={targetId}
+                  targetType={targetType}
+                  session={session}
+                />
+              ))}
 
             {parentComments.length === 0 && !isLoading && (
               <div className='padding- flex w-full items-center justify-center gap-8'>
@@ -112,76 +112,5 @@ export default function EmoticonCommentSection({
         </section>
       )}
     </CommentSectionUiProvider>
-  );
-}
-
-function renderComment({
-  comment,
-  depth = 0,
-  parentNickname,
-  comments,
-  authorId,
-  targetId,
-  targetType,
-  session,
-}: {
-  comment: CommentDetail;
-  depth?: number;
-  parentNickname: string;
-  comments: CommentDetail[];
-  authorId: string;
-  targetId: string;
-  targetType: 'emoticon_set' | 'emoticon_image';
-  session: Session | null;
-}) {
-  const childComments =
-    comments?.filter(
-      (c: CommentDetail) => c.parent_comment_id === comment.id,
-    ) || [];
-
-  return (
-    <div className='flex flex-col gap-16' key={comment.id}>
-      <CommentItemProvider
-        commentId={comment.id}
-        targetId={targetId}
-        targetType={targetType}
-        userType={
-          session?.user.id === comment.user_id
-            ? 'me'
-            : comment.user_id === authorId
-              ? 'author'
-              : 'other'
-        }
-      >
-        <Comment
-          comment={comment}
-          asChild={depth > 0}
-          userType={
-            session?.user.id === comment.user_id
-              ? 'me'
-              : comment.user_id === authorId
-                ? 'author'
-                : 'other'
-          }
-          targetId={targetId}
-          targetType={targetType}
-          parentNickname={parentNickname}
-        />
-      </CommentItemProvider>
-      {childComments.map((childComment) => (
-        <div key={childComment.id} className={cn(depth < 2 && 'ml-24')}>
-          {renderComment({
-            comment: childComment,
-            depth: depth + 1,
-            parentNickname,
-            comments,
-            authorId,
-            targetId,
-            targetType,
-            session,
-          })}
-        </div>
-      ))}
-    </div>
   );
 }
