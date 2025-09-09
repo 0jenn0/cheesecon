@@ -5,7 +5,7 @@ export const tabItemVariants = cva(
   {
     variants: {
       isActive: {
-        true: 'text-body-sm border-interactive-primary bg-interactive-selected border-b-2 font-semibold',
+        true: 'text-body-sm bg-interactive-selected font-semibold',
         false: 'text-body-sm text-secondary font-medium',
       },
     },
