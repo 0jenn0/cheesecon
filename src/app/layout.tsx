@@ -12,7 +12,7 @@ import '../shared/ui/styles/globals.css';
 export const metadata: Metadata = {
   title: {
     default: '치즈콘 - 이모티콘 피드백 커뮤니티',
-    template: '%s | 치즈콘',
+    template: '치즈콘 | %s',
   },
   description:
     '나만의 이모티콘을 업로드하고 다른 사람들의 피드백과 댓글을 받아보세요. 이모티콘 크리에이터들이 모이는 소통 공간이에요.',
