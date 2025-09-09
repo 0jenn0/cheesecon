@@ -39,6 +39,9 @@ export default function Tabs({ items, className, ...props }: TabsProps) {
         <TabItem
           {...item}
           key={item.label}
+          ref={(el) => {
+            tabRefs.current[index] = el;
+          }}
           onClick={() => setActiveIndex(index)}
         />
       ))}
