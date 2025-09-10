@@ -11,17 +11,12 @@ let inited = false;
 export async function ensureFfmpeg() {
   if (inited) return ff;
 
-  const [{ path: ffmpegPath }, { path: ffprobePath }] = await Promise.all([
-    import('@ffmpeg-installer/ffmpeg'),
-    import('@ffprobe-installer/ffprobe'),
-  ]);
+  const { path: ffmpegPath } = await import('@ffmpeg-installer/ffmpeg');
 
-  // 바이너리 존재 확인
   await fs.stat(ffmpegPath);
-  await fs.stat(ffprobePath);
 
   ff.setFfmpegPath(ffmpegPath);
-  ff.setFfprobePath(ffprobePath);
+  ff.setFfprobePath(ffmpegPath);
 
   inited = true;
   return ff;
@@ -161,26 +156,7 @@ export async function gifWebpToVideoFiles(
   const webmPath = join(workdir, `${randomUUID()}.webm`);
 
   try {
-    const lib = await ensureFfmpeg();
-
-    let duration = 0;
-    try {
-      duration = await new Promise<number>((resolve) => {
-        lib.ffprobe(inPath, (err, metadata) => {
-          if (err) return resolve(0); // 에러시 0으로 fallback
-          const fmtDur = Number(metadata.format?.duration ?? 0) || 0;
-          const streamDur =
-            Number(
-              (metadata.streams || []).find(
-                (s: any) => s.codec_type === 'video',
-              )?.duration ?? 0,
-            ) || 0;
-          resolve(fmtDur || streamDur || 0);
-        });
-      });
-    } catch {
-      duration = 0;
-    }
+    const duration = 0;
 
     await extractPosterLastFrame(inPath, posterPath, width, duration);
 

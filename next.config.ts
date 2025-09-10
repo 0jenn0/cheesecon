@@ -1,10 +1,8 @@
 import type { NextConfig } from 'next';
 import ffm from '@ffmpeg-installer/ffmpeg';
-import ffp from '@ffprobe-installer/ffprobe';
 
 const nextConfig: NextConfig = {
   serverExternalPackages: [
-    '@ffprobe-installer/ffprobe',
     '@ffmpeg-installer/ffmpeg',
   ],
   experimental: {
@@ -66,8 +64,8 @@ const nextConfig: NextConfig = {
     ],
   },
   outputFileTracingIncludes: {
-    'src/shared/lib/media/ffmpeg.ts': [ffm.path, ffp.path],
-    '/app/(after)/register/page': [ffm.path, ffp.path],
+    'src/shared/lib/media/ffmpeg.ts': [ffm.path],
+    '/app/(after)/register/page': [ffm.path],
   },
   webpack: (config) => {
     // @ts-expect-error

@@ -17,7 +17,6 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
-    "@ffprobe-installer/ffprobe": "^2.1.2",
     "@rive-app/react-webgl2": "^4.23.3",
     "@storybook/nextjs": "^9.0.16",
     "@supabase/ssr": "^0.6.1",
