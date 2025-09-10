@@ -66,7 +66,7 @@ const nextConfig: NextConfig = {
     ],
   },
   outputFileTracingIncludes: {
-    'src/server/media/ffmpeg.ts': [ffm.path, ffp.path],
+    'src/shared/lib/media/ffmpeg.ts': [ffm.path, ffp.path],
   },
   webpack: (config) => {
     // @ts-expect-error
