@@ -163,18 +163,24 @@ export async function gifWebpToVideoFiles(
   try {
     const lib = await ensureFfmpeg();
 
-    const duration = await new Promise<number>((resolve, reject) => {
-      lib.ffprobe(inPath, (err, metadata) => {
-        if (err) return reject(err);
-        const fmtDur = Number(metadata.format?.duration ?? 0) || 0;
-        const streamDur =
-          Number(
-            (metadata.streams || []).find((s: any) => s.codec_type === 'video')
-              ?.duration ?? 0,
-          ) || 0;
-        resolve(fmtDur || streamDur || 0);
+    let duration = 0;
+    try {
+      duration = await new Promise<number>((resolve, reject) => {
+        lib.ffprobe(inPath, (err, metadata) => {
+          if (err) return resolve(0); // 에러시 0으로 fallback
+          const fmtDur = Number(metadata.format?.duration ?? 0) || 0;
+          const streamDur =
+            Number(
+              (metadata.streams || []).find(
+                (s: any) => s.codec_type === 'video',
+              )?.duration ?? 0,
+            ) || 0;
+          resolve(fmtDur || streamDur || 0);
+        });
       });
-    });
+    } catch {
+      duration = 0;
+    }
 
     await extractPosterLastFrame(inPath, posterPath, width, duration);
 
