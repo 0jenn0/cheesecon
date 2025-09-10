@@ -165,7 +165,7 @@ export async function gifWebpToVideoFiles(
 
     let duration = 0;
     try {
-      duration = await new Promise<number>((resolve, reject) => {
+      duration = await new Promise<number>((resolve) => {
         lib.ffprobe(inPath, (err, metadata) => {
           if (err) return resolve(0); // 에러시 0으로 fallback
           const fmtDur = Number(metadata.format?.duration ?? 0) || 0;
